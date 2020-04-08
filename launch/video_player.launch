@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+
+  <node name="vp" pkg="video_player" type="video_player" output="screen">
+    <param name="video" value="/home/james/ch0_20191204111009_20191204111109.mp4"/>
+    <param name="fps" value="20"/>
+  </node>
+
+</launch>

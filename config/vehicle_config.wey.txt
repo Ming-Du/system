@@ -1,0 +1,15 @@
+vin : "vin"
+plate : "JING-Q"
+brand : "WEY"
+    
+length : 4.625
+width  : 1.860
+height : 1.720
+weight : 1730
+
+accel_min : -5.0
+accel_max : 5.0
+steering_min : -524
+steering_max : 524
+
+wheel_base : 2.680

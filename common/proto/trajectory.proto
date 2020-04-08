@@ -1,0 +1,40 @@
+syntax = "proto2";
+package planning;
+
+import "header.proto";
+import "chassis.proto";
+
+enum LaneChange {
+  LANE_KEEPING = 0;
+  MERGE_LEFT = 1;
+  MERGE_RIGHT = 2;
+}
+
+enum CoordFrame {
+  FRAME_DEFAULT = 0;
+  FRAME_ENU = 1;
+  FRAME_LLH = 2;
+  FRAME_IMU = 3;
+  FRAME_VEHICLE = 5;
+}
+
+message TrajectoryPoint {
+  optional double x = 1;
+  optional double y = 2;
+  optional double z = 3;
+  optional double t = 4;
+  optional double v = 5;
+  optional double a = 6;
+  optional double theta = 7;
+  optional double kappa = 8;
+  optional double s = 9;
+}
+
+message Trajectory {
+  optional common.Header header = 1;
+  optional CoordFrame frame = 2;
+  repeated TrajectoryPoint points = 3;
+  optional double a = 4;
+  optional LaneChange lane_change = 5;
+  optional chassis.LightSwitch light = 6 [default = LIGHT_NONE];
+}

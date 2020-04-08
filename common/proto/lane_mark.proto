@@ -1,0 +1,37 @@
+syntax = "proto2";
+package perception;
+
+import "header.proto";
+
+enum LaneMarkColor {
+  COLOR_WHITE = 0;
+  COLOR_YELLOW = 1;
+}
+
+enum LaneMarkType {
+  LANE_MARK_NONE = 0;
+  LANE_MARK_SOLID = 1;
+  LANE_MARK_BROKEN = 2;
+}
+
+//TODO: define geometry.proto
+message Point2D {
+  optional double x = 1 [default = nan];
+  optional double y = 2 [default = nan];
+}
+
+message LaneMark {
+  optional LaneMarkColor color = 1;
+  optional LaneMarkType type = 2;
+  optional float confidence = 3;
+  repeated Point2D points = 4;
+}
+
+message LaneMarks {
+  optional common.Header header = 1;
+
+  optional LaneMark left = 2;
+  optional LaneMark right = 3;
+  optional LaneMark left2 = 4;
+  optional LaneMark right2 = 5;
+}

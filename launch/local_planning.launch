@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="local_planning" type="local_planning" name="local_planning"  output="screen">	
+    <param name="config" value="/home/neousys/catkin_ws/src/system/config/planning_config.txt" />
+    <param name="vehicle" value="/home/neousys/catkin_ws/src/system/config/vehicle_config.wey.txt" />
+  </node>
+</launch>

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<launch>
+  <!-- lidar detection -->
+  <include file="$(find lslidar_ch_decoder)/launch/lslidar_ch.launch" ns="sensor/lslidar_ch" />
+  <include file="$(find lidar_detection)/launch/lidar_detection_ch.launch" ns="lidar_detection" />
+
+  <!-- gnss -->
+  <include file="$(find gnss)/launch/data_spin.launch" ns="sensor/gnss"/>
+
+  <!-- chassis -->
+  <include file="$(find common)/../launch/chassis.launch" />
+
+  <!-- camera detection -->
+  <node name="usb_cam_6mm" pkg="usb_cam" type="usb_cam_node">
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="1280" />
+    <param name="image_height" value="720" />
+    <param name="pixel_format" value="mjpeg" />
+    <param name="camera_frame_id" value="usb_cam" />
+    <param name="io_method" value="mmap"/>
+  </node>
+
+  <include file="$(find camera_detection)/launch/darknet_ros.launch">
+    <arg name="network_param_file" value="$(find camera_detection)/config/Gaussian_yolov3_BDD.yaml"/>
+    <arg name="image" value="/usb_cam_6mm/image_raw" />
+  </include>
+
+  <!-- telematics -->
+  <!--include file="$(find telematics)/launch/telematics.launch" /-->
+
+</launch>

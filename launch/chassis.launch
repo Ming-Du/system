@@ -1,0 +1,5 @@
+<launch>
+  <node name="chassis_wey" pkg="chassis" type="chassis" output="screen" >
+    <param name="config" value="/home/neousys/catkin_ws/src/system/config/vehicle_config.wey.txt" />
+  </node>
+</launch>
