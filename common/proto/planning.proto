@@ -8,6 +8,13 @@ enum PlanningMode {
 
 message PlanningConfig {
     optional uint32 frequency = 1;
-    //optional float plate = 2;
-    //optional float brand = 3;
+    optional double speed_max = 2;
+    optional double acc_min = 3;
+    optional double acc_max = 4;
+    optional double jerk_min = 5;
+    optional double jerk_max = 6;
+    optional double time_sample = 7;
+    optional double path_sample = 8;
+    optional double safe_long_dis = 9;
+    //int map_builder_mode = 0;
 }

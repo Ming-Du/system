@@ -1,0 +1,75 @@
+syntax = "proto2";
+package perception;
+
+import "header.proto";
+import "geometry.proto";
+
+enum ObjectType {
+  TYPE_UNKNOWN = 0;
+  TYPE_PEDESTRIAN = 3;
+  TYPE_BICYCLE = 4;
+  TYPE_MOTOR = 5;
+  TYPE_RIDER = 6;
+  TYPE_CAR = 7;
+  TYPE_TRUCK = 8;
+  TYPE_BUS = 9;
+  TYPE_TRAIN = 10;
+  TYPE_SIGN = 20;
+  TYPE_LIGHT = 30;
+  TYPE_UNKNOWN_SMALL = 91;
+  TYPE_UNKNOWN_BIG = 92;
+  TYPE_UNKNOWN_STATIC = 93;
+  TYPE_UNKNOWN_DYNAMIC = 94;
+}
+
+message Object {
+  optional uint32 id = 1;                // obj id, after tracked
+  optional ObjectType type = 2;          // obj category
+  optional double timestamp = 3;         // sensing time
+  optional float confidence = 4;         // probability
+  optional int32 status = 5;             // reserved
+
+  optional float x_distance = 6;         // longitudinal distance
+  optional float y_distance = 7;         // lateral distance
+  optional float angle = 8;              // obj angle relative to host vehicle
+
+  optional geometry.Point center = 9;    // x,y,z in meter
+  optional geometry.Vector3 size = 10;   // length width height(in meter)
+  repeated geometry.Point contour = 11;  // contour points
+}
+
+message VisualObject {
+  optional Object obj = 1;
+
+  //bounding box in pixels
+  optional int32 x = 2;                    // rect.x
+  optional int32 y = 3;                    // rect.y
+  optional int32 width = 4;                // rect.width
+  optional int32 height = 5;               // rect.height
+}
+
+message VisualObjects {
+  optional common.Header header = 1;
+  repeated VisualObject objs = 2;
+}
+
+message TrackedObject {
+  optional Object obj = 1;
+
+  optional float yaw = 2;       //box orientation angle from x axis, counter clockwise(in rad),range -pi to pi
+  optional float yaw_rate = 3;  //in rad/s
+  optional geometry.Vector3 velocity = 4; // absolute velocity, in m/s, vx, vy, vz
+  repeated geometry.Point trace = 5;    // historical positions
+
+  optional float absolute_longitude_v = 6;   // along lane speed, m/s
+  optional float absolute_longitude_a = 7;   // in m/s2, longitudinal acc
+  optional float absolute_lateral_v = 8;     // vertical to lane speed, left positive, m/s
+
+//float x_speed             // longitudinal speed relative to host vehicle, m/s
+//float y_speed             // lateral speed relative to host vehicle, m/s
+}
+
+message TrackedObjects {
+  optional common.Header header = 1;
+  repeated TrackedObject objs = 2;
+}

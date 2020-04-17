@@ -27,6 +27,10 @@ message LaneMark {
   repeated Point2D points = 4;
 }
 
+message LaneCenter {
+  repeated Point2D points = 1;
+}
+
 message LaneMarks {
   optional common.Header header = 1;
 

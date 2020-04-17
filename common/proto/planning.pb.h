@@ -117,15 +117,95 @@ class PlanningConfig : public ::google::protobuf::Message {
   inline ::google::protobuf::uint32 frequency() const;
   inline void set_frequency(::google::protobuf::uint32 value);
 
+  // optional double speed_max = 2;
+  inline bool has_speed_max() const;
+  inline void clear_speed_max();
+  static const int kSpeedMaxFieldNumber = 2;
+  inline double speed_max() const;
+  inline void set_speed_max(double value);
+
+  // optional double acc_min = 3;
+  inline bool has_acc_min() const;
+  inline void clear_acc_min();
+  static const int kAccMinFieldNumber = 3;
+  inline double acc_min() const;
+  inline void set_acc_min(double value);
+
+  // optional double acc_max = 4;
+  inline bool has_acc_max() const;
+  inline void clear_acc_max();
+  static const int kAccMaxFieldNumber = 4;
+  inline double acc_max() const;
+  inline void set_acc_max(double value);
+
+  // optional double jerk_min = 5;
+  inline bool has_jerk_min() const;
+  inline void clear_jerk_min();
+  static const int kJerkMinFieldNumber = 5;
+  inline double jerk_min() const;
+  inline void set_jerk_min(double value);
+
+  // optional double jerk_max = 6;
+  inline bool has_jerk_max() const;
+  inline void clear_jerk_max();
+  static const int kJerkMaxFieldNumber = 6;
+  inline double jerk_max() const;
+  inline void set_jerk_max(double value);
+
+  // optional double time_sample = 7;
+  inline bool has_time_sample() const;
+  inline void clear_time_sample();
+  static const int kTimeSampleFieldNumber = 7;
+  inline double time_sample() const;
+  inline void set_time_sample(double value);
+
+  // optional double path_sample = 8;
+  inline bool has_path_sample() const;
+  inline void clear_path_sample();
+  static const int kPathSampleFieldNumber = 8;
+  inline double path_sample() const;
+  inline void set_path_sample(double value);
+
+  // optional double safe_long_dis = 9;
+  inline bool has_safe_long_dis() const;
+  inline void clear_safe_long_dis();
+  static const int kSafeLongDisFieldNumber = 9;
+  inline double safe_long_dis() const;
+  inline void set_safe_long_dis(double value);
+
   // @@protoc_insertion_point(class_scope:planning.PlanningConfig)
  private:
   inline void set_has_frequency();
   inline void clear_has_frequency();
+  inline void set_has_speed_max();
+  inline void clear_has_speed_max();
+  inline void set_has_acc_min();
+  inline void clear_has_acc_min();
+  inline void set_has_acc_max();
+  inline void clear_has_acc_max();
+  inline void set_has_jerk_min();
+  inline void clear_has_jerk_min();
+  inline void set_has_jerk_max();
+  inline void clear_has_jerk_max();
+  inline void set_has_time_sample();
+  inline void clear_has_time_sample();
+  inline void set_has_path_sample();
+  inline void clear_has_path_sample();
+  inline void set_has_safe_long_dis();
+  inline void clear_has_safe_long_dis();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
+  double speed_max_;
+  double acc_min_;
+  double acc_max_;
+  double jerk_min_;
+  double jerk_max_;
+  double time_sample_;
+  double path_sample_;
+  double safe_long_dis_;
   ::google::protobuf::uint32 frequency_;
   friend void  protobuf_AddDesc_planning_2eproto();
   friend void protobuf_AssignDesc_planning_2eproto();
@@ -163,6 +243,198 @@ inline void PlanningConfig::set_frequency(::google::protobuf::uint32 value) {
   set_has_frequency();
   frequency_ = value;
   // @@protoc_insertion_point(field_set:planning.PlanningConfig.frequency)
+}
+
+// optional double speed_max = 2;
+inline bool PlanningConfig::has_speed_max() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void PlanningConfig::set_has_speed_max() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void PlanningConfig::clear_has_speed_max() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void PlanningConfig::clear_speed_max() {
+  speed_max_ = 0;
+  clear_has_speed_max();
+}
+inline double PlanningConfig::speed_max() const {
+  // @@protoc_insertion_point(field_get:planning.PlanningConfig.speed_max)
+  return speed_max_;
+}
+inline void PlanningConfig::set_speed_max(double value) {
+  set_has_speed_max();
+  speed_max_ = value;
+  // @@protoc_insertion_point(field_set:planning.PlanningConfig.speed_max)
+}
+
+// optional double acc_min = 3;
+inline bool PlanningConfig::has_acc_min() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void PlanningConfig::set_has_acc_min() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void PlanningConfig::clear_has_acc_min() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void PlanningConfig::clear_acc_min() {
+  acc_min_ = 0;
+  clear_has_acc_min();
+}
+inline double PlanningConfig::acc_min() const {
+  // @@protoc_insertion_point(field_get:planning.PlanningConfig.acc_min)
+  return acc_min_;
+}
+inline void PlanningConfig::set_acc_min(double value) {
+  set_has_acc_min();
+  acc_min_ = value;
+  // @@protoc_insertion_point(field_set:planning.PlanningConfig.acc_min)
+}
+
+// optional double acc_max = 4;
+inline bool PlanningConfig::has_acc_max() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void PlanningConfig::set_has_acc_max() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void PlanningConfig::clear_has_acc_max() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void PlanningConfig::clear_acc_max() {
+  acc_max_ = 0;
+  clear_has_acc_max();
+}
+inline double PlanningConfig::acc_max() const {
+  // @@protoc_insertion_point(field_get:planning.PlanningConfig.acc_max)
+  return acc_max_;
+}
+inline void PlanningConfig::set_acc_max(double value) {
+  set_has_acc_max();
+  acc_max_ = value;
+  // @@protoc_insertion_point(field_set:planning.PlanningConfig.acc_max)
+}
+
+// optional double jerk_min = 5;
+inline bool PlanningConfig::has_jerk_min() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void PlanningConfig::set_has_jerk_min() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void PlanningConfig::clear_has_jerk_min() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void PlanningConfig::clear_jerk_min() {
+  jerk_min_ = 0;
+  clear_has_jerk_min();
+}
+inline double PlanningConfig::jerk_min() const {
+  // @@protoc_insertion_point(field_get:planning.PlanningConfig.jerk_min)
+  return jerk_min_;
+}
+inline void PlanningConfig::set_jerk_min(double value) {
+  set_has_jerk_min();
+  jerk_min_ = value;
+  // @@protoc_insertion_point(field_set:planning.PlanningConfig.jerk_min)
+}
+
+// optional double jerk_max = 6;
+inline bool PlanningConfig::has_jerk_max() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void PlanningConfig::set_has_jerk_max() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void PlanningConfig::clear_has_jerk_max() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void PlanningConfig::clear_jerk_max() {
+  jerk_max_ = 0;
+  clear_has_jerk_max();
+}
+inline double PlanningConfig::jerk_max() const {
+  // @@protoc_insertion_point(field_get:planning.PlanningConfig.jerk_max)
+  return jerk_max_;
+}
+inline void PlanningConfig::set_jerk_max(double value) {
+  set_has_jerk_max();
+  jerk_max_ = value;
+  // @@protoc_insertion_point(field_set:planning.PlanningConfig.jerk_max)
+}
+
+// optional double time_sample = 7;
+inline bool PlanningConfig::has_time_sample() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void PlanningConfig::set_has_time_sample() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void PlanningConfig::clear_has_time_sample() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void PlanningConfig::clear_time_sample() {
+  time_sample_ = 0;
+  clear_has_time_sample();
+}
+inline double PlanningConfig::time_sample() const {
+  // @@protoc_insertion_point(field_get:planning.PlanningConfig.time_sample)
+  return time_sample_;
+}
+inline void PlanningConfig::set_time_sample(double value) {
+  set_has_time_sample();
+  time_sample_ = value;
+  // @@protoc_insertion_point(field_set:planning.PlanningConfig.time_sample)
+}
+
+// optional double path_sample = 8;
+inline bool PlanningConfig::has_path_sample() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void PlanningConfig::set_has_path_sample() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void PlanningConfig::clear_has_path_sample() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void PlanningConfig::clear_path_sample() {
+  path_sample_ = 0;
+  clear_has_path_sample();
+}
+inline double PlanningConfig::path_sample() const {
+  // @@protoc_insertion_point(field_get:planning.PlanningConfig.path_sample)
+  return path_sample_;
+}
+inline void PlanningConfig::set_path_sample(double value) {
+  set_has_path_sample();
+  path_sample_ = value;
+  // @@protoc_insertion_point(field_set:planning.PlanningConfig.path_sample)
+}
+
+// optional double safe_long_dis = 9;
+inline bool PlanningConfig::has_safe_long_dis() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void PlanningConfig::set_has_safe_long_dis() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void PlanningConfig::clear_has_safe_long_dis() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void PlanningConfig::clear_safe_long_dis() {
+  safe_long_dis_ = 0;
+  clear_has_safe_long_dis();
+}
+inline double PlanningConfig::safe_long_dis() const {
+  // @@protoc_insertion_point(field_get:planning.PlanningConfig.safe_long_dis)
+  return safe_long_dis_;
+}
+inline void PlanningConfig::set_safe_long_dis(double value) {
+  set_has_safe_long_dis();
+  safe_long_dis_ = value;
+  // @@protoc_insertion_point(field_set:planning.PlanningConfig.safe_long_dis)
 }
 
 

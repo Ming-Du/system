@@ -26,6 +26,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* LaneMark_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   LaneMark_reflection_ = NULL;
+const ::google::protobuf::Descriptor* LaneCenter_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  LaneCenter_reflection_ = NULL;
 const ::google::protobuf::Descriptor* LaneMarks_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   LaneMarks_reflection_ = NULL;
@@ -75,7 +78,22 @@ void protobuf_AssignDesc_lane_5fmark_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LaneMark));
-  LaneMarks_descriptor_ = file->message_type(2);
+  LaneCenter_descriptor_ = file->message_type(2);
+  static const int LaneCenter_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LaneCenter, points_),
+  };
+  LaneCenter_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      LaneCenter_descriptor_,
+      LaneCenter::default_instance_,
+      LaneCenter_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LaneCenter, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LaneCenter, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(LaneCenter));
+  LaneMarks_descriptor_ = file->message_type(3);
   static const int LaneMarks_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LaneMarks, header_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LaneMarks, left_),
@@ -113,6 +131,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     LaneMark_descriptor_, &LaneMark::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    LaneCenter_descriptor_, &LaneCenter::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     LaneMarks_descriptor_, &LaneMarks::default_instance());
 }
 
@@ -123,6 +143,8 @@ void protobuf_ShutdownFile_lane_5fmark_2eproto() {
   delete Point2D_reflection_;
   delete LaneMark::default_instance_;
   delete LaneMark_reflection_;
+  delete LaneCenter::default_instance_;
+  delete LaneCenter_reflection_;
   delete LaneMarks::default_instance_;
   delete LaneMarks_reflection_;
 }
@@ -140,23 +162,26 @@ void protobuf_AddDesc_lane_5fmark_2eproto() {
     "\001:\003nan\"\225\001\n\010LaneMark\022(\n\005color\030\001 \001(\0162\031.per"
     "ception.LaneMarkColor\022&\n\004type\030\002 \001(\0162\030.pe"
     "rception.LaneMarkType\022\022\n\nconfidence\030\003 \001("
-    "\002\022#\n\006points\030\004 \003(\0132\023.perception.Point2D\"\277"
-    "\001\n\tLaneMarks\022\036\n\006header\030\001 \001(\0132\016.common.He"
-    "ader\022\"\n\004left\030\002 \001(\0132\024.perception.LaneMark"
-    "\022#\n\005right\030\003 \001(\0132\024.perception.LaneMark\022#\n"
-    "\005left2\030\004 \001(\0132\024.perception.LaneMark\022$\n\006ri"
-    "ght2\030\005 \001(\0132\024.perception.LaneMark*2\n\rLane"
-    "MarkColor\022\017\n\013COLOR_WHITE\020\000\022\020\n\014COLOR_YELL"
-    "OW\020\001*M\n\014LaneMarkType\022\022\n\016LANE_MARK_NONE\020\000"
-    "\022\023\n\017LANE_MARK_SOLID\020\001\022\024\n\020LANE_MARK_BROKE"
-    "N\020\002", 563);
+    "\002\022#\n\006points\030\004 \003(\0132\023.perception.Point2D\"1"
+    "\n\nLaneCenter\022#\n\006points\030\001 \003(\0132\023.perceptio"
+    "n.Point2D\"\277\001\n\tLaneMarks\022\036\n\006header\030\001 \001(\0132"
+    "\016.common.Header\022\"\n\004left\030\002 \001(\0132\024.percepti"
+    "on.LaneMark\022#\n\005right\030\003 \001(\0132\024.perception."
+    "LaneMark\022#\n\005left2\030\004 \001(\0132\024.perception.Lan"
+    "eMark\022$\n\006right2\030\005 \001(\0132\024.perception.LaneM"
+    "ark*2\n\rLaneMarkColor\022\017\n\013COLOR_WHITE\020\000\022\020\n"
+    "\014COLOR_YELLOW\020\001*M\n\014LaneMarkType\022\022\n\016LANE_"
+    "MARK_NONE\020\000\022\023\n\017LANE_MARK_SOLID\020\001\022\024\n\020LANE"
+    "_MARK_BROKEN\020\002", 614);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "lane_mark.proto", &protobuf_RegisterTypes);
   Point2D::default_instance_ = new Point2D();
   LaneMark::default_instance_ = new LaneMark();
+  LaneCenter::default_instance_ = new LaneCenter();
   LaneMarks::default_instance_ = new LaneMarks();
   Point2D::default_instance_->InitAsDefaultInstance();
   LaneMark::default_instance_->InitAsDefaultInstance();
+  LaneCenter::default_instance_->InitAsDefaultInstance();
   LaneMarks::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_lane_5fmark_2eproto);
 }
@@ -816,6 +841,225 @@ void LaneMark::Swap(LaneMark* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = LaneMark_descriptor_;
   metadata.reflection = LaneMark_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int LaneCenter::kPointsFieldNumber;
+#endif  // !_MSC_VER
+
+LaneCenter::LaneCenter()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:perception.LaneCenter)
+}
+
+void LaneCenter::InitAsDefaultInstance() {
+}
+
+LaneCenter::LaneCenter(const LaneCenter& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:perception.LaneCenter)
+}
+
+void LaneCenter::SharedCtor() {
+  _cached_size_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+LaneCenter::~LaneCenter() {
+  // @@protoc_insertion_point(destructor:perception.LaneCenter)
+  SharedDtor();
+}
+
+void LaneCenter::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void LaneCenter::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* LaneCenter::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return LaneCenter_descriptor_;
+}
+
+const LaneCenter& LaneCenter::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_lane_5fmark_2eproto();
+  return *default_instance_;
+}
+
+LaneCenter* LaneCenter::default_instance_ = NULL;
+
+LaneCenter* LaneCenter::New() const {
+  return new LaneCenter;
+}
+
+void LaneCenter::Clear() {
+  points_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool LaneCenter::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:perception.LaneCenter)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated .perception.Point2D points = 1;
+      case 1: {
+        if (tag == 10) {
+         parse_points:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+                input, add_points()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(10)) goto parse_points;
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:perception.LaneCenter)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:perception.LaneCenter)
+  return false;
+#undef DO_
+}
+
+void LaneCenter::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:perception.LaneCenter)
+  // repeated .perception.Point2D points = 1;
+  for (int i = 0; i < this->points_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->points(i), output);
+  }
+
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+  // @@protoc_insertion_point(serialize_end:perception.LaneCenter)
+}
+
+::google::protobuf::uint8* LaneCenter::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:perception.LaneCenter)
+  // repeated .perception.Point2D points = 1;
+  for (int i = 0; i < this->points_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, this->points(i), target);
+  }
+
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:perception.LaneCenter)
+  return target;
+}
+
+int LaneCenter::ByteSize() const {
+  int total_size = 0;
+
+  // repeated .perception.Point2D points = 1;
+  total_size += 1 * this->points_size();
+  for (int i = 0; i < this->points_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->points(i));
+  }
+
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void LaneCenter::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const LaneCenter* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const LaneCenter*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void LaneCenter::MergeFrom(const LaneCenter& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  points_.MergeFrom(from.points_);
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void LaneCenter::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void LaneCenter::CopyFrom(const LaneCenter& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool LaneCenter::IsInitialized() const {
+
+  return true;
+}
+
+void LaneCenter::Swap(LaneCenter* other) {
+  if (other != this) {
+    points_.Swap(&other->points_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata LaneCenter::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = LaneCenter_descriptor_;
+  metadata.reflection = LaneCenter_reflection_;
   return metadata;
 }
 

@@ -35,8 +35,16 @@ void protobuf_AssignDesc_planning_2eproto() {
       "planning.proto");
   GOOGLE_CHECK(file != NULL);
   PlanningConfig_descriptor_ = file->message_type(0);
-  static const int PlanningConfig_offsets_[1] = {
+  static const int PlanningConfig_offsets_[9] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PlanningConfig, frequency_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PlanningConfig, speed_max_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PlanningConfig, acc_min_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PlanningConfig, acc_max_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PlanningConfig, jerk_min_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PlanningConfig, jerk_max_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PlanningConfig, time_sample_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PlanningConfig, path_sample_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PlanningConfig, safe_long_dis_),
   };
   PlanningConfig_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -80,9 +88,13 @@ void protobuf_AddDesc_planning_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\016planning.proto\022\010planning\"#\n\016PlanningCo"
-    "nfig\022\021\n\tfrequency\030\001 \001(\r*%\n\014PlanningMode\022"
-    "\t\n\005LOCAL\020\000\022\n\n\006GLOBAL\020\001", 102);
+    "\n\016planning.proto\022\010planning\"\275\001\n\016PlanningC"
+    "onfig\022\021\n\tfrequency\030\001 \001(\r\022\021\n\tspeed_max\030\002 "
+    "\001(\001\022\017\n\007acc_min\030\003 \001(\001\022\017\n\007acc_max\030\004 \001(\001\022\020\n"
+    "\010jerk_min\030\005 \001(\001\022\020\n\010jerk_max\030\006 \001(\001\022\023\n\013tim"
+    "e_sample\030\007 \001(\001\022\023\n\013path_sample\030\010 \001(\001\022\025\n\rs"
+    "afe_long_dis\030\t \001(\001*%\n\014PlanningMode\022\t\n\005LO"
+    "CAL\020\000\022\n\n\006GLOBAL\020\001", 257);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "planning.proto", &protobuf_RegisterTypes);
   PlanningConfig::default_instance_ = new PlanningConfig();
@@ -115,6 +127,14 @@ bool PlanningMode_IsValid(int value) {
 
 #ifndef _MSC_VER
 const int PlanningConfig::kFrequencyFieldNumber;
+const int PlanningConfig::kSpeedMaxFieldNumber;
+const int PlanningConfig::kAccMinFieldNumber;
+const int PlanningConfig::kAccMaxFieldNumber;
+const int PlanningConfig::kJerkMinFieldNumber;
+const int PlanningConfig::kJerkMaxFieldNumber;
+const int PlanningConfig::kTimeSampleFieldNumber;
+const int PlanningConfig::kPathSampleFieldNumber;
+const int PlanningConfig::kSafeLongDisFieldNumber;
 #endif  // !_MSC_VER
 
 PlanningConfig::PlanningConfig()
@@ -136,6 +156,14 @@ PlanningConfig::PlanningConfig(const PlanningConfig& from)
 void PlanningConfig::SharedCtor() {
   _cached_size_ = 0;
   frequency_ = 0u;
+  speed_max_ = 0;
+  acc_min_ = 0;
+  acc_max_ = 0;
+  jerk_min_ = 0;
+  jerk_max_ = 0;
+  time_sample_ = 0;
+  path_sample_ = 0;
+  safe_long_dis_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -171,7 +199,25 @@ PlanningConfig* PlanningConfig::New() const {
 }
 
 void PlanningConfig::Clear() {
-  frequency_ = 0u;
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<PlanningConfig*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  if (_has_bits_[0 / 32] & 255) {
+    ZR_(speed_max_, path_sample_);
+    frequency_ = 0u;
+  }
+  safe_long_dis_ = 0;
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -193,6 +239,126 @@ bool PlanningConfig::MergePartialFromCodedStream(
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &frequency_)));
           set_has_frequency();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(17)) goto parse_speed_max;
+        break;
+      }
+
+      // optional double speed_max = 2;
+      case 2: {
+        if (tag == 17) {
+         parse_speed_max:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &speed_max_)));
+          set_has_speed_max();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(25)) goto parse_acc_min;
+        break;
+      }
+
+      // optional double acc_min = 3;
+      case 3: {
+        if (tag == 25) {
+         parse_acc_min:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &acc_min_)));
+          set_has_acc_min();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(33)) goto parse_acc_max;
+        break;
+      }
+
+      // optional double acc_max = 4;
+      case 4: {
+        if (tag == 33) {
+         parse_acc_max:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &acc_max_)));
+          set_has_acc_max();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(41)) goto parse_jerk_min;
+        break;
+      }
+
+      // optional double jerk_min = 5;
+      case 5: {
+        if (tag == 41) {
+         parse_jerk_min:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &jerk_min_)));
+          set_has_jerk_min();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(49)) goto parse_jerk_max;
+        break;
+      }
+
+      // optional double jerk_max = 6;
+      case 6: {
+        if (tag == 49) {
+         parse_jerk_max:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &jerk_max_)));
+          set_has_jerk_max();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(57)) goto parse_time_sample;
+        break;
+      }
+
+      // optional double time_sample = 7;
+      case 7: {
+        if (tag == 57) {
+         parse_time_sample:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &time_sample_)));
+          set_has_time_sample();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(65)) goto parse_path_sample;
+        break;
+      }
+
+      // optional double path_sample = 8;
+      case 8: {
+        if (tag == 65) {
+         parse_path_sample:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &path_sample_)));
+          set_has_path_sample();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(73)) goto parse_safe_long_dis;
+        break;
+      }
+
+      // optional double safe_long_dis = 9;
+      case 9: {
+        if (tag == 73) {
+         parse_safe_long_dis:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &safe_long_dis_)));
+          set_has_safe_long_dis();
         } else {
           goto handle_unusual;
         }
@@ -230,6 +396,46 @@ void PlanningConfig::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->frequency(), output);
   }
 
+  // optional double speed_max = 2;
+  if (has_speed_max()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->speed_max(), output);
+  }
+
+  // optional double acc_min = 3;
+  if (has_acc_min()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->acc_min(), output);
+  }
+
+  // optional double acc_max = 4;
+  if (has_acc_max()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(4, this->acc_max(), output);
+  }
+
+  // optional double jerk_min = 5;
+  if (has_jerk_min()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->jerk_min(), output);
+  }
+
+  // optional double jerk_max = 6;
+  if (has_jerk_max()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(6, this->jerk_max(), output);
+  }
+
+  // optional double time_sample = 7;
+  if (has_time_sample()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(7, this->time_sample(), output);
+  }
+
+  // optional double path_sample = 8;
+  if (has_path_sample()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(8, this->path_sample(), output);
+  }
+
+  // optional double safe_long_dis = 9;
+  if (has_safe_long_dis()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(9, this->safe_long_dis(), output);
+  }
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -243,6 +449,46 @@ void PlanningConfig::SerializeWithCachedSizes(
   // optional uint32 frequency = 1;
   if (has_frequency()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->frequency(), target);
+  }
+
+  // optional double speed_max = 2;
+  if (has_speed_max()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->speed_max(), target);
+  }
+
+  // optional double acc_min = 3;
+  if (has_acc_min()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->acc_min(), target);
+  }
+
+  // optional double acc_max = 4;
+  if (has_acc_max()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(4, this->acc_max(), target);
+  }
+
+  // optional double jerk_min = 5;
+  if (has_jerk_min()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->jerk_min(), target);
+  }
+
+  // optional double jerk_max = 6;
+  if (has_jerk_max()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(6, this->jerk_max(), target);
+  }
+
+  // optional double time_sample = 7;
+  if (has_time_sample()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(7, this->time_sample(), target);
+  }
+
+  // optional double path_sample = 8;
+  if (has_path_sample()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(8, this->path_sample(), target);
+  }
+
+  // optional double safe_long_dis = 9;
+  if (has_safe_long_dis()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(9, this->safe_long_dis(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -262,6 +508,48 @@ int PlanningConfig::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->frequency());
+    }
+
+    // optional double speed_max = 2;
+    if (has_speed_max()) {
+      total_size += 1 + 8;
+    }
+
+    // optional double acc_min = 3;
+    if (has_acc_min()) {
+      total_size += 1 + 8;
+    }
+
+    // optional double acc_max = 4;
+    if (has_acc_max()) {
+      total_size += 1 + 8;
+    }
+
+    // optional double jerk_min = 5;
+    if (has_jerk_min()) {
+      total_size += 1 + 8;
+    }
+
+    // optional double jerk_max = 6;
+    if (has_jerk_max()) {
+      total_size += 1 + 8;
+    }
+
+    // optional double time_sample = 7;
+    if (has_time_sample()) {
+      total_size += 1 + 8;
+    }
+
+    // optional double path_sample = 8;
+    if (has_path_sample()) {
+      total_size += 1 + 8;
+    }
+
+  }
+  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    // optional double safe_long_dis = 9;
+    if (has_safe_long_dis()) {
+      total_size += 1 + 8;
     }
 
   }
@@ -294,6 +582,32 @@ void PlanningConfig::MergeFrom(const PlanningConfig& from) {
     if (from.has_frequency()) {
       set_frequency(from.frequency());
     }
+    if (from.has_speed_max()) {
+      set_speed_max(from.speed_max());
+    }
+    if (from.has_acc_min()) {
+      set_acc_min(from.acc_min());
+    }
+    if (from.has_acc_max()) {
+      set_acc_max(from.acc_max());
+    }
+    if (from.has_jerk_min()) {
+      set_jerk_min(from.jerk_min());
+    }
+    if (from.has_jerk_max()) {
+      set_jerk_max(from.jerk_max());
+    }
+    if (from.has_time_sample()) {
+      set_time_sample(from.time_sample());
+    }
+    if (from.has_path_sample()) {
+      set_path_sample(from.path_sample());
+    }
+  }
+  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    if (from.has_safe_long_dis()) {
+      set_safe_long_dis(from.safe_long_dis());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -318,6 +632,14 @@ bool PlanningConfig::IsInitialized() const {
 void PlanningConfig::Swap(PlanningConfig* other) {
   if (other != this) {
     std::swap(frequency_, other->frequency_);
+    std::swap(speed_max_, other->speed_max_);
+    std::swap(acc_min_, other->acc_min_);
+    std::swap(acc_max_, other->acc_max_);
+    std::swap(jerk_min_, other->jerk_min_);
+    std::swap(jerk_max_, other->jerk_max_);
+    std::swap(time_sample_, other->time_sample_);
+    std::swap(path_sample_, other->path_sample_);
+    std::swap(safe_long_dis_, other->safe_long_dis_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

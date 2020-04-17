@@ -1,0 +1,10 @@
+frequency : 10
+speed_max : 17.0
+acc_min : -6.0
+acc_max : 2.0
+jerk_min : -6.0
+jerk_max : 4.0
+time_sample : 0.1
+path_sample : 0.5
+safe_long_dis : 4.0
+

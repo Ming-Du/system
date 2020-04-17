@@ -10,7 +10,7 @@ message VehicleConfig {
     optional string brand = 3;
     
     optional float length = 6; //meter
-    optional float widht  = 7; //meter;
+    optional float width  = 7; //meter;
     optional float height = 8; //meter;
     optional float weight = 9; //kg  
 

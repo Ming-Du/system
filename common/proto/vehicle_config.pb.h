@@ -135,12 +135,12 @@ class VehicleConfig : public ::google::protobuf::Message {
   inline float length() const;
   inline void set_length(float value);
 
-  // optional float widht = 7;
-  inline bool has_widht() const;
-  inline void clear_widht();
-  static const int kWidhtFieldNumber = 7;
-  inline float widht() const;
-  inline void set_widht(float value);
+  // optional float width = 7;
+  inline bool has_width() const;
+  inline void clear_width();
+  static const int kWidthFieldNumber = 7;
+  inline float width() const;
+  inline void set_width(float value);
 
   // optional float height = 8;
   inline bool has_height() const;
@@ -215,8 +215,8 @@ class VehicleConfig : public ::google::protobuf::Message {
   inline void clear_has_brand();
   inline void set_has_length();
   inline void clear_has_length();
-  inline void set_has_widht();
-  inline void clear_has_widht();
+  inline void set_has_width();
+  inline void clear_has_width();
   inline void set_has_height();
   inline void clear_has_height();
   inline void set_has_weight();
@@ -244,7 +244,7 @@ class VehicleConfig : public ::google::protobuf::Message {
   ::std::string* plate_;
   ::std::string* brand_;
   float length_;
-  float widht_;
+  float width_;
   float height_;
   float weight_;
   float accel_min_;
@@ -520,28 +520,28 @@ inline void VehicleConfig::set_length(float value) {
   // @@protoc_insertion_point(field_set:chassis.VehicleConfig.length)
 }
 
-// optional float widht = 7;
-inline bool VehicleConfig::has_widht() const {
+// optional float width = 7;
+inline bool VehicleConfig::has_width() const {
   return (_has_bits_[0] & 0x00000010u) != 0;
 }
-inline void VehicleConfig::set_has_widht() {
+inline void VehicleConfig::set_has_width() {
   _has_bits_[0] |= 0x00000010u;
 }
-inline void VehicleConfig::clear_has_widht() {
+inline void VehicleConfig::clear_has_width() {
   _has_bits_[0] &= ~0x00000010u;
 }
-inline void VehicleConfig::clear_widht() {
-  widht_ = 0;
-  clear_has_widht();
+inline void VehicleConfig::clear_width() {
+  width_ = 0;
+  clear_has_width();
 }
-inline float VehicleConfig::widht() const {
-  // @@protoc_insertion_point(field_get:chassis.VehicleConfig.widht)
-  return widht_;
+inline float VehicleConfig::width() const {
+  // @@protoc_insertion_point(field_get:chassis.VehicleConfig.width)
+  return width_;
 }
-inline void VehicleConfig::set_widht(float value) {
-  set_has_widht();
-  widht_ = value;
-  // @@protoc_insertion_point(field_set:chassis.VehicleConfig.widht)
+inline void VehicleConfig::set_width(float value) {
+  set_has_width();
+  width_ = value;
+  // @@protoc_insertion_point(field_set:chassis.VehicleConfig.width)
 }
 
 // optional float height = 8;

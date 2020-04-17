@@ -39,7 +39,7 @@ void protobuf_AssignDesc_vehicle_5fconfig_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(VehicleConfig, plate_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(VehicleConfig, brand_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(VehicleConfig, length_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(VehicleConfig, widht_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(VehicleConfig, width_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(VehicleConfig, height_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(VehicleConfig, weight_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(VehicleConfig, accel_min_),
@@ -96,7 +96,7 @@ void protobuf_AddDesc_vehicle_5fconfig_2eproto() {
     "\n\024vehicle_config.proto\022\007chassis\032\014header."
     "proto\032\rchassis.proto\"\222\002\n\rVehicleConfig\022\013"
     "\n\003vin\030\001 \001(\t\022\r\n\005plate\030\002 \001(\t\022\r\n\005brand\030\003 \001("
-    "\t\022\016\n\006length\030\006 \001(\002\022\r\n\005widht\030\007 \001(\002\022\016\n\006heig"
+    "\t\022\016\n\006length\030\006 \001(\002\022\r\n\005width\030\007 \001(\002\022\016\n\006heig"
     "ht\030\010 \001(\002\022\016\n\006weight\030\t \001(\002\022\021\n\taccel_min\030\n "
     "\001(\002\022\021\n\taccel_max\030\013 \001(\002\022\024\n\014steering_min\030\014"
     " \001(\002\022\024\n\014steering_max\030\r \001(\002\022\022\n\nwheel_base"
@@ -123,7 +123,7 @@ const int VehicleConfig::kVinFieldNumber;
 const int VehicleConfig::kPlateFieldNumber;
 const int VehicleConfig::kBrandFieldNumber;
 const int VehicleConfig::kLengthFieldNumber;
-const int VehicleConfig::kWidhtFieldNumber;
+const int VehicleConfig::kWidthFieldNumber;
 const int VehicleConfig::kHeightFieldNumber;
 const int VehicleConfig::kWeightFieldNumber;
 const int VehicleConfig::kAccelMinFieldNumber;
@@ -158,7 +158,7 @@ void VehicleConfig::SharedCtor() {
   plate_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   brand_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   length_ = 0;
-  widht_ = 0;
+  width_ = 0;
   height_ = 0;
   weight_ = 0;
   accel_min_ = 0;
@@ -322,18 +322,18 @@ bool VehicleConfig::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(61)) goto parse_widht;
+        if (input->ExpectTag(61)) goto parse_width;
         break;
       }
 
-      // optional float widht = 7;
+      // optional float width = 7;
       case 7: {
         if (tag == 61) {
-         parse_widht:
+         parse_width:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &widht_)));
-          set_has_widht();
+                 input, &width_)));
+          set_has_width();
         } else {
           goto handle_unusual;
         }
@@ -536,9 +536,9 @@ void VehicleConfig::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteFloat(6, this->length(), output);
   }
 
-  // optional float widht = 7;
-  if (has_widht()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(7, this->widht(), output);
+  // optional float width = 7;
+  if (has_width()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(7, this->width(), output);
   }
 
   // optional float height = 8;
@@ -634,9 +634,9 @@ void VehicleConfig::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(6, this->length(), target);
   }
 
-  // optional float widht = 7;
-  if (has_widht()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(7, this->widht(), target);
+  // optional float width = 7;
+  if (has_width()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(7, this->width(), target);
   }
 
   // optional float height = 8;
@@ -722,8 +722,8 @@ int VehicleConfig::ByteSize() const {
       total_size += 1 + 4;
     }
 
-    // optional float widht = 7;
-    if (has_widht()) {
+    // optional float width = 7;
+    if (has_width()) {
       total_size += 1 + 4;
     }
 
@@ -813,8 +813,8 @@ void VehicleConfig::MergeFrom(const VehicleConfig& from) {
     if (from.has_length()) {
       set_length(from.length());
     }
-    if (from.has_widht()) {
-      set_widht(from.widht());
+    if (from.has_width()) {
+      set_width(from.width());
     }
     if (from.has_height()) {
       set_height(from.height());
@@ -872,7 +872,7 @@ void VehicleConfig::Swap(VehicleConfig* other) {
     std::swap(plate_, other->plate_);
     std::swap(brand_, other->brand_);
     std::swap(length_, other->length_);
-    std::swap(widht_, other->widht_);
+    std::swap(width_, other->width_);
     std::swap(height_, other->height_);
     std::swap(weight_, other->weight_);
     std::swap(accel_min_, other->accel_min_);

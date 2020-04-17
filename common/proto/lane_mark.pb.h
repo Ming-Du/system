@@ -37,6 +37,7 @@ void protobuf_ShutdownFile_lane_5fmark_2eproto();
 
 class Point2D;
 class LaneMark;
+class LaneCenter;
 class LaneMarks;
 
 enum LaneMarkColor {
@@ -278,6 +279,88 @@ class LaneMark : public ::google::protobuf::Message {
 
   void InitAsDefaultInstance();
   static LaneMark* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class LaneCenter : public ::google::protobuf::Message {
+ public:
+  LaneCenter();
+  virtual ~LaneCenter();
+
+  LaneCenter(const LaneCenter& from);
+
+  inline LaneCenter& operator=(const LaneCenter& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const LaneCenter& default_instance();
+
+  void Swap(LaneCenter* other);
+
+  // implements Message ----------------------------------------------
+
+  LaneCenter* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const LaneCenter& from);
+  void MergeFrom(const LaneCenter& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated .perception.Point2D points = 1;
+  inline int points_size() const;
+  inline void clear_points();
+  static const int kPointsFieldNumber = 1;
+  inline const ::perception::Point2D& points(int index) const;
+  inline ::perception::Point2D* mutable_points(int index);
+  inline ::perception::Point2D* add_points();
+  inline const ::google::protobuf::RepeatedPtrField< ::perception::Point2D >&
+      points() const;
+  inline ::google::protobuf::RepeatedPtrField< ::perception::Point2D >*
+      mutable_points();
+
+  // @@protoc_insertion_point(class_scope:perception.LaneCenter)
+ private:
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::google::protobuf::RepeatedPtrField< ::perception::Point2D > points_;
+  friend void  protobuf_AddDesc_lane_5fmark_2eproto();
+  friend void protobuf_AssignDesc_lane_5fmark_2eproto();
+  friend void protobuf_ShutdownFile_lane_5fmark_2eproto();
+
+  void InitAsDefaultInstance();
+  static LaneCenter* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -568,6 +651,40 @@ LaneMark::points() const {
 inline ::google::protobuf::RepeatedPtrField< ::perception::Point2D >*
 LaneMark::mutable_points() {
   // @@protoc_insertion_point(field_mutable_list:perception.LaneMark.points)
+  return &points_;
+}
+
+// -------------------------------------------------------------------
+
+// LaneCenter
+
+// repeated .perception.Point2D points = 1;
+inline int LaneCenter::points_size() const {
+  return points_.size();
+}
+inline void LaneCenter::clear_points() {
+  points_.Clear();
+}
+inline const ::perception::Point2D& LaneCenter::points(int index) const {
+  // @@protoc_insertion_point(field_get:perception.LaneCenter.points)
+  return points_.Get(index);
+}
+inline ::perception::Point2D* LaneCenter::mutable_points(int index) {
+  // @@protoc_insertion_point(field_mutable:perception.LaneCenter.points)
+  return points_.Mutable(index);
+}
+inline ::perception::Point2D* LaneCenter::add_points() {
+  // @@protoc_insertion_point(field_add:perception.LaneCenter.points)
+  return points_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::perception::Point2D >&
+LaneCenter::points() const {
+  // @@protoc_insertion_point(field_list:perception.LaneCenter.points)
+  return points_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::perception::Point2D >*
+LaneCenter::mutable_points() {
+  // @@protoc_insertion_point(field_mutable_list:perception.LaneCenter.points)
   return &points_;
 }
 
