@@ -46,9 +46,9 @@ public:
     ProtoPublisher() : seq(1) {}
     void publish(ros::Publisher& pub, const ProtoMessage& msg)
     {
+        ProtoToRos<ProtoMessage>(msg, data);
         data.header.stamp = ros::Time::now();
         data.header.seq = seq++;
-        ProtoToRos<ProtoMessage>(msg, data);
         pub.publish(data);
     }
 };

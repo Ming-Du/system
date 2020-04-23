@@ -19,6 +19,8 @@ add_message_files(
   CommonObject.msg
   CommonObjects.msg
   ControlCommand.msg
+  LaneMark.msg
+  LaneMarks.msg
   TrackedObject.msg
   TrackedObjects.msg
   TrafficLight.msg
