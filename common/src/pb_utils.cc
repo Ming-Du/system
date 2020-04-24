@@ -101,7 +101,7 @@ private:
   std::vector<char> buf;
   //#define BLOCK_SIZE 512
 public:
-  omstreambuf() : buf(512)
+  omstreambuf() : buf(4096*10)
   {
     //buf.reserve(BLOCK_SIZE);
     setp(buf.data(), buf.data() + buf.size());

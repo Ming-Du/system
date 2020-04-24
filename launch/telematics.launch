@@ -3,13 +3,16 @@
 <launch>
   <!-- lidar detection -->
   <include file="$(find lslidar_ch_decoder)/launch/lslidar_ch.launch" ns="sensor/lslidar_ch" />
+  <!--include file="$(find lslidar_c16_decoder)/launch/lslidar_c16_double.launch" ns="sensor" /-->
   <include file="$(find lidar_detection)/launch/lidar_detection_ch.launch" ns="lidar_detection" />
 
   <!-- gnss -->
   <include file="$(find gnss)/launch/data_spin.launch" ns="sensor/gnss"/>
 
+  <node name="loc" pkg="localization" type="localization" />
+
   <!-- chassis -->
-  <include file="$(find common)/../launch/chassis.launch" />
+<!--  <include file="$(find common)/../launch/chassis.launch" /-->
 
   <!-- camera detection -->
   <node name="usb_cam_6mm" pkg="usb_cam" type="usb_cam_node">
@@ -25,6 +28,9 @@
     <arg name="network_param_file" value="$(find camera_detection)/config/Gaussian_yolov3_BDD.yaml"/>
     <arg name="image" value="/usb_cam_6mm/image_raw" />
   </include>
+
+  <!-- perception fusion -->
+  <node name="fusion" pkg="perception_fusion" type="perception_fusion_node" />
 
   <!-- telematics -->
   <!--include file="$(find telematics)/launch/telematics.launch" /-->
