@@ -1,18 +1,20 @@
 <?xml version="1.0"?>
 
 <launch>
-  <!-- lidar detection -->
+  <!-- drivers -->
   <include file="$(find lslidar_ch_decoder)/launch/lslidar_ch.launch" ns="sensor/lslidar_ch" />
-  <!--include file="$(find lslidar_c16_decoder)/launch/lslidar_c16_double.launch" ns="sensor" /-->
-  <include file="$(find lidar_detection)/launch/lidar_detection_ch.launch" ns="lidar_detection" />
-
-  <!-- gnss -->
+  <include file="$(find lslidar_c16_decoder)/launch/lslidar_c16_double.launch" ns="sensor" />
   <include file="$(find gnss)/launch/data_spin.launch" ns="sensor/gnss"/>
+
+  <!-- perception -->
+  <include file="$(find lidar_detection)/launch/lidar_detection_ch.launch" ns="lidar_detection" />
+  <include file="$(find lidar_detection)/launch/lidar_detection_left.launch" ns="lidar_detection_left" />
+  <include file="$(find lidar_detection)/launch/lidar_detection_right.launch" ns="lidar_detection_right" />
 
   <node name="loc" pkg="localization" type="localization" />
 
   <!-- chassis -->
-<!--  <include file="$(find common)/../launch/chassis.launch" /-->
+  <include file="$(find common)/../launch/chassis.launch" />
 
   <!-- camera detection -->
   <node name="usb_cam_6mm" pkg="usb_cam" type="usb_cam_node">
