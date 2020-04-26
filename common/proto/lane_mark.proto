@@ -23,7 +23,7 @@ message Point2D {
 message LaneMark {
   optional LaneMarkColor color = 1;
   optional LaneMarkType type = 2;
-  optional float confidence = 3;
+  optional float confidence = 3;       // valid length / 60.0 meters
   repeated Point2D points = 4;
 }
 

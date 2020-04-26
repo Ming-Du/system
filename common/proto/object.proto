@@ -25,7 +25,7 @@ enum ObjectType {
 message Object {
   optional uint32 id = 1;                // obj id, after tracked
   optional ObjectType type = 2;          // obj category
-  optional double timestamp = 3;         // sensing time
+  optional double time_stamp = 3;        // sensing time
   optional float confidence = 4;         // probability
   optional int32 status = 5;             // reserved
 
@@ -51,6 +51,8 @@ message VisualObject {
 message VisualObjects {
   optional common.Header header = 1;
   repeated VisualObject objs = 2;
+  optional int32 width = 3;        // image width
+  optional int32 height = 4;       // image height
 }
 
 message TrackedObject {
