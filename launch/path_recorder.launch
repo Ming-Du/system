@@ -1,7 +1,7 @@
 <launch>
 
   <node name="path_recorder" pkg="path_recorder" type="path_recorder" output="screen">
-    <param name="log_path" value="/home/neousys/catkin_ws/src/system/"/>
+    <param name="log_path" value="$(find common)/../"/>
   </node>
 
 </launch>

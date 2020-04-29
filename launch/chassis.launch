@@ -1,5 +1,5 @@
 <launch>
   <node name="chassis_wey" pkg="chassis" type="chassis" output="screen" >
-    <param name="config" value="/home/neousys/catkin_ws/src/system/config/vehicle_config.wey.txt" />
+    <param name="config" value="$(find common)/../config/vehicle_config.wey.txt" />
   </node>
 </launch>

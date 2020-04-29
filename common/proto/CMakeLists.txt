@@ -1,8 +1,15 @@
 find_package(Protobuf REQUIRED)
+#set(PROTOBUF_PROTOC_EXECUTABLE "/usr/local/bin/protoc")
+#set(PROTOBUF_INCLUDE_DIR "/usr/local/include/google/protobuf")
+#set(PROTOBUF_LIBRARY "/usr/local/lib/libprotobuf.so")
+message(${PROTOBUF_PROTOC_EXECUTABLE})
+message(${PROTOBUF_INCLUDE_DIR})
+message(${PROTOBUF_LIBRARY})
+message(${PROTOBUF_LIBRARIES})
 set(proto_dir ${CMAKE_CURRENT_SOURCE_DIR})
 file(GLOB proto_files "${proto_dir}/*.proto")
 
-catkin_destinations()
+#catkin_destinations()
 
 set(proto_gen_dir ${CMAKE_CURRENT_SOURCE_DIR})
 
