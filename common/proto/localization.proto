@@ -17,17 +17,17 @@ enum LocalizationFrame {
 message Localization {
   optional common.Header header = 1;
   optional LocalizationMode  mode  = 2 [default = GNSS];
-  optional LocalizationFrame frame = 3 [default = LOCAL];
+  optional LocalizationFrame frame = 3 [default = WGS84];
   optional uint32 local_frame_seq = 4;
   repeated double transform = 5 [packed = true]; //4x4=16
   
-  optional geometry.Point position = 7; //local position
+  optional geometry.Point position = 7; //depends on 'frame'
   optional double longitude = 8;
   optional double latitude = 9;
   optional double altitude = 10;
   optional double roll = 11;
   optional double pitch = 12;
-  optional double yaw = 13; //heading
+  optional double yaw = 13;
   optional double roll_v = 14;
   optional double pitch_v = 15;
   optional double yaw_v = 16;

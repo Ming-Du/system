@@ -10,7 +10,7 @@ add_subdirectory(proto)
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME} ${PROJECT_NAME}_proto
+  LIBRARIES ${PROJECT_NAME} ${PROJECT_NAME}_proto protobuf
 )
 
 include_directories(
