@@ -21,7 +21,8 @@ message VehicleConfig {
     optional float wheel_base = 14; //meter
     optional float front_wheel_base = 15; //meter
     optional float rear_wheel_base = 16; //meter
-
+    optional float steer_ratio = 17;
+    optional float max_abs_speed_when_stopped = 18;
     // double LANE_WIDTH = 3.30;
     // double FRONT_TIRE_STIFFNESS = 111187.0;
     // double REAR_TIRE_STIFFNESS = 90773.0;
