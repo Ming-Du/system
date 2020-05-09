@@ -13,3 +13,5 @@ steering_min : -524
 steering_max : 524
 
 wheel_base : 2.680
+steer_ratio : 20
+max_abs_speed_when_stopped : 0.15
