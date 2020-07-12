@@ -23,6 +23,8 @@ message VehicleConfig {
     optional float rear_wheel_base = 16; //meter
     optional float steer_ratio = 17;
     optional float max_abs_speed_when_stopped = 18;
+    optional double throttle_deadzone = 19; //m/s^2
+    optional double brake_deadzone = 20;
     // double LANE_WIDTH = 3.30;
     // double FRONT_TIRE_STIFFNESS = 111187.0;
     // double REAR_TIRE_STIFFNESS = 90773.0;

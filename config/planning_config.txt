@@ -1,6 +1,6 @@
 frequency : 10
-speed_max : 4.0
-acc_min : -6.0
+speed_max : 7.0
+acc_min : -4.0
 acc_max : 2.0
 jerk_min : -6.0
 jerk_max : 4.0
