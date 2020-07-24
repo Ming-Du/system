@@ -5,26 +5,26 @@
   <!--include file="$(find telematics)/launch/telematics.launch" /-->
 
   <!-- drivers -->
-  <include file="$(find lslidar_ch_decoder)/launch/lslidar_ch.launch" ns="sensor/lslidar_ch" />
-  <include file="$(find lslidar_c16_decoder)/launch/lslidar_c16_double.launch" ns="sensor" />
-  <include file="$(find gnss)/launch/data_spin.launch" ns="sensor/gnss" />
+  <group ns='sensor'>
+   <include file="$(find usb_cam)/launch/usb_cam.launch"/>
+   <include file="$(find lslidar_c32)/launch/lslidar_c32.launch" />
+   <include file="$(find lslidar_c16)/launch/lslidar_c16_double.launch" />
+   <include file="$(find gnss)/launch/data_spin.launch" />
+  </group>
 
   <!-- perception -->
-  <include file="$(find lidar_detection)/launch/lidar_detection_ch.launch" ns="lidar_detection" />
-  <include file="$(find lidar_detection)/launch/lidar_detection_left.launch" ns="lidar_detection_left" />
-  <include file="$(find lidar_detection)/launch/lidar_detection_right.launch" ns="lidar_detection_right" />
-  <node name="fusion" pkg="perception_fusion" type="perception_fusion" />
-
-  <!--node name="loc" pkg="localization" type="localization" /-->
+  <group ns='perception'>
+   <include file="$(find camera_detection)/launch/darknet_ros.launch" />
+   <!--include file="$(find lidar_detection)/launch/lidar_detection_ch.launch" ns="lidar_detection" />
+   <include file="$(find lidar_detection)/launch/lidar_detection_left.launch" ns="lidar_detection_left" />
+   <include file="$(find lidar_detection)/launch/lidar_detection_right.launch" ns="lidar_detection_right" />
+   <node name="fusion" pkg="perception_fusion" type="perception_fusion" /-->
+   <!--node name="loc" pkg="localization" type="localization" /-->
+  </group>
 
   <!-- chassis -->
-  <include file="$(find common)/../launch/chassis.launch" /> 
+  <!--include file="$(find common)/../launch/chassis.launch" /-->
 
   <!-- camera detection -->
-  <include file="$(find usb_cam)/launch/usb_cam.launch"/>
-  <include file="$(find camera_detection)/launch/darknet_ros.launch">
-    <arg name="network_param_file" value="$(find camera_detection)/config/Gaussian_yolov3_BDD.yaml"/>
-    <arg name="image" value="/usb_cam/image_raw" />
-  </include>
 
 </launch>

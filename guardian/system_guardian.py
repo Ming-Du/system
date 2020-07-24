@@ -7,7 +7,7 @@ from threading import Thread
 
 class Process(Thread):
   NodeList=[]
-  ParamName='isReady'
+  ParamName='/system/isReady'  #logDetail
   
   def __init__(self):
     Thread.__init__(self)
@@ -45,21 +45,20 @@ class Process(Thread):
     # drivers
     self.NodeList.append('drivers_camera')
     self.NodeList.append('drivers_gnss')
-    self.NodeList.append('drivers_lslidar_c32_driver')
-    self.NodeList.append('drivers_lslidar_c32_decoder')
-    self.NodeList.append('drivers_lslidar_c16_driver_left')
-    self.NodeList.append('drivers_lslidar_c16_decoder_left')
-    self.NodeList.append('drivers_lslidar_c16_driver_right')
-    self.NodeList.append('drivers_lslidar_c16_decoder_right')
+    self.NodeList.append('drivers_lslidar_c32_front_driver')
+    self.NodeList.append('drivers_lslidar_c32_front_decoder')
+    self.NodeList.append('drivers_lslidar_c16_left_driver')
+    self.NodeList.append('drivers_lslidar_c16_left_decoder')
+    self.NodeList.append('drivers_lslidar_c16_right_driver')
+    self.NodeList.append('drivers_lslidar_c16_right_decoder')
     # perception
     self.NodeList.append('perception_camera_detection')
-    self.NodeList.append('perception_lidar_front')
+    #self.NodeList.append('perception_lidar_front')
     #self.NodeList.append('perception_lidar_front_left')
     #self.NodeList.append('perception_lidar_front_right')
     
     # telematics
-    self.NodeList.append('telematics');
-    
+    #self.NodeList.append('telematics');
     
     #self.NodeList.append('system_guardian')
 
