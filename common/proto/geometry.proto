@@ -7,6 +7,20 @@ message Vector3 {
   optional double z = 3;
 }
 
+message Point2D {
+  optional double x = 1 [default = nan];
+  optional double y = 2 [default = nan];
+}
+
+message PointLLH {
+  // Longitude in degrees, ranging from -180 to 180.
+  optional double lon = 1 [default = nan];
+  // Latitude in degrees, ranging from -90 to 90.
+  optional double lat = 2 [default = nan];
+  // WGS-84 ellipsoid height in meters.
+  optional double height = 3 [default = 0.0];
+}
+
 message Point {
   optional double x = 1;
   optional double y = 2;
