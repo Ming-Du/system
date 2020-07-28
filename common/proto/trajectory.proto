@@ -37,6 +37,7 @@ message Trajectory {
   optional double a = 4;
   optional LaneChange lane_change = 5;
   optional chassis.LightSwitch light = 6 [default = LIGHT_NONE];
+  optional bool stop = 7;
 }
 
 //message SLPoint {
