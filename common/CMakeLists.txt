@@ -9,7 +9,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 -O3 -Wall ${CMAKE_CXX_FLAGS}")
 add_subdirectory(proto)
 
 catkin_package(
-  INCLUDE_DIRS include
+  INCLUDE_DIRS include proto ${PROJECT_SOURCE_DIR}/..
   LIBRARIES ${PROJECT_NAME} ${PROJECT_NAME}_proto protobuf
 )
 
@@ -25,4 +25,5 @@ add_library(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}_proto
+  glog
 )

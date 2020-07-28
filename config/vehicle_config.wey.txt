@@ -16,4 +16,4 @@ wheel_base : 2.680
 steer_ratio : 18
 max_abs_speed_when_stopped : 0.15 
 throttle_deadzone : 0.0
-brake_deadzone : 0.3
+brake_deadzone : 0.35
