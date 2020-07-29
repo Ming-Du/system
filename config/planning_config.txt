@@ -1,5 +1,5 @@
 frequency : 10
-speed_max : 7.0
+speed_max : 11.0
 acc_min : -4.0
 acc_max : 2.0
 jerk_min : -6.0
@@ -7,5 +7,5 @@ jerk_max : 4.0
 time_sample : 0.1
 path_sample : 0.2
 safe_distance_buffer : 2.0
-safe_distance_by_time : 0.6
+safe_distance_by_time : 0.4
 

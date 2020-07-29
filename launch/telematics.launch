@@ -5,22 +5,18 @@
   <!--include file="$(find telematics)/launch/telematics.launch" /-->
 
   <!-- drivers -->
-  <group ns='sensor'>
-   <include file="$(find usb_cam)/launch/usb_cam.launch"/>
-   <include file="$(find lslidar_c32)/launch/lslidar_c32.launch" />
-   <include file="$(find lslidar_c16)/launch/lslidar_c16_double.launch" />
-   <include file="$(find gnss)/launch/data_spin.launch" />
-  </group>
+  <include file="$(find usb_cam)/launch/usb_cam.launch"/>
+  <include file="$(find lslidar_c32)/launch/lslidar_c32.launch" />
+  <include file="$(find lslidar_c16)/launch/lslidar_c16_double.launch" />
+  <!--include file="$(find gnss)/launch/data_spin.launch" /-->
 
   <!-- perception -->
-  <group ns='perception'>
-   <include file="$(find camera_detection)/launch/darknet_ros.launch" />
-   <!--include file="$(find lidar_detection)/launch/lidar_detection_ch.launch" ns="lidar_detection" />
-   <include file="$(find lidar_detection)/launch/lidar_detection_left.launch" ns="lidar_detection_left" />
-   <include file="$(find lidar_detection)/launch/lidar_detection_right.launch" ns="lidar_detection_right" />
-   <node name="fusion" pkg="perception_fusion" type="perception_fusion" /-->
-   <!--node name="loc" pkg="localization" type="localization" /-->
-  </group>
+  <include file="$(find camera_detection)/launch/darknet_ros.launch" />
+  <include file="$(find lidar_detection)/launch/leishen32_front.launch" />
+  <!--include file="$(find lidar_detection)/launch/lidar_detection_left.launch" ns="lidar_detection_left" />
+  <include file="$(find lidar_detection)/launch/lidar_detection_right.launch" ns="lidar_detection_right" />
+  <node name="fusion" pkg="perception_fusion" type="perception_fusion" /-->
+  <!--node name="loc" pkg="localization" type="localization" /-->
 
   <!-- chassis -->
   <!--include file="$(find common)/../launch/chassis.launch" /-->

@@ -9,8 +9,8 @@ weight : 1730
 
 accel_min : -5.0
 accel_max : 5.0
-steering_min : -524
-steering_max : 524
+steering_min : -500
+steering_max : 500
 
 wheel_base : 2.680
 steer_ratio : 18
