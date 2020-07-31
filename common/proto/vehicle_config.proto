@@ -1,9 +1,6 @@
 syntax = "proto2";
 package chassis;
 
-import "header.proto";
-import "chassis.proto";
-
 message VehicleConfig {
     optional string vin = 1;
     optional string plate = 2;

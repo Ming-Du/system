@@ -1,0 +1,322 @@
+syntax = "proto2";
+package hadmap;
+
+import "header.proto";
+import "geometry.proto";
+
+//////////////////////////////////////////////////
+
+enum LaneMarkColor {
+  COLOR_WHITE = 0;
+  COLOR_YELLOW = 1;
+}
+
+enum LaneMarkType {
+    LANE_MARK_NONE = 0;
+    LANE_MARK_SOLID = 1;
+    LANE_MARK_BROKEN = 2;
+    LANE_MARK_SOLID2 				= 0x10;
+    LANE_MARK_BROKEN2 				= 0x20;
+    LANE_MARK_SOLIDSOLID 			= 0x11;//LANE_MARK_SOLID | LANE_MARK_SOLID2, //(for double solid line)
+    LANE_MARK_SOLIDBROKEN 			= 0x21;//LANE_MARK_SOLID | LANE_MARK_BROKEN2, //(from inside to outside, exception: center lane - from left to right)
+    LANE_MARK_BROKENSOLID 			= 0x12;//LANE_MARK_BROKEN | LANE_MARK_SOLID2, //(from inside to outside, exception: center lane - from left to right) 
+    LANE_MARK_BROKENBROKEN 			= 0x22;//LANE_MARK_BROKEN | LANE_MARK_BROKEN2,
+
+    LANE_MARK_CURB 					= 0x100;
+    LANE_MARK_FENCE 				= 0x200;
+    LANE_MARK_GRASS 				= 0x400; //a grass edge
+    LANE_MARK_BOLD 					= 0x1000; //bold lines
+}
+
+enum LaneType {
+    LANE_TYPE_None					= 0;
+    LANE_TYPE_Driving				= 1;
+    LANE_TYPE_Stop					= 2;
+    LANE_TYPE_Shoulder				= 3;
+    LANE_TYPE_Biking				= 4;
+    LANE_TYPE_Sidewalk				= 5;
+    LANE_TYPE_Border				= 6;
+    LANE_TYPE_Restricted			= 7;//BUS
+    LANE_TYPE_Parking				= 8;
+    LANE_TYPE_MwyEntry				= 9;
+    LANE_TYPE_MwyExit				= 10;
+    LANE_TYPE_Emergency 			= 20;	
+    LANE_TYPE_TurnWaiting 			= 21;
+}
+
+enum LaneArrow {
+    LANE_ARROW_None 				= 0x0;
+    LANE_ARROW_Straight 			= 0x1;
+    LANE_ARROW_Left 				= 0x2;
+    LANE_ARROW_Right 				= 0x4;
+    LANE_ARROW_Uturn 				= 0x8;
+    LANE_ARROW_SkewLeft 			= 0x20;
+    LANE_ARROW_SkewRight 			= 0x40;
+    LANE_ARROW_StraightLeft 		= 0x3;//LANE_ARROW_Straight | LANE_ARROW_Left,
+    LANE_ARROW_StraightRight 		= 0x5;//LANE_ARROW_Straight | LANE_ARROW_Right,
+    LANE_ARROW_LeftRight 			= 0x6;//LANE_ARROW_Left | LANE_ARROW_Right,
+    LANE_ARROW_LeftUturn 			= 0xa;//LANE_ARROW_Left | LANE_ARROW_Uturn,
+    LANE_ARROW_StraightUturn 		= 0x9;//LANE_ARROW_Straight | LANE_ARROW_Uturn,
+}
+
+enum RoadType {
+    ROAD_TYPE_Normal				= 0;
+    ROAD_TYPE_OTHER					= 1;
+    ROAD_TYPE_SA					= 2; // Service Area
+    ROAD_TYPE_PA					= 3; //Parking Area
+    ROAD_TYPE_ControlAccess			= 4; 
+    ROAD_TYPE_GenerapRamp			= 5;
+    ROAD_TYPE_Overpass				= 6;
+    ROAD_TYPE_Underpass				= 7;
+    ROAD_TYPE_PrivateRoad			= 8;
+    ROAD_TYPE_PedestrainRoad		= 9;
+    ROAD_TYPE_OverpassForP			= 10; //Overpass for passenger
+    ROAD_TYPE_BusOnly				= 11;
+    ROAD_TYPE_BicycleOnly			= 12; //Bicycle only30 Bridge
+    ROAD_TYPE_Tunnel				= 13;
+    ROAD_TYPE_UTA					= 14; //Undefined Traffic Figure
+    ROAD_TYPE_ICEntrance			= 15;
+    ROAD_TYPE_TollBooth         	= 16;
+    ROAD_TYPE_ConstructionRoad  	= 17;
+    ROAD_TYPE_Roundabout            = 18;
+    ROAD_TYPE_Intersection          = 19;
+}
+
+enum RoadDirection {
+    ROAD_DIRECTION_FORWARD          = 0;
+    ROAD_DIRECTION_BACKWARD         = 1;
+    ROAD_DIRECTION_BIDIRECTIONAL    = 2;
+}
+
+enum ObjectType {
+    OBJECT_TYPE_None				= 0;
+    OBJECT_TYPE_Curb				= 1;
+    OBJECT_TYPE_TrafficBarrier		= 2;
+    OBJECT_TYPE_OverheadCrossing	= 3;
+    OBJECT_TYPE_Tunnel				= 4;
+    OBJECT_TYPE_Gantry				= 5;
+    OBJECT_TYPE_TrafficSign			= 6;
+    OBJECT_TYPE_VariableMessageSign	= 7;
+    OBJECT_TYPE_PermanentDelineator	= 8;
+    OBJECT_TYPE_TollBooth			= 9;
+    OBJECT_TYPE_EmergencyCallbox	= 10;
+    OBJECT_TYPE_Ditch				= 11;
+    OBJECT_TYPE_Pole				= 12;
+    OBJECT_TYPE_Building			= 13;
+    OBJECT_TYPE_RoadSign			= 14;
+    OBJECT_TYPE_CrossWalk			= 15;
+    OBJECT_TYPE_TrafficLights		= 16;
+    OBJECT_TYPE_TunnelWall			= 17;
+    OBJECT_TYPE_Arrow				= 18;
+    OBJECT_TYPE_Text				= 19;
+    OBJECT_TYPE_RoadSign_Text		= 20;
+    OBJECT_TYPE_Stop				= 21;
+    OBJECT_TYPE_LaneBoundary		= 22;
+    OBJECT_TYPE_ParkingSpace		= 23;
+    OBJECT_TYPE_DrivingArea			= 24;
+    OBJECT_TYPE_FeaturePoint        = 25;
+}
+
+enum ObjectShape {
+    OBJECT_SHAPE_None				= 0;
+    OBJECT_SHAPE_Rectangle			= 1;
+    OBJECT_SHAPE_Triangle			= 2;
+    OBJECT_SHAPE_Circle				= 3;
+    OBJECT_SHAPE_Diamond			= 4;
+    OBJECT_SHAPE_RTriangle			= 5;
+    OBJECT_SHAPE_Arrow				= 6;
+    OBJECT_SHAPE_Bicycle			= 7;
+    OBJECT_SHAPE_WheelChair			= 8;
+    OBJECT_SHAPE_Cross				= 9;
+    OBJECT_SHAPE_Polyline			= 10;
+    OBJECT_SHAPE_Polygon			= 11;
+    OBJECT_SHAPE_Point   			= 12;
+}
+
+//////////////////////////////////////////////////
+
+message LaneBoundary {
+    // lane boundary primary key
+    optional uint64 pkid = 1;
+
+    // epsg code
+    optional uint32 srs = 2;
+
+    // lane mark
+    optional LaneMarkType type = 3;
+    optional LaneMarkColor color = 4;
+
+    // lane boundary geometry
+    repeated geometry.Point geom = 5;
+}
+
+message Lane {
+    // road primary key
+    optional uint64 road_pkid = 1;
+
+    // sectin id, ascend order
+    optional uint32 section_id = 2;
+
+    // lane id follow OpenDrive Specification
+    optional int32 lane_id = 3;
+
+    // lane name, "road.section.lane"
+    optional string name = 4;
+
+    // epsg code
+    optional uint32 srs = 5;
+
+    // left lane boundary geometry pkid
+    optional uint64 left_boundary_id = 6;
+
+    // right lane boundary geometry pkid
+    optional uint64 right_boundary_id = 7;
+
+    // lane type
+    optional LaneType type = 8;
+
+    // lane arrow
+    optional LaneArrow arrow = 9;
+
+    // speed limit
+    optional uint32 speed_limit = 10;
+
+    // lane reference line geometry
+    repeated geometry.Point geom = 11;
+}
+
+message Section {
+    // section id
+    optional uint32 id = 1;
+
+    // lanes
+    repeated Lane lanes = 2;
+
+    // boundaries
+    repeated LaneBoundary boundaries = 3;
+}
+
+message Road {
+    // primary key
+    optional uint64 pkid = 1;
+
+    // geohash key
+    optional string id = 2;
+
+    // road name
+    optional string name = 3;
+
+    // epsg code
+    optional uint32 srs = 4;
+
+    // road length
+    optional float length = 6;
+
+    // section count of road
+    optional uint32 section_num = 7;
+
+    // road type
+    optional RoadType road_type = 8;
+
+    // road driving direction
+    optional RoadDirection direction = 9;
+
+    // curvature geometry
+    repeated geometry.Point curvature = 10;
+
+    // slope geometry
+    repeated geometry.Point slope = 11;
+
+    // heading geometry
+    repeated geometry.Point heading = 12;
+
+    // super_elevation geometry
+    repeated geometry.Point super_elevation = 13;
+
+    // road geometry
+    repeated geometry.Point geom = 14;
+
+    // sections
+    repeated Section sections = 15;
+}
+
+message Junction {
+    // primary key
+    optional uint64 pkid = 1;
+
+    // epsg code
+    optional uint32 srs = 2;
+
+    // junction altitude
+    optional float altitude = 3;
+
+    // junction polygon
+    optional geometry.Polygon geom = 4;
+
+}
+
+message LaneLink {
+    // primary key
+    optional uint64 pkid = 1;
+
+    // from road pkid
+    optional uint64 from_road_pkid = 2;
+
+    // from road section id
+    optional uint32 from_section_id = 3;
+
+    // from road lane id
+    optional int32 from_lane_id = 4;
+
+    // to road pkid
+    optional uint64 to_road_pkid = 5;
+
+    // to road section id
+    optional uint32 to_section_id = 6;
+
+    // to road lane id
+    optional int32 to_lane_id = 7;
+}
+
+
+message Object {
+    // object primary key
+    optional uint64 pkid = 1;
+
+    // road id
+    optional uint64 road_pkid = 2;
+
+    // section id
+    optional uint64 section_id = 3;
+
+    // lane id
+    optional int32 lane_id = 4;
+
+    // objcet type
+    optional ObjectType type = 5;
+
+    // polygon style
+    optional ObjectShape shape = 6;
+
+    // object text
+    optional string text = 7;
+
+    // object attribute
+    optional string attribute = 8;
+
+    // object geom
+    repeated geometry.Point geom = 9;
+}
+
+message Map {
+    repeated Road roads = 1;
+    repeated LaneLink lanelinks = 2;
+    repeated Junction junctions = 3;
+    repeated Object objects = 4;
+    //TODO: junction relation with roads
+}
+
+message MapMsg {
+    optional common.Header header = 1;
+    optional Map map = 2;
+}
