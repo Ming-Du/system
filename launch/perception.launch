@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- perception -->
+  <include file="$(find camera_detection)/launch/darknet_ros.launch" />
+  <include file="$(find lidar_detection)/launch/leishen32_front.launch" />
+  <include file="$(find lidar_detection)/launch/leishen16_front_left.launch" />
+  <include file="$(find lidar_detection)/launch/leishen16_front_right.launch" />
+  <node name="fusion" pkg="perception_fusion" type="perception_fusion" />
+  <!--node name="loc" pkg="localization" type="localization" /-->
+</launch>

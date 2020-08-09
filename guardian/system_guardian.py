@@ -27,7 +27,8 @@ class Process(Thread):
           + " | grep -v 'grep' | awk '{print $2}'").read()
           
         if len(pid) is 0: 
-          rospy.logerr(node_name + " is off")
+          rospy.logerr(node_name + " is off, trying to restart...")
+          self.start_node(node_name)
         else:
           rospy.loginfo(node_name + " on, pid: " + pid[:-1]) # 换行符
           ps_num += 1
@@ -40,7 +41,11 @@ class Process(Thread):
         
       print('---------')
       rospy.sleep(2)
-      
+  
+  def star_node(self, node):
+    #if node is 'drivers_camera':
+    pass
+ 
   def register(self):
     # drivers
     self.NodeList.append('drivers_camera')
