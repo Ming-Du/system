@@ -5,7 +5,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
 )
 
-set(CMAKE_CXX_FLAGS "-std=c++11 -O3 -Wall ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-std=c++11 -O3 -g -Wall ${CMAKE_CXX_FLAGS}")
 add_subdirectory(proto)
 
 catkin_package(
