@@ -1,0 +1,7 @@
+<launch>
+  <node pkg="hadmap" type="hadmap_server" name="hadmap_server"  output="screen">	
+    <param name="db_file" value="/home/mogo/catkin_ws/src/hadmap/data/stop.txt" />
+    <param name="traj_file" value="$(find controller_simulator)/testdata/demo_BXY_all.csv" />
+    <param name="fps" value="10" />
+  </node>
+</launch>
