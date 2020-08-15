@@ -115,6 +115,7 @@ enum ObjectType {
     OBJECT_TYPE_ParkingSpace		= 23;
     OBJECT_TYPE_DrivingArea			= 24;
     OBJECT_TYPE_FeaturePoint        = 25;
+    OBJECT_TYPE_SpeedLimit          = 26;
 }
 
 enum ObjectShape {
@@ -306,6 +307,9 @@ message Object {
 
     // object geom
     repeated geometry.Point geom = 9;
+
+    // object value
+    optional float value = 10;
 }
 
 message Map {
