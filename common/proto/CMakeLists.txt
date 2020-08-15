@@ -2,7 +2,7 @@ find_package(Protobuf REQUIRED)
 set(proto_dir ${CMAKE_CURRENT_SOURCE_DIR})
 file(GLOB proto_files "${proto_dir}/*.proto")
 
-#catkin_destinations()
+ #catkin_destinations()
 
 set(proto_gen_dir ${CMAKE_CURRENT_SOURCE_DIR})
 

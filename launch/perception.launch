@@ -5,6 +5,7 @@
   <include file="$(find lidar_detection)/launch/leishen32_front.launch" />
   <include file="$(find lidar_detection)/launch/leishen16_front_left.launch" />
   <include file="$(find lidar_detection)/launch/leishen16_front_right.launch" />
-  <node name="fusion" pkg="perception_fusion" type="perception_fusion" />
+  <node name="perception_fusion" pkg="perception_fusion" 
+     type="perception_fusion" output="screen" ns="perception" />
   <!--node name="loc" pkg="localization" type="localization" /-->
 </launch>

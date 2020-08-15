@@ -50,22 +50,24 @@ class Process(Thread):
     # drivers
     self.NodeList.append('drivers_camera')
     self.NodeList.append('drivers_gnss')
-    self.NodeList.append('drivers_lslidar_c32_front_driver')
-    self.NodeList.append('drivers_lslidar_c32_front_decoder')
-    self.NodeList.append('drivers_lslidar_c16_left_driver')
-    self.NodeList.append('drivers_lslidar_c16_left_decoder')
-    self.NodeList.append('drivers_lslidar_c16_right_driver')
-    self.NodeList.append('drivers_lslidar_c16_right_decoder')
+    self.NodeList.append('drivers_lidar32_front_driver')
+    self.NodeList.append('drivers_lidar32_front_decoder')
+    self.NodeList.append('drivers_lidar16_left_driver')
+    self.NodeList.append('drivers_lidar16_left_decoder')
+    self.NodeList.append('drivers_lidar16_right_driver')
+    self.NodeList.append('drivers_lidar16_right_decoder')
     # perception
     self.NodeList.append('perception_camera_detection')
-    #self.NodeList.append('perception_lidar_front')
-    #self.NodeList.append('perception_lidar_front_left')
-    #self.NodeList.append('perception_lidar_front_right')
+    self.NodeList.append('perception_lidar32_front')
+    self.NodeList.append('perception_lidar16_front_left')
+    self.NodeList.append('perception_lidar16_front_right')
     
     # telematics
     #self.NodeList.append('telematics');
     
     #self.NodeList.append('system_guardian')
+    rospy.Subscriber("/sensor/gnss/gps_fix")
+    #if (status.status == 2) is fine
 
 
 if __name__ == '__main__':

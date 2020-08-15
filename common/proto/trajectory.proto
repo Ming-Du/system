@@ -40,6 +40,7 @@ message Trajectory {
   optional bool stop = 7;
 }
 
+
 //message SLPoint {
 //  optional double s = 1;
 //  optional double l = 2;
