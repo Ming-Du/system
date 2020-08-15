@@ -1,0 +1,14 @@
+<launch>
+
+  <!-- <include file="$(find common)/../launch/hadmap.launch" /> -->
+  <include file="$(find common)/../launch/drivers.launch" />
+  <include file="$(find common)/../launch/perception.launch" />
+  <node pkg="localization" type="localization_node" name="localization_node"  output="screen" />	
+
+  <node pkg="local_planning" type="local_planning" name="local_planning"  output="screen">	
+    <param name="config" value="/home/mogo/catkin_ws/src/system/config/planning_config.txt" />
+    <param name="vehicle" value="/home/mogo/catkin_ws/src/system/config/vehicle_config.wey.txt" />
+    <param name="obstacles_topic" value="/perception/fusion/obstacles" />
+    <param name="simulate_lanes" value="true" />
+  </node>
+</launch>
