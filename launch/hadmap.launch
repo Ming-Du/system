@@ -3,5 +3,7 @@
     <param name="db_file" value="/home/mogo/catkin_ws/src/hadmap/data/map.txt" />
     <param name="traj_file" value="$(find controller_simulator)/testdata/demo_BXY_hl_gov_40km.csv:$(find controller_simulator)/testdata/demo_BXY_gov_wanji_50km.csv" />
     <param name="fps" value="10" />
+    <param name="trajectory_query_distance" value="15" />
+    <param name="object_query_distance" value="200" />
   </node>
 </launch>
