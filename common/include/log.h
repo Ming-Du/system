@@ -16,6 +16,7 @@ class Binary {
   }
 };
 }
+
 #define LEFT_BRACKET "["
 #define RIGHT_BRACKET "]"
 
@@ -53,7 +54,7 @@ class Binary {
       << LEFT_BRACKET << module << RIGHT_BRACKET
 
 #define ALOG_MODULE_STREAM_FATAL(module)                         \
-  google::LogMessage(__FILE__, __LINE__, google::FATAL).stream() \                                      
+  google::LogMessage(__FILE__, __LINE__, google::FATAL).stream() \
       << LEFT_BRACKET << module << RIGHT_BRACKET
 
 #define AINFO_IF(cond) ALOG_IF(INFO, cond, MODULE_NAME)
