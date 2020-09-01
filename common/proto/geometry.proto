@@ -12,6 +12,12 @@ message Point2D {
   optional double y = 2 [default = nan];
 }
 
+message Point3D {
+  optional double x = 1 [default = nan];
+  optional double y = 2 [default = nan];
+  optional double z = 3 [default = nan];
+}
+
 message PointLLH {
   // Longitude in degrees, ranging from -180 to 180.
   optional double lon = 1 [default = nan];
@@ -28,10 +34,10 @@ message Point {
 }
 
 message Quaternion {
-  optional double x = 1;
-  optional double y = 2;
-  optional double z = 3;
-  optional double w = 4;
+  optional double x = 1 [default = nan];
+  optional double y = 2 [default = nan];
+  optional double z = 3 [default = nan];;
+  optional double w = 4 [default = nan];
 }
 
 message Polygon {
