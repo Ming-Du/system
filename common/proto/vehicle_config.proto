@@ -36,6 +36,8 @@ message VehicleConfig {
     // double SPLINE_STEP = 0.1;
     // double FEEDFORWARD_CONTROL_GAIN = 0.90;
 
-    // double METERS_PER_LSB = 0.002 ;
-    // double METERS_PER_CM = 0.01;
+    optional float center_to_front = 22; //meter
+    optional float center_to_back  = 23; //meter
+    optional float center_to_left  = 24; //meter
+    optional float center_to_right = 25; //meter
 }
