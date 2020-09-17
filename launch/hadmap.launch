@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <launch>
   <node pkg="hadmap" type="hadmap_server" name="hadmap_server"  output="screen">	
     <param name="db_file" value="/home/mogo/catkin_ws/src/hadmap/data/map.txt" />

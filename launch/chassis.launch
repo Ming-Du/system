@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <launch>
   <node name="chassis_wey" pkg="chassis" type="chassis" output="screen" >
     <param name="config" value="$(find common)/../config/vehicle_config.wey.txt" />

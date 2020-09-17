@@ -10,7 +10,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <export>
+  <!--export>
     <metapackage/>
-  </export>
+  </export-->
 </package>

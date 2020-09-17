@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <launch>
   <node pkg="local_planning" type="local_planning" name="local_planning"  output="screen">	
     <param name="config" value="/home/mogo/catkin_ws/src/system/config/planning_config.txt" />
