@@ -19,4 +19,5 @@ message PlanningConfig {
     optional double safe_distance_by_time = 10;
     //int map_builder_mode = 0;
     optional double safe_lateral_buffer = 11;
+    optional double car_follow_factor = 12;
 }
