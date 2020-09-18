@@ -2,9 +2,9 @@
 <launch>
   <!-- perception -->
   <include file="$(find camera_detection)/launch/darknet_ros.launch" />
-  <include file="$(find lidar_detection)/launch/leishen32_front.launch" />
-  <include file="$(find lidar_detection)/launch/leishen16_front_left.launch" />
-  <include file="$(find lidar_detection)/launch/leishen16_front_right.launch" />
+  <include file="$(find perception_lidar)/launch/lidar32_front.launch" />
+  <include file="$(find perception_lidar)/launch/lidar16_front_left.launch" />
+  <include file="$(find perception_lidar)/launch/lidar16_front_right.launch" />
   <include file="$(find perception_fusion)/launch/perception_fusion.launch" />
   <!--node name="loc" pkg="localization" type="localization" /-->
 </launch>
