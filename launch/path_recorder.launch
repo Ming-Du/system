@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <launch>
 
   <node name="path_recorder" pkg="path_recorder" type="path_recorder" output="screen">
