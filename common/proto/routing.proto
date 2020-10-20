@@ -1,0 +1,37 @@
+syntax = "proto2";
+
+package autodrive.routing;
+
+import "geometry.proto";
+import "header.proto";
+message RoutingRequest {
+  // message Pose {
+  //   optional double x = 1;//utm
+  //   optional double y = 2;//utm
+  //   optional double z = 3;
+  // }
+
+  message LaneWaypoint {
+    optional string id = 1;
+    optional double s = 2;
+    optional geometry.Point pose = 3;//utm 坐标值
+  }
+
+  message Lane {
+    optional string id = 1;
+    optional double start_s = 2;
+    optional double end_s = 3;
+  }
+
+  optional common.Header header = 1;
+  optional LaneWaypoint start = 2;
+  optional LaneWaypoint end = 3;
+
+  //Route must go through each waypoint in the order from start to end.
+  //Ignored if empty.
+  repeated LaneWaypoint waypoint = 4;
+  repeated Lane blacklisted_lane = 5;
+  repeated string blacklisted_road = 6;
+  optional bool broadcast = 7 [default = true];
+}
+
