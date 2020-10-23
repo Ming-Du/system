@@ -33,5 +33,6 @@ message RoutingRequest {
   repeated Lane blacklisted_lane = 5;
   repeated string blacklisted_road = 6;
   optional bool broadcast = 7 [default = true];
+  optional double speedlimit = 10;
 }
 
