@@ -1,32 +1,17 @@
-use_lidar: true
-use_radar: false
-use_camera: true
-# frame_id: "base_link"
+frame_id: "base_link"
 
 input_sensor {
-  sensor_info {
-    name: "gnss_odometry"
-    type: XW_GNSS
-    orientation: REAR
-  }
+  type: SENSOR_GNSS
   topic: "/sensor/gnss/odometry"
 }
 input_sensor {
-  sensor_info {
-    name: "camera"
-    type: MONOCULAR_CAMERA
-    orientation: FRONT
-  }
+  type: OBJS_CAMERA
   topic: "/perception/camera/visual_objects"
 }
 input_sensor {
-  sensor_info {
-    name: "lidar32_front"
-    type: LSLIDAR_32
-    orientation: FRONT
-  }
+  type: OBJS_LIDAR
   topic: "/perception/lidar/c32_front/tracked_objects"
 }
 
-fusion_main_sensor: "leishen32"
-send_fusion_topic: "/perception/fusion/PerceptionObstacles"
+send_tracked_objs: "/perception/fusion/obstacles"
+send_visual_objs: "/perception/fusion/visual_obstacles"
