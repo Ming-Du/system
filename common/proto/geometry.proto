@@ -18,6 +18,14 @@ message Point3D {
   optional double z = 3 [default = nan];
 }
 
+message Trace {
+  optional double timestamp = 1;
+  optional Point3D position = 2;
+  optional Point3D velocity = 3;
+  optional Point3D acceleration = 4;
+  optional Point3D heading = 5;
+}
+
 message PointLLH {
   // Longitude in degrees, ranging from -180 to 180.
   optional double lon = 1 [default = nan];

@@ -1,0 +1,24 @@
+use_lidar: true
+use_radar: false
+use_camera: true
+
+input_sensor {
+  sensor_info {
+    name: "camera_6mm"
+    type: MONOCULAR_CAMERA
+    orientation: FRONT
+  }
+  topic: "/perception/camera/camera_objects"
+}
+input_sensor {
+  sensor_info {
+    name: "lidar32_front"
+    type: LSLIDAR_32
+    orientation: FRONT
+  }
+  topic: "/perception/lidar/c32_front/tracked_objects"
+}
+
+fusion_main_sensor: "lidar32_front"
+send_fusion_topic: "/perception/fusion/PerceptionObstacles"
+localization_topic: "/localization/global"

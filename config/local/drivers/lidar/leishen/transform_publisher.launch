@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+  <node name="base2lidar16frontright"
+     pkg="tf" type="static_transform_publisher"
+     args="3.35 -0.88 0.31 3.30 0 0 base_link lidar16_front_right 100" />
+
+</launch>

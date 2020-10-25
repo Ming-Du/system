@@ -22,6 +22,11 @@ enum ObjectType {
   TYPE_UNKNOWN_DYNAMIC = 94;
 }
 
+message PredictedPosition {
+  optional double timestamp = 1;
+  optional geometry.Point position = 2;
+}
+
 message Object {
   optional uint32 id = 1;                // obj id, after tracked
   optional ObjectType type = 2;          // obj category
@@ -62,10 +67,11 @@ message TrackedObject {
   optional float yaw_rate = 3;  //in rad/s
   optional geometry.Vector3 velocity = 4; // absolute velocity, in m/s, vx, vy, vz
   repeated geometry.Point trace = 5;    // historical positions
+  repeated PredictedPosition prediction = 6; // predicted global position in future stamp
 
-  optional float absolute_longitude_v = 6;   // along lane speed, m/s
-  optional float absolute_longitude_a = 7;   // in m/s2, longitudinal acc
-  optional float absolute_lateral_v = 8;     // vertical to lane speed, left positive, m/s
+  optional float absolute_longitude_v = 7;   // along lane speed, m/s
+  optional float absolute_longitude_a = 8;   // in m/s2, longitudinal acc
+  optional float absolute_lateral_v = 9;     // vertical to lane speed, left positive, m/s
 
 //float x_speed             // longitudinal speed relative to host vehicle, m/s
 //float y_speed             // lateral speed relative to host vehicle, m/s

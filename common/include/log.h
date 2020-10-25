@@ -3,9 +3,7 @@
 #include <glog/logging.h>
 
 namespace common {
-//#define AERROR std::cerr
-//#define AINFO  std::cout
-//#define ENDL   std::endl
+
 class Binary {
   public:
     static std::string GetName() { return GetNameRef(); }
@@ -21,7 +19,7 @@ class Binary {
 #define RIGHT_BRACKET "]"
 
 #ifndef MODULE_NAME
-#define MODULE_NAME common::Binary::GetName().c_str()
+#define MODULE_NAME ::common::Binary::GetName().c_str()
 #endif
 
 #define ADEBUG_MODULE(module) \
