@@ -1,9 +1,6 @@
-sensor_info {
-  name: "lidar32_front"
-  type: LSLIDAR_32
-  orientation: FRONT
-  frame_id: "base_link"
-}
+module_name: "perception"
+sensor_name: "leishen32"
+frame_id: "base_link"
 
 roi {
   roi_x_min: -15
