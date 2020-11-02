@@ -74,7 +74,7 @@ message TrackedObject {
   optional float yaw = 2;       //box orientation angle from x axis, counter clockwise(in rad),range -pi to pi
   optional float yaw_rate = 3;  //in rad/s
   optional geometry.Vector3 velocity = 4; // absolute velocity, in m/s, vx, vy, vz
-  repeated geometry.Point trace = 5;    // historical positions
+  repeated geometry.Trace trace = 5;    // historical positions
   repeated PredictedPosition prediction = 6; // predicted global position in future stamp
 
   optional float absolute_longitude_v = 7;   // along lane speed, m/s
