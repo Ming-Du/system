@@ -28,7 +28,7 @@ enum ObjectType {
   TYPE_UNKNOWN_DYNAMIC = 94;
 }
 
-message PredictedPosition {
+message PredictedTrajectory {
   optional double timestamp = 1;
   optional geometry.Point position = 2;
 }
@@ -75,7 +75,7 @@ message TrackedObject {
   optional float yaw_rate = 3;  //in rad/s
   optional geometry.Vector3 velocity = 4; // absolute velocity, in m/s, vx, vy, vz
   repeated geometry.Trace trace = 5;    // historical positions
-  repeated PredictedPosition prediction = 6; // predicted global position in future stamp
+  repeated PredictedTrajectory prediction = 6; // predicted global position in future stamp
 
   optional float absolute_longitude_v = 7;   // along lane speed, m/s
   optional float absolute_longitude_a = 8;   // in m/s2, longitudinal acc
