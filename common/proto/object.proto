@@ -31,6 +31,9 @@ enum ObjectType {
 message PredictedTrajectory {
   optional double timestamp = 1;
   optional geometry.Point position = 2;
+  optional geometry.Point velocity = 3;
+  optional geometry.Point acceleration = 4;
+  optional geometry.Point heading = 5;
 }
 
 message Object {
