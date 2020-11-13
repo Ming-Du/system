@@ -4,4 +4,3 @@
 *.pb.cc
 *.pyc
 config/vehicle
-config/local

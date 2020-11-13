@@ -1,0 +1,28 @@
+use_lidar: true
+use_radar: false
+use_camera: true
+
+input_sensor {
+  sensor_info {
+    name: "leishen_ch32"
+    type: LSLIDAR_CH32
+    orientation: FRONT
+    frame_id: "ch32_front_link"
+  }
+  topic: "/perception/lidar/c32_front/lidar_objects"
+}
+input_sensor {
+  sensor_info {
+    name: "camera_6mm"
+    type: MONOCULAR_CAMERA_6MM
+    orientation: FRONT
+    frame_id: "camera_6mm_link"
+  }
+  topic: "/perception/camera/image_raw"
+}
+
+fusion_main_sensor: "leishen_ch32"
+
+send_fusion_topic: "/perception/fusion/fused_obstacles"
+localization_topic: "/localization/global"
+
