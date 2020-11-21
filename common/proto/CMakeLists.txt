@@ -1,3 +1,4 @@
+project(common_proto)
 find_package(Protobuf REQUIRED)
 set(proto_dir ${CMAKE_CURRENT_SOURCE_DIR})
 file(GLOB proto_files "${proto_dir}/*.proto")
@@ -30,10 +31,10 @@ include_directories(
   #${PROTOBUF_INCLUDE_DIR}
   ${PROJECT_SOURCE_DIR}/proto
 )
-add_library(${PROJECT_NAME}_proto ${proto_gen_cpp_files})
-target_link_libraries(${PROJECT_NAME}_proto ${PROTOBUF_LIBRARY})
+add_library(${PROJECT_NAME} ${proto_gen_cpp_files})
+target_link_libraries(${PROJECT_NAME} ${PROTOBUF_LIBRARY})
 
-install(TARGETS ${PROJECT_NAME}_proto
+install(TARGETS ${PROJECT_NAME}
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
