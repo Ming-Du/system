@@ -1,0 +1,8 @@
+sensor_info {
+  name: "camera_6mm"
+  type: MONOCULAR_CAMERA
+  orientation: FRONT
+}
+
+read_camera_topic: "/sensor/camera/image_raw"
+publish_objects: "/perception/camera/camera_objects"
