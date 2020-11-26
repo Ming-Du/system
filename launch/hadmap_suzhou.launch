@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="hadmap" type="hadmap_server" name="hadmap_server"  output="screen">	
+    <!-- <param name="db_file" value="/home/mogo/catkin_ws/src/hadmap/data/map.txt" /> -->
+    <param name="db_file" value="/home/mogo/catkin_ws/src/map_data/suzhou/stop_and_speed_limit_all.txt" />
+
+    <param name="traj_file" value="/home/mogo/catkin_ws/src/map_data/suzhou/suzhou_all_bias_0.2.csv" />
+    
+    <param name="fps" value="10" />
+    <param name="trajectory_query_distance" value="15" />
+    <param name="object_query_distance" value="200" />
+  </node>
+</launch>

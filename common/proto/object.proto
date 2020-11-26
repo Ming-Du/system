@@ -16,15 +16,24 @@ enum ObjectType {
   TYPE_TRAIN = 10;
   TYPE_SIGN = 20;
   TYPE_LIGHT = 30;
+  TYPE_RED = 31;
+  TYPE_GREEN = 32;
+  TYPE_YELLOW = 33;
+  TYPE_BLACK = 34;
+  TYPE_TRIANGLEROADBLOCK = 35;
+  TYPE_WARNINGTRIANGLE = 36;
   TYPE_UNKNOWN_SMALL = 91;
   TYPE_UNKNOWN_BIG = 92;
   TYPE_UNKNOWN_STATIC = 93;
   TYPE_UNKNOWN_DYNAMIC = 94;
 }
 
-message PredictedPosition {
+message PredictedTrajectory {
   optional double timestamp = 1;
   optional geometry.Point position = 2;
+  optional geometry.Point velocity = 3;
+  optional geometry.Point acceleration = 4;
+  optional geometry.Point heading = 5;
 }
 
 message Object {
@@ -68,8 +77,8 @@ message TrackedObject {
   optional float yaw = 2;       //box orientation angle from x axis, counter clockwise(in rad),range -pi to pi
   optional float yaw_rate = 3;  //in rad/s
   optional geometry.Vector3 velocity = 4; // absolute velocity, in m/s, vx, vy, vz
-  repeated geometry.Point trace = 5;    // historical positions
-  repeated PredictedPosition prediction = 6; // predicted global position in future stamp
+  repeated geometry.Trace trace = 5;    // historical positions
+  repeated PredictedTrajectory prediction = 6; // predicted global position in future stamp
 
   optional float absolute_longitude_v = 7;   // along lane speed, m/s
   optional float absolute_longitude_a = 8;   // in m/s2, longitudinal acc

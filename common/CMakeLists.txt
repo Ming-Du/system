@@ -6,13 +6,13 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -O3 -g -Wall ${CMAKE_CXX_FLAGS}")
-add_subdirectory(proto)
 
 catkin_package(
   INCLUDE_DIRS include proto ${PROJECT_SOURCE_DIR}/..
   LIBRARIES ${PROJECT_NAME} ${PROJECT_NAME}_proto protobuf
 )
 
+add_subdirectory(proto)
 include_directories(
   ${catkin_INCLUDE_DIRS}
   include
@@ -26,4 +26,10 @@ target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}_proto
   glog
+)
+
+install(TARGETS ${PROJECT_NAME}
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

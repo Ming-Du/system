@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <!-- perception -->
-  <include file="$(find camera_detection)/launch/darknet_ros.launch" />
+  <!-- <include file="$(find camera_detection)/launch/darknet_ros.launch" /> -->
   <include file="$(find perception_lidar)/launch/lidar32_front.launch" />
   <include file="$(find perception_lidar)/launch/lidar16_front_left.launch" />
   <include file="$(find perception_lidar)/launch/lidar16_front_right.launch" />
