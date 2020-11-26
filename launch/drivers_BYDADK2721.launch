@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <include file="$(find drivers_camera)/launch/6mm.launch"/>
-  <include file="$(find drivers_livox)/launch/ADK2721.launch" />
-  <include file="$(find drivers_gnss)/launch/data_spin.launch" />
+  <include file="$(find drivers_livox)/launch/DLBYDADK2721.launch" />
+  <include file="$(find drivers_gnss)/launch/GNSSBYDADK2721.launch" />
 </launch>
 
