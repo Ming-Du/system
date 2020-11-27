@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- perception -->
+  <!-- <include file="$(find camera_detection)/launch/darknet_ros.launch" /> -->
+  <include file="$(find perception_lidar)/launch/PLBYDADK2721.launch" />
+  <include file="$(find perception_fusion)/launch/perception_fusion.launch" />
+  <!--node name="loc" pkg="localization" type="localization" /-->
+</launch>
