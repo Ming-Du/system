@@ -10,7 +10,7 @@ input_sensor {
 }
 input_sensor {
   type: OBJS_LIDAR
-  topic: "/perception/lidar/c32_front/tracked_objects"
+  topic: "/perception/lidar/front/tracked_objects"
 }
 
 localization_topic: "/localization/global"
