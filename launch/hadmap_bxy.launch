@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <launch>
   <node pkg="hadmap" type="hadmap_server" name="hadmap_server"  output="screen">	
-    <param name="db_file" value="$(find launch)/../../map_data/BXY/map.txt" />
+    <param name="db_file" value="$(find controller_simulator)/../../map_data/BXY/map.txt" />
 
-    <param name="traj_file" value="$(find launch)/../../map_data/BXY/demo_bxy_ql_gov_40km_af_loc_bias.csv:$(find common)/../../map_data/BXY/BXY_19_7_40km.csv:$(find common)/../../map_data/BXY/BXY_7_QL_40km.csv" />
+    <param name="traj_file" value="$(find controller_simulator)/../../map_data/BXY/demo_bxy_ql_gov_40km_af_loc_bias.csv:$(find controller_simulator)/../../map_data/BXY/BXY_19_7_40km.csv:$(find controller_simulator)/../../map_data/BXY/BXY_7_QL_40km.csv" />
     
     <param name="fps" value="10" />
     <param name="trajectory_query_distance" value="15" />

@@ -4,7 +4,7 @@
 
   <!-- drivers -->
   <include file="$(find usb_cam)/launch/usb_cam.launch"/>
-  <include file="$(find lslidar_c32)/launch/lslidar_c32.launch" />
+  <!--include file="$(find lslidar_c32)/launch/lslidar_c32.launch" /-->
   <include file="$(find lslidar_c16)/launch/lslidar_c16_double.launch" />
   <include file="$(find gnss)/launch/data_spin.launch" />
 

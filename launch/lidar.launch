@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+
+<launch>
+  <include file="$(find lslidar_c32)/launch/lslidar_c32.launch" />
+</launch>
