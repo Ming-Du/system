@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+
+  <include file="$(find camera_detection_v3)/launch/darknet_ros.launch"/>
+
+</launch>

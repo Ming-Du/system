@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="hadmap" type="hadmap_server" name="hadmap_server"  output="screen">	
+    <!-- <param name="db_file" value="/home/mogo/catkin_ws/src/hadmap/data/map.txt" /> -->
+    <!-- <param name="db_file" value="/home/mogo/catkin_ws/src/map_data/suzhou/stop_and_speed_limit_all.txt" /> -->
+
+    <!-- param name="traj_file" value="$(find controller_simulator)/testdata/demo_BXY_hl_gov_40km.csv:$(find controller_simulator)/testdata/demo_BXY_gov_wanji_50km.csv" /-->
+    <!-- <param name="traj_file" value="$(find controller_simulator)/testdata/demo_bxy_ql_gov_40km_af_loc_bias.csv:$(find controller_simulator)/../../map_data/BXY/BXY_19_7_40km.csv:$(find controller_simulator)/../../map_data/BXY/BXY_7_QL_40km.csv" /> -->
+    <!-- <param name="traj_file" value="$(find controller_simulator)/../../map_data/shunyi_2/zudi212_youdi_1st_turnright.csv:$(find controller_simulator)/../../map_data/shunyi_2/youdi_1st_zuodi212.csv" /> -->
+    <!-- <param name="traj_file" value="$(find controller_simulator)/testdata/garage_aoti_s_40km.csv" /> -->
+
+
+    <!-- <param name="db_file" value="/home/mogo/catkin_ws/src/map_data/shunyi_guozhan/map1102.txt" /> -->
+
+    <param name="db_file" value="/home/mogo/catkin_ws/src/map_data/shunyi_guozhan/map2020-11-8-13-44-27.txt" />
+    <!-- <param name="db_file" value="/home/mogo/catkin_ws/src/map_data/shunyi_guozhan/map2020-11-8-15-34-26.txt" /> -->
+    <!-- <param name="db_file" value="/home/mogo/catkin_ws/src/map_data/shunyi_guozhan/map2020-11-8-16-7-48.txt" /> -->
+
+    
+
+
+    <!-- <param name="traj_file" value="/home/mogo/catkin_ws/src/map_data/shunyi_guozhan/2020-11-8-13-44-27_path.txt" />  -->
+        <!-- <param name="traj_file" value="/home/mogo/catkin_ws/src/map_data/shunyi_guozhan/2020-11-8-13-44-27_path_kappa.csv" />  -->
+        <param name="traj_file" value="/home/mogo/catkin_ws/src/map_data/shunyi_guozhan/2020-11-8-13-44-27_path_kappa5.txt" /> 
+
+
+
+
+    <!-- <param name="traj_file" value="/home/mogo/catkin_ws/src/map_data/shunyi_guozhan/2020-11-8-14-45-49_path.txt" />  -->
+        <!-- <param name="traj_file" value="/home/mogo/catkin_ws/src/map_data/shunyi_guozhan/2020-11-8-15-34-26_path.txt" />   -->
+        <!-- <param name="traj_file" value="/home/mogo/catkin_ws/src/map_data/shunyi_guozhan/2020-11-8-16-7-48_path.txt" />   -->
+
+
+        <!-- <param name="traj_file" value="/home/mogo/catkin_ws/src/map_data/shunyi_guozhan/2020-11-10-13-34-19_path.txt" />  -->
+
+        
+
+
+    <param name="fps" value="10" />
+    <param name="trajectory_query_distance" value="15" />
+    <param name="object_query_distance" value="200" />
+  </node>
+</launch>

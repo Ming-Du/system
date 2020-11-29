@@ -1,5 +1,5 @@
-module_name: "perception"
-sensor_name: "leishen16"
+module_name: "perception_lidar"
+sensor_name: "lslidar_c16"
 frame_id: "base_link"
 
 roi {
@@ -22,6 +22,7 @@ extrinsics {
 
 sensor_height: 0.67
 read_lidar:    "/sensor/lidar/c16/front_left/point_cloud"
-send_filtered: "/perception/lidar/c16_front_left/filtered_point_cloud"
-send_markers:  "/perception/lidar/c16_front_left/lidar_objects_marker"
-send_objects:  "/perception/lidar/c16_front_left/tracked_objects"
+
+send_filtered: "/perception/lidar/front_left/filtered_cloud"
+send_markers:  "/perception/lidar/front_left/obstacle_marker"
+send_objects:  "/perception/lidar/front_left/lidar_obstacle"
