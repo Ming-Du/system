@@ -5,6 +5,7 @@
   <include file="$(find perception_lidar)/launch/lidar32_front.launch" />
   <include file="$(find perception_lidar)/launch/lidar16_front_left.launch" />
   <include file="$(find perception_lidar)/launch/lidar16_front_right.launch" />
+  <include file="$(find config)/perception/lidar/perception_lidar.launch" />
   <include file="$(find perception_fusion)/launch/perception_fusion.launch" />
   <!--node name="loc" pkg="localization" type="localization" /-->
 </launch>

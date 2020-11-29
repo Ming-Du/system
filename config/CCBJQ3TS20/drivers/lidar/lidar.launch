@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+
+  <include file="$(find lslidar)/launch/ch_front.launch" />
+  <include file="$(find lslidar)/launch/c16_front_left.launch" />
+  <include file="$(find lslidar)/launch/c16_front_right.launch" />
+  
+  <!-- x y z y p r -->
+  <node name="base2chfront" pkg="tf" type="static_transform_publisher"
+     args="3.6 0 0.09 -1.57 0 0 base_link ch_front_link 100" />
+
+</launch>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="config_path" default="$(find config)/vehicle/perception/lidar"/>
+
+  <node name="lidar_front" ns="perception/lidar"
+    pkg="perception_lidar" type="perception_lidar_node"
+    output="screen" >
+    <param name="config_file"
+      value="$(arg config_path)/livox_front_conf.pb.txt" />
+  </node>
+</launch>
