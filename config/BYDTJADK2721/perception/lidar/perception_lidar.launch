@@ -6,6 +6,6 @@
     pkg="perception_lidar" type="perception_lidar_node"
     output="screen" >
     <param name="config_file"
-      value="$(arg config_path)/livox_front_conf.pb.txt" />
+      value="$(arg config_path)/livox_front.pb.txt" />
   </node>
 </launch>
