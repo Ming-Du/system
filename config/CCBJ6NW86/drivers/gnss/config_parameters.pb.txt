@@ -1,0 +1,14 @@
+device: "/dev/ttyACM0"
+
+accelerometer_bias {
+  x: 0
+  y: 0
+  z: 0
+}
+
+gyroscope_bias {
+  x: 0
+  y: 0
+  z: 0
+}
+

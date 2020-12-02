@@ -1,25 +1,14 @@
 device: "/dev/ttyACM0"
 
 accelerometer_bias {
-<<<<<<< Updated upstream
   x: 0  # 
   y: 0  # 
-=======
-  x: 0
-  y: 0
->>>>>>> Stashed changes
   z: 0
 }
 
 gyroscope_bias {
-<<<<<<< Updated upstream
   x: -0.01261873     #roll:-0.75-0.073+0.1
   y: -0.0038589      #pitch:-0.2211
   z: -0.039439554    #yaw:-2.29972+0.14-0.1
-=======
-  x: 0    #roll:-0.62
-  y: 0    #pitch:+2.76
-  z: 0     #yaw:-2.007
->>>>>>> Stashed changes
 }
 

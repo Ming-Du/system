@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="config_path" default="$(find config)/vehicle/perception/lidar"/>
+
+  <node name="perception_lidar_front" ns="perception/lidar"
+    pkg="perception_lidar" type="perception_lidar_node" output="screen">
+    <param name="config_file"
+      value="$(arg config_path)/ch_front.pb.txt" />
+  </node>
+</launch>

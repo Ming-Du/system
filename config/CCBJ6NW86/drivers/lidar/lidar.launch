@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+
+  <include file="$(find drivers_lslidar)/launch/ch_front.launch" />
+  <include file="$(find drivers_lslidar)/launch/c16_front_left.launch" />
+  <include file="$(find drivers_lslidar)/launch/c16_front_right.launch" />
+  
+  <!-- x y z y p r -->
+  <node name="base2chfront" pkg="tf" type="static_transform_publisher"
+     args="3.6 0 0.09 -1.57 0 0 base_link ch_front_link 100" />
+  <node name="base2c16frontleft" pkg="tf" type="static_transform_publisher"
+     args="3.25 0.88 0.31 3.14 0 0 base_link c16_front_left_link 100" />
+  <node name="base2c16frontright" pkg="tf" type="static_transform_publisher"
+     args="3.35 -0.88 0.31 3.30 0 0 base_link c16_front_right_link 100" />
+
+</launch>

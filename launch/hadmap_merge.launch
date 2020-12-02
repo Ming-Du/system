@@ -2,7 +2,7 @@
 <launch>
   <node pkg="hadmap" type="hadmap_server" name="hadmap_server"  output="screen">	
     <!-- <param name="db_file" value="/home/mogo/catkin_ws/src/hadmap/data/map.txt" /> -->
-    <param name="db_file" value="/home/mogo/catkin_ws/src/map_data/suzhou/stop_and_speed_limit_all.txt" />
+    <param name="db_file" value="$(find map_data)/suzhou/stop_and_speed_limit_all.txt" />
 
     <!-- param name="traj_file" value="$(find controller_simulator)/testdata/demo_BXY_hl_gov_40km.csv:$(find controller_simulator)/testdata/demo_BXY_gov_wanji_50km.csv" /-->
 <<<<<<< HEAD
@@ -40,7 +40,7 @@
     <!-- <param name="traj_file" value="$(find controller_simulator)/testdata/demo_bxy_ql_gov_40km_af_loc_bias.csv:$(find controller_simulator)/../../map_data/BXY/BXY_19_7_40km.csv:$(find controller_simulator)/../../map_data/BXY/BXY_7_QL_40km.csv" /> -->
     <!-- <param name="traj_file" value="/home/mogo/catkin_ws/src/map_data/suzhou/xr_xgt_sj_0.2_af_kappa.csv" /> -->
     <!-- <param name="traj_file" value="/home/mogo/catkin_ws/src/map_data/suzhou/sj_xgt_xr.csv" /> -->
-    <param name="traj_file" value="/home/mogo/catkin_ws/src/map_data/suzhou/suzhou_all_bias_0.2.csv" />
+    <param name="traj_file" value="$(find map_data)/suzhou/suzhou_all_bias_0.2.csv" />
     
 >>>>>>> e65d1d618cc205b53b64641074807c09a0973335
     <param name="fps" value="10" />
