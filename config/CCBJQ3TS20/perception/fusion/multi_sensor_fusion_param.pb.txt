@@ -1,10 +1,6 @@
 frame_id: "base_link"
 
 input_sensor {
-  type: OBJS_CAMERA
-  topic: "/perception/camera/camera_obstacle"
-}
-input_sensor {
   type: OBJS_LIDAR
   topic: "/perception/lidar/front/lidar_obstacle"
 }

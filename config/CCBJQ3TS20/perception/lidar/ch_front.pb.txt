@@ -14,7 +14,7 @@ roi {
 extrinsics {
   rotation_axis_x: 0
   rotation_axis_y: 0
-  rotation_axis_z: -0.5
+  rotation_axis_z: -1.57
   translation_axis_x: 3.6
   translation_axis_y: 0
   translation_axis_z: 0.09
