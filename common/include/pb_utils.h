@@ -7,6 +7,7 @@
 
 namespace common {
 
+bool PathExists(const std::string &path);
 /**
  * @brief Sets the content of the file specified by the file_name to be the
  *        ascii representation of the input protobuf.
