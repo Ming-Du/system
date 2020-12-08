@@ -20,7 +20,7 @@ BYD_CAN_ADAPTER="roslaunch byd_can_adapter byd_can_adapter.launch"
 RTKREPLAYPLANNER="roslaunch controller_simulator controller_simulator.launch"
 SIM_VEHICLEDYNAMICANDMAP="roslaunch controller_simulator simulator_vehicledynamicandmap.launch"
 CONTROLLER="roslaunch controller controller.launch"
-SEND_CONTROL_COMMAND="python2 src/control/chassis_tool/chassis_set.py qt5"
+SEND_CONTROL_COMMAND="python2 share/cmd_panel/chassis_set.py qt5"
 SEND_CONTROL_COMMAND_USE_TOPIC="python2 src/control/chassis_tool/chassis_set_pbmsg.py"
 VEHICLE_MODEL="rosrun controller_simulator vehicle_dynamics"
 # PERCEPTION="roslaunch src/control/script/telematics_for_auto.launch"
@@ -36,7 +36,7 @@ GLOBALLOC2LOCAL="rosrun controller_simulator globalloc2local"
 LIDAR_CAMERA_DRIVERS="roslaunch launch drivers.launch"
 TRAFFIC_LANE="roslaunch src/perception/lane_detection/lane_detection_cpp/launch/lane_detection_cpp.launch"
 
-cd $HOME/catkin_ws
+cd $HOME/autopilot/
 # change the    omstreambuf() : buf  (4096*10)   
 ##for the min auto drive mode ,just use RTK_PLANNER and controller
 if [ $1 -eq 1 ]; then
