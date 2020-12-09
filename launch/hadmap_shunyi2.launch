@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="hadmap" type="hadmap_server" name="hadmap_server"  output="screen">	
+    <param name="db_file" value="$(find map_data)/shunyi_2/stop_and_speed_limit.txt" />
+
+    <param name="traj_file" value="$(find map_data)/shunyi_2/youdi_1st_zuodi212_kappa5.csv:$(find map_data)/shunyi_2/zudi212_youdi_1st_turnright_kappa5.csv" />
+    
+    <param name="fps" value="10" />
+    <param name="trajectory_query_distance" value="15" />
+    <param name="object_query_distance" value="200" />
+  </node>
+</launch>
