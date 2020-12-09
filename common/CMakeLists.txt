@@ -25,7 +25,7 @@ add_library(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}_proto
-  glog
+  glog yaml-cpp
 )
 
 install(TARGETS ${PROJECT_NAME}

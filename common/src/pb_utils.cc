@@ -2,6 +2,7 @@
 #include <string>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/stat.h>
 
 #include "log.h"
 #include "pb_utils.h"
@@ -10,6 +11,11 @@
 #include <google/protobuf/text_format.h>
 
 namespace common {
+
+bool PathExists(const std::string &path) {
+  struct stat info;
+  return stat(path.c_str(), &info) == 0;
+}
 
 static bool SetProtoToASCIIFile(const google::protobuf::Message &message,
                          int file_descriptor) {
