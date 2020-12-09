@@ -5,7 +5,9 @@
 
   <node name="perception_fusion" ns="perception/fusion"
       pkg="perception_fusion" type="perception_fusion_node" output="screen">
+    <!--param name="config_file"
+      value="$(arg config_path)/fusion_ch.pb.txt" /-->
     <param name="config_file"
-      value="$(arg config_path)/fusion_ch.pb.txt" />
+      value="$(arg config_path)/multi_sensor_fusion_param.pb.txt" />
   </node>
 </launch>
