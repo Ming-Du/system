@@ -11,7 +11,7 @@
   <arg name="rviz_enable" default="false"/>
   <arg name="rosbag_enable" default="false"/>
   <arg name="cmdline_arg" default="$(arg bd_list)"/>
-  <arg name="msg_frame_id" default="livox_front_link"/>
+  <arg name="msg_frame_id" default="livox_front"/>
 
   <group ns="sensor/lidar/livox/front">
     <param name="xfer_format" value="$(arg xfer_format)"/>

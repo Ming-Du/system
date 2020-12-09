@@ -1,0 +1,18 @@
+use_camera: false
+use_lidar: true
+use_radar: false
+
+input_sensor {
+  sensor_info {
+    name: "horizon_front"
+    type: LIVOX_HORIZON
+    orientation: FRONT
+    frame_id: "horizon_front_link"
+  }
+  topic: "/perception/lidar/front/lidar_obstacle"
+}
+
+fusion_main_sensor: "horizon_front"
+localization_topic: "/localization/global"
+
+send_fusion_topic: "/perception/fusion/fused_obstacle"

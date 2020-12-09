@@ -1,6 +1,9 @@
-module_name: "perception_lidar"
-sensor_name: "livox_horizon_front"
-frame_id: "base_link"
+sensor_info {
+  name: "horizon_front"
+  type: LIVOX_HORIZON
+  orientation: FRONT
+  frame_id: "base_link"
+}
 
 roi {
   roi_x_max: 80
@@ -12,8 +15,8 @@ roi {
 }
 
 extrinsics {
-  rotation_axis_x: -0.045
-  rotation_axis_y: 0.021
+  rotation_axis_x: -0.021
+  rotation_axis_y: 0.045
   rotation_axis_z: 0
   translation_axis_x: 3.6
   translation_axis_y: 0
