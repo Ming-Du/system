@@ -1,4 +1,4 @@
-
+#! coding=utf-8
 import rospy
 import rosnode
 import rosparam
@@ -116,4 +116,4 @@ class Process(Thread):
 if __name__ == '__main__':
     rospy.init_node('system_guardian')
     p = Process()
-    #rospy.spin()
+    rospy.spin()
