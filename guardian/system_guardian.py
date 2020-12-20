@@ -1,10 +1,12 @@
-#! coding=utf-8
+#
+coding=utf-8
 import rospy
 import rosnode
 import rosparam
 import os
 from threading import Thread
 
+# git
 class Process(Thread):
   NodeList=[]
   ParamName='/system/isReady'  #logDetail
