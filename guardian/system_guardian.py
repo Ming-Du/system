@@ -10,6 +10,8 @@ import psutil
 import collections
 import sys
 import simplejson
+import logging
+logging.basicConfig()
 class Process(Thread):
   config_file = ""
   NodeAlive = []
