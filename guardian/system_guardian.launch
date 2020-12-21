@@ -1,0 +1,3 @@
+<launch>
+  <node name="system_guardian" pkg="guardian" type="system_guardian.py"  args="$(find system_guardian)/system_guardian.json"  output="screen"/>
+</launch>
