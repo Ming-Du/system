@@ -1,0 +1,12 @@
+{
+    "guardian_nodes":
+        [
+            "/drivers_camera",
+            "/rosbag_recorder",
+            "/path_recorder",
+            "/local_planning",
+            "/operator_tool"
+
+        ]
+
+}

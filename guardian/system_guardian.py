@@ -8,15 +8,19 @@ from std_msgs.msg import String
 import json
 import psutil
 import collections
-
+import sys
+import simplejson
 class Process(Thread):
+  config_file = ""
+  NodeAlive = []
   NodeList=[]
   ParamName='/system/isReady'  #logDetail
   node_state_dict={}
   
-  def __init__(self):
+  def __init__(self,filename):
     Thread.__init__(self)
     self.daemon = True
+    self.config_file = filename
     self.register()
     self.start()
     
@@ -27,24 +31,28 @@ class Process(Thread):
     
     rate = rospy.Rate(1)
     while True:
-      #node_list = [ node for node in rosnode.get_node_names() if node not in '/rosout' ]
       ps_num = 0
       self.node_state_dict = {}
-      
+      d = os.popen("rosnode list")
+      node_li = d.read()
+      self.NodeAlive = node_li.split("\n")
+      print self.NodeAlive
       for node_name in self.NodeList:
-        pid = os.popen("ps -ef | grep __name:=" 
-          + node_name 
-          + " | grep -v 'grep' | awk '{print $2}'").read()
-          
-        if len(pid) is 0: 
-          rospy.logerr(node_name + " is off, trying to restart...")
-          self.start_node(node_name)
-          self.node_state_dict[node_name] = "off"
+        if node_name in self.NodeAlive:
+            rospy.loginfo(node_name +" on") 
+            self.node_state_dict[node_name] = "on" 
+            ps_num +=1
         else:
-          rospy.loginfo(node_name + " on, pid: " + pid[:-1]) 
-          ps_num += 1
-          self.node_state_dict[node_name] = "on"
-        
+            rospy.logerr(node_name + " is off, trying to restart...")
+            self.node_state_dict[node_name] = "off"
+            self.start_node(node_name)
+      #node_list = [ node for node in rosnode.get_node_names() if node not in '/rosout' ]
+      
+      #for node_name in self.NodeList:
+      #  pid = os.popen("ps -ef | grep __name:=" 
+      #    + node_name 
+      #    + " | grep -v 'grep' | awk '{print $2}'").read()
+      #  
       if ps_num is len(self.NodeList):
         rospy.logwarn('system is ok')
         rosparam.set_param(self.ParamName, '1')
@@ -91,19 +99,12 @@ class Process(Thread):
  
   def register(self):
     # drivers
-    self.NodeList.append('drivers_camera')
-    self.NodeList.append('drivers_gnss')
-    self.NodeList.append('drivers_lidar32_front_driver')
-    self.NodeList.append('drivers_lidar32_front_decoder')
-    self.NodeList.append('drivers_lidar16_left_driver')
-    self.NodeList.append('drivers_lidar16_left_decoder')
-    self.NodeList.append('drivers_lidar16_right_driver')
-    self.NodeList.append('drivers_lidar16_right_decoder')
-    # perception
-    self.NodeList.append('perception_camera_detection')
-    self.NodeList.append('perception_lidar32_front')
-    self.NodeList.append('perception_lidar16_front_left')
-    self.NodeList.append('perception_lidar16_front_right')
+    rospy.loginfo("configfile:%s"%self.config_file)
+    with open(self.config_file,'r') as f:
+        config = simplejson.load(f)
+    guardian_nodes = config["guardian_nodes"]
+    for i in guardian_nodes:
+        self.NodeList.append(i)
     
     # telematics
     #self.NodeList.append('telematics');
@@ -112,8 +113,19 @@ class Process(Thread):
     #rospy.Subscriber("/sensor/gnss/gps_fix")
     #if (status.status == 2) is fine
 
+def main():
+    if len(sys.argv) < 2:
+        rospy.logerr("please use:system_guardian.py filename")
+        exit(-1)
+    rospy.init_node('system_guardian')
+    config_file = sys.argv[1].strip()
+    print (config_file)
+    p = Process(config_file)
+    rospy.spin()
 
 if __name__ == '__main__':
-    rospy.init_node('system_guardian')
-    p = Process()
-    rospy.spin()
+    try:
+        main()
+    except KeyboardInterrupt as e:
+        print "user ctrl-c to exit"
+        exit(0)
