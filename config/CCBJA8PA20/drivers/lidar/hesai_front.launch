@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <launch>
 
-  <arg name="config_path" default="$(find perception_onboard)/conf"/>
+  <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
-    value="$(arg config_path)/vehicle/WEY_A8PA20.pb.txt" />
+    value="$(arg config_path)/sensor/WEY_A8PA20.pb.txt" />
   <arg name="sensor_name" default="hesai_front" />
 
   <arg name="pcap_file"  default=""/>
@@ -19,8 +19,10 @@
 	
   <arg name="lidar_correction_file"  default="$(find drivers_hesai)/config/correction.csv"/>
 
-  <node pkg="drivers_hesai" name="hesai_front" type="drivers_hesai_node" output="screen" 
-      args="--sensor_meta_path=$(arg sensor_meta)" >
+  <node name="hesai_front" output="screen" 
+      pkg="drivers_hesai"  type="drivers_hesai_node"
+      args="--stderrthreshold=0
+            --sensor_meta_path=$(arg sensor_meta)" >
     <param name="pcap_file" type="string" value="$(arg pcap_file)"/>
     <param name="server_ip" type="string" value="$(arg server_ip)"/>
     <param name="lidar_recv_port"  type="int" value="$(arg lidar_recv_port)"/>

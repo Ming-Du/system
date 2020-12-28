@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="config_path" default="$(find config)/vehicle/perception"/>
+  <arg name="config_path" default="$(find config)/vehicle" />
 
   <arg name="lidar_segmentation_conf"
-    value="$(arg config_path)/lidar/hesai_front.pb.txt" />
+    value="$(arg config_path)/perception/lidar/joint_process.pb.txt" />
 
   <node name="perception_lidar" ns="perception/lidar"
     pkg="perception_lidar" type="perception_lidar_node" output="screen"
     args="--stderrthreshold=0 --v=1
-          --sensor_meta_path=$(find perception_onboard)/conf/vehicle/WEY_A8PA20.pb.txt 
+          --sensor_meta_path=$(arg config_path)/sensor/WEY_A8PA20.pb.txt 
           --lidar_segmentation_conf_path=$(arg lidar_segmentation_conf)
-          --lidar_input=hesai_front" >
+          --lidar_input=hesai_front;c16_front_left;c16_front_right" >
 
     <param name="send_filtered" value="/perception/lidar/front/filtered_cloud" />
     <param name="send_objects" value="/perception/lidar/front/lidar_obstacle" />

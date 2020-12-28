@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="config_path" default="$(find perception_onboard)/conf"/>
+  <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
-    value="$(arg config_path)/vehicle/WEY_A8PA20.pb.txt" />
+    value="$(arg config_path)/sensor/WEY_A8PA20.pb.txt" />
 
   <arg name="device_ip" default="192.168.8.202" />
   <arg name="msop_port" default="2372" />
@@ -34,10 +34,10 @@
   </node>
 
   <!-- decoder -->
-  <node name="c16_front_right_decoder" 
+  <node name="c16_front_right_decoder" respawn="true" respawn_delay="10" output="screen"
       pkg="drivers_lslidar" type="lslidar_c16_decoder_node" 
-      respawn="true" respawn_delay="10" output="screen"
-      args="--sensor_meta_path=$(arg sensor_meta)" >
+      args="--stderrthreshold=0
+            --sensor_meta_path=$(arg sensor_meta)" >
 
     <param name="frame_id" value="$(arg frame_id)" />
     <param name="base_frame_id" value="$(arg base_frame_id)" />
