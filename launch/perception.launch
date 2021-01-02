@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <!-- perception -->
   <include file="$(find config)/vehicle/perception/camera/perception_camera.launch" />
   <include file="$(find config)/vehicle/perception/lidar/perception_lidar.launch" />
   <include file="$(find config)/vehicle/perception/fusion/perception_fusion.launch" />
-  <!-- <include file="$(find perception_onboard)/launch/lidar/livox_front.launch" /> -->
-  <!-- <include file="$(find perception_onboard)/launch/fusion/fusion_lidar.launch" /> -->
 </launch>

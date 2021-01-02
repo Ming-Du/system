@@ -39,14 +39,14 @@ sensor_info {
   topic: "/sensor/lidar/front/point_cloud"
   extrinsic {
     translation {
-      x: 3.65
+      x: 3.7
       y: 0.08
-      z: 0.755
+      z: 0.75
     }
     rotation {
       w: 0.707
-      x: 0
-      y: 0
+      x: 0.006
+      y: 0.014
       z: 0.707
     }
   }
@@ -58,18 +58,20 @@ sensor_info {
   topic: "/sensor/lidar/front_left/point_cloud"
   extrinsic {
     translation {
-      x: 3.15
-      y: 0.97
-      z: 0.625
+      x: 3.25
+      y: 0.92
+      z: 0.59
     }
     rotation {
-      w: 0.669
-      x: 0.008
-      y: 0.028
-      z: -0.743
+      w: 0.682
+      x: -0.012
+      y: -0.010
+      z: -0.731
     }
   }
 }
+# x: +right roll
+# y: +lift head
 sensor_info {
   name: "c16_front_right"
   type: LSLIDAR_C16
@@ -77,14 +79,14 @@ sensor_info {
   topic: "/sensor/lidar/front_right/point_cloud"
   extrinsic {
     translation {
-      x: 3.2
-      y: -0.97
-      z: 0.615
+      x: 3.20
+      y: -0.94
+      z: 0.61
     }
     rotation {
       w: 0.688
-      x: 0.010
-      y: -0.011
+      x: -0.006
+      y: 0.006
       z: 0.725
     }
   }

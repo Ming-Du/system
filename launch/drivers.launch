@@ -1,11 +1,6 @@
 <?xml version="1.0"?>
-
 <launch>
-  <!-- drivers -->
-  <include file="$(find drivers_camera)/launch/6mm.launch"/>
+  <include file="$(find config)/vehicle/drivers/camera/camera.launch"/>
   <include file="$(find config)/vehicle/drivers/lidar/lidar.launch" />
   <include file="$(find drivers_gnss)/launch/data_spin.launch" />
-  <!-- chassis -->
-  <!--include file="$(find common)/../launch/chassis.launch" /-->
-
 </launch>

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find config)/vehicle/drivers/lidar/hesai_front.launch" />
+  <include file="$(find config)/vehicle/drivers/lidar/c16_front_left.launch" />
+  <include file="$(find config)/vehicle/drivers/lidar/c16_front_right.launch" />
+</launch>
