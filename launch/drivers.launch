@@ -2,5 +2,5 @@
 <launch>
   <include file="$(find config)/vehicle/drivers/camera/camera.launch"/>
   <include file="$(find config)/vehicle/drivers/lidar/lidar.launch" />
-  <include file="$(find drivers_gnss)/launch/data_spin.launch" />
+  <include file="$(find config)/vehicle/drivers/gnss/data_spin.launch" />
 </launch>
