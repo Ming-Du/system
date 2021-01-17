@@ -5,7 +5,7 @@ ps aux | grep roscore |awk '{print $2}' |xargs kill
 sudo chmod +777 /dev -R
 
 echo $HOME
-sed -i 's/\/home\/mogo\/catkin_ws\/install/\/home\/mogo\/autopilot/g' $HOME/autopilot/setup.sh
+sed -i 's/\(${_CATKIN_SETUP_DIR:=\).*/\1\/home\/mogo\/autopilot}/g' $HOME/autopilot/setup.sh
 sh $HOME/autopilot/setup.sh
 
 ###########################################################
