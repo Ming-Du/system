@@ -5,7 +5,8 @@ ps aux | grep roscore |awk '{print $2}' |xargs kill
 sudo chmod +777 /dev -R
 
 echo $HOME
-source $HOME/autopilot/setup.sh
+sed -i 's/\/home\/mogo\/catkin_ws\/install/\/home\/mogo\/autopilot/g' $HOME/autopilot/setup.sh
+sh $HOME/autopilot/setup.sh
 
 ###########################################################
 GLOG_COMMAND="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1"
