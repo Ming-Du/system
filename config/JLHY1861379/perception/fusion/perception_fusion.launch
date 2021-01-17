@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="config_path" default="$(find config)/vehicle"/>
+  <arg name="sensor_meta"
+      value="$(arg config_path)/sensor/JLBJ1861378_SENSOR.pb.txt " />
+
+  <arg name="multi_sensor_fusion_conf"
+      value="$(arg config_path)/perception/fusion/JLBJ1861378_FUSION.pb.txt" />
+
+  <node name="perception_fusion" ns="perception/fusion"
+      pkg="perception_fusion" type="perception_fusion_node" output="screen"
+      args="--stderrthreshold=0 --v=1
+            --sensor_meta_path=$(arg sensor_meta) 
+            --multi_sensor_fusion_conf_path=$(arg multi_sensor_fusion_conf)" />
+</launch>
