@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <launch>
   <node pkg="hadmap" type="hadmap_server" name="hadmap_server"  output="screen">	
-    <param name="db_file" value="$(find map_data)/BXY/map.txt" />
+    <param name="db_file" value="$(find map_data)/hengyang_jinlv/map_hengyanggaoxin.txt" />
 
-    <param name="traj_file" value="$(find map_data)/BXY/demo_bxy_ql_gov_40km_af_loc_bias.csv:$(find map_data)/BXY/BXY_19_7_40km.csv:$(find map_data)/BXY/BXY_7_QL_40km.csv" />
+    <param name="traj_file" value="$(find map_data)/hengyang_jinlv/traj_hengyanggaoxin_all_kappa_cut.csv" />
     
     <!-- <param name="traj_file" value="/home/mogo/catkin_ws/src/map_data/shunyi_guozhan/2020-11-8-13-44-27_path.txt" />  -->
         <!-- <param name="traj_file" value="/home/mogo/catkin_ws/src/map_data/shunyi_guozhan/2020-11-8-13-44-27_path_kappa.csv" />  -->
