@@ -1,0 +1,24 @@
+vin : "vin"
+plate : "JING-Q"
+brand : "QIN_PRO"
+    
+length : 4.765
+width  : 1.837
+height : 1.515
+weight : 1800
+
+accel_min : -5.0
+accel_max : 5.0
+steering_min : -700
+steering_max : 700
+
+wheel_base : 2.8
+steer_ratio : 18.518
+max_abs_speed_when_stopped : 0.15 
+throttle_deadzone : 0.0
+brake_deadzone : 0.35
+
+center_to_front : 3.765
+center_to_back  : 1.0
+center_to_left  : 0.758
+center_to_right : 0.758
