@@ -21,7 +21,7 @@ extrinsics {
 }
 
 sensor_height: 0.67
-read_lidar:    "/sensor/lidar/c16/front_left/point_cloud"
+read_lidar:    "/sensor/lidar/front_left/point_cloud"
 
 send_filtered: "/perception/lidar/front_left/filtered_cloud"
 send_markers:  "/perception/lidar/front_left/obstacle_marker"

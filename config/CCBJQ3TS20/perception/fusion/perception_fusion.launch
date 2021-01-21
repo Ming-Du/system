@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="config_path" default="$(find config)/vehicle/perception/fusion"/>
-  <!--arg name="config_path" default="$(find perception_onboard)/conf/perception/fusion"/-->
 
   <node name="perception_fusion" ns="perception/fusion"
       pkg="perception_fusion" type="perception_fusion_node" output="screen">
