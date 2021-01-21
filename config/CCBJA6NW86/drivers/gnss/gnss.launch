@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+  <group ns="sensor/gnss">
+  <arg name="config_path" default="$(find config)/vehicle"/>
+  <arg name="sensor_meta"
+    default="$(arg config_path)/sensor/WEYA6NW86_SENSOR.pb.txt" />
+
+  <node name="drivers_gnss" pkg="drivers_gnss" type="drivers_gnss_node"
+    output="screen" args="--sensor_meta_path=$(arg sensor_meta)" >
+    <param name="device" value="/dev/ttyACM0" />
+    <param name="frame_id" value="gnss" />
+
+    <param name="config_file" 
+      value="$(arg config_path)/drivers/gnss/gyro_bias.pb.txt" />
+  </node>
+  </group>
+
+</launch>

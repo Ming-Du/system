@@ -2,7 +2,7 @@
 <launch><group ns="sensor/lidar/c16/front_left">
   <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
-    value="$(arg config_path)/sensor/WEYA8PA20_SENSOR.pb.txt" />
+    default="$(arg config_path)/sensor/WEYA8PA20_SENSOR.pb.txt" />
 
   <arg name="device_ip" default="192.168.8.201" />
   <arg name="msop_port" default="2370" />

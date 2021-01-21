@@ -2,7 +2,7 @@
 <launch>
   <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
-    value="$(arg config_path)/sensor/JLBJ1861378_SENSOR.pb.txt" />
+    default="$(arg config_path)/sensor/JLBJ1861378_SENSOR.pb.txt" />
 
   <arg name="device_ip" default="192.168.8.200" />
   <arg name="msop_port" default="2368" />
@@ -38,6 +38,9 @@
     <param name="return_mode" value="$(arg return_mode)"/>
     <param name="config_vert" value="true"/>
     <param name="print_vert" value="false"/>
+
+    <param name="start_angle" value="0" />
+    <param name="end_angle" value="360" />
     
     <param name="frame_id" value="$(arg frame_id)"/>
     <param name="scan_num" value="15"/>

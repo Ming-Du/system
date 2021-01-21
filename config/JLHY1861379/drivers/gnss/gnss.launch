@@ -12,7 +12,7 @@
     <param name="frame_id" value="gnss" />
 
     <param name="config_file" 
-        value="$(arg config_path)/drivers/gnss/config_parameters.pb.txt" />
+        value="$(arg config_path)/drivers/gnss/gyro_bias.pb.txt" />
   </node>
   </group>
 
