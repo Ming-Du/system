@@ -18,6 +18,7 @@ LOCALIZATION="roslaunch launch path_recorder.launch"
 CANCARD="bash ~/EMUC_B202/start.sh"
 CANBUS="roslaunch launch chassis.launch"
 BYD_CAN_ADAPTER="roslaunch byd_can_adapter byd_can_adapter.launch"
+JINLV_CAN_ADAPTER="roslaunch can_adapter jinlv_can_adapter.launch"
 RTKREPLAYPLANNER="roslaunch controller_simulator controller_simulator.launch"
 SIM_VEHICLEDYNAMICANDMAP="roslaunch controller_simulator simulator_vehicledynamicandmap.launch"
 CONTROLLER="roslaunch controller controller.launch"
@@ -26,7 +27,7 @@ SEND_CONTROL_COMMAND_USE_TOPIC="python2 src/control/chassis_tool/chassis_set_pbm
 VEHICLE_MODEL="rosrun controller_simulator vehicle_dynamics"
 # PERCEPTION="roslaunch src/control/script/telematics_for_auto.launch"
 PERCEPTION="roslaunch launch perception.launch"
-PERCEPTION_BYD="roslaunch launchperception_BYDADK2721.launch"
+#PERCEPTION_BYD="roslaunch launchperception_BYDADK2721.launch"
 CHEJI="roslaunch telematics telematics.launch"
 LOCAL_PLANNER="roslaunch launch local_planning.launch"
 SIM_LOCAL_PLANNER="roslaunch launch sim_local_planning.launch"
@@ -107,8 +108,8 @@ elif [ $1 -eq 6 ]; then
     gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -t "gnss_rtk"  \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
-        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $BYD_CAN_ADAPTER';bash" -t "canadapter"  \
-        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION_BYD';bash" -t "perception"  \
+        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $JINLV_CAN_ADAPTER';bash" -t "canadapter"  \
+        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -t "perception"  \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -t "controller"  \
