@@ -48,10 +48,13 @@ message Object {
   optional float angle = 8;              // obj angle relative to host vehicle
 
   optional geometry.Point center = 9;    // x,y,z in meter
+  optional geometry.Point centroid = 13;
   optional geometry.Vector3 size = 10;   // length width height(in meter)
   repeated geometry.Point contour = 11;  // contour points
 
   optional geometry.Vector3 velocity = 12; // sharing with visual/tracked obj
+
+  repeated double cloud = 14 [packed = true];
 }
 
 message VisualObject {
