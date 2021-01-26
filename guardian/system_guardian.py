@@ -144,7 +144,7 @@ def topicFun(config_file):
                 topic_monitor_list.append(topic_g)
         topics_size = len(topic_monitor_list)
         print("topics_size:%d"%topics_size)
-        cmd = "rostopic hz --window=50 " +  topic_str
+        cmd = "rostopic/rostopic.py hz --window=50 " +  topic_str
         print(cmd)
         r = Popen(cmd, shell=True, stdout=PIPE,stderr=STDOUT)
         topic_dict = {}
