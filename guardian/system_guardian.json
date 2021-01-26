@@ -7,7 +7,7 @@
             "/path_recorder",
             "/local_planning",
             "/operator_tool"
-        ]
+        ],
     "guardian_topics":
         [
             "/app/telematics/setDemo",
