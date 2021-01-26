@@ -22,6 +22,9 @@ install(FILES
   system_guardian.json
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
+install(DIRECTORY rostopic/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/rostopic
+)
 
 # if(CATKIN_ENABLE_TESTING)
 #   find_package(rostest)

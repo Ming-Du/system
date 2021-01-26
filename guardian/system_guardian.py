@@ -119,7 +119,7 @@ class Process(Thread):
     #rospy.Subscriber("/sensor/gnss/gps_fix")
     #if (status.status == 2) is fine
 
-def topicFun(config_file):
+def topicFun(config_file,rostopic_file):
     topic_list=[]
     topic_send_list=[]
     rospy.loginfo("config_file:%s"%config_file)
@@ -144,7 +144,7 @@ def topicFun(config_file):
                 topic_monitor_list.append(topic_g)
         topics_size = len(topic_monitor_list)
         print("topics_size:%d"%topics_size)
-        cmd = "rostopic/rostopic.py hz --window=50 " +  topic_str
+        cmd = "python " + rostopic_file + " hz --window=50 " +  topic_str
         print(cmd)
         r = Popen(cmd, shell=True, stdout=PIPE,stderr=STDOUT)
         topic_dict = {}
@@ -194,13 +194,15 @@ def topicFun(config_file):
                 topic_dict_list = []
 
 def main():
-    if len(sys.argv) < 2:
-        rospy.logerr("please use:system_guardian.py filename")
+    if len(sys.argv) < 3:
+        rospy.logerr("please use:system_guardian.py configfilename, rostopicfilename")
         exit(-1)
     rospy.init_node('system_guardian')
     config_file = sys.argv[1].strip()
-    pth_topic = Thread(target=topicFun,args=(config_file,))
+    rostopic_file = sys.argv[2].strip()
+    pth_topic = Thread(target=topicFun,args=(config_file,rostopic_file))
     print("pth:config_file:%s"%config_file) 
+    print("pth:rostopic_file:%s"%rostopic_file)
     pth_topic.setDaemon(True)
     pth_topic.start()
 
