@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="config_path" default="$(find config)/vehicle/perception/lidar"/>
+
+  <node name="perception_lidar_front" ns="perception/lidar"
+    pkg="perception_lidar" type="perception_lidar_node" output="screen">
+    <param name="config_file"
+      value="$(arg config_path)/ch_front.pb.txt" />
+  </node>
+  <node name="perception_lidar_front_left" ns="perception/lidar"
+    pkg="perception_lidar" type="perception_lidar_node" output="screen">
+    <param name="config_file"
+      value="$(arg config_path)/c16_front_left.pb.txt" />
+  </node>
+  <node name="perception_lidar_front_right" ns="perception/lidar"
+    pkg="perception_lidar" type="perception_lidar_node" output="screen">
+    <param name="config_file"
+      value="$(arg config_path)/c16_front_right.pb.txt" />
+  </node>
+</launch>

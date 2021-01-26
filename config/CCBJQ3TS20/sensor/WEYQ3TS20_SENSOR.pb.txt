@@ -45,8 +45,8 @@ sensor_info {
     }
     rotation {
       w: 0.707
-      x: 0
-      y: 0
+      x: -0.007
+      y: 0.007
       z: -0.707
     }
   }

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="config_path" default="$(find perception_onboard)/conf"/>
+  <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
-    value="$(arg config_path)/vehicle/WEYQ3TS20_SENSOR.pb.txt" />
+    value="$(arg config_path)/sensor/WEYQ3TS20_SENSOR.pb.txt" />
 
   <arg name="device_ip" default="192.168.8.202" />
   <arg name="msop_port" default="2372" />
@@ -55,7 +55,7 @@
     <param name="print_vert" value="false"/>
     <param name="return_mode" value="$(arg return_mode)"/>
     <param name="config_vert_file" value="false"/>
-    <param name="distance_unit" value="0.25"/>
+    <param name="distance_unit" value="1"/>
     <param name="time_synchronization" value="false"/>
   </node>
   </group>
