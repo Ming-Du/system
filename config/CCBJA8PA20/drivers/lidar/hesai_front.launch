@@ -3,7 +3,7 @@
 
   <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
-    default="$(arg config_path)/sensor/WEYA8PA20_SENSOR.pb.txt" />
+    default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
   <arg name="sensor_name" default="hesai_front" />
 
   <arg name="pcap_file"  default=""/>
@@ -36,7 +36,6 @@
     <param name="timestamp_type"  type="string" value="$(arg timestamp_type)"/>
     <param name="data_type"  type="string" value="$(arg data_type)"/>
     <param name="lidar_correction_file"  type="string" value="$(arg lidar_correction_file)"/>
-</node>
+  </node>
+
 </launch>
-
-
