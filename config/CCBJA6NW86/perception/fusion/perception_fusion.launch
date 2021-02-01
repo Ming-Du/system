@@ -2,7 +2,7 @@
 <launch>
   <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
-    default="$(arg config_path)/sensor/WEYA6NW86_SENSOR.pb.txt " />
+    default="$(arg config_path)/sensor/calibrated_sensor.pb.txt " />
 
   <node name="perception_fusion" ns="perception/fusion"
     pkg="perception_fusion" type="perception_fusion_node" output="screen"
