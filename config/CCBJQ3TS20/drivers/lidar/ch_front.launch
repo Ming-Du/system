@@ -1,25 +1,23 @@
 <?xml version="1.0"?>
 <launch>
-
-<group ns="sensor/lidar/front">
   <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
-      value="$(arg config_path)/sensor/WEYQ3TS20_SENSOR.pb.txt" />
+      value="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
 
-  <node name="ch_front_driver" pkg="drivers_lslidar" type="lslidar_ch_driver_node" 
-      respawn="true" respawn_delay="10" output="screen">
+  <group ns="/sensor/lidar/front">
+  <node pkg="drivers_lslidar" type="lslidar_ch_driver_node" 
+      name="ch_driver" output="screen">
     <param name="lidar_ip" value="192.168.8.200"/>
     <param name="device_port" value="2368"/>
     <param name="add_multicast" value="false"/>
     <param name="group_ip" value="224.1.1.2"/>
   </node>
 
-  <node name="ch_front_decoder" pkg="drivers_lslidar" type="lslidar_ch_decoder_node" 
-      respawn="true" respawn_delay="10" output="screen"
+  <node pkg="drivers_lslidar" type="lslidar_ch_decoder_node" 
+      name="ch_decoder" output="screen"
       args="--sensor_meta_path=$(arg sensor_meta)" >
-
+    <!-- frame id -->
     <param name="frame_id" value="ch_front"/>
-    <param name="base_frame_id" value="base_link"/>
 
     <param name="point_num" value="2000"/>
     <param name="min_range" value="0.15"/>
@@ -28,6 +26,6 @@
     <param name="publish_point_cloud" value="true"/>
     <param name="use_gps_ts" value="false"/>
   </node>
-</group>
+  </group>
 
 </launch>

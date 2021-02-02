@@ -15,8 +15,8 @@ class Binary {
 };
 }
 
-#define LEFT_BRACKET "["
-#define RIGHT_BRACKET "]"
+#define LEFT_BRACKET "<"
+#define RIGHT_BRACKET ">"
 
 #ifndef MODULE_NAME
 #define MODULE_NAME ::common::Binary::GetName().c_str()
