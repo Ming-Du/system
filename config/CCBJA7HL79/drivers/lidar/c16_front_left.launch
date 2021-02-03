@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<launch><group ns="sensor/lidar/c16/front_left">
+<launch>
   <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
-    value="$(arg config_path)/sensor/WEY_A8PA20.pb.txt" />
+      value="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
 
   <arg name="device_ip" default="192.168.8.201" />
   <arg name="msop_port" default="2370" />
@@ -10,10 +10,10 @@
   <arg name="return_mode" default="1" />
 
   <arg name="frame_id" default="c16_front_left" />
-  <arg name="base_frame_id" default="base_link" />
 
-  <node name="c16_front_left_driver" pkg="drivers_lslidar" type="lslidar_c16_driver_node" 
-      respawn="true" respawn_delay="10" output="screen">
+  <group ns="sensor/lidar/front_left">
+  <node pkg="drivers_lslidar" type="lslidar_c16_driver_node" 
+      name="c16_driver" output="screen" >
     <param name="output_packets_topic" value="packets" />
     <param name="output_difop_topic" value="difop" />
     <!-- device address -->
@@ -30,29 +30,28 @@
     <param name="time_synchronization" value="false"/>
   </node>
 
-  <node name="c16_front_left_decoder" pkg="drivers_lslidar" type="lslidar_c16_decoder_node" 
-     respawn="true" respawn_delay="10" output="screen"
-     args="--stderrthreshold=0
-           --sensor_meta_path=$(arg sensor_meta)" >
-
+  <node pkg="drivers_lslidar" type="lslidar_c16_decoder_node" 
+      name="c16_decoder" output="screen"
+      args="--sensor_meta_path=$(arg sensor_meta)" >
+    <!-- frame id-->
     <param name="frame_id" value="$(arg frame_id)" />
-    <param name="base_frame_id" value="$(arg base_frame_id)" />
 
     <param name="input_packets_topic" value="packets" />
     <param name="input_difop_topic" value="difop" />
     <!-- distance -->
-    <param name="min_distance" value="0.2"/>
+    <param name="min_distance" value="0.15"/>
     <param name="max_distance" value="150.0"/>
     <!-- angle from behind clockwise -->
-    <param name="scan_start_angle" value="9000.0"/>
-    <param name="scan_end_angle" value="30000.0"/>
+    <param name="scan_start_angle" value="0.0"/>
+    <param name="scan_end_angle" value="36000.0"/>
     <!-- parameter -->
     <param name="config_vert" value="true"/>
     <param name="print_vert" value="false"/>
     <param name="return_mode" value="$(arg return_mode)"/>
     <param name="config_vert_file" value="false"/>
-    <param name="distance_unit" value="0.25"/>
+    <param name="distance_unit" value="1"/>
     <param name="time_synchronization" value="false"/>
   </node>
-
-</group></launch>
+  </group>
+  
+</launch>

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find trt_yolov5)/launch/obj_6mm.launch" />
+</launch>
