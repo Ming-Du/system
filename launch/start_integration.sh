@@ -37,7 +37,8 @@ TRAFFIC_LIGHT="roslaunch traffic_light traffic_light.launch"
 GLOBALLOC2LOCAL="rosrun controller_simulator globalloc2local"
 LIDAR_CAMERA_DRIVERS="roslaunch launch drivers.launch"
 TRAFFIC_LANE="roslaunch src/perception/lane_detection/lane_detection_cpp/launch/lane_detection_cpp.launch"
-OPERATOR_TOOL="python2 src/tools/operator_tool/operator_tool.py qt5 src/tools/operator_tool/conf.txt"
+#OPERATOR_TOOL="python2 src/tools/operator_tool/operator_tool.py qt5 src/tools/operator_tool/conf.txt"
+OPERATOR_TOOL="roslaunch operator_tool operator_tool.launch"
 
 
 cd $HOME/autopilot/
@@ -52,7 +53,8 @@ gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" 
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -t "controller"  \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -t "perception" \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -t "cheji" \
-        --tab -e "bash -c 'sleep 2';bash";$OPERATOR_TOOL
+		--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
+        --tab -e "bash -c 'sleep 2';bash";
 ##for perception mode  tracffic light and lidar dectection
 elif [ $1 -eq 2 ]; then
 gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
@@ -65,7 +67,8 @@ gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" 
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRAFFIC_LIGHT';bash" -t "traffic_light" \
-        --tab -e "bash -c 'sleep 2';bash";$OPERATOR_TOOL
+		--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
+        --tab -e "bash -c 'sleep 2';bash";
 #for perception mode only lane_detection 
 elif [ $1 -eq 3 ]; then
 gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
@@ -76,7 +79,8 @@ gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" 
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -t "cheji" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRAFFIC_LANE';bash" -t "traffic_lane" \
-        --tab -e "bash -c 'sleep 2';bash";$OPERATOR_TOOL
+		--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
+        --tab -e "bash -c 'sleep 2';bash";
 ##for offline simulator,use had_map build map
 elif [ $1 -eq 4 ]; then
 gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
@@ -94,7 +98,8 @@ gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" 
 	--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GLOBALLOC2LOCAL';bash" -t "globalloc2local"  \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRAFFIC_LANE';bash" -t "lane_detection" \
-        --tab -e "bash -c 'sleep 2';bash";$OPERATOR_TOOL
+		--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
+        --tab -e "bash -c 'sleep 2';bash";
 #min autodrive system 
 elif [ $1 -eq 0 ]; then
     gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
