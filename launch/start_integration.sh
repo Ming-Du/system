@@ -44,7 +44,7 @@ OPERATOR_TOOL="roslaunch operator_tool operator_tool.launch"
 cd $HOME/autopilot/
 # change the    omstreambuf() : buf  (4096*10)   
 ##for the min auto drive mode ,just use RTK_PLANNER and controller
-if [ $1 -eq 1 ]; then
+if [ "$1" == "1" ]; then
 gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GNSS_COMMAND';bash" -t "gnss_rtk"  \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
@@ -56,7 +56,7 @@ gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" 
 		--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
         --tab -e "bash -c 'sleep 2';bash";
 ##for perception mode  tracffic light and lidar dectection
-elif [ $1 -eq 2 ]; then
+elif [ "$1" == "2" ]; then
 gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CANBUS';bash" -t "canbus"  \
@@ -70,7 +70,7 @@ gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" 
 		--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
         --tab -e "bash -c 'sleep 2';bash";
 #for perception mode only lane_detection 
-elif [ $1 -eq 3 ]; then
+elif [ "$1" == "3" ]; then
 gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CANBUS';bash" -t "canbus"  \
@@ -82,7 +82,7 @@ gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" 
 		--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
         --tab -e "bash -c 'sleep 2';bash";
 ##for offline simulator,use had_map build map
-elif [ $1 -eq 4 ]; then
+elif [ "$1" == "4" ]; then
 gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $SIM_VEHICLEDYNAMICANDMAP';bash" -t "planner"  \
 	    --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -t "controller"  \
@@ -91,7 +91,7 @@ gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" 
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $SIM_HAD_MAP';bash" -t "had_map" \
         --tab -e "bash -c 'sleep 2';bash";$SEND_CONTROL_COMMAND_USE_TOPIC
 ##for offline simulator,use traffic_lane build map  ,rtk_planner is a reference map (shutdown the traj_pub)
-elif [ $1 -eq 5 ]; then
+elif [ "$1" == "5" ]; then
 gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $RTKREPLAYPLANNER';bash" -t "rtk_planner"  \
 	    --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -t "controller"  \
@@ -101,7 +101,7 @@ gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" 
 		--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
         --tab -e "bash -c 'sleep 2';bash";
 #min autodrive system 
-elif [ $1 -eq 0 ]; then
+elif [ "$1" == "0" ]; then
     gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GNSS_COMMAND';bash" -t "gnss_rtk"  \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
@@ -109,7 +109,7 @@ elif [ $1 -eq 0 ]; then
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $RTKREPLAYPLANNER';bash" -t "planner"  \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -t "controller"  \
         --tab -e "bash -c 'sleep 2';bash";$SEND_CONTROL_COMMAND_USE_TOPIC
-elif [ $1 -eq 6 ]; then
+elif [ "$1" == "6" ]; then
     gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -t "gnss_rtk"  \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
@@ -119,6 +119,46 @@ elif [ $1 -eq 6 ]; then
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -t "controller"  \
         --tab -e "bash -c 'sleep 2';bash";$SEND_CONTROL_COMMAND_USE_TOPIC
+elif [ "$1" == "wey" ]; then
+    gnome-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CANBUS';bash" -t "canbus"  \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -t "drivers"  \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -t "controller"  \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -t "perception" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -t "cheji" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GNSS_COMMAND';bash" -t "drivers_gnss" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRAFFIC_LIGHT';bash" -t "traffic_light" \
+      --tab -e "bash -c 'sleep 2';bash";$OPERATOR_TOOL
+elif [ "$1" == "minibus" ]; then
+    gnome-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CANCARD';bash" -t "cancard" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $JINLV_CAN_ADAPTER';bash" -t "canbus"  \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -t "drivers"  \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -t "controller"  \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -t "perception" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -t "cheji" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GNSS_COMMAND';bash" -t "drivers_gnss" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRAFFIC_LIGHT';bash" -t "traffic_light" \
+      --tab -e "bash -c 'sleep 2';bash";$OPERATOR_TOOL
+elif [ "$1" == "byd" ]; then
+    gnome-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $BYD_CAN_ADAPTER';bash" -t "canbus"  \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -t "drivers"  \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -t "controller"  \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -t "perception" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -t "cheji" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GNSS_COMMAND';bash" -t "drivers_gnss" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRAFFIC_LIGHT';bash" -t "traffic_light" \
+      --tab -e "bash -c 'sleep 2';bash";$OPERATOR_TOOL
 else
     echo "do others"
 fi
