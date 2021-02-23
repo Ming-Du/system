@@ -2,7 +2,7 @@
 <launch>
   <arg name="config_path" default="$(find config)/vehicle" />
   <arg name="sensor_meta"
-    default="$(arg config_path)/sensor/JLHY1861381_SENSOR.pb.txt" />
+    default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
 
   <node name="perception_lidar" ns="perception/lidar"
     pkg="perception_lidar" type="perception_lidar_node" output="screen"

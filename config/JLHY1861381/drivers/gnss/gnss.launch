@@ -3,7 +3,7 @@
   <group ns="sensor/gnss">
   <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
-        value="$(arg config_path)/sensor/JLHY1861381_SENSOR.pb.txt" />
+        value="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
 
   <node name="drivers_gnss" pkg="drivers_gnss" type="drivers_gnss_node"
         output="screen"

@@ -38,7 +38,9 @@ message PredictedTrajectory {
 
 message Object {
   optional uint32 id = 1;                // obj id, after tracked
+  
   optional ObjectType type = 2;          // obj category
+  
   optional double time_stamp = 3;        // sensing time
   optional float confidence = 4;         // probability
   optional int32 status = 5;             // reserved
