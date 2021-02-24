@@ -129,7 +129,6 @@ elif [ "$1" == "wey" ]; then
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -t "cheji" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GNSS_COMMAND';bash" -t "drivers_gnss" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRAFFIC_LIGHT';bash" -t "traffic_light" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
       --tab -e "bash -c 'sleep 2';bash";
