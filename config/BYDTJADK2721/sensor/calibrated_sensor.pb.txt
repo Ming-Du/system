@@ -1,0 +1,72 @@
+base: "base_link"
+
+sensor_info {
+  name: "gnss"
+  type: GNSS
+  orientation: FRONT
+
+  extrinsic {
+    translation {
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    }
+    rotation {
+      w: 0.
+      x: 0
+      y: 0
+      z: 0.
+    }
+  }
+}
+sensor_info {
+  name: "6mm_front"
+  type: CAMERA_6MM
+  orientation: FRONT
+  topic: "/sensor/camera/6mm/image_raw"
+}
+sensor_info {
+  name: "12mm_front"
+  type: CAMERA_12MM
+  orientation: FRONT
+  topic: "/sensor/camera/12mm/image_raw"
+}
+
+sensor_info {
+  name: "livox_front"
+  type: LIVOX_HORIZON
+  orientation: FRONT
+  topic: "/sensor/lidar/front/point_cloud"
+  extrinsic {
+    translation {
+      x: 3.65
+      y: -0.08
+      z: 0.566
+    }
+    rotation {
+      w: 1.
+      x: 0
+      y: 0
+      z: 0
+    }
+  }
+}
+sensor_info {
+  name: "livox_front_left"
+  type: LIVOX_HORIZON
+  orientation: LEFT_FORWARD
+  topic: "/sensor/lidar/front_left/point_cloud"
+  extrinsic {
+    translation {
+      x: 3.15
+      y: 0.97
+      z: 0.625
+    }
+    rotation {
+      w: 0.669
+      x: 0.008
+      y: 0.028
+      z: -0.743
+    }
+  }
+}
