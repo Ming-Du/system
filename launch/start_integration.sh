@@ -5,8 +5,6 @@ ps aux | grep roscore |awk '{print $2}' |xargs kill
 sudo chmod +777 /dev -R
 
 echo $HOME
-sed -i 's/\(${_CATKIN_SETUP_DIR:=\).*/\1\/home\/mogo\/autopilot}/g' $HOME/autopilot/setup.sh
-sh $HOME/autopilot/setup.sh
 
 ###########################################################
 GLOG_COMMAND="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1"
@@ -41,7 +39,6 @@ TRAFFIC_LANE="roslaunch src/perception/lane_detection/lane_detection_cpp/launch/
 OPERATOR_TOOL="roslaunch operator_tool operator_tool.launch"
 
 
-cd $HOME/autopilot/
 # change the    omstreambuf() : buf  (4096*10)   
 ##for the min auto drive mode ,just use RTK_PLANNER and controller
 if [ "$1" == "1" ]; then
@@ -131,7 +128,8 @@ elif [ "$1" == "wey" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GNSS_COMMAND';bash" -t "drivers_gnss" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRAFFIC_LIGHT';bash" -t "traffic_light" \
-      --tab -e "bash -c 'sleep 2';bash";$OPERATOR_TOOL
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "traffic_light" \
+      --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "minibus" ]; then
     gnome-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
@@ -145,7 +143,8 @@ elif [ "$1" == "minibus" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GNSS_COMMAND';bash" -t "drivers_gnss" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRAFFIC_LIGHT';bash" -t "traffic_light" \
-      --tab -e "bash -c 'sleep 2';bash";$OPERATOR_TOOL
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "traffic_light" \
+      --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "byd" ]; then
     gnome-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
@@ -158,7 +157,8 @@ elif [ "$1" == "byd" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GNSS_COMMAND';bash" -t "drivers_gnss" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRAFFIC_LIGHT';bash" -t "traffic_light" \
-      --tab -e "bash -c 'sleep 2';bash";$OPERATOR_TOOL
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPRATOR_TOOL';bash" -t "traffic_light" \
+      --tab -e "bash -c 'sleep 2';bash";
 else
     echo "do others"
 fi
