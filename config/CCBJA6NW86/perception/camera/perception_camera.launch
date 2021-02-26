@@ -1,4 +1,14 @@
 <?xml version="1.0"?>
-<launch>
 
+<launch>
+<!--
+  <group ns="perception/camera/6mm">
+  <node name="trt_yolov5" pkg = "trt_yolov5" type = "trt_yolov5_node" output = "screen">
+    <param name = "serialize" type = "string" value = "-d" />
+    <param name = "weights" type = "string" value = "$(find models)/tensorRT_weights/mogo_5m.wts" />
+    <param name = "names" type = "string" value = "$(find models)/tensorRT_weights/obj.names"/>
+    <param name = "cameraTopicName" type = "string" value = "/sensor/camera/6mm/image_raw" />
+  </node>
+  </group>
+-->
 </launch>
