@@ -3,7 +3,7 @@ rosnode kill -a
 ps aux | grep roscore |awk '{print $2}' |xargs kill
 
 sudo chmod +777 /dev -R
-
+source ~/catkin_ws/devel/setup.bash
 echo $HOME
 
 ###########################################################
@@ -37,7 +37,7 @@ LIDAR_CAMERA_DRIVERS="roslaunch launch drivers.launch"
 TRAFFIC_LANE="roslaunch src/perception/lane_detection/lane_detection_cpp/launch/lane_detection_cpp.launch"
 #OPERATOR_TOOL="python2 src/tools/operator_tool/operator_tool.py qt5 src/tools/operator_tool/conf.txt"
 OPERATOR_TOOL="roslaunch operator_tool operator_tool.launch"
-
+GUARDIAN="roslaunch guardian system_guardian.launch"
 
 # change the    omstreambuf() : buf  (4096*10)   
 ##for the min auto drive mode ,just use RTK_PLANNER and controller
@@ -126,11 +126,11 @@ elif [ "$1" == "wey" ]; then
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -t "cheji" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GNSS_COMMAND';bash" -t "drivers_gnss" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRAFFIC_LIGHT';bash" -t "traffic_light" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "traffic_light" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -t "guardian" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
       --tab -e "bash -c 'sleep 2';bash";
-elif [ "$1" == "minibus" ]; then
+elif [ "$1" == "jinlv" ]; then
     gnome-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CANCARD';bash" -t "cancard" \
@@ -141,9 +141,9 @@ elif [ "$1" == "minibus" ]; then
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -t "cheji" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GNSS_COMMAND';bash" -t "drivers_gnss" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRAFFIC_LIGHT';bash" -t "traffic_light" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "traffic_light" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -t "guardian" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "byd" ]; then
     gnome-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
@@ -155,9 +155,9 @@ elif [ "$1" == "byd" ]; then
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -t "cheji" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GNSS_COMMAND';bash" -t "drivers_gnss" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRAFFIC_LIGHT';bash" -t "traffic_light" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPRATOR_TOOL';bash" -t "traffic_light" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -t "guardian" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
       --tab -e "bash -c 'sleep 2';bash";
 else
     echo "do others"
