@@ -3,12 +3,12 @@ package planning;
 
 import "header.proto";
 import "chassis.proto";
-
-enum LaneChange {
-  LANE_KEEPING = 0;
-  MERGE_LEFT = 1;
-  MERGE_RIGHT = 2;
-}
+import "trajectory.proto";
+//enum LaneChange {
+  //LANE_KEEPING = 0;
+  //MERGE_LEFT = 1;
+  //MERGE_RIGHT = 2;
+//}
 enum Follow {
   NO_FOLLOW = 0;
   FOLLOW = 1;//有车 跟车
