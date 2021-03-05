@@ -36,28 +36,54 @@ message PredictedTrajectory {
   optional geometry.Point heading = 5;
 }
 
+message BBox2D {
+  optional double xmin = 1 [default = nan];  // in pixel.
+  optional double ymin = 2 [default = nan];
+  optional double xmax = 3 [default = nan];
+  optional double ymax = 4 [default = nan];
+}
+
+message CameraObjectSupplement {
+  optional bool on_use = 1 [default = false];
+  optional BBox2D box = 2;
+  optional int32 cols = 3;
+  optional int32 rows = 4;
+}
+
+message LidarObjectSupplement {
+  optional bool on_use = 1 [default = false];
+  // Format: [x0, y0, z0, x1, y1, z1...]
+  repeated double cloud = 2 [packed = true];
+}
+
 message Object {
   optional uint32 id = 1;                // obj id, after tracked
+  optional string sensor_name = 2;
   
-  optional ObjectType type = 2;          // obj category
+  optional ObjectType type = 3;          // obj category
   
-  optional double time_stamp = 3;        // sensing time
-  optional float confidence = 4;         // probability
-  optional int32 status = 5;             // reserved
+  optional double time_stamp = 4;        // sensing time
+  optional float confidence = 5;         // probability
+  optional int32 status = 6;             // reserved
 
-  optional float x_distance = 6;         // longitudinal distance
-  optional float y_distance = 7;         // lateral distance
-  optional float angle = 8;              // obj angle relative to host vehicle
+  optional float x_distance = 7;         // longitudinal distance
+  optional float y_distance = 8;         // lateral distance
+  optional float angle = 9;              // obj angle relative to host vehicle
 
-  optional geometry.Point center = 9;    // x,y,z in meter
-  optional geometry.Point centroid = 10;
-  optional geometry.Vector3 size = 11;   // length width height(in meter)
-  repeated geometry.Point contour = 12;  // contour points
+  optional geometry.Point center = 10;    // x,y,z in meter
+  optional geometry.Point centroid = 11;
+  optional geometry.Vector3 size = 12;   // length width height(in meter)
+  repeated geometry.Point contour = 13;  // contour points
 
-  optional geometry.Vector3 velocity = 13; // sharing with visual/tracked obj
-  optional geometry.Vector3 acceleration = 14;
+  optional geometry.Vector3 velocity = 14; // sharing with visual/tracked obj
+  optional geometry.Vector3 acceleration = 15;
 
-  repeated double cloud = 15 [packed = true];
+  optional double tracking_time = 16;
+
+  // camera supplement
+  optional CameraObjectSupplement camera_supplement = 17;
+  // lidar supplement
+  optional LidarObjectSupplement lidar_supplement = 18;
 }
 
 message VisualObject {
@@ -72,9 +98,9 @@ message VisualObject {
 
 message VisualObjects {
   optional common.Header header = 1;
-  repeated VisualObject objs = 2;
-  optional int32 width = 3;        // image width
-  optional int32 height = 4;       // image height
+  repeated VisualObject objs = 3;
+  optional int32 width = 4;        // image width
+  optional int32 height = 5;       // image height
 }
 
 message TrackedObject {
