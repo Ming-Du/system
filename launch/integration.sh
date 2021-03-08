@@ -5,6 +5,7 @@ ps aux | grep roscore |awk '{print $2}' |xargs kill
 sudo chmod +777 /dev -R
 
 echo $HOME
+echo $1
 
 ###########################################################
 GLOG_COMMAND="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1"
