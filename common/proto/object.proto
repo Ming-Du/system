@@ -98,6 +98,7 @@ message VisualObject {
 
 message VisualObjects {
   optional common.Header header = 1;
+  optional string sensor_name = 2;
   repeated VisualObject objs = 3;
   optional int32 width = 4;        // image width
   optional int32 height = 5;       // image height
@@ -122,5 +123,6 @@ message TrackedObject {
 
 message TrackedObjects {
   optional common.Header header = 1;
-  repeated TrackedObject objs = 2;
+  optional string sensor_name = 2;
+  repeated TrackedObject objs = 3;
 }
