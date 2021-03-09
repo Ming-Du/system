@@ -4,10 +4,10 @@
   <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
     default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
-<!--
   <arg name="pixel_format" default="yuyv" />
--->
+<!--
   <arg name="pixel_format" default="mjpeg" />
+-->
   <arg name="frame_id" default="6mm_front" />
 
   <group ns="sensor/camera/6mm">
