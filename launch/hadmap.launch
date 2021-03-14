@@ -6,6 +6,11 @@
 
 
     <!-- <param name="traj_file" value="$(find map_data)/hengyang_jinlv/traj_hengyanggaoxin_all_kappa_cut.csv" /> -->
+
+    <!-- <param name="traj_file" value="$(find map_data)/hengyang_jinlv/traj_hengyanggaoxin_all_kappa_cut.csv" /> -->
+    <!-- <param name="traj_file" value="$(find controller_simulator)/testdata/garage_shunyi_all_25km_jinlv.csv" /> -->
+
+<!-- <param name="traj_file" value="/home/mogo/catkin_ws/2021-2-3-16-45-43_path_0.2.txt" /> -->
     
     <!-- <param name="traj_file" value="/home/mogo/catkin_ws/src/map_data/shunyi_guozhan/2020-11-8-13-44-27_path.txt" />  -->
         <!-- <param name="traj_file" value="/home/mogo/catkin_ws/src/map_data/shunyi_guozhan/2020-11-8-13-44-27_path_kappa.csv" />  -->

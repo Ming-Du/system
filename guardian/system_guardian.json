@@ -4,23 +4,21 @@
         [
 	"/controller",
 	"/hadmap_server",
+	"/jinlv_can_adapter",
 	"/local_planning",
 	"/operator_tool",
 	"/path_recorder",
 	"/perception/fusion/perception_fusion",
 	"/perception/lidar/perception_lidar",
-	"/sensor/camera/6mm/drivers_camera_6mm",
-	"/chassis_wey",
+	"/rosout",
+	"/sensor/camera/6mm/trt_yolov5",
 	"/sensor/gnss/drivers_gnss",
-	"/sensor/lidar/front/hesai_front",
-	"/sensor/lidar/front_left/c16_decoder",
-	"/sensor/lidar/front_left/c16_driver",
-	"/sensor/lidar/front_right/c16_decoder",
-	"/sensor/lidar/front_right/c16_driver",
-	"/system_guardian",
+	"/sensor/lidar/c32/front_right/c32_right_decoder_node",
+	"/sensor/lidar/c32/front_right/c32_right_driver_node",
+	"/sensor/lidar/front_left/c32_decoder",
+	"/sensor/lidar/front_left/c32_driver",
 	"/telematics_node"
-
-        ],
+		],
     "guardian_topics":
         [
 	"/app/telematics/setDemo",

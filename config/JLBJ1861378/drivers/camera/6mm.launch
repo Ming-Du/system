@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="camera_device" default="/dev/video1" />
-  <arg name="pixel_format" default="yuyv" />
+  <arg name="camera_device" default="/dev/video0" />
+  <arg name="pixel_format" default="mjpeg" />
   <!-- arg name="pixel_format" default="mjpeg" /-->
   <arg name="frame_id" default="6mm_front" />
 
