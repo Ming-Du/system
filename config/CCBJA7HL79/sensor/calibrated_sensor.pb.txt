@@ -24,6 +24,33 @@ sensor_info {
   type: CAMERA_6MM
   orientation: FRONT
   topic: "/sensor/camera/6mm/image_raw"
+
+  extrinsic {
+    translation {
+      x:-0.0296562
+      y:-1.31053
+      z:1.17889
+    }
+    rotation {
+      w: 1
+      x: 0
+      y: 0
+      z: 0
+    }
+  }
+  intrinsic {
+    width: 1280
+    height: 720
+    matrix: 1923.1
+    matrix: 0.0
+    matrix: 646.224
+    matrix: 0.0
+    matrix: 1940.29
+    matrix: 275.988
+    matrix: 0.0
+    matrix: 0.0
+    matrix: 1.0
+  }
 }
 sensor_info {
   name: "12mm_front"
