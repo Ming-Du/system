@@ -27,26 +27,26 @@ sensor_info {
 
   extrinsic {
     translation {
-      x:-0.0296562
-      y:-1.31053
-      z:1.17889
+      x: 2.01456
+      y: -0.0461773
+      z: 1.36841
     }
     rotation {
-      w: 1
-      x: 0
-      y: 0
-      z: 0
+      w: 0.500274
+      x: -0.51457
+      y: 0.497363
+      z: -0.487172
     }
   }
   intrinsic {
     width: 1280
     height: 720
-    matrix: 1923.1
+    matrix: 1954.55
     matrix: 0.0
-    matrix: 646.224
+    matrix: 589.718
     matrix: 0.0
-    matrix: 1940.29
-    matrix: 275.988
+    matrix: 1973.15
+    matrix: 346.782
     matrix: 0.0
     matrix: 0.0
     matrix: 1.0

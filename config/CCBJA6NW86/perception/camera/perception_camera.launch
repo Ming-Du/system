@@ -7,6 +7,7 @@
     <param name = "weights" type = "string" value = "$(find models)/tensorRT_weights/mogo_5m.wts" />
     <param name = "names" type = "string" value = "$(find models)/tensorRT_weights/obj.names"/>
     <param name = "cameraTopicName" type = "string" value = "/sensor/camera/6mm/image_raw" />
+    <param name = "sensor_name" value="6mm_front" />
   </node>
   </group>
 </launch>
