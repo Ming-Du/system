@@ -1,9 +1,4 @@
 <?xml version="1.0"?>
 <launch>
-
   <include file="$(find config)/vehicle/drivers/lidar/livox_front.launch" />
-  <!-- x y z y p r -->
-  <node name="base2livoxfront" pkg="tf" type="static_transform_publisher"
-    args="3.6 0 0.474 0 0.045 -0.021 base_link $(arg msg_frame_id) 100" />
-
 </launch>
