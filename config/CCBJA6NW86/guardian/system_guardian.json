@@ -6,7 +6,7 @@
     "/hadmap_server",
     "/local_planning",
     "/operator_tool",
-    "/path_recorder",
+    "/localization",
     "/perception/fusion/perception_fusion",
     "/perception/lidar/perception_lidar",
     "/sensor/camera/6mm/drivers_camera_6mm",
