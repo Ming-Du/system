@@ -29,6 +29,10 @@ TRAFFIC_LANE="roslaunch src/perception/lane_detection/lane_detection_cpp/launch/
 OPERATOR_TOOL="roslaunch operator_tool operator_tool.launch"
 GUARDIAN="roslaunch guardian system_guardian.launch"
 TRACK_RECORDER="roslaunch track_recorder track_recorder.launch"
+PRIUS_CAR="roslaunch model_publisher prius_model.launch"
+PRIUS_MAP="roslaunch model_publisher map_model.launch"
+HADMAP_ENGINE="roslaunch hadmap_engine hadmap_engine.launch"
+
 
 ##for the min auto drive mode ,just use RTK_PLANNER and controller
 if [ "$1" == "1" ]; then
@@ -68,6 +72,9 @@ elif [ "$1" == "wey" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -t "guardian" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -t "track_recorder" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $PRIUS_CAR';bash" -t "prius_car" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $PRIUS_MAP';bash" -t "prius_map" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -t "hadmap_engine" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "jinlv" ]; then
     gnome-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
@@ -82,6 +89,9 @@ elif [ "$1" == "jinlv" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -t "guardian" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -t "track_recorder" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $PRIUS_CAR';bash" -t "prius_car" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $PRIUS_MAP';bash" -t "prius_map" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -t "hadmap_engine" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "byd" ]; then
     gnome-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
@@ -96,6 +106,9 @@ elif [ "$1" == "byd" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -t "guardian" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -t "track_recorder" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $PRIUS_CAR';bash" -t "prius_car" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $PRIUS_MAP';bash" -t "prius_map" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -t "hadmap_engine" \
       --tab -e "bash -c 'sleep 2';bash";
 else
     echo "do others"
