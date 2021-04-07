@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=/home/mogo/qtapp/build-auto1-unknown-Release/up.sh
+Name=auto
+GenericName=myapp
+Icon=/home/mogo/Desktop/mogo.jpeg
+Terminal=false
+Categories=Development;
