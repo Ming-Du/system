@@ -2,7 +2,7 @@
 rosnode kill -a
 ps aux | grep roscore |awk '{print $2}' |xargs kill
 
-sudo chmod +777 /dev -R
+echo "123"|sudo -S chmod +777 /dev -R
 echo $HOME
 echo $1
 ###########################################################
