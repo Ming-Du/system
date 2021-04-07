@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/conf">
+        <file>vehicle.conf</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>mogo.ico</file>
+    </qresource>
+</RCC>
