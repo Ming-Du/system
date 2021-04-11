@@ -28,14 +28,6 @@ enum ObjectType {
   TYPE_UNKNOWN_DYNAMIC = 94;
 }
 
-message PredictedTrajectory {
-  optional double timestamp = 1;
-  optional geometry.Point position = 2;
-  optional geometry.Point velocity = 3;
-  optional geometry.Point acceleration = 4;
-  optional geometry.Point heading = 5;
-}
-
 message BBox2D {
   optional double xmin = 1 [default = nan];  // in pixel.
   optional double ymin = 2 [default = nan];
@@ -81,9 +73,9 @@ message Object {
   optional double tracking_time = 16;
 
   // camera supplement
-  optional CameraObjectSupplement camera_supplement = 17;
+  //optional CameraObjectSupplement camera_supplement = 17;
   // lidar supplement
-  optional LidarObjectSupplement lidar_supplement = 18;
+  //optional LidarObjectSupplement lidar_supplement = 18;
 }
 
 message VisualObject {
@@ -111,7 +103,7 @@ message TrackedObject {
   optional float yaw_rate = 3;  //in rad/s
   optional geometry.Vector3 velocity = 4; // absolute velocity, in m/s, vx, vy, vz
   repeated geometry.Trace trace = 5;    // historical positions
-  repeated PredictedTrajectory prediction = 6; // predicted global position in future stamp
+  repeated geometry.Trace prediction = 6; // predicted global position in future stamp
 
   optional float absolute_longitude_v = 7;   // along lane speed, m/s
   optional float absolute_longitude_a = 8;   // in m/s2, longitudinal acc
