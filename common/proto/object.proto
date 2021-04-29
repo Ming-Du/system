@@ -73,7 +73,7 @@ message Object {
   optional double tracking_time = 16;
 
   // camera supplement
-  //optional CameraObjectSupplement camera_supplement = 17;
+  optional CameraObjectSupplement camera_supplement = 17;
   // lidar supplement
   //optional LidarObjectSupplement lidar_supplement = 18;
 }
