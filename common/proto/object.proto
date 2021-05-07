@@ -75,7 +75,7 @@ message Object {
   // camera supplement
   optional CameraObjectSupplement camera_supplement = 17;
   // lidar supplement
-  //optional LidarObjectSupplement lidar_supplement = 18;
+  optional LidarObjectSupplement lidar_supplement = 18;
 }
 
 message VisualObject {
