@@ -41,7 +41,11 @@ message Intrinsic {
 
 message RegisteredSensor {
   repeated SensorInfo sensor_info = 1;
-  optional string base = 2; // 车体坐标系
+  optional string base = 2; // 车体坐标�?
+}
+
+message Distcoeff {
+  repeated double distort_matrix = 1;  // 5x1 matrix
 }
 
 message SensorInfo {
@@ -52,5 +56,6 @@ message SensorInfo {
   
   optional Extrinsic extrinsic = 6;
   optional Intrinsic intrinsic = 7;
+  optional Distcoeff distcoeff = 8;
 }
 
