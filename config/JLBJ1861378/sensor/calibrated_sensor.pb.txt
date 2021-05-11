@@ -4,10 +4,10 @@ sensor_info {
   name: "gnss"
   type: GNSS
   orientation: FRONT
-
+//imu lever-arm -0.46,-3.5,1.8
   extrinsic {
     translation {
-      x: 3.88
+      x: 3.78
       y: -0.46
       z: 0
     }
