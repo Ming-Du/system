@@ -4,10 +4,10 @@ sensor_info {
   name: "gnss"
   type: GNSS
   orientation: FRONT
-//imu lever-arm -0.46,-3.5,1.8
+
   extrinsic {
     translation {
-      x: 3.78
+      x: 3.80
       y: -0.46
       z: 0
     }
@@ -39,15 +39,15 @@ sensor_info {
   topic: "/sensor/lidar/front_left/point_cloud"
   extrinsic {
     translation {
-      x: 4.95
-      y: 1.00
+      x: 4.96
+      y: 0.97
       z: 0.68
     }
     rotation {
-      w: 0.656627
-      x: 0.0125035
-      y: -0.0108883
-      z: 0.754033
+      w: 0.657319
+      x: 0.00986384
+      y: -0.00860478
+      z: 0.753499
     }
   }
 }
@@ -64,9 +64,11 @@ sensor_info {
     }
     rotation {
       w: 0.942751
-      x: -0.000392
-      y: 0.0220709
-      z: 0.332765
+      x: 0.00298611
+      y: 0.0229856
+      z: 0.33269
     }
   }
 }
+
+
