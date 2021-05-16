@@ -1,0 +1,70 @@
+syntax = "proto2";
+package adas;
+
+enum CarLocation
+{
+  Same_LINE   = 0;
+  Left_LINE   = 1;
+  Right_LINE  = 2;
+  left2_LINE  = 3;
+  Right2_LINE = 4;
+}
+
+enum ActionType
+{
+  action_type_view                        = 1;
+  action_type_obstacles                   = 2;
+  action_type_lanes                       = 3;
+  action_type_state                       = 4;
+  action_type_warn                        = 5;
+  action_type_light                       = 6;
+  action_type_config                      = 7;
+  action_type_gdgps                       = 8;
+  action_type_auto_pilot_state            = 9;
+  action_type_auto_pilot_mode             = 10;
+  action_type_obu_traffic_light           = 11;
+  action_type_ai_cloud_to_start_autopilot = 12;
+}
+
+message View
+{
+  optional int32       xl = 1;
+  optional int32       yt = 2;
+  optional int32       xr = 3;
+  optional int32       yb = 4;
+  optional string     type = 5;
+  optional CarLocation showImageLocation = 6;
+  optional double      distance_x = 7;
+  optional double      distance_y = 8;
+  optional double      lon = 9;
+  optional double      lat = 10;
+  optional double      alt = 11;
+  optional string      systemTime = 12;
+  optional string      satelliteTime = 13;
+  optional string      uuid = 14;
+  optional string      carId = 15;
+  optional string      color = 16;
+  optional double      heading = 17;
+  optional double      speed = 18;
+  //长
+//  optional float       length = 19;
+  //宽
+//  optional float       width = 20;
+  //高
+//  optional float       height = 21;
+}
+
+
+// 渲染流消息
+message ViwesMsg
+{
+  optional string    action  = 1;
+  repeated View      models  = 2;
+}
+
+
+
+
+
+
+
