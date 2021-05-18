@@ -12,3 +12,4 @@
           --publish_lidar_cluster=true
           --lidar_input=c32_front_left;c32_front_right" />
 </launch>
+
