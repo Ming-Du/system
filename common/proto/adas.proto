@@ -32,26 +32,41 @@ message View
   optional int32       yt = 2;
   optional int32       xr = 3;
   optional int32       yb = 4;
+  //物体类型
   optional string     type = 5;
   optional CarLocation showImageLocation = 6;
+  //距离x轴值
   optional double      distance_x = 7;
+  //距离y轴值
   optional double      distance_y = 8;
+  //经度
   optional double      lon = 9;
+  //纬度
   optional double      lat = 10;
+  //海拔
   optional double      alt = 11;
+  //系统时间
   optional string      systemTime = 12;
+  //gps时间
   optional string      satelliteTime = 13;
+  //车辆id
   optional string      uuid = 14;
+  //车牌id
   optional string      carId = 15;
+  //车辆颜色
   optional string      color = 16;
+  //车辆朝向
   optional double      heading = 17;
+  //车辆速度
   optional double      speed = 18;
   //长
-//  optional float       length = 19;
+  optional float       length = 19;
   //宽
-//  optional float       width = 20;
+  optional float       width = 20;
   //高
-//  optional float       height = 21;
+  optional float       height = 21;
+  //危险等级 1 绿,2 黄,3 红
+  optional int32       drawlevel = 22;
 }
 
 
