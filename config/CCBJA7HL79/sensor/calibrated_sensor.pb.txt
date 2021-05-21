@@ -23,40 +23,40 @@ sensor_info {
   name: "6mm_front"
   type: CAMERA_6MM
   orientation: FRONT
-  topic: "/sensor/camera/6mm/image_undistort"
+  topic: "/sensor/camera/6mm/image_raw"
 
   extrinsic {
     translation {
-      x: 2.01456
-      y: -0.0461773
-      z: 1.36841
+      x: 1.8121721422039041
+      y: -0.0462259777987210144
+      z: 1.43998588064915101
     }
     rotation {
-      w: 0.500274
-      x: -0.51457
-      y: 0.497363
-      z: -0.487172
+      w: -0.491014072075948382
+      x: 0.520373401974146499
+      y: -0.499624097384851806
+      z: 0.488356903149347321
     }
   }
   intrinsic {
     width: 1280
     height: 720
-    matrix: 1954.55
+    matrix: 2012.49
     matrix: 0.0
-    matrix: 589.718
+    matrix: 647.517
     matrix: 0.0
-    matrix: 1973.15
-    matrix: 346.782
+    matrix: 2032.47
+    matrix: 346.133
     matrix: 0.0
     matrix: 0.0
     matrix: 1.0
   }
   distcoeff {
-    distort_matrix: -0.519739
-    distort_matrix: -0.828860
-    distort_matrix: 0.00018620
-    distort_matrix: 0.00366811
-    distort_matrix: 6.08208
+    distort_matrix: -0.610606
+    distort_matrix: 0.532652
+    distort_matrix: -0.00392882
+    distort_matrix: 7.82198e-5
+    distort_matrix: 1.17838
   }
   
 }
