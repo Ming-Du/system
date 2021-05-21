@@ -23,19 +23,19 @@ sensor_info {
   name: "6mm_front"
   type: CAMERA_6MM
   orientation: FRONT
-  topic: "/sensor/camera/6mm/image_undistort"
+  topic: "/sensor/camera/6mm/image_raw"
 
   extrinsic {
     translation {
-      x: 2.01456
-      y: -0.0461773
-      z: 1.36841
+      x: 2.01471358895938391
+      y: -0.0461772739317396486
+      z: 1.37840587004337944
     }
     rotation {
-      w: 0.500274
-      x: -0.51457
-      y: 0.497363
-      z: -0.487172
+      w: -0.485966762808998864
+      x: 0.520481345933420214
+      y: -0.511196159689339069
+      z: 0.481262880657909564
     }
   }
   intrinsic {
