@@ -27,36 +27,36 @@ sensor_info {
 
   extrinsic {
     translation {
-      x: 2.01456
-      y: -0.0461773
-      z: 1.36841
+      x: 1.80215100266792727
+      y: -0.0496866202652800903
+      z: 1.55451020801675699
     }
     rotation {
-      w: 0.500274
-      x: -0.51457
-      y: 0.497363
-      z: -0.487172
+      w: -0.494557954371301123
+      x: 0.510806960135818278
+      y: -0.508153377527938765
+      z: 0.486074916192788919
     }
   }
   intrinsic {
     width: 1280
     height: 720
-    matrix: 2003.33
+    matrix: 2014.4491753225191
     matrix: 0.0
-    matrix: 614.478
+    matrix: 655.65184858619159
     matrix: 0.0
-    matrix: 2019.47
-    matrix: 334.415
+    matrix: 2022.9906439288798
+    matrix: 403.79107636953171
     matrix: 0.0
     matrix: 0.0
     matrix: 1.0
   }
   distcoeff {
-    distort_matrix: -0.609794
-    distort_matrix: 0.786334
-    distort_matrix: -0.00196532
-    distort_matrix: 0.00519612
-    distort_matrix: -1.38696
+    distort_matrix: -0.66520653484730607
+    distort_matrix: 2.1653895527814959
+    distort_matrix: -0.008662926077908693
+    distort_matrix: -0.001161984367312015
+    distort_matrix: -10.046859045679854
   }
 }
 sensor_info {
