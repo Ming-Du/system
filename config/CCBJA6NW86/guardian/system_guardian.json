@@ -8,6 +8,7 @@
     "/operator_tool",
     "/localization",
     "/perception/fusion/perception_fusion",
+    "/perception/camera/6mm/trt_yolov5",
     "/perception/lidar/perception_lidar",
     "/sensor/camera/6mm/drivers_camera_6mm",
     "/sensor/gnss/drivers_gnss",
