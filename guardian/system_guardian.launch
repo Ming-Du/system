@@ -1,3 +1,3 @@
 <launch>
-  <node name="system_guardian" pkg="guardian" type="system_guardian.py"  args="$(find guardian)/system_guardian.json"  output="screen"/>
+  <node name="system_guardian" pkg="guardian" type="system_guardian.py"  args="$(find config)/vehicle/guardian/system_guardian.json $(find guardian)/rostopic/rostopic.py"  output="screen"/>
 </launch>

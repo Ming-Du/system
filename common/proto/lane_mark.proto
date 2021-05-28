@@ -2,6 +2,7 @@ syntax = "proto2";
 package perception;
 
 import "header.proto";
+import "geometry.proto";
 
 enum LaneMarkColor {
   COLOR_WHITE = 0;
@@ -14,21 +15,15 @@ enum LaneMarkType {
   LANE_MARK_BROKEN = 2;
 }
 
-//TODO: define geometry.proto
-message Point2D {
-  optional double x = 1 [default = nan];
-  optional double y = 2 [default = nan];
-}
-
 message LaneMark {
   optional LaneMarkColor color = 1;
   optional LaneMarkType type = 2;
   optional float confidence = 3;       // valid length / 60.0 meters
-  repeated Point2D points = 4;
+  repeated geometry.Point2D points = 4;
 }
 
 message LaneCenter {
-  repeated Point2D points = 1;
+  repeated geometry.Point2D points = 1;
 }
 
 message LaneMarks {

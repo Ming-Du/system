@@ -1,0 +1,120 @@
+base: "base_link"
+
+sensor_info {
+  name: "gnss"
+  type: GNSS
+  orientation: FRONT
+
+  extrinsic {
+    translation {
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    }
+    rotation {
+      w: 1.
+      x: 0
+      y: 0
+      z: 0.029
+    }
+  }
+}
+sensor_info {
+  name: "6mm_front"
+  type: CAMERA_6MM
+  orientation: FRONT
+  topic: "/sensor/camera/6mm/image_raw"
+
+  extrinsic {
+    translation {
+      x: 2.14151
+      y: -0.0267435
+      z: 1.41486
+    }
+    rotation {
+      w: -0.497794
+      x: 0.505581
+      y: -0.498785
+      z: 0.498147
+    }
+  }
+  intrinsic {
+    width: 1280
+    height: 720
+    matrix: 1949.55
+    matrix: 0.0
+    matrix: 621.751
+    matrix: 0.0
+    matrix: 1964.2
+    matrix: 356.96
+    matrix: 0.0
+    matrix: 0.0
+    matrix: 1.0
+  }
+}
+sensor_info {
+  name: "12mm_front"
+  type: CAMERA_12MM
+  orientation: FRONT
+  topic: "/sensor/camera/12mm/image_raw"
+}
+
+sensor_info {
+  name: "hesai_front"
+  type: HESAI_XT32
+  orientation: FRONT
+  topic: "/sensor/lidar/front/point_cloud"
+  extrinsic {
+    translation {
+      x: 3.7
+      y: -0.08
+      z: 0.75
+    }
+    rotation {
+      w: 0.707
+      x: 0.011
+      y: 0.023
+      z: 0.707
+    }
+  }
+}
+sensor_info {
+  name: "c16_front_left"
+  type: LSLIDAR_C16
+  orientation: LEFT_FORWARD
+  topic: "/sensor/lidar/front_left/point_cloud"
+  extrinsic {
+    translation {
+      x: 3.25
+      y: 0.92
+      z: 0.59
+    }
+    rotation {
+      w: 0.679
+      x: -0.012
+      y: -0.010
+      z: -0.734
+    }
+  }
+}
+# x: +right roll
+# y: +lift head
+sensor_info {
+  name: "c16_front_right"
+  type: LSLIDAR_C16
+  orientation: RIGHT_FORWARD
+  topic: "/sensor/lidar/front_right/point_cloud"
+  extrinsic {
+    translation {
+      x: 3.20
+      y: -0.94
+      z: 0.61
+    }
+    rotation {
+      w: 0.676
+      x: -0.003
+      y: 0.009
+      z: 0.737
+    }
+  }
+}

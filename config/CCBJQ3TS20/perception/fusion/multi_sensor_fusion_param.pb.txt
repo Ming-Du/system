@@ -1,9 +1,0 @@
-frame_id: "base_link"
-
-input_sensor {
-  type: OBJS_LIDAR
-  topic: "/perception/lidar/front/lidar_obstacle"
-}
-
-localization_topic: "/localization/global"
-send_tracked_objs: "/perception/fusion/obstacles"

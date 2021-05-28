@@ -100,16 +100,14 @@ bool GetProtoFromFile(const std::string &file_name,
 }
 
 // output memory stream
-//TODO: handle overflow
 class omstreambuf : public std::streambuf
 {
 private:
   std::vector<char> buf;
-  //#define BLOCK_SIZE 512
+  #define BUFFER_SIZE 1024
 public:
-  omstreambuf() : buf(4096*10)
+  omstreambuf() : buf(BUFFER_SIZE)
   {
-    //buf.reserve(BLOCK_SIZE);
     setp(buf.data(), buf.data() + buf.size());
   }
   template <class bufT>
@@ -118,6 +116,22 @@ public:
     int len = pptr() - pbase();
     v.resize(len);
     memcpy((void*)v.data(), buf.data(), len);
+  }
+private:
+  virtual int overflow(int c)
+  {
+    if (c == EOF)
+    {
+      return !EOF;
+    }
+    else
+    {
+      size_t old_size = buf.size();
+      buf.resize(old_size * 2);
+      setp(buf.data(), buf.data() + buf.size());
+      pbump(static_cast<int>(old_size));
+      return sputc(c);
+    }
   }
 };
 // input memory stream

@@ -1,0 +1,20 @@
+input_sensor: "ch_front"
+
+# segmentation
+downsampling_radius: 0.16
+
+# ground filter
+sensor_height: 0.33
+num_lpr: 5000
+th_dist: 0.4
+th_seeds: 1.2
+min_distance: 2.0
+
+roi {
+  roi_x_max: 120.0
+  roi_x_min: -8.0
+  roi_y_max: 12.5
+  roi_y_min: -12.5
+  roi_z_max: 2.5
+  roi_z_min: -1.0
+}

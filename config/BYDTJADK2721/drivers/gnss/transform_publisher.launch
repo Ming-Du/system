@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-
-  <!--remap from="/dev/ttyACM0" to="/dev/ttyACM1" /-->
-  <!-- x y z y p r -->
-  <node name="base2gnss" pkg="tf" type="static_transform_publisher"
-        args="0 0 0.24 -1.57 0 0 base_link gnss 10" />
-
-</launch>

@@ -1,20 +1,15 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="config_path" default="$(find config)/vehicle/perception/lidar"/>
+  <arg name="config_path" default="$(find config)/vehicle" />
+  <arg name="sensor_meta"
+    default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
 
-  <node name="perception_lidar_front" ns="perception/lidar"
-    pkg="perception_lidar" type="perception_lidar_node" output="screen">
-    <param name="config_file"
-      value="$(arg config_path)/ch_front.pb.txt" />
-  </node>
-  <node name="perception_lidar_front_left" ns="perception/lidar"
-    pkg="perception_lidar" type="perception_lidar_node" output="screen">
-    <param name="config_file"
-      value="$(arg config_path)/c16_front_left.pb.txt" />
-  </node>
-  <node name="perception_lidar_front_right" ns="perception/lidar"
-    pkg="perception_lidar" type="perception_lidar_node" output="screen">
-    <param name="config_file"
-      value="$(arg config_path)/c16_front_right.pb.txt" />
-  </node>
+  <node name="perception_lidar" ns="/perception/lidar"
+    pkg="perception_lidar" type="perception_lidar_node" output="screen"
+    args="--logtostderr=0 --stderrthreshold=1 --v=5
+          --sensor_meta_path=$(arg sensor_meta) 
+          --lidar_segmentation_conf_path=$(arg config_path)/perception/lidar/lidar_segmentation.pb.txt
+          --publish_lidar_cluster=true
+          --lidar_input=ch_front;c16_left" />
 </launch>
+

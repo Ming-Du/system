@@ -1,0 +1,14 @@
+{
+   "lidar_config": [
+      {
+         "broadcast_code": "3WEDH760010537",
+         "sensor_name": "livox_front",
+         "enable_connect": true,
+         "enable_fan": false,
+         "return_mode": 0,
+         "coordinate": 0,
+         "imu_rate": 0,
+         "extrinsic_parameter_source": 0
+      }
+   ]
+}
