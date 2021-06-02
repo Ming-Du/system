@@ -1,0 +1,72 @@
+base: "base_link"
+
+sensor_info {
+  name: "gnss"
+  type: GNSS
+  orientation: FRONT
+
+  extrinsic {
+    translation {
+      x: 3.76
+      y: -0.46
+      z: 0
+    }
+    rotation {
+      w: 0.707
+      x: 0
+      y: 0
+      z: 0.707
+    }
+  }
+}
+sensor_info {
+  name: "6mm_front"
+  type: CAMERA_6MM
+  orientation: FRONT
+  topic: "/sensor/camera/6mm/image_raw"
+}
+sensor_info {
+  name: "12mm_front"
+  type: CAMERA_12MM
+  orientation: FRONT
+  topic: "/sensor/camera/12mm/image_raw"
+}
+
+sensor_info {
+  name: "c32_front_left"
+  type: LSLIDAR_C32
+  orientation: LEFT_FORWARD
+  topic: "/sensor/lidar/front_left/point_cloud"
+  extrinsic {
+    translation {
+      x: 4.91
+      y: 1.00
+      z: 0.70
+    }
+    rotation { 
+      w: 0.422269
+      x: 0.0235345
+      y: 0.00298423
+      z: 0.90616
+    }
+  }
+}
+sensor_info {
+  name: "c32_front_right"
+  type: LSLIDAR_C32
+  orientation: RIGHT_FORWARD
+  topic: "/sensor/lidar/front_right/point_cloud"
+  extrinsic {
+    translation {
+      x: 4.94
+      y: -1.02
+      z: 0.69
+    }
+    rotation {
+      w: 0.743092
+      x: 0.00636122
+      y: -0.0201041
+      z: 0.668857
+    }
+  }
+}
