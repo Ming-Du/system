@@ -23,40 +23,40 @@ sensor_info {
   name: "6mm_front"
   type: CAMERA_6MM
   orientation: FRONT
-  topic: "/sensor/camera/6mm/image_undistort"
+  topic: "/sensor/camera/6mm/image_raw"
 
   extrinsic {
     translation {
-      x: 2.01456
-      y: -0.0461773
-      z: 1.36841
+      x: 1.80215100266792727
+      y: -0.0496866202652800903
+      z: 1.55451020801675699
     }
     rotation {
-      w: 0.500274
-      x: -0.51457
-      y: 0.497363
-      z: -0.487172
+      w: -0.494557954371301123
+      x: 0.510806960135818278
+      y: -0.508153377527938765
+      z: 0.486074916192788919
     }
   }
   intrinsic {
     width: 1280
     height: 720
-    matrix: 2003.33
+    matrix: 2014.4491753225191
     matrix: 0.0
-    matrix: 614.478
+    matrix: 655.65184858619159
     matrix: 0.0
-    matrix: 2019.47
-    matrix: 334.415
+    matrix: 2022.9906439288798
+    matrix: 403.79107636953171
     matrix: 0.0
     matrix: 0.0
     matrix: 1.0
   }
   distcoeff {
-    distort_matrix: -0.609794
-    distort_matrix: 0.786334
-    distort_matrix: -0.00196532
-    distort_matrix: 0.00519612
-    distort_matrix: -1.38696
+    distort_matrix: -0.66520653484730607
+    distort_matrix: 2.1653895527814959
+    distort_matrix: -0.008662926077908693
+    distort_matrix: -0.001161984367312015
+    distort_matrix: -10.046859045679854
   }
 }
 sensor_info {
@@ -75,16 +75,17 @@ sensor_info {
     translation {
       x: 3.6
       y: 0.
-      z: 0.33
+      z: 0.42
     }
     rotation {
-      w: 0.707
-      x: -0.007
-      y: 0.007
-      z: -0.707
+      w: 0.700872
+      x: -0.00727516
+      y: 0.0148726
+      z: -0.713095
     }
   }
 }
+
 sensor_info {
   name: "c16_front_left"
   type: LSLIDAR_C16
@@ -92,15 +93,15 @@ sensor_info {
   topic: "/sensor/lidar/front_left/point_cloud"
   extrinsic {
     translation {
-      x: 3.25
+      x: 3.18
       y: 0.88
-      z: 0.55
+      z: 0.71
     }
     rotation {
-      w: 0.
-      x: 0.
-      y: 0.
-      z: 1.
+      w: -0.0262081
+      x: -0.00596938
+      y: 0.00539397
+      z: -0.999624
     }
   }
 }
@@ -111,15 +112,15 @@ sensor_info {
   topic: "/sensor/lidar/front_right/point_cloud"
   extrinsic {
     translation {
-      x: 3.35
-      y: -0.88
-      z: 0.55
+      x: 3.31
+      y: -0.93
+      z: 0.66
     }
     rotation {
-      w: -0.078
-      x: 0.0
-      y: 0.0
-      z: 0.997
+      w: 0.077424
+      x: -0.0143644
+      y: 0.0102598
+      z: -0.996842
     }
   }
 }

@@ -8,6 +8,7 @@
     "/operator_tool",
     "/localization",
     "/perception/fusion/perception_fusion",
+    "/perception/camera/6mm/trt_yolov5",
     "/perception/lidar/perception_lidar",
     "/sensor/camera/6mm/drivers_camera_6mm",
     "/sensor/gnss/drivers_gnss",
@@ -17,7 +18,10 @@
     "/sensor/lidar/front_right/c16_decoder",
     "/sensor/lidar/front_right/c16_driver",
     "/system_guardian",
-    "/telematics_node"
+    "/telematics_node",
+    "/track_recorder",
+    "/vv6_can_adapter"
+
 	],
     "guardian_topics":
         [
@@ -63,15 +67,13 @@
             "/sensor/lidar/c16/front_left/packets",
             "/sensor/lidar/c16/front_left/point_cloud",
             "/sensor/lidar/c16/front_right/difop",
-            "/sensor/lidar/c16/front_right/lslidar_packet_difop",
-            "/sensor/lidar/c16/front_right/packets",
             "/sensor/lidar/c16/front_right/point_cloud",
             "/sensor/lidar/ch/front/lslidar_packet",
             "/sensor/lidar/ch/front/lslidar_sweep",
             "/sensor/lidar/ch/front/point_cloud",
             "/telematics/message",
             "/tf",
-            "/traffic_light/object_detection",
+            "/traffic_light/object_detection"
        ]
 
 }

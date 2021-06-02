@@ -27,36 +27,36 @@ sensor_info {
 
   extrinsic {
     translation {
-      x: 2.09505839892200374
-      y: 0.00280632131927716771
-      z: 1.47460313708842183
+      x: 2.32253307506471973
+      y: 0.0349594283964761998
+      z: 1.37396854218571574
     }
     rotation {
-      w: 0.502526129976408331
-      x: -0.504158184050587432
-      y: 0.503511891076910301
-      z: -0.48966045066732039
+      w: -0.489480586530833539
+      x: 0.505597783422680802
+      y: -0.492462598953505748
+      z: 0.51211348882787866
     }
   }
   intrinsic {
     width: 1280
     height: 720
-    matrix: 1957.12
+    matrix: 1907.74
     matrix: 0.0
-    matrix: 630.738
+    matrix: 627.251
     matrix: 0.0
-    matrix: 1975.98
-    matrix: 357.959
+    matrix: 1522.25
+    matrix: 311.836
     matrix: 0.0
     matrix: 0.0
     matrix: 1.0
   }
   distcoeff {
-    distort_matrix: -0.547095
-    distort_matrix: -0.224453
-    distort_matrix: -0.00711943
-    distort_matrix: 0.00207297
-    distort_matrix: 3.56561
+    distort_matrix: -0.536482
+    distort_matrix: -0.498468
+    distort_matrix: 0.00231368
+    distort_matrix: -0.00282605
+    distort_matrix: 4.39016
   }
 }
 sensor_info {
@@ -75,13 +75,13 @@ sensor_info {
     translation {
       x: 3.7
       y: -0.08
-      z: 0.75
+      z: 0.76
     }
     rotation {
-      w: 0.707
-      x: 0.011
-      y: 0.023
-      z: 0.707
+      w: 0.71006
+      x: 0.0133455
+      y: 0.0181434
+      z: 0.703781
     }
   }
 }
@@ -92,15 +92,15 @@ sensor_info {
   topic: "/sensor/lidar/front_left/point_cloud"
   extrinsic {
     translation {
-      x: 3.25
+      x: 3.19
       y: 0.92
-      z: 0.59
+      z: 0.65
     }
     rotation {
-      w: 0.679
-      x: -0.012
-      y: -0.010
-      z: -0.734
+      w: 0.67536
+      x: -0.0186821
+      y: -0.0106104
+      z: -0.737175
     }
   }
 }
@@ -114,14 +114,14 @@ sensor_info {
   extrinsic {
     translation {
       x: 3.20
-      y: -0.94
-      z: 0.61
+      y: -0.9
+      z: 0.63
     }
     rotation {
-      w: 0.676
-      x: -0.003
-      y: 0.009
-      z: 0.737
+      w: 0.682938
+      x: -0.00489225
+      y: -0.00139926
+      z: 0.730459
     }
   }
 }
