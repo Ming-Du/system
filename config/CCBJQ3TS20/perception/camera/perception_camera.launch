@@ -1,12 +1,23 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <launch>
-  <group ns="perception/camera/6mm">
+    
   <node name="trt_yolov5" pkg = "trt_yolov5" type = "trt_yolov5_node" output = "screen">
     <param name = "serialize" type = "string" value = "-d" />
-    <param name = "weights" type = "string" value = "$(find models)/tensorRT_weights/mogo_5m.wts" />
-    <param name = "names" type = "string" value = "$(find models)/tensorRT_weights/obj.names"/>
-    <param name = "cameraTopicName" type = "string" value = "/sensor/camera/6mm/image_raw" />
+    <param name = "model_weights" type = "string" value = "$(find models)/tensorRT_weights/mogo_5m.wts" />
+    <param name = "obj_names" type = "string" value = "$(find models)/tensorRT_weights/obj.names"/>
+    <param name = "camera_topic" type = "string" value = "/sensor/camera/6mm/image_raw" />
+    <!-- <param name = "cameraTopic6mm_det" type = "string" value = "true"/>
+    <param name = "cameraTopic12mm_det" type = "string" value = "true"/>
+    <param name = "cameraTopic6mm" type = "string" value = "/sensor/camera/6mm/image_raw" />  
+    <param name = "cameraTopic12mm" type = "string" value = "/sensor/camera/12mm/image_raw" />  -->
   </node>
-  </group>
+
+	<node name="lane_detection" pkg="lane_detection" type="lane_detection_node" output="screen">
+	  <param name = "cameraTopic6mm" type = "string" value = "/sensor/camera/6mm/image_raw" />
+	  <param name = "cameraTopic6mm_lane" type = "string" value = "true"/>
+	  <param name="model_path"  value="$(find models)/lanenet/lane_background_3dims_20200904_224_1280.pb" />
+  </node>
+
 </launch>
+
