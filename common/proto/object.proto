@@ -118,3 +118,27 @@ message TrackedObjects {
   optional string sensor_name = 2;
   repeated TrackedObject objs = 3;
 }
+
+
+message RadarObject {
+  optional Object obj = 1;
+
+  optional float yaw = 2;       //box orientation angle from x axis, counter clockwise(in rad),range -pi to pi
+  optional float yaw_rate = 3;  //in rad/s
+  optional geometry.Vector3 velocity = 4; // absolute velocity, in m/s, vx, vy, vz
+  repeated geometry.Trace trace = 5;    // historical positions
+  repeated geometry.Trace prediction = 6; // predicted global position in future stamp
+
+  optional float absolute_longitude_v = 7;   // along lane speed, m/s
+  optional float absolute_longitude_a = 8;   // in m/s2, longitudinal acc
+  optional float absolute_lateral_v = 9;     // vertical to lane speed, left positive, m/s
+
+//float x_speed             // longitudinal speed relative to host vehicle, m/s
+//float y_speed             // lateral speed relative to host vehicle, m/s
+}
+
+message RadarObjects {
+  optional common.Header header = 1;
+  optional string sensor_name = 2;
+  repeated RadarObject objs = 3;
+}

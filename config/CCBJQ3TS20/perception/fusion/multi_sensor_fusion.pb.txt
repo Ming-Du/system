@@ -1,11 +1,11 @@
-use_camera: false
+use_camera: true
 use_lidar: true
 use_radar: false
 
-#input_sensor {
-#  sensor_name: "cam_front"
-#  topic: "/perception/camera/camera_obstacle"
-#}
+input_sensor {
+  sensor_name: "6mm_front"
+  topic: "/perception/camera/camera_obstacle"
+}   
 input_sensor {
   sensor_name: "ch_front"
   topic: "/perception/lidar/lidar_obstacle"

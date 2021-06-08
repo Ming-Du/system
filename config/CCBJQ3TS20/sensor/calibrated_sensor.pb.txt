@@ -23,7 +23,7 @@ sensor_info {
   name: "6mm_front"
   type: CAMERA_6MM
   orientation: FRONT
-  topic: "/sensor/camera/6mm/image_undistort"
+  topic: "/sensor/camera/6mm/image_raw"
 
   extrinsic {
     translation {
