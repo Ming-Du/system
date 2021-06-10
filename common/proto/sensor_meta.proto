@@ -14,6 +14,9 @@ enum SensorType {
   LIVOX_HORIZON = 7;
   HESAI_XT32 = 8;
   VELODYNE_64 = 9;
+  SENSING_30 = 10;
+  SENSING_60 = 11;
+  SENSING_90 = 12;
 }
 
 enum SensorOrientation {
@@ -41,7 +44,7 @@ message Intrinsic {
 
 message RegisteredSensor {
   repeated SensorInfo sensor_info = 1;
-  optional string base = 2; // 车体坐标�?
+  optional string base = 2; // 车体坐标�?
 }
 
 message Distcoeff {
