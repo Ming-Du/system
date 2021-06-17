@@ -11,7 +11,7 @@
   "intrinsic_parameter": [
     "/home/conf/"
   ],
-  "threshold_mb": 1000,
+  "threshold_mb": 10000,
   "threshold_write_speed": 10,
   "record": {
     "-a": 0,

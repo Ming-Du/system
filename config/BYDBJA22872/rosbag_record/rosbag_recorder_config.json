@@ -1,5 +1,5 @@
 {
-  "vehicle": "CCBJA7HL79",
+  "vehicle": "BYDBJA22872",
   "disk": [
     "/home/mogo/data/bags/"
   ],
@@ -49,10 +49,19 @@
             "/perception/lidar/front_right/lidar_obstacle",
             "/perception/lidar/front_right/obstacle_marker",
             "/perception/traffic_sign/image",
+            "/perception/traffic_sign/image/compressed/parameter_descriptions",
+            "/perception/traffic_sign/image/compressed/parameter_updates",
+            "/perception/traffic_sign/image/compressedDepth/parameter_descriptions",
+            "/perception/traffic_sign/image/compressedDepth/parameter_updates",
+            "/perception/traffic_sign/image/theora",
+            "/perception/traffic_sign/image/theora/parameter_descriptions",
+            "/perception/traffic_sign/image/theora/parameter_updates",
             "/perception/traffic_sign/type",
             "/planning/global_trajectory",
             "/planning/markers",
             "/planning/trajectory",
+            "/routing/request",
+            "/sensor/camera/6mm/camera_info",
             "/sensor/camera/6mm/image_raw",
             "/sensor/gnss/best_gnss_vel",
             "/sensor/gnss/gps_fix",
@@ -64,13 +73,22 @@
             "/sensor/lidar/c16/front_left/packets",
             "/sensor/lidar/c16/front_left/point_cloud",
             "/sensor/lidar/c16/front_right/difop",
+            "/sensor/lidar/c16/front_right/lslidar_packet_difop",
+            "/sensor/lidar/c16/front_right/packets",
             "/sensor/lidar/c16/front_right/point_cloud",
             "/sensor/lidar/ch/front/lslidar_packet",
             "/sensor/lidar/ch/front/lslidar_sweep",
             "/sensor/lidar/ch/front/point_cloud",
             "/telematics/message",
             "/tf",
-            "/traffic_light/object_detection"
+            "/traffic_light/object_detection",
+            "/traffic_light/object_detection/compressed/parameter_descriptions",
+            "/traffic_light/object_detection/compressed/parameter_updates",
+            "/traffic_light/object_detection/compressedDepth/parameter_descriptions",
+            "/traffic_light/object_detection/compressedDepth/parameter_updates",
+            "/traffic_light/object_detection/theora",
+            "/traffic_light/object_detection/theora/parameter_descriptions",
+            "/traffic_light/object_detection/theora/parameter_updates" 
 
     ]
   }
