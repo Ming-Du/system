@@ -4,6 +4,7 @@ ps aux | grep roscore |awk '{print $2}' |xargs kill
 
 export DATE=`date +"%Y%m%d"`
 export TIME=`date +"%H%M%S"`
+export ROS_LOG_DIR=${HOME}/data/log/${DATE}_${TIME}
 
 [[ ! -d $ROS_LOG_DIR ]] && mkdir -p $ROS_LOG_DIR
 
@@ -13,7 +14,7 @@ echo $1
 ###########################################################
 GLOG_COMMAND="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1; export ROS_LOG_DIR=${HOME}/data/log/${DATE}_${TIME}"
 
-ROSCORE="roscore"
+ROSCORE="roscore 2>&1 | tee \${ROS_LOG_DIR}/roscore.log"
 GNSS_COMMAND="roslaunch drivers_gnss data_spin.launch 2>&1 | tee \${ROS_LOG_DIR}/data_spin.launch.log"
 #LOCALIZATION="roslaunch launch path_recorder.launch 2>&1 | tee \${ROS_LOG_DIR}/path_recorder.launch.log"
 LOCALIZATION="roslaunch localization localization.launch 2>&1 | tee \${ROS_LOG_DIR}/localization.launch.log"
