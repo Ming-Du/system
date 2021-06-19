@@ -16,7 +16,7 @@ enum SensorType {
   VELODYNE_64 = 9;
   SENSING_30 = 10;
   SENSING_60 = 11;
-  SENSING_90 = 12;
+  SENSING_120 = 12;
 }
 
 enum SensorOrientation {
