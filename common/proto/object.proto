@@ -48,6 +48,16 @@ message LidarObjectSupplement {
   repeated double cloud = 2 [packed = true];
 }
 
+message RadarObjectSupplement {
+  optional bool on_use = 1 [default = false];  
+  optional float x = 2;
+  optional float y = 3;
+  optional float relative_vel_x = 4;
+  optional float relative_vel_y = 5;
+  optional float absolute_vel_x = 6;
+  optional float absolute_vel_y = 7;
+}
+
 message Object {
   optional uint32 id = 1;                // obj id, after tracked
   optional string sensor_name = 2;
@@ -76,6 +86,9 @@ message Object {
   optional CameraObjectSupplement camera_supplement = 17;
   // lidar supplement
   optional LidarObjectSupplement lidar_supplement = 18;
+  // radar supplement
+  optional RadarObjectSupplement radar_supplement = 19;
+  
 }
 
 message VisualObject {
@@ -117,4 +130,28 @@ message TrackedObjects {
   optional common.Header header = 1;
   optional string sensor_name = 2;
   repeated TrackedObject objs = 3;
+}
+
+
+message RadarObject {
+  optional Object obj = 1;
+
+  optional float yaw = 2;       //box orientation angle from x axis, counter clockwise(in rad),range -pi to pi
+  optional float yaw_rate = 3;  //in rad/s
+  optional geometry.Vector3 velocity = 4; // absolute velocity, in m/s, vx, vy, vz
+  repeated geometry.Trace trace = 5;    // historical positions
+  repeated geometry.Trace prediction = 6; // predicted global position in future stamp
+
+  optional float absolute_longitude_v = 7;   // along lane speed, m/s
+  optional float absolute_longitude_a = 8;   // in m/s2, longitudinal acc
+  optional float absolute_lateral_v = 9;     // vertical to lane speed, left positive, m/s
+
+//float x_speed             // longitudinal speed relative to host vehicle, m/s
+//float y_speed             // lateral speed relative to host vehicle, m/s
+}
+
+message RadarObjects {
+  optional common.Header header = 1;
+  optional string sensor_name = 2;
+  repeated RadarObject objs = 3;
 }

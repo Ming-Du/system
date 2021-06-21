@@ -29,6 +29,7 @@ TRAFFIC_LANE="source $BASHRC && roslaunch src/perception/lane_detection/lane_det
 OPERATOR_TOOL="source $BASHRC && roslaunch operator_tool operator_tool.launch"
 GUARDIAN="source $BASHRC && roslaunch guardian system_guardian.launch"
 TRACK_RECORDER="source $BASHRC && roslaunch track_recorder track_recorder.launch"
+ROSBAG_RECORD="source $BASHRC && roslaunch rosbag_recorder rosbag_recorder.launch"
 
 ##for the min auto drive mode ,just use RTK_PLANNER and controller
 if [ "$1" == "1" ]; then
@@ -68,6 +69,7 @@ elif [ "$1" == "wey" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -T "guardian" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
+      --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "jinlv" ]; then
     xfce4-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" \
@@ -82,6 +84,7 @@ elif [ "$1" == "jinlv" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -T "guardian" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
+      --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "byd" ]; then
     xfce4-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" \
@@ -96,6 +99,7 @@ elif [ "$1" == "byd" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -T "guardian" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
+      --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 2';bash";
 else
     echo "do others"

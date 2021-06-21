@@ -1,0 +1,77 @@
+{
+  "vehicle": "CCBJA7HL79",
+  "disk": [
+    "/home/mogo/data/bags/"
+  ],
+  "system_info_file": "/home/system_info.yaml",
+
+  "extrinsic_parameter": [
+    "/home/conf/"
+  ],
+  "intrinsic_parameter": [
+    "/home/conf/"
+  ],
+  "threshold_mb": 10000,
+  "threshold_write_speed": 10,
+  "record": {
+    "-a": 0,
+    "-x": "",
+    "--size": "1800",
+    "--duration": "",
+    "--node": "",
+    "compress": "",
+    "--tcpnodelay": "",
+    "topic": [
+            "/app/telematics/setDemo",
+            "/app/telematics/startAutopilot",
+            "/car_odom",
+            "/chassis/command",
+            "/chassis/vehicle_state",
+            "/command/lane_change",
+            "/diagnostics",
+            "/hadmap/speed_limit",
+            "/hadmap/stop_line",
+            "/localization/global",
+            "/localization/local",
+            "/perception/camera/camera_obstacle",
+            "/perception/camera/ldw",
+            "/perception/fusion/obstacles",
+            "/perception/fusion/visualisation",
+            "/perception/lanemarks",
+            "/perception/lanemarks2",
+            "/perception/lidar/front/filtered_cloud",
+            "/perception/lidar/front/lidar_obstacle",
+            "/perception/lidar/front/obstacle_marker",
+            "/perception/lidar/front_left/filtered_cloud",
+            "/perception/lidar/front_left/lidar_obstacle",
+            "/perception/lidar/front_left/obstacle_marker",
+            "/perception/lidar/front_right/filtered_cloud",
+            "/perception/lidar/front_right/lidar_obstacle",
+            "/perception/lidar/front_right/obstacle_marker",
+            "/perception/traffic_sign/image",
+            "/perception/traffic_sign/type",
+            "/planning/global_trajectory",
+            "/planning/markers",
+            "/planning/trajectory",
+            "/sensor/camera/6mm/image_raw",
+            "/sensor/gnss/best_gnss_vel",
+            "/sensor/gnss/gps_fix",
+            "/sensor/gnss/imu",
+            "/sensor/gnss/odometry",
+            "/sensor/gnss/reference_time",
+            "/sensor/lidar/c16/front_left/difop",
+            "/sensor/lidar/c16/front_left/lslidar_packet_difop",
+            "/sensor/lidar/c16/front_left/packets",
+            "/sensor/lidar/c16/front_left/point_cloud",
+            "/sensor/lidar/c16/front_right/difop",
+            "/sensor/lidar/c16/front_right/point_cloud",
+            "/sensor/lidar/ch/front/lslidar_packet",
+            "/sensor/lidar/ch/front/lslidar_sweep",
+            "/sensor/lidar/ch/front/point_cloud",
+            "/telematics/message",
+            "/tf",
+            "/traffic_light/object_detection"
+
+    ]
+  }
+}
