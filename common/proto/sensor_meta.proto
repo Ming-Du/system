@@ -17,6 +17,7 @@ enum SensorType {
   SENSING_30 = 10;
   SENSING_60 = 11;
   SENSING_120 = 12;
+  HESAI_128 = 13;
 }
 
 enum SensorOrientation {
@@ -29,6 +30,7 @@ enum SensorOrientation {
   RIGHT = 6;
   RIGHT_FORWARD = 7;
   PANORAMIC = 8;
+  MIDDLE = 9;
 }
 
 message Extrinsic {
