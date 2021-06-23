@@ -8,9 +8,10 @@ export ROS_LOG_DIR=${HOME}/data/log/${DATE}_${TIME}
 
 [[ ! -d $ROS_LOG_DIR ]] && mkdir -p $ROS_LOG_DIR
 
-sudo chmod +777 /dev -R
+echo "123" | sudo -S chmod +777 /dev -R
 echo $HOME
 echo $1
+echo $BASHRC
 ###########################################################
 GLOG_COMMAND="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1; export ROS_LOG_DIR=${HOME}/data/log/${DATE}_${TIME}"
 #BASHRC="/home/mogo/autopilot/share/launch/bashrc.sh"
