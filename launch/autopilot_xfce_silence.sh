@@ -4,4 +4,4 @@ source $HOME/autopilot/setup.bash
 
 cd $HOME/autopilot/  
 BASHRC="/home/mogo/autopilot/share/launch/bashrc.sh"
-source $HOME/autopilot/share/launch/integration_xfce.sh
+source $HOME/autopilot/share/launch/integration_xfce_silence.sh
