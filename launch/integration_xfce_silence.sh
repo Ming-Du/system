@@ -18,7 +18,7 @@ export ROS_LOG_DIR=${HOME}/data/log/${DATE}_${TIME}
 source /home/mogo/autopilot/share/launch/bashrc.sh
 
 GLOG_COMMAND="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1; export ROS_LOG_DIR=${HOME}/data/log/${DATE}_${TIME}"
-BASHRC="/home/mogo/autopilot/share/launch/bashrc.sh"
+#BASHRC="/home/mogo/autopilot/share/launch/bashrc.sh"
 ROSCORE="source $BASHRC && roscore 2>&1 | tee \${ROS_LOG_DIR}/roscore.log"
 GNSS_COMMAND="source $BASHRC && roslaunch drivers_gnss data_spin.launch 2>&1 | tee ${ROS_LOG_DIR}/data_spin.launch.log"
 #LOCALIZATION="source $BASHRC roslaunch launch path_recorder.launch 2>&1 | tee \${ROS_LOG_DIR}/.log"
