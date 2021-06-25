@@ -56,7 +56,7 @@ if [ "$1" == "1" ]; then
     sleep 2
 ##for perception mode  tracffic light and lidar dectection
 elif [ "$1" == "2" ]; then
-    roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log
+    roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log &
     sleep 3 && roslaunch localization localization.launch 2>&1 | tee ${ROS_LOG_DIR}/localization.launch.log &
     sleep 3 && roslaunch can_adapter vv6_can_adapter.launch 2>&1 | tee ${ROS_LOG_DIR}/vv6_can_adapter.launch.log &
     sleep 2 && roslaunch launch drivers.launch 2>&1 | tee ${ROS_LOG_DIR}/drivers.launch.log &
@@ -68,7 +68,7 @@ elif [ "$1" == "2" ]; then
 	sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
     sleep 2
 elif [ "$1" == "wey" ]; then
-  roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log
+  roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log &
   sleep 3 && roslaunch localization localization.launch 2>&1 | tee ${ROS_LOG_DIR}/localization.launch.log &
   sleep 3 && roslaunch can_adapter vv6_can_adapter.launch 2>&1 | tee ${ROS_LOG_DIR}/vv6_can_adapter.launch.log &
   sleep 2 && roslaunch launch drivers.launch 2>&1 | tee ${ROS_LOG_DIR}/drivers.launch.log &
@@ -83,7 +83,7 @@ elif [ "$1" == "wey" ]; then
   sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
   sleep 2
 elif [ "$1" == "df" ]; then
-  roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log
+  roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log &
   sleep 3 && roslaunch localization localization.launch 2>&1 | tee ${ROS_LOG_DIR}/localization.launch.log &
   sleep 3 && roslaunch can_adapter vv6_can_adapter.launch 2>&1 | tee ${ROS_LOG_DIR}/vv6_can_adapter.launch.log &
   sleep 2 && roslaunch launch drivers.launch 2>&1 | tee ${ROS_LOG_DIR}/drivers.launch.log &
@@ -98,7 +98,7 @@ elif [ "$1" == "df" ]; then
   sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
   sleep 2
 elif [ "$1" == "jinlv" ]; then
-  roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log
+  roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log &
   sleep 3 && roslaunch localization localization.launch 2>&1 | tee ${ROS_LOG_DIR}/localization.launch.log &
   sleep 3 && roslaunch can_adapter jinlv_can_adapter.launch 2>&1 | tee ${ROS_LOG_DIR}/jinlv_can_adapter.launch.log &
   sleep 2 && roslaunch launch drivers.launch 2>&1 | tee ${ROS_LOG_DIR}/drivers.launch.log &
@@ -113,7 +113,7 @@ elif [ "$1" == "jinlv" ]; then
   sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
   sleep 2
 elif [ "$1" == "byd" ]; then
-  roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log
+  roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log &
   sleep 3 && roslaunch localization localization.launch 2>&1 | tee ${ROS_LOG_DIR}/localization.launch.log &
   sleep 3 && roslaunch can_adapter byd_can_adapter.launch 2>&1 | tee ${ROS_LOG_DIR}/byd_can_adapter.launch.log &
   sleep 2 && roslaunch launch drivers.launch 2>&1 | tee ${ROS_LOG_DIR}/drivers.launch.log &
