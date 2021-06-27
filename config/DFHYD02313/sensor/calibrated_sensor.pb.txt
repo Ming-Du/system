@@ -146,15 +146,15 @@ sensor_info {
   topic: "/sensor/lidar/middle/point_cloud"
   extrinsic {
     translation {
-      x: 1.130
-      y: 0
-      z: 1.950
+      x: 1.13464
+      y: 0.330729
+      z: 1.93346
     }
     rotation {
-      w: 0.70710678
-      x: 0
-      y: 0
-      z: 0.70710678
+      w: 0.70816
+      x: -0.00758
+      y: 0.00310
+      z: 0.70600
     }
   }
 }
