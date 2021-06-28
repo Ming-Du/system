@@ -11,7 +11,7 @@ echo $1
 ###########################################################
 export GLOG_logtostderr=1
 export GLOG_colorlogtostderr=1
-export ROS_LOG_DIR=${HOME}/data/log/${DATE}_${TIME}
+export ROS_LOG_DIR=/home/mogo/data/log/${DATE}_${TIME}
 
 if [ ! -d $ROS_LOG_DIR ]; then 
 	mkdir -p $ROS_LOG_DIR
@@ -58,7 +58,7 @@ if [ "$1" = "1" ]; then
     sleep 2
 ##for perception mode  tracffic light and lidar dectection
 elif [ "$1" = "2" ]; then
-    roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log & \
+    roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log & 
     sleep 3 && roslaunch localization localization.launch 2>&1 | tee ${ROS_LOG_DIR}/localization.launch.log &
     sleep 3 && roslaunch can_adapter vv6_can_adapter.launch 2>&1 | tee ${ROS_LOG_DIR}/vv6_can_adapter.launch.log &
     sleep 2 && roslaunch launch drivers.launch 2>&1 | tee ${ROS_LOG_DIR}/drivers.launch.log &

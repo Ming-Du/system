@@ -1,7 +1,7 @@
 #!/bin/bash
-sed -i 's/\(${_CATKIN_SETUP_DIR:=\).*/\1\/home\/mogo\/autopilot}/g' $HOME/autopilot/setup.sh
-source $HOME/autopilot/setup.bash
+sed -i 's/\(${_CATKIN_SETUP_DIR:=\).*/\1\/home\/mogo\/autopilot}/g' /home/mogo/autopilot/setup.sh
+source /home/mogo/autopilot/setup.bash
 
-cd $HOME/autopilot/  
+cd /home/mogo/autopilot/  
 BASHRC="/home/mogo/autopilot/share/launch/bashrc.sh"
-source $HOME/autopilot/share/launch/integration_xfce_silence.sh
+source /home/mogo/autopilot/share/launch/integration_xfce_silence.sh

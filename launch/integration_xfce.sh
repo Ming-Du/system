@@ -4,7 +4,7 @@ ps aux | grep roscore |awk '{print $2}' |xargs kill
 
 export DATE=`date +"%Y%m%d"`
 export TIME=`date +"%H%M%S"`
-export ROS_LOG_DIR=${HOME}/data/log/${DATE}_${TIME}
+export ROS_LOG_DIR=/home/mogo/data/log/${DATE}_${TIME}
 
 [[ ! -d $ROS_LOG_DIR ]] && mkdir -p $ROS_LOG_DIR
 
@@ -13,7 +13,7 @@ echo $HOME
 echo $1
 echo $BASHRC
 ###########################################################
-GLOG_COMMAND="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1; export ROS_LOG_DIR=${HOME}/data/log/${DATE}_${TIME}"
+GLOG_COMMAND="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1; export ROS_LOG_DIR=/home/mogo/data/log/${DATE}_${TIME}"
 #BASHRC="/home/mogo/autopilot/share/launch/bashrc.sh"
 ROSCORE="source $BASHRC && roscore 2>&1 | tee \${ROS_LOG_DIR}/roscore.log"
 GNSS_COMMAND="source $BASHRC && roslaunch drivers_gnss data_spin.launch 2>&1 | tee \${ROS_LOG_DIR}/data_spin.launch.log"
