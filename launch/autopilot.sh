@@ -1,7 +1,7 @@
 #!/bin/bash
-sed -i 's/\(${_CATKIN_SETUP_DIR:=\).*/\1\/home\/mogo\/autopilot}/g' $HOME/autopilot/setup.sh
-source $HOME/autopilot/setup.bash
+sed -i 's/\(${_CATKIN_SETUP_DIR:=\).*/\1\/home\/mogo\/autopilot}/g' /home/mogo/autopilot/setup.sh
+source /home/mogo/autopilot/setup.bash
 
-cd $HOME/autopilot/  
+cd /home/mogo/autopilot/  
 
-source $HOME/autopilot/share/launch/integration.sh
+source /home/mogo/autopilot/share/launch/integration.sh
