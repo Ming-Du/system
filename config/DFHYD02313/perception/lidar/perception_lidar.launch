@@ -4,7 +4,7 @@
   <arg name="sensor_meta"
     default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
 
-  <node name="rs_perception_node" ns="base_link"
+  <node name="rs_perception_node" ns="/perception/lidar"
     pkg="rs_perception_node" type="rs_perception_node" output="screen"
     args="--logtostderr=0 --stderrthreshold=1 --v=5
           --sensor_meta_path=$(arg sensor_meta) 
