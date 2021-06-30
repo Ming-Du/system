@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="video_device" default="1" />
+  <arg name="video_device" default="/dev/video1" />
   <arg name="config_path" default="$(find drivers_common)/conf"/>
   <arg name="sensor_meta"
     default="$(arg config_path)/sensing.pb.txt" />
