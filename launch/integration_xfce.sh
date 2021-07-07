@@ -37,6 +37,7 @@ OPERATOR_TOOL="source $BASHRC && roslaunch operator_tool operator_tool.launch 2>
 GUARDIAN="source $BASHRC && roslaunch guardian system_guardian.launch 2>&1 | tee \${ROS_LOG_DIR}/system_guardian.launch.log"
 TRACK_RECORDER="source $BASHRC && roslaunch track_recorder track_recorder.launch 2>&1 | tee \${ROS_LOG_DIR}/track_recorder.launch.log"
 ROSBAG_RECORD="source $BASHRC && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee \${ROS_LOG_DIR}/rosbag_recorder.launch.log"
+HADMAP_ENGINE="source $BASHRC && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee \${ROS_LOG_DIR}/hadmap_engine.launch.log"
 
 ##for the min auto drive mode ,just use RTK_PLANNER and controller
 if [ "$1" == "1" ]; then
@@ -49,6 +50,7 @@ xfce4-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" 
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
 		--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
+        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
         --tab -e "bash -c 'sleep 2';bash";
 ##for perception mode  tracffic light and lidar dectection
 elif [ "$1" == "2" ]; then
@@ -62,6 +64,7 @@ xfce4-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" 
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -T "local_planner" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -T "had_map" \
 		--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
+        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
         --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "wey" ]; then
     xfce4-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" \
@@ -77,6 +80,7 @@ elif [ "$1" == "wey" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
       --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "df" ]; then
     xfce4-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" \
@@ -92,6 +96,7 @@ elif [ "$1" == "df" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
       --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "jinlv" ]; then
     xfce4-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" \
@@ -107,6 +112,7 @@ elif [ "$1" == "jinlv" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
       --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "byd" ]; then
     xfce4-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" \
@@ -122,6 +128,7 @@ elif [ "$1" == "byd" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
       --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
       --tab -e "bash -c 'sleep 2';bash";
 else
     echo "do others"

@@ -53,6 +53,7 @@ if [ "$1" == "1" ]; then
     sleep 3 && roslaunch launch perception.launch 2>&1 | tee ${ROS_LOG_DIR}/perception.launch.log &
     sleep 3 && roslaunch telematics telematics.launch 2>&1 | tee ${ROS_LOG_DIR}/telematics.launch.log &
 	  sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
+    sleep 3 && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
     sleep 2
 ##for perception mode  tracffic light and lidar dectection
 elif [ "$1" == "2" ]; then
@@ -65,7 +66,8 @@ elif [ "$1" == "2" ]; then
     sleep 3 && roslaunch telematics telematics.launch 2>&1 | tee ${ROS_LOG_DIR}/telematics.launch.log &
     sleep 2 && roslaunch launch local_planning.launch 2>&1 | tee ${ROS_LOG_DIR}/local_planning.launch.log &
     sleep 2 && roslaunch launch hadmap.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap.launch.log &
-	sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
+	  sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
+    sleep 3 && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
     sleep 2
 elif [ "$1" == "wey" ]; then
   roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log &
@@ -81,6 +83,7 @@ elif [ "$1" == "wey" ]; then
   sleep 2 && roslaunch launch hadmap.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap.launch.log &
   sleep 2 && roslaunch track_recorder track_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/track_recorder.launch.log &
   sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
+  sleep 3 && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
   sleep 2
 elif [ "$1" == "df" ]; then
   roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log &
@@ -96,6 +99,7 @@ elif [ "$1" == "df" ]; then
   sleep 2 && roslaunch launch hadmap.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap.launch.log &
   sleep 2 && roslaunch track_recorder track_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/track_recorder.launch.log &
   sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
+  sleep 3 && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
   sleep 2
 elif [ "$1" == "jinlv" ]; then
   roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log &
@@ -111,6 +115,7 @@ elif [ "$1" == "jinlv" ]; then
   sleep 2 && roslaunch launch hadmap.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap.launch.log &
   sleep 2 && roslaunch track_recorder track_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/track_recorder.launch.log &
   sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
+  sleep 3 && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
   sleep 2
 elif [ "$1" == "byd" ]; then
   roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log &
@@ -126,6 +131,7 @@ elif [ "$1" == "byd" ]; then
   sleep 2 && roslaunch launch hadmap.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap.launch.log &
   sleep 2 && roslaunch track_recorder track_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/track_recorder.launch.log &
   sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
+  sleep 3 && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
   sleep 2
 else
     echo "do others"
