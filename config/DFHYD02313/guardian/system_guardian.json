@@ -1,28 +1,25 @@
 {
 
     "guardian_nodes":
-        [
-	"/controller",
-	"/hadmap_server",
-	"/local_planning",
-	"/localization",
-	"/operator_tool",
-	"/perception/camera/6mm/trt_yolov5",
-	"/perception/fusion/perception_fusion",
-	"/perception/lidar/perception_lidar",
-	"/sensor/camera/6mm/drivers_camera_6mm",
-	"/sensor/gnss/drivers_gnss",
-	"/sensor/lidar/front/ch_decoder",
-	"/sensor/lidar/front/ch_driver",
-	"/sensor/lidar/front_left/c16_decoder",
-	"/sensor/lidar/front_left/c16_driver",
-	"/sensor/lidar/front_right/c16_decoder",
-	"/sensor/lidar/front_right/c16_driver",
-	"/system_guardian",
-	"/telematics_node",
-	"/track_recorder",
-	"/vv6_can_adapter"
-		],
+     [
+        "/controller", 
+        "/hadmap_engine_node", 
+        "/hadmap_server", 
+        "/local_planning", 
+        "/localization", 
+        "/map_publisher", 
+        "/model_publisher", 
+        "/perception/fusion/perception_fusion", 
+        "/perception/lidar/rs_perception_node", 
+        "/sensor/camera/sensing60/drivers_camera_sensing60", 
+        "/sensor/gnss/drivers_gnss", 
+        "/sensor/lidar/hesai128/drivers_hesai128", 
+        "/system_guardian", 
+        "/telematics_node", 
+        "/track_recorder", 
+        "/trt_yolov5", 
+        "/vv6_can_adapter"
+     ],
     "guardian_topics":
         [
             "/app/telematics/setDemo",
