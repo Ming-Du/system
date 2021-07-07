@@ -17,8 +17,9 @@
         "/system_guardian", 
         "/telematics_node", 
         "/track_recorder", 
-        "/trt_yolov5", 
-        "/vv6_can_adapter"
+        "/trt_yolov5",
+        "/vv6_can_adaper",
+        "/ros_recorder" 
      ],
     "guardian_topics":
         [
