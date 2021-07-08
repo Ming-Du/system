@@ -1,0 +1,122 @@
+base: "base_link"
+
+sensor_info {
+  name: "H60-D05270592"
+  type: SENSING_60
+  orientation: FRONT
+  topic: "/sensor/camera/sensing/image_raw_60"
+  extrinsic {
+    translation {
+      x: 1.5536494114681636
+      y: 0.20114022398947951
+      z: 1.659336774191204
+    }
+    rotation {
+      x: -0.52781961415440926
+      y: 0.47730785489164246
+      z: -0.4740471666820214
+      w: 0.51851996136443712
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 1957.7692496976131
+    matrix: 0
+    matrix: 868.454795102822
+    matrix: 0
+    matrix: 1957.7976603001596
+    matrix: 561.09174848387556
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.57800948922803341
+    distort_matrix: 0.34585043121004122
+    distort_matrix: -0.00059873788664144907
+    distort_matrix: 0.0035749110578469122
+    distort_matrix: -0.1794751142875427
+  }
+}
+
+sensor_info {
+  name: "H30-D05270514"
+  type: SENSING_30
+  orientation: FRONT
+  topic: "/sensor/camera/sensing/image_raw_30"
+  extrinsic {
+    translation {
+      x: 1.5464999520474141
+      y: 0.46290276602126168
+      z: 1.530580741146351
+    }
+    rotation {
+      x: -0.49116133175515864
+      y: 0.49884253659722427
+      z: -0.50704989895985386
+      w: 0.50280917835153682
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 3898.7761259725835
+    matrix: 0
+    matrix: 987.40390199364128
+    matrix: 0
+    matrix: 3900.9039598030176
+    matrix: 613.64368951981623
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.38602163976753667
+    distort_matrix: 0.21786487005495869
+    distort_matrix: 0.00020769300123077512
+    distort_matrix: -0.0012319236033160874
+    distort_matrix: 5.3662139644164286
+  }
+}
+
+sensor_info {
+  name: "H120-D05270537"
+  type: SENSING_120
+  orientation: FRONT
+  topic: "/sensor/camera/sensing/image_raw_120"
+  extrinsic {
+    translation {
+      x: 1.4827638336863975
+      y: 0.36036676424729386
+      z: 1.5179398953168186
+    }
+    rotation {
+      x: 0.49116963926332219
+      y: -0.5106158182037992
+      z: 0.51289288654734533
+      w: -0.48473163564505972
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 952.96073818774391
+    matrix: 0
+    matrix: 995.13240322945785
+    matrix: 0
+    matrix: 953.76596988721633
+    matrix: 563.642931697563
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.32681737736714878
+    distort_matrix: 0.1174228857227728
+    distort_matrix: -0.000221361822516215
+    distort_matrix: -0.00015206933518639037
+    distort_matrix: -0.020024629951331811
+  }
+}
+

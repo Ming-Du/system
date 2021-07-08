@@ -19,6 +19,7 @@ sensor_info {
     }
   }
 }
+
 sensor_info {
   name: "H60-D05270579"
   type: SENSING_60

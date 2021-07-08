@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="video_device" default="/dev/video2" />
+  <arg name="video_device" default="/dev/video0" />
   <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
     default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
-  <arg name="camera_id" default="H60-D05270579" />
+  <arg name="camera_id" default="H30-D05270527" />
   <arg name="calibed" default="1" />
   <arg name="undistort" default="0" />
-  <group ns="sensor/camera/sensing60">
-    <node name="drivers_camera_sensing60" pkg="drivers_camera"
+  <group ns="sensor/camera/sensing30">
+    <node name="drivers_camera_sensing30" pkg="drivers_camera"
         type="drivers_camera_sensing_node" output="screen" 
         args="--sensor_meta_path=$(arg sensor_meta)">
       <param name="video_device" value="$(arg video_device)" />
