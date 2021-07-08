@@ -7,8 +7,6 @@
         "/hadmap_server", 
         "/local_planning", 
         "/localization", 
-        "/map_publisher", 
-        "/model_publisher", 
         "/perception/fusion/perception_fusion", 
         "/perception/lidar/rs_perception_node", 
         "/sensor/camera/sensing60/drivers_camera_sensing60", 
