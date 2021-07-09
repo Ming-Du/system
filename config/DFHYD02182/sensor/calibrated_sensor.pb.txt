@@ -120,3 +120,21 @@ sensor_info {
   }
 }
 
+sensor_info {
+  name: "middle_pandar_128"
+  type: HESAI_128
+  orientation: MIDDLE
+  topic: "/sensor/lidar/middle/point_cloud"
+  extrinsic {
+    translation {
+      x: 1.13463926
+      y: 0.33072897
+      z: 1.9277342432431002
+    }
+    rotation {
+      x: 0.000953297943226406
+      y: 0.010167491478351465
+      z: 0.70158852011415884
+      w: 0.71250913101804791
+    }
+  }
