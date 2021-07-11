@@ -6,7 +6,7 @@
     <param name = "model_weights" type = "string" value = "$(find models)/tensorRT_weights/yolov5m_cuda10.2.engine" />
     <param name = "obj_names" type = "string" value = "$(find models)/tensorRT_weights/obj.names"/>
     <param name = "camera_topic" type = "string" value = "/sensor/camera/sensing/image_raw_60" />
-    <param name = "sensor_name" type = "string" value = "H60-D05270579" />
+    <param name = "sensor_name" type = "string" value = "H60-D06170609" />
     <param name = "calibration_file" type = "string" value = "$(find config)/vehicle/sensor/calibrated_sensor.pb.txt" />
   </node>
 
@@ -20,4 +20,3 @@
   </node> -->
 
 </launch>
-
