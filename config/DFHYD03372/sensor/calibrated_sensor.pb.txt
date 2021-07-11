@@ -1,6 +1,26 @@
 base: "base_link"
 
 sensor_info {
+  name: "gnss"
+  type: GNSS
+  orientation: FRONT
+
+  extrinsic {
+    translation {
+      x: 0.88
+      y: 0.0
+      z: 0.0
+    }
+    rotation {
+      w: 0.707
+      x: 0
+      y: 0
+      z: 0.707
+    }
+  }
+}
+
+sensor_info {
   name: "H60-D05270582"
   type: SENSING_60
   orientation: FRONT
