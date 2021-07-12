@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="video_device" default="/dev/video1" />
-  <arg name="config_path" default="$(find drivers_common)/conf"/>
+  <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
-    default="$(arg config_path)/sensing.pb.txt" />
-  <arg name="frame_id" default="H120-D05270538" />
+    default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
+  <arg name="camera_id" default="H120-D05270550" />
   <arg name="calibed" default="1" />
   <arg name="undistort" default="0" />
   <group ns="sensor/camera/sensing120">
@@ -13,12 +13,11 @@
         args="--sensor_meta_path=$(arg sensor_meta)">
       <param name="video_device" value="$(arg video_device)" />
       <param name="framerate" value="30"/>
-      <param name="camera_frame_id" value="$(arg frame_id)" />
+      <param name="camera_id" value="$(arg camera_id)" />
       <param name="image_width" value="1920" />
       <param name="image_height" value="1080" />
       <param name="calibed" value="$(arg calibed)" />
       <param name="undistort" value="$(arg undistort)" />
     </node>
   </group>
-
 </launch>

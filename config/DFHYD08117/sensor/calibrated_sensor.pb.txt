@@ -19,123 +19,144 @@ sensor_info {
     }
   }
 }
+
 sensor_info {
-  name: "H60-D05270579"
+  name: "gnss"
+  type: GNSS
+  orientation: FRONT
+
+  extrinsic {
+    translation {
+      x: 0.88
+      y: 0.0
+      z: 0.0
+    }
+    rotation {
+      w: 0.707
+      x: 0
+      y: 0
+      z: 0.707
+    }
+  }
+}
+
+sensor_info {
+  name: "H60-D05270576"
   type: SENSING_60
   orientation: FRONT
   topic: "/sensor/camera/sensing/image_raw_60"
   extrinsic {
     translation {
-      x: 1.4929688778578329
-      y: 0.255252200154084
-      z: 1.593567699695716
+      x: 1.5084135230490272
+      y: 0.43064017686150757
+      z: 1.6141678446308481
     }
     rotation {
-      x: -0.49794512232419635
-      y: 0.50405115185252891
-      z: -0.49535978795606755
-      w: 0.50259503772500536
+      x: 0.50157838284923051
+      y: -0.4915221529557709
+      z: 0.50819560712527778
+      w: -0.4985602510335585
     }
   }
   intrinsic {
     width: 1920
     height: 1080
-    matrix: 1965.1758962887186
+    matrix: 1966.3073418912022
     matrix: 0
-    matrix: 1036.0019695733818
+    matrix: 918.895647271691
     matrix: 0
-    matrix: 1966.5161211991299
-    matrix: 535.6666944022453
+    matrix: 1967.2045730235286
+    matrix: 513.43235278319128
     matrix: 0
     matrix: 0
     matrix: 1
   }
   distcoeff {
-    distort_matrix: -0.57075764708629573
-    distort_matrix: 0.28768343916029654
-    distort_matrix: 0.00018006677552336994
-    distort_matrix: 0.00016317857385772627
-    distort_matrix: 0.05592112056179685
+    distort_matrix: -0.57618587793791332
+    distort_matrix: 0.31308286359816234
+    distort_matrix: 0.0026229354683768523
+    distort_matrix: -0.00048504669336381866
+    distort_matrix: 0.010463229096766185
   }
 }
 
 sensor_info {
-  name: "H30-D05270524"
+  name: "H30-D05270519"
   type: SENSING_30
   orientation: FRONT
   topic: "/sensor/camera/sensing/image_raw_30"
   extrinsic {
     translation {
-      x: 1.4541131470091884
-      y: 0.47143333715889124
-      z: 1.6720728806589678
+      x: 1.3956493933531995
+      y: 0.35496909435106039
+      z: 1.4020411555054595
     }
     rotation {
-      x: 0.49302816180225595
-      y: -0.51572508945380546
-      z: 0.51607740213305264
-      w: -0.47393562725896954
+      x: -0.49846766759042305
+      y: 0.48925351716624971
+      z: -0.49750480207225189
+      w: 0.51444139823935908
     }
   }
   intrinsic {
     width: 1920
     height: 1080
-    matrix: 3942.8040772705344
+    matrix: 3977.6082516492183
     matrix: 0
-    matrix: 1140.0971878306257
+    matrix: 1000.233743994469
     matrix: 0
-    matrix: 3959.8648340513064
-    matrix: 527.04509682754622
+    matrix: 3983.2776229730734
+    matrix: 626.22024426991845
     matrix: 0
     matrix: 0
     matrix: 1
   }
   distcoeff {
-    distort_matrix: -0.38395574118417225
-    distort_matrix: 6.884335788685795
-    distort_matrix: -0.0010450785504361247
-    distort_matrix: 0.00914031937475074
-    distort_matrix: -91.9667119091764
+    distort_matrix: 0.8137848925007316
+    distort_matrix: -55.23380115652354
+    distort_matrix: -0.0086129315221548878
+    distort_matrix: -0.0093224462511691114
+    distort_matrix: 701.02629039662884
   }
 }
 
 sensor_info {
-  name: "H120-D05270538"
+  name: "H120-D05270550"
   type: SENSING_120
   orientation: FRONT
   topic: "/sensor/camera/sensing/image_raw_120"
   extrinsic {
     translation {
-      x: 1.5022769194689136
-      y: 0.18817296038579734
-      z: 1.5928763274580284
+      x: 1.5259189935772453
+      y: 0.3762428955080277
+      z: 1.5934592934495502
     }
     rotation {
-      x: -0.49761863573742693
-      y: 0.50486385104729348
-      z: -0.49230689420869178
-      w: 0.50509613657907781
+      x: -0.49804871239618309
+      y: 0.50286175745443673
+      z: -0.49392051820213706
+      w: 0.50509410476590577
     }
   }
   intrinsic {
     width: 1920
     height: 1080
-    matrix: 957.34968414711716
+    matrix: 951.916093051389
     matrix: 0
-    matrix: 955.76017205556639
+    matrix: 935.83739078749784
     matrix: 0
-    matrix: 958.30990438540448
-    matrix: 574.82781803276691
+    matrix: 952.79918350035143
+    matrix: 597.71276898338863
     matrix: 0
     matrix: 0
     matrix: 1
   }
   distcoeff {
-    distort_matrix: -0.34495444789752222
-    distort_matrix: 0.14527243085720082
-    distort_matrix: 0.00016635390949842422
-    distort_matrix: -3.5525599369336738e-05
-    distort_matrix: -0.03153983596306846
+    distort_matrix: -0.34227127064561835
+    distort_matrix: 0.14063607230568556
+    distort_matrix: 4.4316136611441993e-06
+    distort_matrix: -8.3066503642935713e-05
+    distort_matrix: -0.029316814185468856
   }
 }
 
@@ -148,15 +169,12 @@ sensor_info {
     translation {
       x: 1.13463926
       y: 0.33072897
-      z: 1.9205635387984414
+      z: 1.9138109537379904
     }
     rotation {
-      x: -0.0040499085127210094
-      y: 0.0015465832245025784
-      z: 0.7019775333348548
-      w: 0.7121858949842248
+      x: 0.0010846572309088016
+      y: 0.0034003005285834
+      z: 0.71205458635916341
+      w: 0.70211503866523717
     }
   }
-}
-
-
