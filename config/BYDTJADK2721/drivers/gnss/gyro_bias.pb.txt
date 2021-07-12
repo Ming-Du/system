@@ -5,7 +5,7 @@ accelerometer_bias {
 }
 
 gyroscope_bias {
-  x: -0.011397      #roll:-0.723+0.07
-  y: -0.0028117      #pitch:-0.3711+0.21
-  z: -0.0418879      #yaw:-2.4
+  x: -1.0      #roll:
+  y: -0.0      #pitch:
+  z: 0.70      #yaw:
 }

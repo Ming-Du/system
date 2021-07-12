@@ -1,64 +1,138 @@
-base: "base_link"
-
 sensor_info {
   name: "gnss"
   type: GNSS
   orientation: FRONT
-
   extrinsic {
     translation {
-      x: 0.0
-      y: 0.0
-      z: 0.0
+      x: -0.42
+      y: 0
+      z: 0
     }
     rotation {
-      w: 0.
       x: 0
       y: 0
-      z: 0.
+      z: 0
+      w: 0
     }
   }
 }
 sensor_info {
-  name: "6mm_front"
-  type: CAMERA_6MM
+  name: "H60-D05270588"
+  type: SENSING_60
   orientation: FRONT
-  topic: "/sensor/camera/6mm/image_raw"
-
+  topic: "/sensor/camera/sensing/image_raw_60"
   extrinsic {
     translation {
-      x: 2
-      y: 0
-      z: 1.5
+      x: 1.4559475581769101
+      y: 0.44027127503383889
+      z: 1.5531447355313706
     }
     rotation {
-      w: 0.5
-      x: -0.5
-      y: 0.5
-      z: -0.5
+      x: 0.49698888755116161
+      y: -0.5005986127123695
+      z: 0.50769551453974227
+      w: -0.49461938813327533
     }
   }
   intrinsic {
-    width: 1280
-    height: 720
-    matrix: 2000
-    matrix: 0.0
-    matrix: 640
-    matrix: 0.0
-    matrix: 2000
-    matrix: 360
-    matrix: 0.0
-    matrix: 0.0
-    matrix: 1.0
+    width: 1920
+    height: 1080
+    matrix: 1960.3262640549576
+    matrix: 0
+    matrix: 889.50040260688206
+    matrix: 0
+    matrix: 1961.5575419035883
+    matrix: 552.40368772148236
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.57597757410237493
+    distort_matrix: 0.35993865531433511
+    distort_matrix: 0.0018240949983210537
+    distort_matrix: 0.0013507289100730035
+    distort_matrix: -0.15457470413005045
   }
 }
 sensor_info {
-  name: "12mm_front"
-  type: CAMERA_12MM
+  name: "H30-D05270514"
+  type: SENSING_30
   orientation: FRONT
-  topic: "/sensor/camera/12mm/image_raw"
+  topic: "/sensor/camera/sensing/image_raw_30"
+  extrinsic {
+    translation {
+      x: 1.4826853881916247
+      y: 0.46707629906361969
+      z: 1.5323804013970472
+    }
+    rotation {
+      x: -0.49277504619243351
+      y: 0.5107762894184823
+      z: -0.49675792031759142
+      w: 0.49951166614972409
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 3898.7761259725835
+    matrix: 0
+    matrix: 987.40390199364128
+    matrix: 0
+    matrix: 3900.9039598030176
+    matrix: 613.64368951981623
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.38602163976753667
+    distort_matrix: 0.21786487005495869
+    distort_matrix: 0.00020769300123077512
+    distort_matrix: -0.0012319236033160874
+    distort_matrix: 5.3662139644164286
+  }
 }
-
+sensor_info {
+  name: "H120-D05270537"
+  type: SENSING_120
+  orientation: FRONT
+  topic: "/sensor/camera/sensing/image_raw_120"
+  extrinsic {
+    translation {
+      x: 1.4193650840437266
+      y: 0.37419232987879125
+      z: 1.5339811961288652
+    }
+    rotation {
+      x: 0.49088115459452969
+      y: -0.50372841957076286
+      z: 0.50616298538017246
+      w: -0.49909157838187751
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 952.96073818774391
+    matrix: 0
+    matrix: 995.13240322945785
+    matrix: 0
+    matrix: 953.76596988721633
+    matrix: 563.642931697563
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.32681737736714878
+    distort_matrix: 0.1174228857227728
+    distort_matrix: -0.000221361822516215
+    distort_matrix: -0.00015206933518639037
+    distort_matrix: -0.020024629951331811
+  }
+}
 sensor_info {
   name: "livox_front"
   type: LIVOX_HORIZON
@@ -71,10 +145,10 @@ sensor_info {
       z: 0.566
     }
     rotation {
-      w: 1.
       x: 0
       y: 0
       z: 0
+      w: 1
     }
   }
 }
@@ -90,10 +164,30 @@ sensor_info {
       z: 0.625
     }
     rotation {
-      w: 0.669
       x: 0.008
       y: 0.028
       z: -0.743
+      w: 0.669
     }
   }
 }
+sensor_info {
+  name: "middle_pandar_128"
+  type: HESAI_128
+  orientation: MIDDLE
+  topic: "/sensor/lidar/middle/point_cloud"
+  extrinsic {
+    translation {
+      x: 1.13463926
+      y: 0.33072897
+      z: 1.8159363452254293
+    }
+    rotation {
+      x: -0.0016864622565264744
+      y: 0.007882689360736073
+      z: 0.70970060896138654
+      w: 0.70445728379607
+    }
+  }
+}
+base: "base_link"
