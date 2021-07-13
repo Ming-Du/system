@@ -4,3 +4,4 @@
 *.pb.cc
 *.pyc
 config/vehicle
+!config/*/drivers/lidar/correct.csv
