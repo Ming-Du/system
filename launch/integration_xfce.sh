@@ -73,7 +73,7 @@ elif [ "$1" == "wey" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -T "drivers"  \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -T "controller"  \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
+      --tab -e "bash -c 'sleep 15; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -T "local_planner" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -T "had_map" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -T "guardian" \
@@ -84,12 +84,12 @@ elif [ "$1" == "wey" ]; then
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "df" ]; then
     xfce4-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -T "localization" \
+      --tab -e "bash -c 'sleep 5; $GLOG_COMMAND && $LOCALIZATION';bash" -T "localization" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $VV6_CAN_ADAPTER';bash" -T "canadapter"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -T "drivers"  \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -T "drivers"  \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -T "controller"  \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
+      --tab -e "bash -c 'sleep 7; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
+      --tab -e "bash -c 'sleep 15; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -T "local_planner" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -T "had_map" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -T "guardian" \
@@ -105,7 +105,7 @@ elif [ "$1" == "jinlv" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -T "drivers"  \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -T "controller"  \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
+      --tab -e "bash -c 'sleep 15; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -T "local_planner" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -T "had_map" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -T "guardian" \
@@ -121,7 +121,7 @@ elif [ "$1" == "byd" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -T "drivers"  \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -T "controller"  \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
+      --tab -e "bash -c 'sleep 15; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -T "local_planner" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -T "had_map" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -T "guardian" \
