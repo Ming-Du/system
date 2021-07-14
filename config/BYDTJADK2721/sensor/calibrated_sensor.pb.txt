@@ -134,6 +134,12 @@ sensor_info {
   }
 }
 sensor_info {
+  name: "H120-D05270564"
+  type: SENSING_120
+  orientation: REAR
+  topic: "/sensor/camera/sensing/image_raw_120_back"
+}
+sensor_info {
   name: "livox_front"
   type: LIVOX_HORIZON
   orientation: FRONT
