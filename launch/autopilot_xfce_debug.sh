@@ -1,6 +1,8 @@
 #!/bin/bash
 echo $HOME
 
+script_path=$(readlink -f $0)
+ABS_PATH=$(dirname $script_path)
 source /home/mogo/catkin_ws/devel/setup.bash
-BASHRC="/home/mogo/catkin_ws/src/system/launch/bashrc_debug.sh"
-source /home/mogo/catkin_ws/src/system/launch/integration_xfce.sh
+BASHRC="${ABS_PATH}/../../../bashrc_debug.sh"
+source ${ABS_PATH}/integration_xfce.sh

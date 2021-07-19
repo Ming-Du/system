@@ -3,7 +3,7 @@ use_lidar: true
 use_radar: false
 
 input_sensor {
-  sensor_name: "H60-D05270579"
+  sensor_name: "H60-D05270577"
   topic: "/perception/camera/camera_obstacle"
 }   
 input_sensor {

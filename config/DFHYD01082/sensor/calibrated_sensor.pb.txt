@@ -138,6 +138,13 @@ sensor_info {
 }
 
 sensor_info {
+  name: "H120-D06170508"
+  type: SENSING_120
+  orientation: REAR
+  topic: "/sensor/camera/sensing/image_raw_120_back"
+}
+
+sensor_info {
   name: "middle_pandar_128"
   type: HESAI_128
   orientation: MIDDLE

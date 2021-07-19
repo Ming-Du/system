@@ -1,6 +1,8 @@
 #!/bin/bash
 echo $HOME
 
-source /home/mogo/catkin_ws/devel/setup.bash
-BASHRC="/home/mogo/catkin_ws/src/system/launch/bashrc_debug.sh"
-source /home/mogo/catkin_ws/src/system/launch/integration_xfce_silence.sh
+script_path=$(readlink -f $0)
+ABS_PATH=$(dirname $script_path)
+source ${ABS_PATH}/../../../devel/setup.bash
+BASHRC="${ABS_PATH}/bashrc_debug.sh"
+source ${ABS_PATH}/integration_xfce_silence.sh

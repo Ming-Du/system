@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="config_path" default="$(find config)/vehicle"/>
+  <arg name="sensor_meta"
+    default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
+  <arg name="sensor_name" default="middle_pandar_128" />
+
+  <arg name="pcap_file"  default=""/>
+  <arg name="server_ip" default="192.168.1.205"/>
+  <arg name="lidar_recv_port"  default="2368"/>
+  <arg name="gps_port"  default="10110"/>
+  <arg name="start_angle"  default="0"/>
+  <arg name="lidar_type" default="Pandar128"/>
+  <arg name="pcldata_type" default="0"/>
+  <arg name="publish_type" default="point"/>
+  <arg name="timestamp_type" default=""/>
+  <arg name="data_type" default=""/>
+	
+  <arg name="lidar_correction_file"  default="$(arg config_path)/drivers/lidar/correct.csv"/>
+
+  <group ns="/sensor/lidar/hesai128">
+  <node pkg="drivers_hesai128" type="drivers_hesai128_node" 
+      name="drivers_hesai128" output="screen"
+      args="--sensor_meta_path=$(arg sensor_meta)" >
+    <param name="pcap_file" type="string" value="$(arg pcap_file)"/>
+    <param name="server_ip" type="string" value="$(arg server_ip)"/>
+    <param name="lidar_recv_port"  type="int" value="$(arg lidar_recv_port)"/>
+    <param name="gps_port"  type="int" value="$(arg gps_port)"/>
+		
+    <param name="frame_id" value="$(arg sensor_name)"/>
+    <param name="start_angle"  type="double" value="$(arg start_angle)"/>
+    <param name="lidar_type"  type="string" value="$(arg lidar_type)"/>
+    <param name="pcldata_type"  type="int" value="$(arg pcldata_type)"/>
+    <param name="publish_type"  type="string" value="$(arg publish_type)"/>
+    <param name="timestamp_type"  type="string" value="$(arg timestamp_type)"/>
+    <param name="data_type"  type="string" value="$(arg data_type)"/>
+    <param name="lidar_correction_file"  type="string" value="$(arg lidar_correction_file)"/>
+  </node>
+  </group>
+  
+</launch>
