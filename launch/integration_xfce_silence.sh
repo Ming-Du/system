@@ -18,7 +18,7 @@ export ROS_LOG_DIR=/home/mogo/data/log/${DATE}_${TIME}
 source /home/mogo/autopilot/share/launch/bashrc.sh
 
 GLOG_COMMAND="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1; export ROS_LOG_DIR=/home/mogo/data/log/${DATE}_${TIME}"
-#BASHRC="/home/mogo/autopilot/share/launch/bashrc.sh"
+BASHRC="/home/mogo/autopilot/share/launch/bashrc.sh"
 ROSCORE="source $BASHRC && roscore 2>&1 | tee \${ROS_LOG_DIR}/roscore.log"
 GNSS_COMMAND="source $BASHRC && roslaunch drivers_gnss data_spin.launch 2>&1 | tee ${ROS_LOG_DIR}/data_spin.launch.log"
 #LOCALIZATION="source $BASHRC roslaunch launch path_recorder.launch 2>&1 | tee \${ROS_LOG_DIR}/.log"
@@ -87,19 +87,19 @@ elif [ "$1" == "wey" ]; then
   sleep 2
 elif [ "$1" == "df" ]; then
   roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log &
-  sleep 2 && roslaunch guardian system_guardian.launch 2>&1 | tee ${ROS_LOG_DIR}/system_guardian.launch.log &
-  sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
-  sleep 5 && roslaunch localization localization.launch 2>&1 | tee ${ROS_LOG_DIR}/localization.launch.log &
-  sleep 3 && roslaunch can_adapter vv6_can_adapter.launch 2>&1 | tee ${ROS_LOG_DIR}/vv6_can_adapter.launch.log &
-  sleep 3 && roslaunch launch drivers.launch 2>&1 | tee ${ROS_LOG_DIR}/drivers.launch.log &
-  sleep 2 && roslaunch controller controller.launch 2>&1 | tee ${ROS_LOG_DIR}/controller.launch.log &
-  sleep 7 && roslaunch launch perception.launch 2>&1 | tee ${ROS_LOG_DIR}/perception.launch.log &
-  sleep 15 && roslaunch telematics telematics.launch 2>&1 | tee ${ROS_LOG_DIR}/telematics.launch.log &
-  sleep 2 && roslaunch launch local_planning.launch 2>&1 | tee ${ROS_LOG_DIR}/local_planning.launch.log &
-  sleep 2 && roslaunch launch hadmap.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap.launch.log &
-  sleep 2 && roslaunch track_recorder track_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/track_recorder.launch.log &
-  sleep 17 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
-  sleep 3 && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
+  sleep 2 && source $BASHRC && roslaunch --wait guardian system_guardian.launch 2>&1 | tee ${ROS_LOG_DIR}/system_guardian.launch.log &
+  sleep 2 && source $BASHRC && roslaunch --wait operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
+  sleep 5 && source $BASHRC && roslaunch --wait localization localization.launch 2>&1 | tee ${ROS_LOG_DIR}/localization.launch.log &
+  sleep 3 && source $BASHRC && roslaunch --wait can_adapter vv6_can_adapter.launch 2>&1 | tee ${ROS_LOG_DIR}/vv6_can_adapter.launch.log &
+  sleep 3 && source $BASHRC && roslaunch --wait launch drivers.launch 2>&1 | tee ${ROS_LOG_DIR}/drivers.launch.log &
+  sleep 2 && source $BASHRC && roslaunch --wait controller controller.launch 2>&1 | tee ${ROS_LOG_DIR}/controller.launch.log &
+  sleep 7 && source $BASHRC && roslaunch --wait launch perception.launch 2>&1 | tee ${ROS_LOG_DIR}/perception.launch.log &
+  sleep 15 && source $BASHRC && roslaunch --wait telematics telematics.launch 2>&1 | tee ${ROS_LOG_DIR}/telematics.launch.log &
+  sleep 2 && source $BASHRC && roslaunch --wait launch local_planning.launch 2>&1 | tee ${ROS_LOG_DIR}/local_planning.launch.log &
+  sleep 2 && source $BASHRC && roslaunch --wait launch hadmap.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap.launch.log &
+  sleep 2 && source $BASHRC && roslaunch --wait track_recorder track_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/track_recorder.launch.log &
+  sleep 17 && source $BASHRC && roslaunch --wait rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
+  sleep 3 && source $BASHRC && roslaunch --wait hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
   sleep 2
 elif [ "$1" == "jinlv" ]; then
   roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log &
