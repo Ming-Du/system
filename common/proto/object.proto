@@ -122,12 +122,12 @@ message TrackedObject {
   optional float absolute_longitude_a = 8;   // in m/s2, longitudinal acc
   optional float absolute_lateral_v = 9;     // vertical to lane speed, left positive, m/s
 
-  optional float longitude = 10;   // longitude , in degrees
-  optional float latitude = 11;   // latitude , in degrees
-  optional float alt = 12;     // height above mean sea level in meters
+  optional double longitude = 10;   // longitude , in degrees
+  optional double latitude = 11;   // latitude , in degrees
+  optional double alt = 12;     // height above mean sea level in meters
 
-  optional float longitude_p = 13;   // position in East , in meters
-  optional float latitude_p = 14;   // position in North , in meters
+  optional double longitude_p = 13;   // position in East , in meters
+  optional double latitude_p = 14;   // position in North , in meters
 
 //float x_speed             // longitudinal speed relative to host vehicle, m/s
 //float y_speed             // lateral speed relative to host vehicle, m/s
