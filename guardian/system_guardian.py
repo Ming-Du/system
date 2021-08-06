@@ -34,6 +34,7 @@ class Process(Thread):
     pub_node = rospy.Publisher('/system/nodes',String, queue_size=100)
     pub_cpu = rospy.Publisher('/system/cpu',String, queue_size=100)
     pub_mem = rospy.Publisher('/system/mem',String, queue_size=100)
+    pub_disk = rospy.Publisher('/system/disk',String, queue_size=100)
     
     rate = rospy.Rate(1)
     while True:
@@ -97,6 +98,30 @@ class Process(Thread):
       #print(dict)
       print(memmsg)
       print('---------')
+      #diskstat
+      disk_dict = {}
+      #cmd="df -h |grep -w -E '/|/data' |awk -F' ' '{print $1 \" \" $2 \" \" $3 \" \" $4 \" \" $5 \" \" $6}'"
+      cmd="df -h |grep '/' |awk -F' ' '{print $1 \" \" $2 \" \" $3 \" \" $4 \" \" $5 \" \" $6}'"
+      rdisk = Popen(cmd, shell=True, stdout=PIPE,stderr=STDOUT)
+      for line in iter(rdisk.stdout.readline, b''):
+          line = line.strip('\n')
+          print(line)
+          out_list=re.split(r' ',line)
+          dict_tmp = {}
+          dict_tmp["diskname"]=out_list[0]
+          dict_tmp["diskall"]=out_list[1]
+          dict_tmp["diskuse"]=out_list[2]
+          dict_tmp["diskfree"]=out_list[3]
+          dict_tmp["diskpercent"]=out_list[4]
+          dict_tmp["diskmount"]=out_list[5]
+          disk_dict[out_list[0]] = dict_tmp;
+            #    print(out_list)
+      rdisk.terminate()
+      diskmsg = json.dumps(disk_dict)
+      pub_disk.publish(diskmsg)
+      print(diskmsg)
+      print('---------')
+
       rate.sleep()
   
   def start_node(self, node):
