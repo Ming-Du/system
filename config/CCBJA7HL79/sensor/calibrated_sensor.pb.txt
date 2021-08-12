@@ -87,6 +87,25 @@ sensor_info {
   }
 }
 sensor_info {
+  name: "ct_radar"
+  type: CT_RADAR
+  orientation: FRONT
+  topic: "/perception/radar/RScan"
+  extrinsic {
+    translation {
+      x: 3.6
+      y: 0.0
+      z: 0.4
+    }
+    rotation {
+      w: 1
+      x: 0
+      y: 0
+      z: 0
+    }
+  }
+}
+sensor_info {
   name: "c16_front_left"
   type: LSLIDAR_C16
   orientation: LEFT_FORWARD
