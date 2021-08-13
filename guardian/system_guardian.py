@@ -159,7 +159,7 @@ def topicFun(config_file,rostopic_file):
         topic_str=""
         topic_monitor_list=[]
         count = 0
-        p = Popen("rostopic list",shell=True,stdout=PIPE)
+        p = Popen("rostopic list -p",shell=True,stdout=PIPE)
         topic_li = p.stdout.read()
         topicAlive = topic_li.split("\n")
         #print(topicAlive)
