@@ -13,9 +13,8 @@ export GLOG_logtostderr=1
 export GLOG_colorlogtostderr=1
 export ROS_LOG_DIR=/home/mogo/data/log/${DATE}_${TIME}
 
-if [ ! -d $ROS_LOG_DIR ]; then 
-	mkdir -p $ROS_LOG_DIR
-fi
+[[ ! -d $ROS_LOG_DIR ]] && mkdir -p $ROS_LOG_DIR
+find /home/mogo/data/log -mtime +3 -name *.log -exec rm -Rf {} \;
 # export ROSCONSOLE_CONFIG_FILE="${HOME}/catkin_ws/src/system/launch/log4cxx.properties"
 
 ROSCORE="roscore"
@@ -85,7 +84,7 @@ elif [ "$1" = "wey" ]; then
     sleep 2 && roslaunch model_publisher prius_model.launch 2>&1 | tee ${ROS_LOG_DIR}/prius_model.launch.log &
     sleep 2 && roslaunch model_publisher map_model.launch 2>&1 | tee ${ROS_LOG_DIR}/map_model.launch.log &
     sleep 2 && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
-    sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
+    #sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
     sleep 2
 elif [ "$1" = "df" ]; then
     echo "enter df branch"
@@ -104,7 +103,7 @@ elif [ "$1" = "df" ]; then
     sleep 2 && roslaunch model_publisher prius_model.launch 2>&1 | tee ${ROS_LOG_DIR}/prius_model.launch.log &
     sleep 2 && roslaunch model_publisher map_model.launch 2>&1 | tee ${ROS_LOG_DIR}/map_model.launch.log &
     sleep 2 && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
-    sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
+    #sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
     sleep 2
 elif [ "$1" = "jinlv" ]; then
     roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log & 
@@ -122,7 +121,7 @@ elif [ "$1" = "jinlv" ]; then
     sleep 2 && roslaunch model_publisher prius_model.launch 2>&1 | tee ${ROS_LOG_DIR}/prius_model.launch.log &
     sleep 2 && roslaunch model_publisher map_model.launch 2>&1 | tee ${ROS_LOG_DIR}/map_model.launch.log &
     sleep 2 && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
-    sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
+    #sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
     sleep 2
 elif [ "$1" = "byd" ]; then
     roscore 2>&1 | tee ${ROS_LOG_DIR}/roscore.log & 
@@ -140,7 +139,7 @@ elif [ "$1" = "byd" ]; then
     sleep 2 && roslaunch model_publisher prius_model.launch 2>&1 | tee ${ROS_LOG_DIR}/prius_model.launch.log &
     sleep 2 && roslaunch model_publisher map_model.launch 2>&1 | tee ${ROS_LOG_DIR}/map_model.launch.log &
     sleep 2 && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
-    sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
+    #sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
     sleep 2
 else
     echo "do others"

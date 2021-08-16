@@ -7,8 +7,9 @@ export TIME=`date +"%H%M%S"`
 export ROS_LOG_DIR=/home/mogo/data/log/${DATE}_${TIME}
 
 [[ ! -d $ROS_LOG_DIR ]] && mkdir -p $ROS_LOG_DIR
+find /home/mogo/data/log -mtime +3 -name *.log -exec rm -Rf {} \;
 
-echo "123" | sudo -S chmod +777 /dev -R
+sudo -S chmod +777 /dev -R
 echo $HOME
 echo $1
 echo $BASHRC
@@ -79,8 +80,8 @@ elif [ "$1" == "wey" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -T "guardian" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
-      --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
+      #--tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "df" ]; then
     xfce4-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" \
@@ -95,8 +96,8 @@ elif [ "$1" == "df" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -T "guardian" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
-      --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
+      #--tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "jinlv" ]; then
     xfce4-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" \
@@ -111,8 +112,8 @@ elif [ "$1" == "jinlv" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -T "guardian" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
-      --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
+      #--tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "byd" ]; then
     xfce4-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" \
@@ -127,8 +128,8 @@ elif [ "$1" == "byd" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -T "guardian" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
-      --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
+      #--tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 2';bash";
 else
     echo "do others"

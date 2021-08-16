@@ -6,11 +6,12 @@ export DATE=`date +"%Y%m%d"`
 export TIME=`date +"%H%M%S"`
 export ROS_LOG_DIR=${HOME}/data/log/${DATE}_${TIME}
 
-[[ ! -d $ROS_LOG_DIR ]] && mkdir -p $ROS_LOG_DIR
-
 echo "123"|sudo -S chmod +777 /dev -R
 echo $HOME
 echo $1
+
+[[ ! -d $ROS_LOG_DIR ]] && mkdir -p $ROS_LOG_DIR
+find /home/mogo/data/log -mtime +3 -name *.log -exec rm -Rf {} \;
 ###########################################################
 GLOG_COMMAND="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1; export ROS_LOG_DIR=${HOME}/data/log/${DATE}_${TIME}"
 
