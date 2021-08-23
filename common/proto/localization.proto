@@ -38,7 +38,7 @@ message Localization {
   optional double longitudinal_a = 21;
   optional double vertical_a = 22;
   optional double horizontal_v = 23;
-  optional int utm_zone = 24;
+  optional double utm_zone = 24;
   //repeated double pose_cov  = 10 [packed = true]; //6x6=36
   //repeated double twist_cov = 11 [packed = true]; //6x6=36
   //repeated double accel_cov = 12 [packed = true]; //6x6=36
