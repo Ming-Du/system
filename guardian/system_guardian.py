@@ -35,6 +35,8 @@ class Process(Thread):
     pub_cpu = rospy.Publisher('/system/cpu',String, queue_size=100)
     pub_mem = rospy.Publisher('/system/mem',String, queue_size=100)
     pub_disk = rospy.Publisher('/system/disk',String, queue_size=100)
+    pub_progcpu = rospy.Publisher('/system/program/cpu',String, queue_size=100)
+    pub_progmem = rospy.Publisher('/system/program/mem',String, queue_size=100)
     
     rate = rospy.Rate(1)
     while True:
@@ -121,6 +123,62 @@ class Process(Thread):
       pub_disk.publish(diskmsg)
       print(diskmsg)
       print('---------')
+      #top ten %cpu program
+      #top_cmd = "ps aux|head -1|awk -F' ' '{print$3,$4,$11}';ps aux|grep -v PID|sort -rn -k +3|head|awk -F' ' '{print$3,$4,$11,$12}'" 
+      #top_cmd = "ps aux|grep -v PID|sort -rn -k +3|head|awk -F' ' '{print$3,$4,$11,$12}'" 
+      top_cmd = "ps aux|grep -v PID|sort -rn -k +3" 
+      top_cmd1 = "head|awk -F' ' '{print$3,$4,$11,$12}'" 
+      prog1 = Popen(top_cmd, shell=True, stdout=PIPE)
+      prog = Popen(top_cmd1, shell=True, stdin=prog1.stdout, stdout=PIPE)
+      prog_dict = {}
+      for line in iter(prog.stdout.readline, b''):
+          print(line)
+          out_list = re.split(r' ', line)
+          dict_tmp = {}
+          if len(out_list)==3:
+            tmp = out_list[2]
+          elif len(out_list) > 3:
+            if "python" in out_list[2]:
+                tmp = out_list[3]
+            else:
+                tmp = out_list[2]
+          print(tmp)
+          dict_tmp["prog_name"] = tmp
+          dict_tmp["cpu_percent"] = out_list[0]
+          dict_tmp["mem_percent"] = out_list[1]
+          prog_dict[tmp] = dict_tmp
+      prog1.terminate()
+      prog.terminate()
+      progmsg = json.dumps(prog_dict)
+      pub_progcpu.publish(progmsg)
+      print(progmsg)
+      #top ten %mem  program
+      top_cmd = "ps aux|grep -v PID|sort -rn -k +4" 
+      top_cmd1 = "head|awk -F' ' '{print$3,$4,$11,$12}'" 
+      prog_mem1 = Popen(top_cmd, shell=True, stdout=PIPE)
+      prog_mem = Popen(top_cmd1, shell=True, stdin=prog_mem1.stdout, stdout=PIPE)
+      progmem_dict = {}
+      for line in iter(prog_mem.stdout.readline, b''):
+          print(line)
+          out_list = re.split(r' ', line)
+          dict_tmp = {}
+          if len(out_list)==3:
+            tmp = out_list[2]
+          elif len(out_list) > 3:
+            if "python" in out_list[2]:
+                tmp = out_list[3]
+            else:
+                tmp = out_list[2]
+          print(tmp)
+          dict_tmp["prog_name"] = tmp
+          dict_tmp["cpu_percent"] = out_list[0]
+          dict_tmp["mem_percent"] = out_list[1]
+          progmem_dict[tmp] = dict_tmp
+      prog_mem1.terminate()
+      prog_mem.terminate()
+      progmemmsg = json.dumps(progmem_dict)
+      pub_progmem.publish(progmemmsg)
+      print(progmemmsg)
 
       rate.sleep()
   
@@ -145,6 +203,8 @@ class Process(Thread):
     #if (status.status == 2) is fine
 
 def topicFun(config_file,rostopic_file):
+    topic_orig_dict = {}
+    topic_orig_list = []
     topic_list=[]
     topic_send_list=[]
     rospy.loginfo("config_file:%s"%config_file)
@@ -152,9 +212,16 @@ def topicFun(config_file,rostopic_file):
         config = simplejson.load(f)
     guardian_topics=config["guardian_topics"]
     for topic_g in guardian_topics:
-        topic_list.append(topic_g) ######monitor topics
+        topic_g_list = []
+        topic_g_list = topic_g.split(':')
+        topic_list.append(topic_g_list[0]) ######monitor topics
+        if( len(topic_g_list) >= 2 ):
+            topic_orig_dict[topic_g_list[0]] = topic_g_list[1];
+        else:
+            topic_orig_dict[topic_g_list[0]] = "";
+            
     topics_size = len(topic_list)
-    pub_topics = rospy.Publisher('/system/rostopics',String, queue_size=100)
+    pub_topics = rospy.Publisher('/system/rostopics_hz',String, queue_size=100)
     while True:
         topic_str=""
         topic_monitor_list=[]
@@ -164,6 +231,10 @@ def topicFun(config_file,rostopic_file):
         topicAlive = topic_li.split("\n")
         #print(topicAlive)
         for topic_g in topic_list:
+            #topic_g_list = topic_g.split(':')
+            #print("topic_g_list")
+            #print(topic_g_list)
+            #topic_g = topic_g_list[0]
             if topic_g in topicAlive:
                 topic_str=topic_str +" " + topic_g  ######rostopic
                 topic_monitor_list.append(topic_g)
@@ -179,16 +250,25 @@ def topicFun(config_file,rostopic_file):
             line = line.strip()
             out_list=re.split(r'\s+',line)
             print("out_list[0]:%s"%out_list[0])
+            topic_msg_dict = {}
             if topics_size==1:
                 if out_list[0]=="average":
-                    topic_dict[topic_list[0]] = out_list[2]
+                    topic_msg_dict["topic_name"] = topic_list[0]
+                    topic_msg_dict["run_hz"] = out_list[2]
+                    topic_msg_dict["set_hz"] = topic_orig_dict[topic_list[0]]
+                    #topic_dict[topic_list[0]] = out_list[2]
+                    topic_dict[topic_list[0]] = topic_msg_dict
                     topicsmsg = json.dumps(topic_dict)
                     print(topicsmsg)
                     pub_topics.publish(topicsmsg)
             if out_list[0]=="topic":
                 for topic_g in topic_list:
                     if topic_g not in topic_dict_list:
-                        topic_dict[topic_g]  = '0'
+                        topic_msg_dict["topic_name"] = topic_g
+                        topic_msg_dict["run_hz"] = "0"
+                        topic_msg_dict["set_hz"] = topic_orig_dict[topic_g]
+                        topic_dict[topic_g]  = topic_msg_dict
+                        topic_msg_dict = {}
                 topicsmsg = json.dumps(topic_dict)
                 print(topicsmsg)
                 pub_topics.publish(topicsmsg)
@@ -202,15 +282,24 @@ def topicFun(config_file,rostopic_file):
                 print(out_list)
                 break
             if out_list[0] in topic_list:
-                topic_dict[out_list[0]] = out_list[1]
-                print(out_list[0]+":"+out_list[1])
+                topic_msg_dict["topic_name"] =out_list[0] 
+                topic_msg_dict["run_hz"] = out_list[1]
+                topic_msg_dict["set_hz"] = topic_orig_dict[out_list[0]]
+                #topic_dict[out_list[0]] = out_list[1]
+                topic_dict[out_list[0]] = topic_msg_dict;
+                #print(out_list[0]+":"+out_list[1])
                 topic_dict_list.append(out_list[0])
-            if out_list[0]=='no':
+            if out_list[0]=='no' or out_list[0] == 'Usage:':
                 print(out_list[0]+":"+out_list[0])
                 topic_dict_list  = []
                 for topic_g in topic_list:
                     if topic_g not in topic_dict_list:
-                        topic_dict[topic_g]  = '0'
+                        topic_msg_dict["topic_name"] = topic_g
+                        topic_msg_dict["run_hz"] = "0"
+                        topic_msg_dict["set_hz"] = topic_orig_dict[topic_g]
+                        #topic_dict[topic_g]  = '0'
+                        topic_dict[topic_g]  = topic_msg_dict
+                        topic_msg_dict = {}
                 topicsmsg = json.dumps(topic_dict)
                 print(topicsmsg)
                 pub_topics.publish(topicsmsg)
