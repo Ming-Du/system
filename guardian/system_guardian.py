@@ -15,7 +15,11 @@ import logging
 import re
 import time
 from subprocess import Popen,PIPE,STDOUT
+from multiprocessing import Process, Manager
+import multiprocessing
 logging.basicConfig()
+
+flow_dict = {}
 class Process(Thread):
   config_file = ""
   NodeAlive = []
@@ -37,6 +41,7 @@ class Process(Thread):
     pub_disk = rospy.Publisher('/system/disk',String, queue_size=100)
     pub_progcpu = rospy.Publisher('/system/program/cpu',String, queue_size=100)
     pub_progmem = rospy.Publisher('/system/program/mem',String, queue_size=100)
+    pub_netflow = rospy.Publisher('/system/netflow',String, queue_size=100)
     
     rate = rospy.Rate(1)
     while True:
@@ -179,6 +184,21 @@ class Process(Thread):
       progmemmsg = json.dumps(progmem_dict)
       pub_progmem.publish(progmemmsg)
       print(progmemmsg)
+      #net-flow
+      self.flow_dict = {}
+      net_list = []
+      for Net_card in self.get_netcard():
+          #netp = multiprocessing.Process(target=self.Net_card_flow, args=(Net_card,))
+          self.Net_card_flow(Net_card)
+          break
+          #netp.daemon=True
+          #net_list.append(netp)
+      #for p in net_list:
+          #p.start()
+      #for p in net_list:
+          #p.join()
+      netmsg = json.dumps(self.flow_dict)
+      pub_netflow.publish(netmsg)
 
       rate.sleep()
   
@@ -201,6 +221,55 @@ class Process(Thread):
     #self.NodeList.append('system_guardian')
     #rospy.Subscriber("/sensor/gnss/gps_fix")
     #if (status.status == 2) is fine
+  def get_netcard(self):
+        netcard_info = []
+        info = psutil.net_if_addrs()
+        for k,v in info.items():
+            for item in v:
+                if item[0] == 2 and not item[1]=='127.0.0.1':
+                    netcard_info.append((k))
+        return netcard_info
+
+  def Net_card_flow(self, get_net):
+        Sent_flow_1 = (psutil.net_io_counters(pernic=True)[get_net]).bytes_sent
+        Recv_flow_1 = (psutil.net_io_counters(pernic=True)[get_net]).bytes_recv
+        time.sleep(0.5)
+        Sent_flow_2 = (psutil.net_io_counters(pernic=True)[get_net]).bytes_sent
+        Recv_flow_2 = (psutil.net_io_counters(pernic=True)[get_net]).bytes_recv
+
+        #计算当前流量的字节数
+        Sent_flow = (Sent_flow_2-Sent_flow_1)*2.0
+        Recv_flow = (Recv_flow_2-Recv_flow_1)*2.0
+        #计算发送流量
+        if Sent_flow < 1024:
+            Sent_flow_format = str(Sent_flow )+"B/s"
+        elif 1024 <= Sent_flow < 1048576:
+            Sent_flow_format = str(Sent_flow/1024)+"K/s"
+        elif 1048576 <= Sent_flow < 1073741824:
+            Sent_flow_format = str(Sent_flow/1024/1024 )+"M/s"
+        else:
+            Sent_flow_format = str(Sent_flow/1024/1024/10240)+"G/s"
+
+        #计算接受流量
+        if Recv_flow  < 1024:
+            Recv_flow_format = str(Recv_flow)+"B/s"
+        elif 1024 <= Recv_flow < 1048576:
+            Recv_flow_format = str(Recv_flow/1024)+"K/s"
+        elif 1048576 <= Recv_flow < 1073741824:
+            Recv_flow_format = str(Recv_flow/1024/1024)+"M/s"
+        else:
+            Recv_flow_format = str(Recv_flow/1024/1024/1024)+"G/s"
+
+        #print "网卡:",get_net," \t发送流量:",Sent_flow_format,"接受流量:",Recv_flow_format
+        net_dict = {}
+        self.flow_dict = {}
+        net_dict["netname"] = get_net
+        net_dict["send_flow"] = Sent_flow_format
+        net_dict["recv_flow"] = Recv_flow_format
+        self.flow_dict[get_net] = net_dict
+        print(self.flow_dict)
+        #print(netmsg)
+        #print(flow_dict)
 
 def topicFun(config_file,rostopic_file):
     topic_orig_dict = {}
@@ -306,6 +375,8 @@ def topicFun(config_file,rostopic_file):
                 count = 0
                 topic_dict = {}
                 topic_dict_list = []
+
+
 
 def main():
     if len(sys.argv) < 3:
