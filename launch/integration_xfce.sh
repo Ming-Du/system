@@ -23,8 +23,12 @@ LOCALIZATION="source $BASHRC && roslaunch localization localization.launch 2>&1 
 VV6_CAN_ADAPTER="source $BASHRC && roslaunch can_adapter vv6_can_adapter.launch 2>&1 | tee \${ROS_LOG_DIR}/vv6_can_adapter.launch.log"
 BYD_CAN_ADAPTER="source $BASHRC && roslaunch can_adapter byd_can_adapter.launch 2>&1 | tee \${ROS_LOG_DIR}/byd_can_adapter.launch.log"
 JINLV_CAN_ADAPTER="source $BASHRC && roslaunch can_adapter jinlv_can_adapter.launch 2>&1 | tee \${ROS_LOG_DIR}/jinlv_can_adapter.launch.log"
+DONGFENG_CAN_ADAPTER="source $BASHRC && roslaunch can_adapter DongFeng_E70_can_adapter.launch 2>&1 | tee \${ROS_LOG_DIR}/DongFeng_E70_can_adapter.launch.log"
 RTKREPLAYPLANNER="source $BASHRC && roslaunch controller_simulator controller_simulator.launch 2>&1 | tee \${ROS_LOG_DIR}/controller_simulator.launch.log"
-CONTROLLER="source $BASHRC && roslaunch controller controller.launch 2>&1 | tee \${ROS_LOG_DIR}/controller.launch.log"
+VV6_CONTROLLER="source $BASHRC && roslaunch controller controller_vv6.launch 2>&1 | tee \${ROS_LOG_DIR}/controller_vv6.launch.log"
+BYD_CONTROLLER="source $BASHRC && roslaunch controller controller_qinpro.launch 2>&1 | tee \${ROS_LOG_DIR}/controller_qinpro.launch.log"
+JINLV_CONTROLLER="source $BASHRC && roslaunch controller controller_jinlv.launch 2>&1 | tee \${ROS_LOG_DIR}/controller_jinlv.launch.log"
+DONGFENG_CONTROLLER="source $BASHRC && roslaunch controller controller_dfe70.launch 2>&1 | tee \${ROS_LOG_DIR}/controller_dfe70.launch.log"
 SEND_CONTROL_COMMAND="source $BASHRC && python2 share/cmd_panel/chassis_set.py qt5 2>&1 | tee \${ROS_LOG_DIR}/chassis_set.py.log"
 SEND_CONTROL_COMMAND_USE_TOPIC="source $BASHRC && python2 src/control/chassis_tool/chassis_set_pbmsg.py 2>&1 | tee \${ROS_LOG_DIR}/chassis_set_pbmsg.py.log"
 PERCEPTION="source $BASHRC && roslaunch launch perception.launch 2>&1 | tee \${ROS_LOG_DIR}/perception.launch.log"
@@ -47,7 +51,7 @@ xfce4-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" 
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -T "localization" \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $VV6_CAN_ADAPTER';bash" -T "canadapter"  \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $RTKREPLAYPLANNER';bash" -T "planner"  \
-        --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -T "controller"  \
+        --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $VV6_CONTROLLER';bash" -T "controller"  \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
 		--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
@@ -59,7 +63,7 @@ xfce4-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" 
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -T "localization" \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $VV6_CAN_ADAPTER';bash" -T "canadapter"  \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -T "drivers"  \
-	    --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -T "controller"  \
+	    --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $VV6_CONTROLLER';bash" -T "controller"  \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -T "local_planner" \
@@ -72,7 +76,7 @@ elif [ "$1" == "wey" ]; then
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -T "localization" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $VV6_CAN_ADAPTER';bash" -T "canadapter"  \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -T "drivers"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -T "controller"  \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $VV6_CONTROLLER';bash" -T "controller"  \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
       --tab -e "bash -c 'sleep 15; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -T "local_planner" \
@@ -86,9 +90,9 @@ elif [ "$1" == "wey" ]; then
 elif [ "$1" == "df" ]; then
     xfce4-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" \
       --tab -e "bash -c 'sleep 5; $GLOG_COMMAND && $LOCALIZATION';bash" -T "localization" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $VV6_CAN_ADAPTER';bash" -T "canadapter"  \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $DONGFENG_CAN_ADAPTER';bash" -T "canadapter"  \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -T "drivers"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -T "controller"  \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $DONGFENG_CONTROLLER';bash" -T "controller"  \
       --tab -e "bash -c 'sleep 7; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
       --tab -e "bash -c 'sleep 15; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -T "local_planner" \
@@ -104,7 +108,7 @@ elif [ "$1" == "jinlv" ]; then
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -T "localization" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $JINLV_CAN_ADAPTER';bash" -T "canadapter"  \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -T "drivers"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -T "controller"  \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $JINLV_CONTROLLER';bash" -T "controller"  \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
       --tab -e "bash -c 'sleep 15; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -T "local_planner" \
@@ -120,7 +124,7 @@ elif [ "$1" == "byd" ]; then
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -T "localization" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $BYD_CAN_ADAPTER';bash" -T "canadapter"  \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -T "drivers"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -T "controller"  \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $BYD_CONTROLLER';bash" -T "controller"  \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
       --tab -e "bash -c 'sleep 15; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -T "local_planner" \
