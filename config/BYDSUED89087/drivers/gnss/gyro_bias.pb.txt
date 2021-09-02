@@ -1,11 +1,13 @@
+device: "/dev/ttyACM0"
+
 accelerometer_bias {
-  x: 0.1713
-  y: 0.0437
-  z: 0.001593
+  x: 0.0
+  y: 0.0
+  z: 0.00
 }
 
 gyroscope_bias {
-  x: -0.011397      #roll:-0.723+0.07
-  y: -0.0028117      #pitch:-0.3711+0.21
-  z: -0.0418879      #yaw:-2.4
+  x: -0.0      #roll:
+  y: -0.00      #pitch:
+  z: -0.0      #yaw:
 }
