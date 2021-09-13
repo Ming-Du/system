@@ -27,10 +27,11 @@ class Process(Thread):
   ParamName='/system/isReady'  #logDetail
   node_state_dict={}
   
-  def __init__(self,filename):
+  def __init__(self, vehiclefile):
     Thread.__init__(self)
     self.daemon = True
-    self.config_file = filename
+    #self.config_file = filename
+    self.vehiclefile = vehiclefile
     self.register()
     self.start()
     
@@ -112,7 +113,7 @@ class Process(Thread):
       rdisk = Popen(cmd, shell=True, stdout=PIPE,stderr=STDOUT)
       for line in iter(rdisk.stdout.readline, b''):
           line = line.strip('\n')
-          print(line)
+          #print(line)
           out_list=re.split(r' ',line)
           dict_tmp = {}
           dict_tmp["diskname"]=out_list[0]
@@ -122,7 +123,7 @@ class Process(Thread):
           dict_tmp["diskpercent"]=out_list[4]
           dict_tmp["diskmount"]=out_list[5]
           disk_dict[out_list[0]] = dict_tmp;
-            #    print(out_list)
+          #print(out_list)
       rdisk.terminate()
       diskmsg = json.dumps(disk_dict)
       pub_disk.publish(diskmsg)
@@ -137,7 +138,7 @@ class Process(Thread):
       prog = Popen(top_cmd1, shell=True, stdin=prog1.stdout, stdout=PIPE)
       prog_dict = {}
       for line in iter(prog.stdout.readline, b''):
-          print(line)
+          #print(line)
           out_list = re.split(r' ', line)
           dict_tmp = {}
           if len(out_list)==3:
@@ -147,7 +148,7 @@ class Process(Thread):
                 tmp = out_list[3]
             else:
                 tmp = out_list[2]
-          print(tmp)
+          #print(tmp)
           dict_tmp["prog_name"] = tmp
           dict_tmp["cpu_percent"] = out_list[0]
           dict_tmp["mem_percent"] = out_list[1]
@@ -164,7 +165,7 @@ class Process(Thread):
       prog_mem = Popen(top_cmd1, shell=True, stdin=prog_mem1.stdout, stdout=PIPE)
       progmem_dict = {}
       for line in iter(prog_mem.stdout.readline, b''):
-          print(line)
+      #print(line)
           out_list = re.split(r' ', line)
           dict_tmp = {}
           if len(out_list)==3:
@@ -174,7 +175,7 @@ class Process(Thread):
                 tmp = out_list[3]
             else:
                 tmp = out_list[2]
-          print(tmp)
+          #print(tmp)
           dict_tmp["prog_name"] = tmp
           dict_tmp["cpu_percent"] = out_list[0]
           dict_tmp["mem_percent"] = out_list[1]
@@ -208,10 +209,10 @@ class Process(Thread):
  
   def register(self):
     # drivers
-    rospy.loginfo("configfile:%s"%self.config_file)
-    with open(self.config_file,'r') as f:
-        config = simplejson.load(f)
-    guardian_nodes = config["guardian_nodes"]
+    rospy.loginfo("configfile:%s"%self.vehiclefile)
+    guardian_nodes = nodeconfig(self.vehiclefile)
+      
+
     for i in guardian_nodes:
         self.NodeList.append(i)
     
@@ -267,19 +268,18 @@ class Process(Thread):
         net_dict["send_flow"] = Sent_flow_format
         net_dict["recv_flow"] = Recv_flow_format
         self.flow_dict[get_net] = net_dict
-        print(self.flow_dict)
+        #print(self.flow_dict)
         #print(netmsg)
         #print(flow_dict)
 
-def topicFun(config_file,rostopic_file):
+def topicFun(rostopic_file, brandtopicfile):
     topic_orig_dict = {}
     topic_orig_list = []
     topic_list=[]
     topic_send_list=[]
-    rospy.loginfo("config_file:%s"%config_file)
-    with open(config_file,'r') as f:
-        config = simplejson.load(f)
-    guardian_topics=config["guardian_topics"]
+    guardian_topics = topicconfig(brandtopicfile)
+    print("guardian_topics") 
+    print(guardian_topics) 
     for topic_g in guardian_topics:
         topic_g_list = []
         topic_g_list = topic_g.split(':')
@@ -288,7 +288,7 @@ def topicFun(config_file,rostopic_file):
             topic_orig_dict[topic_g_list[0]] = topic_g_list[1];
         else:
             topic_orig_dict[topic_g_list[0]] = "";
-            
+        
     topics_size = len(topic_list)
     pub_topics = rospy.Publisher('/system/rostopics_hz',String, queue_size=100)
     while True:
@@ -300,10 +300,6 @@ def topicFun(config_file,rostopic_file):
         topicAlive = topic_li.split("\n")
         #print(topicAlive)
         for topic_g in topic_list:
-            #topic_g_list = topic_g.split(':')
-            #print("topic_g_list")
-            #print(topic_g_list)
-            #topic_g = topic_g_list[0]
             if topic_g in topicAlive:
                 topic_str=topic_str +" " + topic_g  ######rostopic
                 topic_monitor_list.append(topic_g)
@@ -318,7 +314,7 @@ def topicFun(config_file,rostopic_file):
             line = line.strip('\n')
             line = line.strip()
             out_list=re.split(r'\s+',line)
-            print("out_list[0]:%s"%out_list[0])
+            #print("out_list[0]:%s"%out_list[0])
             topic_msg_dict = {}
             if topics_size==1:
                 if out_list[0]=="average":
@@ -370,6 +366,7 @@ def topicFun(config_file,rostopic_file):
                         topic_dict[topic_g]  = topic_msg_dict
                         topic_msg_dict = {}
                 topicsmsg = json.dumps(topic_dict)
+                print("topicsmsg")
                 print(topicsmsg)
                 pub_topics.publish(topicsmsg)
                 count = 0
@@ -377,25 +374,80 @@ def topicFun(config_file,rostopic_file):
                 topic_dict_list = []
 
 
+def topicconfig(configfile):
+    global brand
+    topic_list = []
+    node_list = []
+    with open(configfile, 'r') as f:
+        config = simplejson.load(f)
+    for model in config:
+        for node in  model["value"]:
+            brand_list = node["brand"].split(":")
+            for brand_tmp in brand_list:
+                if brand_tmp.strip() == brand.strip():
+                    node_list.append(node["node_name"].strip())
+                    for topic in node["value"]:
+                        if topic["topic_name"].strip() != '':
+                            str_tmp = topic["topic_name"] + ":" + topic["set_hz"]
+                            topic_list.append(str_tmp.strip())
+    return topic_list              
+
+def nodeconfig(configfile):
+    global brand
+    node_list = []
+    with open(configfile, 'r') as f:
+        config = simplejson.load(f)
+    for model in config:
+        for node in  model["value"]:
+            brand_list = node["brand"].split(":")
+            for brand_tmp in brand_list:
+                if brand_tmp.strip() == brand.strip():
+                    node_list.append(node["node_name"].strip())
+    return node_list
+
+def get_brand(vehicle_config):
+    global brand
+    f = open(vehicle_config);
+    line = f.readline()
+    while line:
+        if(line.isspace()):
+            line = f.readline()
+        line = line.replace(" ", "")
+        tmp = line.split(":")
+        if(tmp[0] == "brand"):
+            brand = tmp[1].replace("\"","")
+            #brand = tmp[1]
+            print("brand:" + brand)
+            break;
+        line  = f.readline()
+    return brand
+
 
 def main():
-    if len(sys.argv) < 3:
+    global brand
+    if len(sys.argv) < 4:
         rospy.logerr("please use:system_guardian.py configfilename, rostopicfilename")
         exit(-1)
     rospy.init_node('system_guardian')
-    config_file = sys.argv[1].strip()
+    config_file = sys.argv[1].strip() #no use 
     rostopic_file = sys.argv[2].strip()
-    pth_topic = Thread(target=topicFun,args=(config_file,rostopic_file))
-    print("pth:config_file:%s"%config_file) 
+    brandtopicfile = sys.argv[3].strip()
+    vehicleconfigfile = sys.argv[4].strip()
+    brand = get_brand(vehicleconfigfile)
+
+    pth_topic = Thread(target=topicFun,args=(rostopic_file, brandtopicfile))
     print("pth:rostopic_file:%s"%rostopic_file)
+    print("pth:brandtopicfile:%s"%brandtopicfile)
+    print("pth:vehicleconfigfile:%s"%vehicleconfigfile)
     pth_topic.setDaemon(True)
     pth_topic.start()
 
-    p = Process(config_file)
+    p = Process(brandtopicfile)
     rospy.spin()
 
 if __name__ == '__main__':
     try:
+      
         main()
     except KeyboardInterrupt as e:
         print "user ctrl-c to exit"
