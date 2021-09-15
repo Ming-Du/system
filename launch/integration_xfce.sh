@@ -42,6 +42,7 @@ OPERATOR_TOOL="source $BASHRC && roslaunch operator_tool operator_tool.launch 2>
 GUARDIAN="source $BASHRC && roslaunch guardian system_guardian.launch 2>&1 | tee \${ROS_LOG_DIR}/system_guardian.launch.log"
 TRACK_RECORDER="source $BASHRC && roslaunch track_recorder track_recorder.launch 2>&1 | tee \${ROS_LOG_DIR}/track_recorder.launch.log"
 ROSBAG_RECORD="source $BASHRC && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee \${ROS_LOG_DIR}/rosbag_recorder.launch.log"
+RECORD_CACHE="source $BASHRC && roslaunch record_cache record_cache.launch 2>&1 | tee \${ROS_LOG_DIR}/record_cache.launch.log"
 HADMAP_ENGINE="source $BASHRC && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee \${ROS_LOG_DIR}/hadmap_engine.launch.log"
 
 ##for the min auto drive mode ,just use RTK_PLANNER and controller
@@ -85,6 +86,7 @@ elif [ "$1" == "wey" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
+      --tab -e "bash -c 'sleep 5; $GLOG_COMMAND && $RECORD_CACHE';bash" -T "record_cache" \
       #--tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "df" ]; then
@@ -101,6 +103,7 @@ elif [ "$1" == "df" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
+      --tab -e "bash -c 'sleep 5; $GLOG_COMMAND && $RECORD_CACHE';bash" -T "record_cache" \
       #--tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "jinlv" ]; then
@@ -117,6 +120,7 @@ elif [ "$1" == "jinlv" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
+      --tab -e "bash -c 'sleep 5; $GLOG_COMMAND && $RECORD_CACHE';bash" -T "record_cache" \
       #--tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "byd" ]; then
@@ -133,6 +137,7 @@ elif [ "$1" == "byd" ]; then
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
+      --tab -e "bash -c 'sleep 5; $GLOG_COMMAND && $RECORD_CACHE';bash" -T "record_cache" \
       #--tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 2';bash";
 else

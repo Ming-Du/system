@@ -87,6 +87,7 @@ elif [ "$1" == "wey" ]; then
   sleep 2 && roslaunch launch local_planning.launch 2>&1 | tee ${ROS_LOG_DIR}/local_planning.launch.log &
   sleep 2 && roslaunch launch hadmap.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap.launch.log &
   sleep 2 && roslaunch track_recorder track_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/track_recorder.launch.log &
+  sleep 5 && roslaunch record_cache record_cache.launch 2>&1 | tee ${ROS_LOG_DIR}/record_cache.launch.log &
   #sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
   sleep 3 && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
   sleep 2
@@ -103,6 +104,7 @@ elif [ "$1" == "df" ]; then
   sleep 2 && source $BASHRC && roslaunch --wait launch local_planning.launch 2>&1 | tee ${ROS_LOG_DIR}/local_planning.launch.log &
   sleep 2 && source $BASHRC && roslaunch --wait launch hadmap.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap.launch.log &
   sleep 2 && source $BASHRC && roslaunch --wait track_recorder track_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/track_recorder.launch.log &
+  sleep 5 && roslaunch --wait record_cache record_cache.launch 2>&1 | tee ${ROS_LOG_DIR}/record_cache.launch.log &
   #sleep 17 && source $BASHRC && roslaunch --wait rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
   sleep 3 && source $BASHRC && roslaunch --wait hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
   sleep 2
@@ -119,7 +121,8 @@ elif [ "$1" == "jinlv" ]; then
   sleep 2 && roslaunch launch local_planning.launch 2>&1 | tee ${ROS_LOG_DIR}/local_planning.launch.log &
   sleep 2 && roslaunch launch hadmap.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap.launch.log &
   sleep 2 && roslaunch track_recorder track_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/track_recorder.launch.log &
-  #sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
+  sleep 5 && roslaunch record_cache record_cache.launch 2>&1 | tee ${ROS_LOG_DIR}/record_cache.launch.log &
+  #sleep 5 && roslaunch record_cache record_cache.launch 2>&1 | tee ${ROS_LOG_DIR}/record_cache.launch.log &
   sleep 3 && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
   sleep 2
 elif [ "$1" == "byd" ]; then
@@ -135,6 +138,7 @@ elif [ "$1" == "byd" ]; then
   sleep 2 && roslaunch launch local_planning.launch 2>&1 | tee ${ROS_LOG_DIR}/local_planning.launch.log &
   sleep 2 && roslaunch launch hadmap.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap.launch.log &
   sleep 2 && roslaunch track_recorder track_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/track_recorder.launch.log &
+  sleep 5 && roslaunch record_cache record_cache.launch 2>&1 | tee ${ROS_LOG_DIR}/record_cache.launch.log &
   #sleep 4 && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee ${ROS_LOG_DIR}/rosbag_recorder.launch.log &
   sleep 3 && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee ${ROS_LOG_DIR}/hadmap_engine.launch.log &
   sleep 2
