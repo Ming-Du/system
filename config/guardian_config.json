@@ -38,13 +38,23 @@
           "value":
              [
                 {
-                    "topic_name": "",
-                    "set_hz":" ",
+                    "topic_name": "/hadmap/objects",
+                    "set_hz":"10",
                     "guardian":"y"
                 },
                 {
-                    "topic_name": "", 
-                    "set_hz":" ",
+                    "topic_name": "/hadmap/speed_limit", 
+                    "set_hz":"10",
+                    "guardian":"y"
+                },    
+                {
+                    "topic_name": "/planning/global_trajectory", 
+                    "set_hz":"10",
+                    "guardian":"y"
+                },    
+                {
+                    "topic_name": "/hadmap/stop_line", 
+                    "set_hz":"10",
                     "guardian":"y"
                 }    
              ]
@@ -56,7 +66,8 @@
              [
                 {
                     "topic_name": "/planning/trajectory",
-                    "set_hz":"10"
+                    "set_hz":"10",
+                    "guardian":"y"
                 }
              ]
         }
@@ -73,12 +84,12 @@
              [
                 {
                     "topic_name": "/perception/camera/object_detection",
-                    "set_hz":"",
+                    "set_hz":"20",
                     "guardian":"y"
                 },
                 {
                     "topic_name": "/perception/camera/traffic_sign", 
-                    "set_hz":"",
+                    "set_hz":"20",
                     "guardian":"y"
                 }    
              ]
@@ -90,13 +101,13 @@
              [
                 {
                     "topic_name": "/perception/fusion/obstacles_debug",
-                    "set_hz":" ",
-                    "guardian":"y"
+                    "set_hz":"",
+                    "guardian":"n"
                 },
                 {
                     "topic_name": "/perception/fusion/visualisation",
                     "set_hz":" ",
-                    "guardian":"y"
+                    "guardian":"n"
                 },    
                 {
                     "topic_name": "/perception/fusion/obstacles",
@@ -106,17 +117,41 @@
              ]
         },
         {
-          "node_name":"/perception/lidar/perception_lidar",
-          "brand":"",
+          "node_name":"/perception/lidar/rs_perception_node",
+          "brand":"DF",
           "value":
              [
                 {
-                    "topic_name": "",
-                    "set_hz":" "
+                    "topic_name": "/sensor/lidar/middle/point_cloud",
+                    "set_hz":"10",
+                    "guardian":"y"
                 },
                 {
-                    "topic_name": "", 
-                    "set_hz":" "
+                    "topic_name": "/perception/lidar/lidar_obstacle",
+                    "set_hz":"10",
+                    "guardian":"y"
+                }
+             ]
+        },
+        {
+          "node_name":"/perception/lidar/perception_lidar",
+          "brand":"JINLV",
+          "value":
+             [
+                {
+                    "topic_name": "/sensor/lidar/front_left/point_cloud",
+                    "set_hz":"10",
+                    "guardian":"y"
+                },
+                {
+                    "topic_name": "/sensor/lidar/front_right/point_cloud", 
+                    "set_hz":"10",
+                    "guardian":"y"
+                },    
+                {
+                    "topic_name": "/perception/lidar/lidar_obstacle",
+                    "set_hz":"10",
+                    "guardian":"y"
                 }    
              ]
         }
@@ -155,93 +190,39 @@
       "value":
      [
         {
-          "node_name":"/sensor/lidar/front/ch_decoder",
-          "brand":"",
+          "node_name":"/sensor/lidar/front_right/c32_driver",
+          "brand":"JINLV",
           "value":
              [
                 {
-                    "topic_name": "",
-                    "set_hz":" "
-                },
-                {
-                    "topic_name": "", 
-                    "set_hz":" "
-                }    
+                    "topic_name": "/sensor/lidar/front_righrt/point_cloud",
+                    "set_hz":"10",
+                    "guardian":"y"
+                }
              ]
         },
         {
-          "node_name":"/sensor/lidar/front/ch_driver",
-          "brand":"",
+          "node_name":"/sensor/lidar/front_left/c32_driver",
+          "brand":"JINLV",
           "value":
              [
                 {
-                    "topic_name": " ",
-                    "set_hz":" "
-                },
-                {
-                    "topic_name": "", 
-                    "set_hz":" "
-                }    
+                    "topic_name": "/sensor/lidar/front_left/point_cloud",
+                    "set_hz":"10",
+                    "guardian":"y"
+                }
              ]
         },
         {
-          "node_name":"/sensor/lidar/front_left/c16_decoder",
-          "brand":"",
+          "node_name":"/sensor/lidar/hesai128/drivers_hesai128",
+          "brand":"DF",
           "value":
              [
                 {
-                    "topic_name": " ",
-                    "set_hz":" "
-                },
-                {
-                    "topic_name": "", 
-                    "set_hz":" "
-                }    
-             ]
-        },
-        {
-          "node_name":"/sensor/lidar/front_left/c16_driver",
-          "brand":"",
-          "value":
-             [
-                {
-                    "topic_name": " ",
-                    "set_hz":" "
-                },
-                {
-                    "topic_name": "", 
-                    "set_hz":" "
-                }    
-             ]
-        },
-        {
-          "node_name":"/sensor/lidar/front_right/c16_decoder",
-          "brand":"",
-          "value":
-             [
-                {
-                    "topic_name": " ",
-                    "set_hz":" "
-                },
-                {
-                    "topic_name": "", 
-                    "set_hz":" "
-                }    
-             ]
-        },
-        {
-          "node_name":"/sensor/lidar/front_right/c16_driver",
-          "brand":"",
-          "value":
-             [
-                {
-                    "topic_name": " ",
-                    "set_hz":" "
-                },
-                {
-                    "topic_name": "", 
-                    "set_hz":" "
-                }    
+                    "topic_name": "/sensor/lidar/middle/point_cloud",
+                    "set_hz":"10",
+                    "guardian":"y"
+                }
              ]
         },
         {
@@ -251,11 +232,13 @@
              [
                 {
                     "topic_name": "/sensor/camera/sensing/image_raw_60",
-                    "set_hz":""
+                    "set_hz":"30",
+                    "guardian":"y"
                 },
                 {
                     "topic_name": "/sensor/camera/sensing/image_raw_30", 
-                    "set_hz":""
+                    "set_hz":"30",
+                    "guardian":"y"
                 }    
              ]
         },
@@ -368,7 +351,7 @@
                 {
                     "topic_name": "/guardian/detection_state", 
                     "set_hz":"0",
-                    "guardian":"n"
+                    "guardian":"y"
                 }    
              ]
         }
