@@ -78,7 +78,7 @@
       "value":
      [
         {
-          "node_name":"/perception/camera/6mm/trt_yolov5",
+          "node_name":"/trt_yolov5",
           "brand":"JINLV:DF:WEY",
           "value":
              [
@@ -324,7 +324,7 @@
       "value":
      [
         {
-          "node_name":"telematics_node",
+          "node_name":"/telematics_node",
           "brand":"WEY:JINLV:DF",
           "value":
              [
