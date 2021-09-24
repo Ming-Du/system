@@ -2,7 +2,7 @@
 <launch>
   <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
-    value="$(arg config_path)/sensor/calibrated_sensor_new.pb.txt " />
+    value="$(arg config_path)/sensor/calibrated_sensor.pb.txt " />
   <arg name="obs_enable_hdmap_input" default="true" />
 
   <node name="perception_fusion_new" ns="/perception/fusion"

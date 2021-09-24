@@ -112,7 +112,7 @@ message VisualObjects {
 message TrackedObject {
   optional Object obj = 1;
 
-  optional float yaw = 2;       //box orientation angle from x axis, counter clockwise(in rad),range -pi to pi
+  optional float yaw = 2;       //box orientation angle from x axis, counter clockwise(in rad),range 0 to 2*pi
   optional float yaw_rate = 3;  //in rad/s
   optional geometry.Vector3 velocity = 4; // absolute velocity, in m/s, vx, vy, vz
   repeated geometry.Trace trace = 5;    // historical positions

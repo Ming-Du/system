@@ -11,6 +11,7 @@ input_sensor {
   topic: "/perception/lidar/lidar_obstacle"
 }
 
+obstacle_filter_dis: 100.0
 fusion_main_sensor: "middle_pandar_128"
 localization_topic: "/localization/global"
 
