@@ -1,144 +1,227 @@
 #!/bin/bash
-rosnode kill -a
-ps aux | grep roscore |awk '{print $2}' |xargs kill
 
-export DATE=`date +"%Y%m%d"`
-export TIME=`date +"%H%M%S"`
-export ROS_LOG_DIR=${HOME}/data/log/${DATE}_${TIME}
+start_node_terminal(){
+    # echo "func::VehicleType:$VehicleType"  #wey|byd|jinlv|df
+    # echo "func::GuiServer:$GuiServer"  #background|xfce4|gnome
+    # echo "func::RunMode:$RunMode"  #normal|debug
+    # echo "func::LOG_ENV:$LOG_ENV"
+    # echo "func::BASHRC:$BASHRC"
+    echo "func::GuiTerminal:$GuiTerminal"
+    echo "func::TitleOpt:$TitleOpt"
+    # return
+    if [ "$VehicleType" == "wey" ];then
+        $GuiTerminal  --window -e "bash -c '$LOG_ENV && $BASHRC && $ROSCORE';bash" $TitleOpt "core" \
+            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $LOCALIZATION';bash" $TitleOpt "localization" \
+            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $VV6_CAN_ADAPTER';bash" $TitleOpt "canadapter"  \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LIDAR_CAMERA_DRIVERS';bash" $TitleOpt "drivers"  \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $VV6_CONTROLLER';bash" $TitleOpt "controller"  \
+            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $PERCEPTION';bash" $TitleOpt "perception" \
+            --tab -e "bash -c 'sleep 15; $LOG_ENV && $BASHRC && $CHEJI';bash" $TitleOpt "cheji" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LOCAL_PLANNER';bash" $TitleOpt "local_planner" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $HAD_MAP';bash" $TitleOpt "had_map" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GUARDIAN';bash" $TitleOpt "guardian" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $OPERATOR_TOOL';bash" $TitleOpt "operator_tool" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $TRACK_RECORDER';bash" $TitleOpt "track_recorder" \
+            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $HADMAP_ENGINE';bash" $TitleOpt "hadmap_engine" \
+            --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $RECORD_CACHE';bash" $TitleOpt "record_cache" \
+            --tab -e "bash -c 'sleep 2';bash";
+    elif [ "$VehicleType" == "jinlv" ];then
+        $GuiTerminal  --window -e "bash -c '$LOG_ENV && $BASHRC && $ROSCORE';bash" $TitleOpt "core" \
+            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $LOCALIZATION';bash" $TitleOpt "localization" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LIDAR_CAMERA_DRIVERS';bash" $TitleOpt "drivers"  \
+            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $JINLV_CAN_ADAPTER';bash" $TitleOpt "canadapter"  \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $JINLV_CONTROLLER';bash" $TitleOpt "controller"  \
+            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $PERCEPTION';bash" $TitleOpt "perception" \
+            --tab -e "bash -c 'sleep 15; $LOG_ENV && $BASHRC && $CHEJI';bash" $TitleOpt "cheji" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LOCAL_PLANNER';bash" $TitleOpt "local_planner" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $HAD_MAP';bash" $TitleOpt "had_map" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GUARDIAN';bash" $TitleOpt "guardian" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $OPERATOR_TOOL';bash" $TitleOpt "operator_tool" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $TRACK_RECORDER';bash" $TitleOpt "track_recorder" \
+            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $HADMAP_ENGINE';bash" $TitleOpt "hadmap_engine" \
+            --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $RECORD_CACHE';bash" $TitleOpt "record_cache" \
+            --tab -e "bash -c 'sleep 2';bash";
+    elif [ "$VehicleType" == "byd" ];then
+        $GuiTerminal  --window -e "bash -c '$LOG_ENV && $BASHRC && $ROSCORE';bash" $TitleOpt "core" \
+            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $LOCALIZATION';bash" $TitleOpt "localization" \
+            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $BYD_CAN_ADAPTER';bash" $TitleOpt "canadapter"  \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LIDAR_CAMERA_DRIVERS';bash" $TitleOpt "drivers"  \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $BYD_CONTROLLER';bash" $TitleOpt "controller"  \
+            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $PERCEPTION';bash" $TitleOpt "perception" \
+            --tab -e "bash -c 'sleep 15; $LOG_ENV && $BASHRC && $CHEJI';bash" $TitleOpt "cheji" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LOCAL_PLANNER';bash" $TitleOpt "local_planner" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $HAD_MAP';bash" $TitleOpt "had_map" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GUARDIAN';bash" $TitleOpt "guardian" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $OPERATOR_TOOL';bash" $TitleOpt "operator_tool" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $TRACK_RECORDER';bash" $TitleOpt "track_recorder" \
+            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $HADMAP_ENGINE';bash" $TitleOpt "hadmap_engine" \
+            --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $RECORD_CACHE';bash" $TitleOpt "record_cache" \
+            --tab -e "bash -c 'sleep 2';bash";
+    elif [ "$VehicleType" == "df" ];then
+        $GuiTerminal  --window -e "bash -c '$LOG_ENV && $BASHRC && $ROSCORE';bash" $TitleOpt "core" \
+            --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $LOCALIZATION';bash" $TitleOpt "localization" \
+            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $DONGFENG_CAN_ADAPTER';bash" $TitleOpt "canadapter"  \
+            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $LIDAR_CAMERA_DRIVERS';bash" $TitleOpt "drivers"  \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $DONGFENG_CONTROLLER';bash" $TitleOpt "controller"  \
+            --tab -e "bash -c 'sleep 7; $LOG_ENV && $BASHRC && $PERCEPTION';bash" $TitleOpt "perception" \
+            --tab -e "bash -c 'sleep 15; $LOG_ENV && $BASHRC && $CHEJI';bash" $TitleOpt "cheji" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LOCAL_PLANNER';bash" $TitleOpt "local_planner" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $HAD_MAP';bash" $TitleOpt "had_map" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GUARDIAN';bash" $TitleOpt "guardian" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $OPERATOR_TOOL';bash" $TitleOpt "operator_tool" \
+            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $TRACK_RECORDER';bash" $TitleOpt "track_recorder" \
+            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $HADMAP_ENGINE';bash" $TitleOpt "hadmap_engine" \
+            --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $RECORD_CACHE';bash" $TitleOpt "record_cache" \
+            --tab -e "bash -c 'sleep 2';bash";
+    else
+        echo "undefined vehicle type"
+    fi
+}
 
-echo "123"|sudo -S chmod +777 /dev -R
-echo $HOME
-echo $1
+# silence mode will not display log on terminal
+start_node_silence(){
+    echo "start_node_silence"
+    if [ "$VehicleType" == "wey" ]; then
+        roscore 1>>${ROS_LOG_DIR}/roscore.log 2>>${ROS_LOG_DIR}/roscore.err &
+        sleep 2 && roslaunch guardian system_guardian.launch 1>>${ROS_LOG_DIR}/system_guardian.launch.log 2>>${ROS_LOG_DIR}/system_guardian.launch.err &
+        # sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
+        sleep 3 && roslaunch localization localization.launch 1>>${ROS_LOG_DIR}/localization.launch.log 2>>${ROS_LOG_DIR}/localization.launch.err &
+        sleep 3 && roslaunch can_adapter vv6_can_adapter.launch 1>>${ROS_LOG_DIR}/vv6_can_adapter.launch.log 2>>${ROS_LOG_DIR}/vv6_can_adapter.launch.err &
+        sleep 3 && roslaunch launch drivers.launch 1>>${ROS_LOG_DIR}/drivers.launch.log 2>>${ROS_LOG_DIR}/drivers.launch.err &
+        sleep 2 && roslaunch controller controller_vv6.launch 1>>${ROS_LOG_DIR}/controller_vv6.launch.log 2>>${ROS_LOG_DIR}/controller_vv6.launch.err &
+        sleep 3 && roslaunch launch perception.launch 1>>${ROS_LOG_DIR}/perception.launch.log 2>>${ROS_LOG_DIR}/perception.launch.err &
+        sleep 15 && roslaunch telematics telematics.launch 1>>${ROS_LOG_DIR}/telematics.launch.log 2>>${ROS_LOG_DIR}/telematics.launch.err &
+        sleep 2 && roslaunch launch local_planning.launch 1>>${ROS_LOG_DIR}/local_planning.launch.log 2>>${ROS_LOG_DIR}/local_planning.launch.err &
+        sleep 2 && roslaunch launch hadmap.launch 1>>${ROS_LOG_DIR}/hadmap.launch.log 2>>${ROS_LOG_DIR}/hadmap.launch.err &
+        sleep 2 && roslaunch track_recorder track_recorder.launch 1>>${ROS_LOG_DIR}/track_recorder.launch.log 2>>${ROS_LOG_DIR}/track_recorder.launch.err &
+        sleep 5 && roslaunch record_cache record_cache.launch 1>>${ROS_LOG_DIR}/record_cache.launch.log 2>>${ROS_LOG_DIR}/record_cache.launch.err &
+        sleep 3 && roslaunch hadmap_engine hadmap_engine.launch 1>>${ROS_LOG_DIR}/hadmap_engine.launch.log 2>>${ROS_LOG_DIR}/hadmap_engine.launch.err &
+        sleep 2
+    elif [ "$VehicleType" == "df" ]; then
+        roscore 1>>${ROS_LOG_DIR}/roscore.log 2>>${ROS_LOG_DIR}/roscore.err &
+        sleep 2 && roslaunch guardian system_guardian.launch 1>>${ROS_LOG_DIR}/system_guardian.launch.log 2>>${ROS_LOG_DIR}/system_guardian.launch.err &
+        # sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
+        sleep 5 && roslaunch localization localization.launch 1>>${ROS_LOG_DIR}/localization.launch.log 2>>${ROS_LOG_DIR}/localization.launch.err &
+        sleep 3 && roslaunch can_adapter DongFeng_E70_can_adapter.launch 1>>${ROS_LOG_DIR}/DongFeng_E70_can_adapter.launch.log 2>>${ROS_LOG_DIR}/DongFeng_E70_can_adapter.launch.err &
+        sleep 3 && roslaunch launch drivers.launch 1>>${ROS_LOG_DIR}/drivers.launch.log 2>>${ROS_LOG_DIR}/drivers.launch.err &
+        sleep 2 && roslaunch controller controller_dfe70.launch 1>>${ROS_LOG_DIR}/controller_dfe70.launch.log 2>>${ROS_LOG_DIR}/controller_dfe70.launch.err &
+        sleep 7 && roslaunch launch perception.launch 1>>${ROS_LOG_DIR}/perception.launch.log 2>>${ROS_LOG_DIR}/perception.launch.err &
+        sleep 15 && roslaunch telematics telematics.launch 1>>${ROS_LOG_DIR}/telematics.launch.log 2>>${ROS_LOG_DIR}/telematics.launch.err &
+        sleep 2 && roslaunch launch local_planning.launch 1>>${ROS_LOG_DIR}/local_planning.launch.log 2>>${ROS_LOG_DIR}/local_planning.launch.err &
+        sleep 2 && roslaunch launch hadmap.launch 1>>${ROS_LOG_DIR}/hadmap.launch.log 2>>${ROS_LOG_DIR}/hadmap.launch.err &
+        sleep 2 && roslaunch track_recorder track_recorder.launch 1>>${ROS_LOG_DIR}/track_recorder.launch.log 2>>${ROS_LOG_DIR}/track_recorder.launch.err &
+        sleep 5 && roslaunch record_cache record_cache.launch 1>>${ROS_LOG_DIR}/record_cache.launch.log 2>>${ROS_LOG_DIR}/record_cache.launch.err &
+        sleep 3 && roslaunch hadmap_engine hadmap_engine.launch 1>>${ROS_LOG_DIR}/hadmap_engine.launch.log 2>>${ROS_LOG_DIR}/hadmap_engine.launch.err &
+        sleep 2
+    elif [ "$VehicleType" == "jinlv" ]; then
+        roscore 1>>${ROS_LOG_DIR}/roscore.log 2>>${ROS_LOG_DIR}/roscore.err &
+        sleep 2 && roslaunch guardian system_guardian.launch 1>>${ROS_LOG_DIR}/system_guardian.launch.log 2>>${ROS_LOG_DIR}/system_guardian.launch.err &
+        # sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
+        sleep 3 && roslaunch localization localization.launch 1>>${ROS_LOG_DIR}/localization.launch.log 2>>${ROS_LOG_DIR}/localization.launch.err &
+        sleep 3 && roslaunch can_adapter jinlv_can_adapter.launch 1>>${ROS_LOG_DIR}/jinlv_can_adapter.launch.log 2>>${ROS_LOG_DIR}/jinlv_can_adapter.launch.err &
+        sleep 3 && roslaunch launch drivers.launch 1>>${ROS_LOG_DIR}/drivers.launch.log 2>>${ROS_LOG_DIR}/drivers.launch.err &
+        sleep 2 && roslaunch controller controller_jinlv.launch 1>>${ROS_LOG_DIR}/controller_jinlv.launch.log 2>>${ROS_LOG_DIR}/controller_jinlv.launch.err &
+        sleep 3 && roslaunch launch perception.launch 1>>${ROS_LOG_DIR}/perception.launch.log 2>>${ROS_LOG_DIR}/perception.launch.err &
+        sleep 15 && roslaunch telematics telematics.launch 1>>${ROS_LOG_DIR}/telematics.launch.log 2>>${ROS_LOG_DIR}/telematics.launch.err &
+        sleep 2 && roslaunch launch local_planning.launch 1>>${ROS_LOG_DIR}/local_planning.launch.log 2>>${ROS_LOG_DIR}/local_planning.launch.err &
+        sleep 2 && roslaunch launch hadmap.launch 1>>${ROS_LOG_DIR}/hadmap.launch.log 2>>${ROS_LOG_DIR}/hadmap.launch.err &
+        sleep 2 && roslaunch track_recorder track_recorder.launch 1>>${ROS_LOG_DIR}/track_recorder.launch.log 2>>${ROS_LOG_DIR}/track_recorder.launch.err &
+        sleep 5 && roslaunch record_cache record_cache.launch 1>>${ROS_LOG_DIR}/record_cache.launch.log 2>>${ROS_LOG_DIR}/record_cache.launch.err &
+        sleep 3 && roslaunch hadmap_engine hadmap_engine.launch 1>>${ROS_LOG_DIR}/hadmap_engine.launch.log 2>>${ROS_LOG_DIR}/hadmap_engine.launch.err &
+        sleep 2
+    elif [ "$VehicleType" == "byd" ]; then
+        roscore 1>>${ROS_LOG_DIR}/roscore.log 2>>${ROS_LOG_DIR}/roscore.err &
+        sleep 2 && roslaunch guardian system_guardian.launch 1>>${ROS_LOG_DIR}/system_guardian.launch.log 2>>${ROS_LOG_DIR}/system_guardian.launch.err &
+        # sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
+        sleep 3 && roslaunch localization localization.launch 1>>${ROS_LOG_DIR}/localization.launch.log 2>>${ROS_LOG_DIR}/localization.launch.err &
+        sleep 3 && roslaunch can_adapter byd_can_adapter.launch 1>>${ROS_LOG_DIR}/byd_can_adapter.launch.log 2>>${ROS_LOG_DIR}/byd_can_adapter.launch.err &
+        sleep 2 && roslaunch launch drivers.launch 1>>${ROS_LOG_DIR}/drivers.launch.log 2>>${ROS_LOG_DIR}/drivers.launch.err &
+        sleep 2 && roslaunch controller controller_qinpro.launch 1>>${ROS_LOG_DIR}/controller_qinpro.launch.log 2>>${ROS_LOG_DIR}/controller_qinpro.launch.err &
+        sleep 3 && roslaunch launch perception.launch 1>>${ROS_LOG_DIR}/perception.launch.log 2>>${ROS_LOG_DIR}/perception.launch.err &
+        sleep 15 && roslaunch telematics telematics.launch 1>>${ROS_LOG_DIR}/telematics.launch.log 2>>${ROS_LOG_DIR}/telematics.launch.err &
+        sleep 2 && roslaunch launch local_planning.launch 1>>${ROS_LOG_DIR}/local_planning.launch.log 2>>${ROS_LOG_DIR}/local_planning.launch.err &
+        sleep 2 && roslaunch launch hadmap.launch 1>>${ROS_LOG_DIR}/hadmap.launch.log 2>>${ROS_LOG_DIR}/hadmap.launch.err &
+        sleep 2 && roslaunch track_recorder track_recorder.launch 1>>${ROS_LOG_DIR}/track_recorder.launch.log 2>>${ROS_LOG_DIR}/track_recorder.launch.err &
+        sleep 5 && roslaunch record_cache record_cache.launch 1>>${ROS_LOG_DIR}/record_cache.launch.log 2>>${ROS_LOG_DIR}/record_cache.launch.err &
+        sleep 3 && roslaunch hadmap_engine hadmap_engine.launch 1>>${ROS_LOG_DIR}/hadmap_engine.launch.log 2>>${ROS_LOG_DIR}/hadmap_engine.launch.err &
+        sleep 2
+    else
+        echo "undefined vehicle type"
+    fi
+}
 
-[[ ! -d $ROS_LOG_DIR ]] && mkdir -p $ROS_LOG_DIR
-find /home/mogo/data/log -mtime +3 -name *.log -exec rm -Rf {} \;
-###########################################################
-GLOG_COMMAND="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1; export ROS_LOG_DIR=${HOME}/data/log/${DATE}_${TIME}"
+# main
+echo $VehicleType  #wey|byd|jinlv|df
+echo $GuiServer  #background|xfce4|gnome
+echo $RunMode  #normal|debug
 
-ROSCORE="roscore 2>&1 | tee \${ROS_LOG_DIR}/roscore.log"
-GNSS_COMMAND="roslaunch drivers_gnss data_spin.launch 2>&1 | tee \${ROS_LOG_DIR}/data_spin.launch.log"
-#LOCALIZATION="roslaunch launch path_recorder.launch 2>&1 | tee \${ROS_LOG_DIR}/path_recorder.launch.log"
-LOCALIZATION="roslaunch localization localization.launch 2>&1 | tee \${ROS_LOG_DIR}/localization.launch.log"
-VV6_CAN_ADAPTER="roslaunch can_adapter vv6_can_adapter.launch 2>&1 | tee \${ROS_LOG_DIR}/vv6_can_adapter.launch.log"
-BYD_CAN_ADAPTER="roslaunch can_adapter byd_can_adapter.launch 2>&1 | tee \${ROS_LOG_DIR}/byd_can_adapter.launch.log"
-JINLV_CAN_ADAPTER="roslaunch can_adapter jinlv_can_adapter.launch 2>&1 | tee \${ROS_LOG_DIR}/jinlv_can_adapter.launch.log"
-RTKREPLAYPLANNER="roslaunch controller_simulator controller_simulator.launch 2>&1 | tee \${ROS_LOG_DIR}/controller_simulator.launch.log"
-CONTROLLER="roslaunch controller controller.launch 2>&1 | tee \${ROS_LOG_DIR}/controller.launch.log"
-SEND_CONTROL_COMMAND="python2 share/cmd_panel/chassis_set.py qt5 2>&1 | tee \${ROS_LOG_DIR}/chassis_set.py.log"
-SEND_CONTROL_COMMAND_USE_TOPIC="python2 src/control/chassis_tool/chassis_set_pbmsg.py 2>&1 | tee \${ROS_LOG_DIR}/chassis_set_pbmsg.py.log"
-PERCEPTION="roslaunch launch perception.launch 2>&1 | tee \${ROS_LOG_DIR}/perception.launch.log"
-CHEJI="roslaunch telematics telematics.launch 2>&1 | tee \${ROS_LOG_DIR}/telematics.launch.log"
-LOCAL_PLANNER="roslaunch launch local_planning.launch 2>&1 | tee \${ROS_LOG_DIR}/local_planning.launch.log"
-HAD_MAP="roslaunch launch hadmap.launch 2>&1 | tee \${ROS_LOG_DIR}/hadmap.launch.log"
-TRAFFIC_LIGHT="roslaunch trt_yolov5 obj_6mm.launch 2>&1 | tee \${ROS_LOG_DIR}/obj_6mm.launch.log"
-LIDAR_CAMERA_DRIVERS="roslaunch launch drivers.launch 2>&1 | tee \${ROS_LOG_DIR}/drivers.launch.log"
-TRAFFIC_LANE="roslaunch src/perception/lane_detection/lane_detection_cpp/launch/lane_detection_cpp.launch 2>&1 | tee \${ROS_LOG_DIR}/lane_detection_cpp.launch.log"
-OPERATOR_TOOL="roslaunch operator_tool operator_tool.launch 2>&1 | tee \${ROS_LOG_DIR}/operator_tool.launch.log"
-GUARDIAN="roslaunch guardian system_guardian.launch 2>&1 | tee \${ROS_LOG_DIR}/system_guardian.launch.log"
-TRACK_RECORDER="roslaunch track_recorder track_recorder.launch 2>&1 | tee \${ROS_LOG_DIR}/track_recorder.launch.log"
-PRIUS_CAR="roslaunch model_publisher prius_model.launch 2>&1 | tee \${ROS_LOG_DIR}/prius_model.launch.log"
-PRIUS_MAP="roslaunch model_publisher map_model.launch 2>&1 | tee \${ROS_LOG_DIR}/map_model.launch.log"
-HADMAP_ENGINE="roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee \${ROS_LOG_DIR}/hadmap_engine.launch.log"
-ROSBAG_RECORD="roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee \${ROS_LOG_DIR}/rosbag_recorder.launch.log"
+export GuiTerminal
+export TitleOpt
 
-##for the min auto drive mode ,just use RTK_PLANNER and controller
-if [ "$1" == "1" ]; then
-gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
-        --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GNSS_COMMAND';bash" -t "gnss_rtk"  \
-        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
-        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $VV6_CAN_ADAPTER';bash" -t "canadapter"  \
-        --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $RTKREPLAYPLANNER';bash" -t "planner"  \
-        --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -t "controller"  \
-        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -t "perception" \
-        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -t "cheji" \
-		--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
-        --tab -e "bash -c 'sleep 2';bash";
-##for perception mode  tracffic light and lidar dectection
-elif [ "$1" == "2" ]; then
-gnome-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
-        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
-        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $VV6_CAN_ADAPTER';bash" -t "canadapter"  \
-        --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -t "drivers"  \
-	    --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -t "controller"  \
-        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -t "perception" \
-        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -t "cheji" \
-        --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
-        --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
-		--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
-        --tab -e "bash -c 'sleep 2';bash";
-elif [ "$1" == "wey" ]; then
-    gnome-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $VV6_CAN_ADAPTER';bash" -t "canadapter"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -t "drivers"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -t "controller"  \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -t "perception" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -t "cheji" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -t "guardian" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -t "track_recorder" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $PRIUS_CAR';bash" -t "prius_car" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $PRIUS_MAP';bash" -t "prius_map" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -t "hadmap_engine" \
-      --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -t "rosbag_record" \
-      --tab -e "bash -c 'sleep 2';bash";
-elif [ "$1" == "df" ]; then
-    gnome-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $VV6_CAN_ADAPTER';bash" -t "canadapter"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -t "drivers"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -t "controller"  \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -t "perception" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -t "cheji" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -t "guardian" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -t "track_recorder" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $PRIUS_CAR';bash" -t "prius_car" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $PRIUS_MAP';bash" -t "prius_map" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -t "hadmap_engine" \
-      --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -t "rosbag_record" \
-      --tab -e "bash -c 'sleep 2';bash";
-elif [ "$1" == "jinlv" ]; then
-    gnome-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $JINLV_CAN_ADAPTER';bash" -t "canadapter"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -t "drivers"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -t "controller"  \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -t "perception" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -t "cheji" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -t "guardian" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -t "track_recorder" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $PRIUS_CAR';bash" -t "prius_car" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $PRIUS_MAP';bash" -t "prius_map" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -t "hadmap_engine" \
-      --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -t "rosbag_record" \
-      --tab -e "bash -c 'sleep 2';bash";
-elif [ "$1" == "byd" ]; then
-    gnome-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -t "core" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -t "localization" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $BYD_CAN_ADAPTER';bash" -t "canadapter"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -t "drivers"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -t "controller"  \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -t "perception" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -t "cheji" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -t "local_planner" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -t "had_map" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -t "guardian" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -t "operator_tool" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -t "track_recorder" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $PRIUS_CAR';bash" -t "prius_car" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $PRIUS_MAP';bash" -t "prius_map" \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -t "hadmap_engine" \
-      --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -t "rosbag_record" \
-      --tab -e "bash -c 'sleep 2';bash";
-else
-    echo "do others"
+core_pid=`ps aux | grep -v grep | grep "roscore$" |awk '{print $2}'`
+if [ ! -z "$core_pid" ];then
+    rosnode kill -a
+    kill $core_pid
 fi
 
+# 需要在run.sh中将/dev/ttyACM0 /dev/video* /dev/ttyUSB*权限设置为777
+# echo "123"|sudo -S chmod +777 /dev -R 
+###########################################################
+export GLOG_logtostderr=1
+export GLOG_colorlogtostderr=1
+
+# [[ ! -d $ROS_LOG_DIR ]] && mkdir -p $ROS_LOG_DIR
+find /home/mogo/data/log -mtime +3 -name *.log -exec rm -Rf {} \;
+
+export LOG_ENV="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1; export ROS_LOG_DIR=${ROS_LOG_DIR}"
+echo "LOG_ENV:$LOG_ENV"
+##########################################################
+ROSCORE="roscore 2>&1 | tee \${ROS_LOG_DIR}/roscore.log"
+LOCALIZATION="roslaunch localization localization.launch 2>&1 | tee -i \${ROS_LOG_DIR}/localization.launch.log"
+VV6_CAN_ADAPTER="roslaunch can_adapter vv6_can_adapter.launch 2>&1 | tee -i \${ROS_LOG_DIR}/vv6_can_adapter.launch.log"
+BYD_CAN_ADAPTER="roslaunch can_adapter byd_can_adapter.launch 2>&1 | tee -i \${ROS_LOG_DIR}/byd_can_adapter.launch.log"
+JINLV_CAN_ADAPTER="roslaunch can_adapter jinlv_can_adapter.launch 2>&1 | tee -i \${ROS_LOG_DIR}/jinlv_can_adapter.launch.log"
+DONGFENG_CAN_ADAPTER="roslaunch can_adapter DongFeng_E70_can_adapter.launch 2>&1 | tee -i \${ROS_LOG_DIR}/DongFeng_E70_can_adapter.launch.log"
+VV6_CONTROLLER="roslaunch controller controller_vv6.launch 2>&1 | tee -i \${ROS_LOG_DIR}/controller_vv6.launch.log"
+BYD_CONTROLLER="roslaunch controller controller_qinpro.launch 2>&1 | tee -i \${ROS_LOG_DIR}/controller_qinpro.launch.log"
+JINLV_CONTROLLER="roslaunch controller controller_jinlv.launch 2>&1 | tee -i \${ROS_LOG_DIR}/controller_jinlv.launch.log"
+DONGFENG_CONTROLLER="roslaunch controller controller_dfe70.launch 2>&1 | tee -i \${ROS_LOG_DIR}/controller_dfe70.launch.log"
+PERCEPTION="roslaunch launch perception.launch 2>&1 | tee -i \${ROS_LOG_DIR}/perception.launch.log"
+CHEJI="roslaunch telematics telematics.launch 2>&1 | tee -i \${ROS_LOG_DIR}/telematics.launch.log"
+LOCAL_PLANNER="roslaunch launch local_planning.launch 2>&1 | tee -i \${ROS_LOG_DIR}/local_planning.launch.log"
+HAD_MAP="roslaunch launch hadmap.launch 2>&1 | tee -i \${ROS_LOG_DIR}/hadmap.launch.log"
+LIDAR_CAMERA_DRIVERS="roslaunch launch drivers.launch 2>&1 | tee -i \${ROS_LOG_DIR}/drivers.launch.log"
+OPERATOR_TOOL="roslaunch operator_tool operator_tool.launch 2>&1 | tee -i \${ROS_LOG_DIR}/operator_tool.launch.log"
+GUARDIAN="roslaunch guardian system_guardian.launch 2>&1 | tee -i \${ROS_LOG_DIR}/system_guardian.launch.log"
+TRACK_RECORDER="roslaunch track_recorder track_recorder.launch 2>&1 | tee -i \${ROS_LOG_DIR}/track_recorder.launch.log"
+RECORD_CACHE="roslaunch record_cache record_cache.launch 2>&1 | tee -i \${ROS_LOG_DIR}/record_cache.launch.log"
+HADMAP_ENGINE="roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee -i \${ROS_LOG_DIR}/hadmap_engine.launch.log"
+##########################################################
+
+
+if [ "$GuiServer" = "x" ];then
+    GuiTerminal="/usr/bin/xfce4-terminal"
+    TitleOpt="-T"
+elif [ "$GuiServer" = "g" ];then
+    GuiTerminal="/usr/bin/gnome-terminal"
+    TitleOpt="-t"
+else
+    echo "GuiServer is $GuiServer"
+fi
+
+
+if [ "$GuiServer" == "x" -o "$GuiServer" == "g" ];then
+    start_node_terminal
+fi
+
+if [ "$GuiServer" == "silence" ];then
+    if [ $RunMode -eq 1 ];then 
+	export GLOG_logtostderr=1
+	export export GLOG_colorlogtostderr=1
+	source $SETUP_ROS
+	source $SETUP_AUTOPILOT
+        start_node_silence
+    else
+        echo "nodes can't be launch with silence mode in catkin_ws environment,please use silence mode in docker's autopilot environment"
+    fi
+fi
