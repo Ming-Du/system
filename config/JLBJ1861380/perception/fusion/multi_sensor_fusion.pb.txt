@@ -11,6 +11,7 @@ input_sensor {
   topic: "/perception/lidar/lidar_obstacle"
 }
 
+obstacle_filter_dis: 100.0
 fusion_main_sensor: "c32_front_left"
 localization_topic: "/localization/global"
 

@@ -4,16 +4,17 @@ ps aux | grep roscore |awk '{print $2}' |xargs kill
 
 export DATE=`date +"%Y%m%d"`
 export TIME=`date +"%H%M%S"`
-export ROS_LOG_DIR=${HOME}/data/log/${DATE}_${TIME}
+export ROS_LOG_DIR=/home/mogo/data/log/${DATE}_${TIME}
 
 [[ ! -d $ROS_LOG_DIR ]] && mkdir -p $ROS_LOG_DIR
+find /home/mogo/data/log -mtime +3 -name *.log -exec rm -Rf {} \;
 
-echo "123" | sudo -S chmod +777 /dev -R
+sudo -S chmod +777 /dev -R
 echo $HOME
 echo $1
 echo $BASHRC
 ###########################################################
-GLOG_COMMAND="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1; export ROS_LOG_DIR=${HOME}/data/log/${DATE}_${TIME}"
+GLOG_COMMAND="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1; export ROS_LOG_DIR=/home/mogo/data/log/${DATE}_${TIME}"
 #BASHRC="/home/mogo/autopilot/share/launch/bashrc.sh"
 ROSCORE="source $BASHRC && roscore 2>&1 | tee \${ROS_LOG_DIR}/roscore.log"
 GNSS_COMMAND="source $BASHRC && roslaunch drivers_gnss data_spin.launch 2>&1 | tee \${ROS_LOG_DIR}/data_spin.launch.log"
@@ -22,8 +23,12 @@ LOCALIZATION="source $BASHRC && roslaunch localization localization.launch 2>&1 
 VV6_CAN_ADAPTER="source $BASHRC && roslaunch can_adapter vv6_can_adapter.launch 2>&1 | tee \${ROS_LOG_DIR}/vv6_can_adapter.launch.log"
 BYD_CAN_ADAPTER="source $BASHRC && roslaunch can_adapter byd_can_adapter.launch 2>&1 | tee \${ROS_LOG_DIR}/byd_can_adapter.launch.log"
 JINLV_CAN_ADAPTER="source $BASHRC && roslaunch can_adapter jinlv_can_adapter.launch 2>&1 | tee \${ROS_LOG_DIR}/jinlv_can_adapter.launch.log"
+DONGFENG_CAN_ADAPTER="source $BASHRC && roslaunch can_adapter DongFeng_E70_can_adapter.launch 2>&1 | tee \${ROS_LOG_DIR}/DongFeng_E70_can_adapter.launch.log"
 RTKREPLAYPLANNER="source $BASHRC && roslaunch controller_simulator controller_simulator.launch 2>&1 | tee \${ROS_LOG_DIR}/controller_simulator.launch.log"
-CONTROLLER="source $BASHRC && roslaunch controller controller.launch 2>&1 | tee \${ROS_LOG_DIR}/controller.launch.log"
+VV6_CONTROLLER="source $BASHRC && roslaunch controller controller_vv6.launch 2>&1 | tee \${ROS_LOG_DIR}/controller_vv6.launch.log"
+BYD_CONTROLLER="source $BASHRC && roslaunch controller controller_qinpro.launch 2>&1 | tee \${ROS_LOG_DIR}/controller_qinpro.launch.log"
+JINLV_CONTROLLER="source $BASHRC && roslaunch controller controller_jinlv.launch 2>&1 | tee \${ROS_LOG_DIR}/controller_jinlv.launch.log"
+DONGFENG_CONTROLLER="source $BASHRC && roslaunch controller controller_dfe70.launch 2>&1 | tee \${ROS_LOG_DIR}/controller_dfe70.launch.log"
 SEND_CONTROL_COMMAND="source $BASHRC && python2 share/cmd_panel/chassis_set.py qt5 2>&1 | tee \${ROS_LOG_DIR}/chassis_set.py.log"
 SEND_CONTROL_COMMAND_USE_TOPIC="source $BASHRC && python2 src/control/chassis_tool/chassis_set_pbmsg.py 2>&1 | tee \${ROS_LOG_DIR}/chassis_set_pbmsg.py.log"
 PERCEPTION="source $BASHRC && roslaunch launch perception.launch 2>&1 | tee \${ROS_LOG_DIR}/perception.launch.log"
@@ -37,6 +42,8 @@ OPERATOR_TOOL="source $BASHRC && roslaunch operator_tool operator_tool.launch 2>
 GUARDIAN="source $BASHRC && roslaunch guardian system_guardian.launch 2>&1 | tee \${ROS_LOG_DIR}/system_guardian.launch.log"
 TRACK_RECORDER="source $BASHRC && roslaunch track_recorder track_recorder.launch 2>&1 | tee \${ROS_LOG_DIR}/track_recorder.launch.log"
 ROSBAG_RECORD="source $BASHRC && roslaunch rosbag_recorder rosbag_recorder.launch 2>&1 | tee \${ROS_LOG_DIR}/rosbag_recorder.launch.log"
+RECORD_CACHE="source $BASHRC && roslaunch record_cache record_cache.launch 2>&1 | tee \${ROS_LOG_DIR}/record_cache.launch.log"
+HADMAP_ENGINE="source $BASHRC && roslaunch hadmap_engine hadmap_engine.launch 2>&1 | tee \${ROS_LOG_DIR}/hadmap_engine.launch.log"
 
 ##for the min auto drive mode ,just use RTK_PLANNER and controller
 if [ "$1" == "1" ]; then
@@ -45,10 +52,11 @@ xfce4-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" 
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -T "localization" \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $VV6_CAN_ADAPTER';bash" -T "canadapter"  \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $RTKREPLAYPLANNER';bash" -T "planner"  \
-        --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -T "controller"  \
+        --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $VV6_CONTROLLER';bash" -T "controller"  \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
 		--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
+        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
         --tab -e "bash -c 'sleep 2';bash";
 ##for perception mode  tracffic light and lidar dectection
 elif [ "$1" == "2" ]; then
@@ -56,57 +64,81 @@ xfce4-terminal	--window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" 
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -T "localization" \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $VV6_CAN_ADAPTER';bash" -T "canadapter"  \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -T "drivers"  \
-	    --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -T "controller"  \
+	    --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $VV6_CONTROLLER';bash" -T "controller"  \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
         --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -T "local_planner" \
         --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -T "had_map" \
 		--tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
+        --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
         --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "wey" ]; then
     xfce4-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -T "localization" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $VV6_CAN_ADAPTER';bash" -T "canadapter"  \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -T "drivers"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -T "controller"  \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $VV6_CONTROLLER';bash" -T "controller"  \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
+      --tab -e "bash -c 'sleep 15; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -T "local_planner" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -T "had_map" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -T "guardian" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
-      --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
+      --tab -e "bash -c 'sleep 5; $GLOG_COMMAND && $RECORD_CACHE';bash" -T "record_cache" \
+      #--tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
+      --tab -e "bash -c 'sleep 2';bash";
+elif [ "$1" == "df" ]; then
+    xfce4-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" \
+      --tab -e "bash -c 'sleep 5; $GLOG_COMMAND && $LOCALIZATION';bash" -T "localization" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $DONGFENG_CAN_ADAPTER';bash" -T "canadapter"  \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -T "drivers"  \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $DONGFENG_CONTROLLER';bash" -T "controller"  \
+      --tab -e "bash -c 'sleep 7; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
+      --tab -e "bash -c 'sleep 15; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -T "local_planner" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -T "had_map" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -T "guardian" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
+      --tab -e "bash -c 'sleep 5; $GLOG_COMMAND && $RECORD_CACHE';bash" -T "record_cache" \
+      #--tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "jinlv" ]; then
     xfce4-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -T "localization" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $JINLV_CAN_ADAPTER';bash" -T "canadapter"  \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -T "drivers"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -T "controller"  \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $JINLV_CONTROLLER';bash" -T "controller"  \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
+      --tab -e "bash -c 'sleep 15; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -T "local_planner" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -T "had_map" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -T "guardian" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
-      --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
+      --tab -e "bash -c 'sleep 5; $GLOG_COMMAND && $RECORD_CACHE';bash" -T "record_cache" \
+      #--tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 2';bash";
 elif [ "$1" == "byd" ]; then
     xfce4-terminal  --window -e "bash -c '$GLOG_COMMAND && $ROSCORE';bash" -T "core" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $LOCALIZATION';bash" -T "localization" \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $BYD_CAN_ADAPTER';bash" -T "canadapter"  \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LIDAR_CAMERA_DRIVERS';bash" -T "drivers"  \
-      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $CONTROLLER';bash" -T "controller"  \
+      --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $BYD_CONTROLLER';bash" -T "controller"  \
       --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $PERCEPTION';bash" -T "perception" \
-      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
+      --tab -e "bash -c 'sleep 15; $GLOG_COMMAND && $CHEJI';bash" -T "cheji" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $LOCAL_PLANNER';bash" -T "local_planner" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $HAD_MAP';bash" -T "had_map" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $GUARDIAN';bash" -T "guardian" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $OPERATOR_TOOL';bash" -T "operator_tool" \
       --tab -e "bash -c 'sleep 2; $GLOG_COMMAND && $TRACK_RECORDER';bash" -T "track_recorder" \
-      --tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
+      --tab -e "bash -c 'sleep 3; $GLOG_COMMAND && $HADMAP_ENGINE';bash" -T "hadmap_engine" \
+      --tab -e "bash -c 'sleep 5; $GLOG_COMMAND && $RECORD_CACHE';bash" -T "record_cache" \
+      #--tab -e "bash -c 'sleep 4; $GLOG_COMMAND && $ROSBAG_RECORD';bash" -T "rosbag_recorder" \
       --tab -e "bash -c 'sleep 2';bash";
 else
     echo "do others"

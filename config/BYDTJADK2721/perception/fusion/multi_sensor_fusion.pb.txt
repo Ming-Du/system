@@ -3,7 +3,7 @@ use_lidar: true
 use_radar: false
 
 input_sensor {
-  sensor_name: "6mm_front"
+  sensor_name: "H60-D05270588"
   topic: "/perception/camera/camera_obstacle"
 }
 input_sensor {
@@ -11,6 +11,7 @@ input_sensor {
   topic: "/perception/lidar/front/lidar_obstacle"
 }
 
+obstacle_filter_dis: 100.0
 fusion_main_sensor: "livox_front"
 localization_topic: "/localization/global"
 

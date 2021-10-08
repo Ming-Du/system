@@ -12,10 +12,10 @@ sensor_info {
       z: 0.0
     }
     rotation {
-      w: 1.
-      x: -0.005
-      y: 0.024
-      z: 0.017
+      w: 0.707
+      x: -0.00
+      y: 0.0
+      z: 0.707
     }
   }
 }
@@ -83,6 +83,25 @@ sensor_info {
       x: -0.012
       y: 0.000
       z: -0.719
+    }
+  }
+}
+sensor_info {
+  name: "ct_radar"
+  type: CT_RADAR
+  orientation: FRONT
+  topic: "/perception/radar/RScan"
+  extrinsic {
+    translation {
+      x: 3.6
+      y: 0.0
+      z: 0.4
+    }
+    rotation {
+      w: 1
+      x: 0
+      y: 0
+      z: 0
     }
   }
 }

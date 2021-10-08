@@ -15,11 +15,25 @@ enum LaneMarkType {
   LANE_MARK_BROKEN = 2;
 }
 
+
+message LaneLineCubicCurve
+{
+  optional double x_start = 1;
+  optional double x_end = 2;
+  optional double a = 3;
+  optional double b = 4;
+  optional double c = 5;
+  optional double d = 6;
+}  // add by qianlei
+
 message LaneMark {
   optional LaneMarkColor color = 1;
   optional LaneMarkType type = 2;
   optional float confidence = 3;       // valid length / 60.0 meters
   repeated geometry.Point2D points = 4;
+  optional LaneLineCubicCurve curve_car_coord = 5; // add by qianlei
+  repeated geometry.Point2D curve_image_coord_point_set = 6; // add by qianlei
+  repeated geometry.Point3D curve_car_coord_point_set = 7; // add by qianlei
 }
 
 message LaneCenter {
@@ -28,9 +42,10 @@ message LaneCenter {
 
 message LaneMarks {
   optional common.Header header = 1;
-
+  
   optional LaneMark left = 2;
   optional LaneMark right = 3;
   optional LaneMark left2 = 4;
   optional LaneMark right2 = 5;
+  repeated LaneMark lanemarks = 6;  // add by qianlei
 }

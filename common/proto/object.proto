@@ -112,7 +112,7 @@ message VisualObjects {
 message TrackedObject {
   optional Object obj = 1;
 
-  optional float yaw = 2;       //box orientation angle from x axis, counter clockwise(in rad),range -pi to pi
+  optional float yaw = 2;       //box orientation angle from x axis, counter clockwise(in rad),range 0 to 2*pi
   optional float yaw_rate = 3;  //in rad/s
   optional geometry.Vector3 velocity = 4; // absolute velocity, in m/s, vx, vy, vz
   repeated geometry.Trace trace = 5;    // historical positions
@@ -121,6 +121,13 @@ message TrackedObject {
   optional float absolute_longitude_v = 7;   // along lane speed, m/s
   optional float absolute_longitude_a = 8;   // in m/s2, longitudinal acc
   optional float absolute_lateral_v = 9;     // vertical to lane speed, left positive, m/s
+
+  optional double longitude = 10;   // longitude , in degrees
+  optional double latitude = 11;   // latitude , in degrees
+  optional double alt = 12;     // height above mean sea level in meters
+
+  optional double longitude_p = 13;   // position in East , in meters
+  optional double latitude_p = 14;   // position in North , in meters
 
 //float x_speed             // longitudinal speed relative to host vehicle, m/s
 //float y_speed             // lateral speed relative to host vehicle, m/s

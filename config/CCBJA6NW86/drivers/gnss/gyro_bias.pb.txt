@@ -7,8 +7,8 @@ accelerometer_bias {
 }
 
 gyroscope_bias {
-  x: 0
-  y: 0
-  z: 0.0
+  x: -1.3
+  y: -1.5
+  z: -1.1
 }
 

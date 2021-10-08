@@ -1,0 +1,18 @@
+use_camera: true
+use_lidar: true
+use_radar: false
+
+input_sensor {
+  sensor_name: "H60-D05270581"
+  topic: "/perception/camera/camera_obstacle"
+}   
+input_sensor {
+  sensor_name: "middle_pandar_128"
+  topic: "/perception/lidar/lidar_obstacle"
+}
+
+obstacle_filter_dis: 100.0
+fusion_main_sensor: "middle_pandar_128"
+localization_topic: "/localization/global"
+
+send_fusion_topic: "/perception/fusion/fused_obstacle"

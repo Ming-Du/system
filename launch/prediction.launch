@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+<node name="prediciton" ns="prediction"
+    pkg="prediction" type="prediction_node" output="screen"
+/>
+</launch>

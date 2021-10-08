@@ -19,6 +19,7 @@ add_message_files(
   CommonObject.msg
   CommonObjects.msg
   ControlCommand.msg
+  LaneLineCubicCurve.msg
   LaneMark.msg
   LaneMarks.msg
   TrackedObject.msg

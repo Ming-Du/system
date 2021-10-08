@@ -19,6 +19,7 @@ sensor_info {
     }
   }
 }
+
 sensor_info {
   name: "H60-D05270579"
   type: SENSING_60
@@ -138,6 +139,12 @@ sensor_info {
     distort_matrix: -0.03153983596306846
   }
 }
+sensor_info {
+  name: "H120-D05270554"
+  type: SENSING_120
+  orientation: REAR
+  topic: "/sensor/camera/sensing/image_raw_120_back"
+}
 
 sensor_info {
   name: "middle_pandar_128"
@@ -146,17 +153,15 @@ sensor_info {
   topic: "/sensor/lidar/middle/point_cloud"
   extrinsic {
     translation {
-      x: 0
-      y: 0
-      z: 0
+      x: 1.13463926
+      y: 0.33072897
+      z: 1.9269314321477091
     }
     rotation {
-      w: 1
-      x: 0
-      y: 0
-      z: 0
+      x: 0.00234927234990239
+      y: 0.011146536101888668
+      z: 0.7091276784332794
+      w: 0.70498806467356789
     }
   }
 }
-
-

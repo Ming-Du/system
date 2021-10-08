@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+
+  <node name="trt_yolov5" pkg = "trt_yolov5" type = "trt_yolov5_node" output = "screen">
+    <param name = "model_weights" type = "string" value = "$(find models)/tensorRT_weights/cv2d_objdet.engine" />
+    <param name = "obj_names" type = "string" value = "$(find models)/tensorRT_weights/obj.names"/>
+    <param name = "camera_topic" type = "string" value = "/sensor/camera/sensing/image_raw_60" />
+    <param name = "sensor_name" type = "string" value = "H60-D05270582" />
+    <param name = "calibration_file" type = "string" value = "$(find config)/vehicle/sensor/calibrated_sensor.pb.txt" />
+  </node>
+
+  <!-- The following is old node for trt_yolov5 -->
+  <!-- <node name="trt_yolov5" pkg = "trt_yolov5" type = "trt_yolov5_node_old" output = "screen">
+    <param name = "serialize" type = "string" value = "-d" />
+    <param name = "model_weights" type = "string" value = "$(find models)/tensorRT_weights/cv2d_objdet.engine" />
+    <param name = "obj_names" type = "string" value = "$(find models)/tensorRT_weights/obj.names"/>
+    <param name = "camera_topic" type = "string" value = "/sensor/camera/6mm/image_raw" />
+    <param name = "sensor_name" type = "string" value = "6mm_front" />
+  </node> -->
+
+</launch>

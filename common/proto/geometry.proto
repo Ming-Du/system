@@ -7,6 +7,12 @@ message Vector3 {
   optional double z = 3;
 }
 
+message Vector3f {
+  optional float x = 1;
+  optional float y = 2;
+  optional float z = 3;
+}
+
 message Point2D {
   optional double x = 1 [default = nan];
   optional double y = 2 [default = nan];

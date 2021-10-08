@@ -1,0 +1,168 @@
+base: "base_link"
+
+sensor_info {
+  name: "gnss"
+  type: GNSS
+  orientation: FRONT
+
+  extrinsic {
+    translation {
+      x: 0.88
+      y: 0.0
+      z: 0.0
+    }
+    rotation {
+      w: 0.707
+      x: 0
+      y: 0
+      z: 0.707
+    }
+  }
+}
+
+sensor_info {
+  name: "H60-D05270582"
+  type: SENSING_60
+  orientation: FRONT
+  topic: "/sensor/camera/sensing/image_raw_60"
+  extrinsic {
+    translation {
+      x: 1.5604071914800972
+      y: 0.423620145101693
+      z: 1.5786582422788362
+    }
+    rotation {
+      x: -0.50250575750808124
+      y: 0.49757284761501475
+      z: -0.49792845386484452
+      w: 0.50197258871304962
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 1953.8440807621494
+    matrix: 0
+    matrix: 1001.502982983798
+    matrix: 0
+    matrix: 1955.8975315527155
+    matrix: 500.80693228074017
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.57143389469501682
+    distort_matrix: 0.34578280409603956
+    distort_matrix: -0.00081190409643279665
+    distort_matrix: -0.00041216774745210093
+    distort_matrix: -0.11784654379699785
+  }
+}
+
+sensor_info {
+  name: "H30-D05270531"
+  type: SENSING_30
+  orientation: FRONT
+  topic: "/sensor/camera/sensing/image_raw_30"
+  extrinsic {
+    translation {
+      x: 1.5217968260087424
+      y: 0.44111403085080303
+      z: 1.5689789418851614
+    }
+    rotation {
+      x: 0.48793675957368249
+      y: -0.49921062664192195
+      z: 0.51284996104759384
+      w: -0.49969129105678345
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 3911.9514939753954
+    matrix: 0
+    matrix: 1065.9531111668473
+    matrix: 0
+    matrix: 3912.501586564073
+    matrix: 497.30309635737535
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.11564959713600755
+    distort_matrix: -7.309280372213526
+    distort_matrix: -0.00334749425436192
+    distort_matrix: -0.0035633725578280112
+    distort_matrix: 66.375949137219507
+  }
+}
+
+sensor_info {
+  name: "H120-D05270547"
+  type: SENSING_120
+  orientation: FRONT
+  topic: "/sensor/camera/sensing/image_raw_120"
+  extrinsic {
+    translation {
+      x: 1.5074866941456389
+      y: 0.37714029524972981
+      z: 1.5907375055668835
+    }
+    rotation {
+      x: 0.48879539080840728
+      y: -0.505639628096446
+      z: 0.50798837590191226
+      w: -0.49734841144964159
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 954.55548015893
+    matrix: 0
+    matrix: 1006.7030631272585
+    matrix: 0
+    matrix: 955.37596059880514
+    matrix: 516.87254610674449
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.33488583286024337
+    distort_matrix: 0.127165684922856
+    distort_matrix: 0.000275791441225374
+    distort_matrix: 6.7337997891550908e-05
+    distort_matrix: -0.023447485085440613
+  }
+}
+
+sensor_info {
+  name: "H120-D05270548"
+  type: SENSING_120
+  orientation: REAR
+  topic: "/sensor/camera/sensing/image_raw_120_back"
+}
+
+sensor_info {
+  name: "middle_pandar_128"
+  type: HESAI_128
+  orientation: MIDDLE
+  topic: "/sensor/lidar/middle/point_cloud"
+  extrinsic {
+    translation {
+      x: 1.13463926
+      y: 0.33072897
+      z: 1.9184302992525508
+    }
+    rotation {
+      x: 0.008833424255905397
+      y: 0.00759099568671105
+      z: 0.70832947859992035
+      w: 0.70578587202264442
+    }
+  }
+}
