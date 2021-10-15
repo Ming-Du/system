@@ -17,7 +17,7 @@
   <arg name="timestamp_type" default=""/>
   <arg name="data_type" default=""/>
 	
-  <arg name="lidar_correction_file"  default="$(arg config_path)/drivers/lidar/correct.csv"/>
+  <arg name="lidar_correction_file"  default=" "/>
 
   <group ns="/sensor/lidar/hesai128">
   <node pkg="drivers_hesai128" type="drivers_hesai128_node" 
