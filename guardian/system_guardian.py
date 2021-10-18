@@ -14,6 +14,7 @@ import simplejson
 import logging
 import re
 import time
+import datetime
 from subprocess import Popen,PIPE,STDOUT
 from multiprocessing import Process, Manager
 import multiprocessing
@@ -292,6 +293,8 @@ def topicFun(rostopic_file, brandtopicfile):
     topics_size = len(topic_list)
     pub_topics = rospy.Publisher('/system/rostopics_hz',String, queue_size=100)
     while True:
+        topic_first = True;
+        pub_first = True;
         topic_str=""
         topic_monitor_list=[]
         count = 0
@@ -299,10 +302,19 @@ def topicFun(rostopic_file, brandtopicfile):
         topic_li = p.stdout.read()
         topicAlive = topic_li.split("\n")
         #print(topicAlive)
+        print("topicalive:")
+        print(topicAlive)
+        print("topic_list_after:")
+        print(topic_list)
+
         for topic_g in topic_list:
             if topic_g in topicAlive:
+                print("yes:" + topic_g)
                 topic_str=topic_str +" " + topic_g  ######rostopic
                 topic_monitor_list.append(topic_g)
+            else:
+                print("no:" + topic_g )
+
         topics_size = len(topic_monitor_list)
         print("topics_size:%d"%topics_size)
         cmd = "python " + rostopic_file + " hz --window=50 " +  topic_str
@@ -310,10 +322,12 @@ def topicFun(rostopic_file, brandtopicfile):
         r = Popen(cmd, shell=True, stdout=PIPE,stderr=STDOUT)
         topic_dict = {}
         topic_dict_list = []
+        tbegin = time.time()
         for line in iter(r.stdout.readline, b''):
             line = line.strip('\n')
             line = line.strip()
             out_list=re.split(r'\s+',line)
+            print(line)
             #print("out_list[0]:%s"%out_list[0])
             topic_msg_dict = {}
             if topics_size==1:
@@ -326,6 +340,7 @@ def topicFun(rostopic_file, brandtopicfile):
                     topicsmsg = json.dumps(topic_dict)
                     print(topicsmsg)
                     pub_topics.publish(topicsmsg)
+                    topic_first = False
             if out_list[0]=="topic":
                 for topic_g in topic_list:
                     if topic_g not in topic_dict_list:
@@ -334,9 +349,15 @@ def topicFun(rostopic_file, brandtopicfile):
                         topic_msg_dict["set_hz"] = topic_orig_dict[topic_g]
                         topic_dict[topic_g]  = topic_msg_dict
                         topic_msg_dict = {}
-                topicsmsg = json.dumps(topic_dict)
-                print(topicsmsg)
-                pub_topics.publish(topicsmsg)
+                if pub_first == False:
+                    topicsmsg = json.dumps(topic_dict)
+                    print(topicsmsg)
+                    pub_topics.publish(topicsmsg)
+                    topic_first = False
+                else:
+                    print("first pub")
+                    pub_first = False
+
                 count = 0
                 topic_dict = {}
                 topic_dict_list = []
@@ -354,7 +375,7 @@ def topicFun(rostopic_file, brandtopicfile):
                 topic_dict[out_list[0]] = topic_msg_dict;
                 #print(out_list[0]+":"+out_list[1])
                 topic_dict_list.append(out_list[0])
-            if out_list[0]=='no' or out_list[0] == 'Usage:':
+            if (out_list[0]=='no' or out_list[0] == 'Usage:') :
                 print(out_list[0]+":"+out_list[0])
                 topic_dict_list  = []
                 for topic_g in topic_list:
@@ -366,12 +387,27 @@ def topicFun(rostopic_file, brandtopicfile):
                         topic_dict[topic_g]  = topic_msg_dict
                         topic_msg_dict = {}
                 topicsmsg = json.dumps(topic_dict)
+                    
                 print("topicsmsg")
-                print(topicsmsg)
-                pub_topics.publish(topicsmsg)
+                if topic_first == False or out_list[0] == 'Usage:':
+                    print(topicsmsg)
+                    pub_topics.publish(topicsmsg)
+                else:
+                    print("topic_first")
+                    topic_first = False
                 count = 0
                 topic_dict = {}
                 topic_dict_list = []
+            tend = time.time()
+            if(tend - tbegin > 20.0):
+                tbegin = time.time()
+                p.terminate()
+                r.terminate()
+                break;
+
+
+        print("end for")
+    print("end while") 
 
 
 def topicconfig(configfile):
@@ -387,9 +423,12 @@ def topicconfig(configfile):
                 if brand_tmp.strip() == brand.strip():
                     node_list.append(node["node_name"].strip())
                     for topic in node["value"]:
-                        if topic["topic_name"].strip() != '':
-                            str_tmp = topic["topic_name"] + ":" + topic["set_hz"]
-                            topic_list.append(str_tmp.strip())
+                        if brand.strip() in topic["brand"].split(":"):
+                            if topic["topic_name"].strip() != '':
+                                str_tmp = topic["topic_name"] + ":" + topic["set_hz"]
+                                topic_list.append(str_tmp.strip())
+    print("topic_list:")
+    print(topic_list) 
     return topic_list              
 
 def nodeconfig(configfile):
@@ -401,8 +440,11 @@ def nodeconfig(configfile):
         for node in  model["value"]:
             brand_list = node["brand"].split(":")
             for brand_tmp in brand_list:
-                if brand_tmp.strip() == brand.strip():
+               if brand_tmp.strip() == brand.strip():
                     node_list.append(node["node_name"].strip())
+    print("node_list:")
+    print(node_list) 
+
     return node_list
 
 def get_brand(vehicle_config):
