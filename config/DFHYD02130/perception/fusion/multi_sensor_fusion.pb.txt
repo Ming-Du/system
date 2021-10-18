@@ -11,8 +11,11 @@ input_sensor {
   topic: "/perception/lidar/lidar_obstacle"
 }
 
-obstacle_filter_dis: 100.0
-fusion_main_sensor: "middle_pandar_128"
+fusion_method: "ProbabilisticFusion"
+fusion_main_sensors: "middle_pandar_128"
+object_in_roi_check: true
+radius_for_roi_object_check: 100
 localization_topic: "/localization/global"
-
-send_fusion_topic: "/perception/fusion/fused_obstacle"
+output_obstacles_topic_name: "/perception/fusion/obstacles"
+output_viz_fused_content_topic_name: "/perception/fusion/obstacles_debug"
+output_viz_fused_content_topic_name2: "/perception/fusion/visualisation"
