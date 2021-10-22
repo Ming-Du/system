@@ -11,5 +11,7 @@
     args="--logtostderr=0 --stderrthreshold=0 --v=1
           --sensor_meta_path=$(arg sensor_meta) 
           --multi_sensor_fusion_conf_path=$(arg config_path)/perception/fusion/multi_sensor_fusion.pb.txt
-          --work_root=$(arg fusion_config_path)" />
+          --work_root=$(arg fusion_config_path)" >
+    <param name="use_filter" type="bool" value="true"/>
+  </node>          
 </launch>
