@@ -140,8 +140,8 @@ sensor_info {
 }
 
 sensor_info {
-  name: "rslidar"
-  type: HESAI_128
+  name: "lidar_main"
+  type: RSLIDAR_80
   orientation: MIDDLE
   topic: "/sensor/lidar/middle/point_cloud"
   extrinsic {

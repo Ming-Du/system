@@ -140,7 +140,7 @@ sensor_info {
 }
 
 sensor_info {
-  name: "middle_pandar_128"
+  name: "lidar_main"
   type: HESAI_128
   orientation: MIDDLE
   topic: "/sensor/lidar/middle/point_cloud"
