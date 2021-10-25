@@ -5,9 +5,9 @@
   <arg name="sensor_meta"
     default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
 
-  <node name="drivers_gnss" pkg="drivers_gnss" type="drivers_gnss_node"
+  <node name="drivers_gnss_zy" pkg="drivers_gnss_zy" type="drivers_gnss_zy_node"
     output="screen" args="--sensor_meta_path=$(arg sensor_meta)" >
-    <param name="device" value="/dev/ttyACM0" />
+    <param name="device" value="/dev/ttyUSB0" />
     <param name="frame_id" value="gnss" />
 
     <param name="config_file" 
