@@ -1,0 +1,29 @@
+syntax = "proto2";
+package hadmap;
+
+import "header.proto";
+import "hadmap.proto";
+
+message PathRemains {
+  optional double dis_remain = 1; // distance to end, wbq 20211025
+  optional uint64 points_remain = 2; // points size to end, wbq 20211025
+}
+
+message PathInfo {
+  optional int64 current_road_id = 1;
+  optional int64 current_section_id = 2;
+  optional int64 current_targetlane_id = 3;
+  optional hadmap.RoadType current_road_type = 4 [default = ROAD_TYPE_Normal];
+  optional int64 next_road_id = 5;
+  optional int64 next_section_id = 6;
+  optional int64 next_targetlane_id = 7;
+  optional hadmap.RoadType next_road_type = 8 [default = ROAD_TYPE_Normal];
+  optional double next_road_distance = 9;
+}
+
+message PathMsg {
+  optional common.Header header = 1;
+  required PathRemains path_remains = 2;
+  optional PathInfo path_info = 3;
+}
+

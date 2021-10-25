@@ -28,6 +28,7 @@ message TrajectoryPoint {
   optional double theta = 7;  //direction of v
   optional double kappa = 8;  //curvature
   optional double s = 9; //accumulated distance in meters from beginning
+  optional double s_reverse = 10; // accumulated distance in meters from current to end - wbq 20211024
 }
 
 message Trajectory {
