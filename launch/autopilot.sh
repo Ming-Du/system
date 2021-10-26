@@ -13,6 +13,27 @@ Usage(){
     echo "g          --gnome窗口启动"
 }
 
+
+check_env(){
+    #add environment to /root/.bashrc
+    env_roshostname_root=$(grep  "export\b[[:space:]]*ROS_HOSTNAME"  /root/.bashrc | grep -v "^#")
+    if [ -z "$env_roshostname_root" ];then
+        echo "export ROS_HOSTNAME=$ros_machine" >> /root/.bashrc
+    fi
+    env_rosmasteruri_root=$(grep  "export\b[[:space:]]*ROS_MASTER_URI"  /root/.bashrc | grep -v "^#")
+    if [ -z "$env_rosmasteruri_root" ];then
+        echo "export ROS_MASTER_URI=http://$ros_master:11311" >> /root/.bashrc
+    fi
+    #add environment to /home/mogo/.bashrc
+    env_roshostname_mogo=$(grep  "export\b[[:space:]]*ROS_HOSTNAME"  /home/mogo/.bashrc | grep -v "^#")
+    if [ -z "$env_roshostname_mogo" ];then
+        echo "export ROS_HOSTNAME=$ros_machine" >> /home/mogo/.bashrc
+    fi
+    env_rosmasteruri_mogo=$(grep  "export\b[[:space:]]*ROS_MASTER_URI"  /home/mogo/.bashrc | grep -v "^#")
+    if [ -z "$env_rosmasteruri_mogo" ];then
+        echo "export ROS_MASTER_URI=http://$ros_master:11311" >> /home/mogo/.bashrc
+    fi
+}
 # vehicle/drivers/camera/camera.launch
 # vehicle/drivers/lidar/lidar.launch
 # vehicle/drivers/gnss/gnss.launch
@@ -77,7 +98,7 @@ start_node_silence_multi(){
         sleep 2 && roslaunch --wait $ABS_PATH/../config/vehicle/drivers/gnss/gnss.launch 1>>${ROS_LOG_DIR}/gnss_drivers.launch.log 2>>${ROS_LOG_DIR}/gnss_drivers.launch.err &
         sleep 2 && roslaunch --wait guardian system_guardian.launch 1>>${ROS_LOG_DIR}/system_guardian.launch.log 2>>${ROS_LOG_DIR}/system_guardian.launch.err &
         sleep 5 && roslaunch --wait localization localization.launch 1>>${ROS_LOG_DIR}/localization.launch.log 2>>${ROS_LOG_DIR}/localization.launch.err &
-        sleep 15 && roslaunch --wait telematics telematics.launch 1>>${ROS_LOG_DIR}/telematics.launch.log 2>>${ROS_LOG_DIR}/telematics.launch.err &
+        sleep 15 && roslaunch --wait telematics telematics.launch 1>/dev/null 2>>${ROS_LOG_DIR}/telematics.launch.err &
         sleep 2 && roslaunch --wait launch local_planning.launch 1>>${ROS_LOG_DIR}/local_planning.launch.log 2>>${ROS_LOG_DIR}/local_planning.launch.err &
         sleep 2 && roslaunch --wait launch hadmap.launch 1>>${ROS_LOG_DIR}/hadmap.launch.log 2>>${ROS_LOG_DIR}/hadmap.launch.err &
         sleep 2 && roslaunch --wait track_recorder track_recorder.launch 1>>${ROS_LOG_DIR}/track_recorder.launch.log 2>>${ROS_LOG_DIR}/track_recorder.launch.err &
@@ -192,7 +213,7 @@ start_node_silence(){
     sleep 3 && roslaunch launch drivers.launch 1>>${ROS_LOG_DIR}/drivers.launch.log 2>>${ROS_LOG_DIR}/drivers.launch.err &
     sleep 2 && roslaunch guardian system_guardian.launch 1>>${ROS_LOG_DIR}/system_guardian.launch.log 2>>${ROS_LOG_DIR}/system_guardian.launch.err &
     sleep 5 && roslaunch localization localization.launch 1>>${ROS_LOG_DIR}/localization.launch.log 2>>${ROS_LOG_DIR}/localization.launch.err &
-    sleep 15 && roslaunch telematics telematics.launch 1>>${ROS_LOG_DIR}/telematics.launch.log 2>>${ROS_LOG_DIR}/telematics.launch.err &
+    sleep 15 && roslaunch telematics telematics.launch 1>/dev/null 2>>${ROS_LOG_DIR}/telematics.launch.err &
     sleep 2 && roslaunch launch local_planning.launch 1>>${ROS_LOG_DIR}/local_planning.launch.log 2>>${ROS_LOG_DIR}/local_planning.launch.err &
     sleep 2 && roslaunch launch hadmap.launch 1>>${ROS_LOG_DIR}/hadmap.launch.log 2>>${ROS_LOG_DIR}/hadmap.launch.err &
     sleep 2 && roslaunch track_recorder track_recorder.launch 1>>${ROS_LOG_DIR}/track_recorder.launch.log 2>>${ROS_LOG_DIR}/track_recorder.launch.err &
@@ -295,6 +316,7 @@ else
         ping -c 1 -W 2 $slave_ip > /dev/null
         if [ $? -eq 0 ];then #双xavier
             xavier_type="multi"
+            check_env
         else #单Xavier
             xavier_type="single"
         fi
@@ -305,6 +327,7 @@ else
             ping -c 1 -W 2 $master_ip > /dev/null
             if [ $? -eq 0 ];then #双xavier
                 xavier_type="multi"
+                check_env
             else #单Xavier
                 echo "cannot contact with ${ros_master}[${master_ip}],please check /etc/hosts or ip address"
                 exit 1
@@ -327,12 +350,12 @@ else
     echo "GuiServer is $GuiServer"
 fi
 
-export DATE=`date +"%Y%m%d"`
-export TIME=`date +"%H%M%S"`
+# export DATE=`date +"%Y%m%d"`
+# export TIME=`date +"%H%M%S"`
 export GLOG_logtostderr=1
 export GLOG_colorlogtostderr=1
 # ros日志存储路径的环境变量
-export ROS_LOG_DIR="/home/mogo/data/log/${DATE}_${TIME}"
+export ROS_LOG_DIR="/home/mogo/data/log/$(date +"%Y%m%d_%H")"
 # ros日志配置文件的环境变量
 export ROSCONSOLE_CONFIG_FILE
 export ROS_HOSTNAME=${ros_machine}
