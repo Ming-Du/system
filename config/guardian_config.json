@@ -110,7 +110,7 @@
                     "guardian":"n"
                 },    
                 {
-                    "topic_name": "/perception/fusion/obstacles",
+                    "topic_name": "/perception/fusion/obstacles_app",
                     "set_hz":" ",
                     "guardian":"y"
                 }    
