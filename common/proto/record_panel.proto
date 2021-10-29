@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+package record_cache;
+
+import "header.proto";
+
+message RecordItem {
+  optional string topic = 1;
+  optional int32 nums = 2;
+}
+
+message RecordPanel {
+  optional common.Header header = 1;
+  optional bool stat = 2; //记录状态：false：写入异常 true：正常
+  optional int64 disk_free = 3; //磁盘剩余空间
+  optional int64 total_size = 4; //此次占用空间
+  optional string timestamp = 5; //记录的时间戳
+  optional float duration = 6; //记录时长
+  repeated RecordItem records = 7; //每个topic的数据信息
+  optional string note = 8; //备注消息
+}
+
+

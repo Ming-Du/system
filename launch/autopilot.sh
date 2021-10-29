@@ -61,6 +61,7 @@ start_node_terminal_multi(){
         $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GUARDIAN';bash" $TitleOpt "guardian" &
         $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $OPERATOR_TOOL';bash" $TitleOpt "operator_tool" &
         $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $TRACK_RECORDER';bash" $TitleOpt "track_recorder" &
+        $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $HADMAP_ENGINE';bash" $TitleOpt "hadmap_engine" &
         $GuiTerminal --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $RECORD_CACHE';bash" $TitleOpt "record_cache" &
         if [ "$VehicleType" == "wey" ];then
             $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $VV6_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
@@ -82,7 +83,6 @@ start_node_terminal_multi(){
         sleep 1
         $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LIDAR_DRIVERS';bash" $TitleOpt "drivers_lidar"  &
         $GuiTerminal --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $PERCEPTION_LIDAR';bash" $TitleOpt "perception_lidar" &
-        $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $HADMAP_ENGINE';bash" $TitleOpt "hadmap_engine" &
     fi
 }
 
@@ -103,6 +103,7 @@ start_node_silence_multi(){
         sleep 2 && roslaunch --wait launch hadmap.launch 1>>${ROS_LOG_DIR}/hadmap.launch.log 2>>${ROS_LOG_DIR}/hadmap.launch.err &
         sleep 2 && roslaunch --wait track_recorder track_recorder.launch 1>>${ROS_LOG_DIR}/track_recorder.launch.log 2>>${ROS_LOG_DIR}/track_recorder.launch.err &
         sleep 5 && roslaunch --wait record_cache record_cache.launch 1>>${ROS_LOG_DIR}/record_cache.launch.log 2>>${ROS_LOG_DIR}/record_cache.launch.err &
+        sleep 3 && roslaunch --wait hadmap_engine hadmap_engine.launch 1>>${ROS_LOG_DIR}/hadmap_engine.launch.log 2>>${ROS_LOG_DIR}/hadmap_engine.launch.err &
         sleep 5 && roslaunch --wait $ABS_PATH/../config/vehicle/perception/camera/perception_camera.launch 1>>${ROS_LOG_DIR}/perception_camera.launch.log 2>>${ROS_LOG_DIR}/perception_camera.launch.err &
         if [ "$VehicleType" == "wey" ]; then
             # sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
@@ -127,7 +128,6 @@ start_node_silence_multi(){
         sleep 2 && roslaunch --wait $ABS_PATH/../config/vehicle/drivers/lidar/lidar.launch 1>>${ROS_LOG_DIR}/lidar.launch.log 2>>${ROS_LOG_DIR}/lidar.launch.err &
         sleep 5 && roslaunch --wait $ABS_PATH/../config/vehicle/perception/lidar/perception_lidar.launch 1>>${ROS_LOG_DIR}/perception_lidar.launch.log 2>>${ROS_LOG_DIR}/perception_lidar.launch.err &
         sleep 7 && roslaunch --wait $ABS_PATH/../config/vehicle/perception/fusion/perception_fusion.launch 1>>${ROS_LOG_DIR}/perception_fusion.launch.log 2>>${ROS_LOG_DIR}/perception_fusion.launch.err &
-        sleep 3 && roslaunch --wait hadmap_engine hadmap_engine.launch 1>>${ROS_LOG_DIR}/hadmap_engine.launch.log 2>>${ROS_LOG_DIR}/hadmap_engine.launch.err &
     fi 
     sleep 17
 }
