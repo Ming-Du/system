@@ -3,20 +3,20 @@ use_lidar: true
 use_radar: false
 
 input_sensor {
-  sensor_name: "H60-D05270585"
+  sensor_name: "6mm_front"
   topic: "/perception/camera/camera_obstacle"
-}   
+}
 input_sensor {
-  sensor_name: "lidar_main"
+  sensor_name: "c32_front_left"
   topic: "/perception/lidar/lidar_obstacle"
 }
 
 fusion_method: "ProbabilisticFusion"
-fusion_main_sensors: "lidar_main"
+fusion_main_sensors: "c32_front_left"
 object_in_roi_check: true
 radius_for_roi_object_check: 100
 localization_topic: "/localization/global"
-enable_publish_fusion_topic: true
+enable_publish_fusion_topic: false
 enable_publish_fusion_topic_app: true
 output_obstacles_topic_name: "/perception/fusion/obstacles"
 output_obstacles_topic_name_app: "/perception/fusion/obstacles_app"
