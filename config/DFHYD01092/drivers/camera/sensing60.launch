@@ -4,7 +4,7 @@
   <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
     default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
-  <arg name="camera_id" default="H60-D0xxxx" />
+  <arg name="camera_id" default="H60-D06170611" />
   <arg name="calibed" default="1" />
   <arg name="undistort" default="0" />
   <group ns="sensor/camera/sensing60">
