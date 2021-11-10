@@ -3,27 +3,59 @@ package hadmap;
 
 import "header.proto";
 import "hadmap.proto";
+import "geometry.proto";
+
+
+enum PathSetStatus{
+  PATH_SET_FAIL = 0;
+  PATH_SET_SUCESS = 1;
+  PATH_INITIAL = 2;
+  PATH_FINISH = 3;
+}
+
+enum ReferenceType {
+  FOLLOW_UNKNOW = 0;            
+  FOLLOW_LOCAL = 1;
+  FOLLOW_GLOBAL = 2;
+}
+
+enum NodeType {
+  NODE_UNKNOW = 0;            
+  NODE_ROAD = 1;
+  NODE_JUNCTION = 2;
+}
+
+enum MotionType {
+  MOVE_UNKNOW = 0;
+  MOVE_STRIGHT = 1;
+  MOVE_LEFT_TURN = 2;
+  MOVE_RIGHT_TURN = 3;
+  MOVE_U_TURN = 4;
+}
 
 message PathRemains {
   optional double dis_remain = 1; // distance to end, wbq 20211025
   optional uint64 points_remain = 2; // points size to end, wbq 20211025
 }
 
-message PathInfo {
-  optional int64 current_road_id = 1;
-  optional int64 current_section_id = 2;
-  optional int64 current_targetlane_id = 3;
-  optional hadmap.RoadType current_road_type = 4 [default = ROAD_TYPE_Normal];
-  optional int64 next_road_id = 5;
-  optional int64 next_section_id = 6;
-  optional int64 next_targetlane_id = 7;
-  optional hadmap.RoadType next_road_type = 8 [default = ROAD_TYPE_Normal];
-  optional double next_road_distance = 9;
+message PathNodeInfo {
+  optional int64 node_id = 1;
+  optional int64 section_id = 2;
+  optional int64 targetlane_id = 3;
+  optional NodeType node_type = 4 [default = NODE_UNKNOW]; // node type, wbq 20211104
+  optional ReferenceType reference_type = 5 [default = FOLLOW_UNKNOW]; // reference type, not use now,  wbq 20211104
+  optional MotionType motion_type = 6 [default = MOVE_UNKNOW]; // motion type, only use for junction now,  wbq 20211104
+  optional double distance_to_node = 7 [default = 0]; // distance from loc to node, 0 in current node,  wbq 20211104
+  optional bool node_valid = 8 [default = false]; // node info valid, wbq 20211105
+  repeated geometry.Point vertex = 9; // node vertex, wbq 20211110 
 }
 
 message PathMsg {
   optional common.Header header = 1;
-  required PathRemains path_remains = 2;
-  optional PathInfo path_info = 3;
+  optional PathRemains path_remains = 2;
+  optional PathNodeInfo cur_node_info = 3;
+  optional PathNodeInfo next_node_info = 4;
+  optional PathNodeInfo next_junct_info = 5;
+  optional int32 path_set_state = 6 [default = 0]; // set path status, wbq 20211110
 }
 
