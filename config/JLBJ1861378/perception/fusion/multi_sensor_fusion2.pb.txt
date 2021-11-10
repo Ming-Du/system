@@ -3,7 +3,7 @@ use_lidar: true
 use_radar: false
 
 input_sensor {
-  sensor_name: "6mm_front"
+  sensor_name: "H60-D05270587"
   topic: "/perception/camera/camera_obstacle"
 }
 input_sensor {
@@ -12,7 +12,7 @@ input_sensor {
 }
 
 fusion_method: "ProbabilisticFusion"
-fusion_main_sensors: "c32_front_left"
+fusion_main_sensors: "lidar_main"
 object_in_roi_check: true
 radius_for_roi_object_check: 100
 localization_topic: "/localization/global"
