@@ -63,12 +63,17 @@ sensor_info {
       z: 0.68
     }
     rotation {
-      w: 0.942751
-      x: 0.00298611
-      y: 0.0229856
-      z: 0.33269
+      w: 0.953956
+      x: 0.00378795
+      y: 0.022828
+      z: 0.299053
     }
   }
+}
+
+sensor_info{
+  name:"lidar_main"
+  type:LSLIDAR_C32
 }
 
 
