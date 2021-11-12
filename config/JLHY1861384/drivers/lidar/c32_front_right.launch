@@ -12,7 +12,7 @@
   <arg name="time_synchronization" default="false" />
   <arg name="frame_id" value="c32_front_right" />
 
-  <group ns="sensor/lidar/front_right">
+  <group ns="sensor/lidar/c32/front_right">
   <node pkg="drivers_lslidar" type="lslidar_c32_driver_node"
         name="c32_driver" output="screen">
     <param name="device_ip" value="$(arg device_ip)" />
