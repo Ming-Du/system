@@ -52,7 +52,7 @@ public:
         pub.publish(data);
     }
 };
-
+ 
 template <class ProtoMessage>
 void ProtoLightToRos(const ProtoMessage& proto_msg, 
     autopilot_msgs::BinaryData& ros_msg)
