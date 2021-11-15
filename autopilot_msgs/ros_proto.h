@@ -52,3 +52,24 @@ public:
         pub.publish(data);
     }
 };
+
+template <class ProtoMessage>
+void ProtoLightToRos(const ProtoMessage& proto_msg, 
+    autopilot_msgs::BinaryData& ros_msg)
+{
+    common::SerializeProto(proto_msg, ros_msg.data);
+    ros_msg.size = ros_msg.data.size();
+}
+
+template<class ProtoMessage>
+class ProtoPublisherLight
+{
+private:
+    autopilot_msgs::BinaryData data;
+public:
+    void publish(ros::Publisher& pub, const ProtoMessage& msg)
+    {
+        ProtoLightToRos<ProtoMessage>(msg, data);
+        pub.publish(data);
+    }
+};

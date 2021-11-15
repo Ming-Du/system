@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+package lightstate;
+
+message state{
+    optional string color = 1;
+    optional int32 remain = 2;
+}
