@@ -23,7 +23,7 @@ message Header {
   // Module name.
   optional string module_name = 4;
 }
-
+ 
 message LightInfo
 {
   //路口ID
