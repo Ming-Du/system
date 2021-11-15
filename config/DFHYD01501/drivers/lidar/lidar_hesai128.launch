@@ -4,7 +4,7 @@
   <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
     default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
-  <arg name="sensor_name" default="middle_pandar_128" />
+  <arg name="sensor_name" default="lidar_main" />
 
   <arg name="pcap_file"  default=""/>
   <arg name="server_ip" default="192.168.1.205"/>
@@ -17,7 +17,7 @@
   <arg name="timestamp_type" default=""/>
   <arg name="data_type" default=""/>
 	
-  <arg name="lidar_correction_file"  default="$(arg config_path)/drivers/lidar/correct.csv"/>
+  <arg name="lidar_correction_file"  default=" "/>
 
   <group ns="/sensor/lidar/hesai128">
   <node pkg="drivers_hesai128" type="drivers_hesai128_node" 

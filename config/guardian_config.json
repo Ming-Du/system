@@ -110,7 +110,7 @@
                     "guardian":"n"
                 },    
                 {
-                    "topic_name": "/perception/fusion/obstacles",
+                    "topic_name": "/perception/fusion/obstacles_app",
                     "set_hz":" ",
                     "guardian":"y"
                 }    
@@ -226,8 +226,8 @@
              ]
         },
         {
-          "node_name":"/sensor/camera/6mm/drivers_camera_6mm",
-          "brand":"",
+          "node_name":"/sensor/camera/sensing60/drivers_camera_sensing60",
+          "brand":"DF:JINLV",
           "value":
              [
                 {

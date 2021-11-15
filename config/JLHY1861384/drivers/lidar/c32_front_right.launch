@@ -5,14 +5,14 @@
     default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
 
   <arg name="device_ip" default="192.168.8.202" />
-  <arg name="msop_port" default="2370" />
-  <arg name="difop_port" default="2371" />
+  <arg name="msop_port" default="2372" />
+  <arg name="difop_port" default="2373" />
   <arg name="return_mode" default="1" />
   <arg name="degree_mode" value="1"/>
   <arg name="time_synchronization" default="false" />
   <arg name="frame_id" value="c32_front_right" />
 
-  <group ns="sensor/lidar/front_right">
+  <group ns="sensor/lidar/c32/front_right">
   <node pkg="drivers_lslidar" type="lslidar_c32_driver_node"
         name="c32_driver" output="screen">
     <param name="device_ip" value="$(arg device_ip)" />

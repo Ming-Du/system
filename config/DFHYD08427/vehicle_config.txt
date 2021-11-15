@@ -1,6 +1,6 @@
 vin : "vin"
-plate : "JING-Q"
-brand : "WEY"
+plate : "DFD08427"
+brand : "DF"
     
 length : 4.625
 width  : 1.860
