@@ -26,7 +26,7 @@ message Header {
 
 message LightInfo
 {
-    //路口ID
+  //路口ID
   optional string nCrossID = 1;
   //纬度
   optional double   lat = 2;
@@ -57,5 +57,4 @@ message LightInfo
   //optional lightstate.state right.remain = 14;
   //
   optional Header header = 15;
-
 }
