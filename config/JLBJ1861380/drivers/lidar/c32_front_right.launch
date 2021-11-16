@@ -13,7 +13,7 @@
   <arg name="frame_id" value="c32_front_right" />
 
   <group ns="sensor/lidar/c32/front_right">
-  <node name="c32_right_driver_node" output="screen"
+  <node name="c32_right_driver" output="screen"
         pkg="drivers_lslidar" type="lslidar_c32_driver_node">
     <param name="device_ip" value="$(arg device_ip)" />
     <param name="msop_port" value="$(arg msop_port)" />
@@ -28,7 +28,7 @@
     <param name="time_synchronization" value="$(arg time_synchronization)"/>
   </node>
 
-  <node name="c32_right_decoder_node" output="screen"
+  <node name="c32_right_decoder" output="screen"
         pkg="drivers_lslidar" type="lslidar_c32_decoder_node" 
         args="--sensor_meta_path=$(arg sensor_meta)" >
     <param name="min_distance" value="0.3"/>
