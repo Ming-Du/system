@@ -4,6 +4,26 @@ package LightInfo;
 
 import "lightstate.proto";
 
+message Time {
+  optional uint32 sec = 1;
+  optional uint32 nsec = 2;
+}
+
+message Header {
+  // Sequence number for each message. Each module maintains its own counter for
+  // sequence_num, always starting from 1 on boot.
+  optional uint32 seq = 1;
+
+  // Message publishing time in seconds.
+  optional Time stamp = 2;
+
+  // frame id
+  optional string frame_id = 3;
+
+  // Module name.
+  optional string module_name = 4;
+}
+
 message LightInfo
 {
     //路口ID
@@ -35,4 +55,6 @@ message LightInfo
   optional lightstate.state right = 13;
   //右转剩余时间
   //optional lightstate.state right.remain = 14;
+  //
+  optional Header header = 15;
 }
