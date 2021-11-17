@@ -53,8 +53,5 @@ message LightInfo
   //optional lightstate.state mid.remain = 12;
   //右转灯色
   optional lightstate.state right = 13;
-  //右转剩余时间
-  //optional lightstate.state right.remain = 14;
-  //
   optional Header header = 15;
 }
