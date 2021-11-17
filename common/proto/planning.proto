@@ -20,4 +20,5 @@ message PlanningConfig {
     //int map_builder_mode = 0;
     optional double safe_lateral_buffer = 11;
     optional double car_follow_factor = 12;
+    optional bool  flag_lane_change = 13;
 }
