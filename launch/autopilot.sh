@@ -43,7 +43,7 @@ check_env(){
 #vehicle/perception/fusion/perception_fusion.launch
 
 start_node_terminal_multi(){
-    echo "start_node_terminal_multi"
+    Logging "start_node_terminal_multi"
     # echo "func::GuiTerminal:$GuiTerminal"
     # echo "func::TitleOpt:$TitleOpt"
     if [ "$ros_machine" = "rosmaster" ];then
@@ -76,7 +76,7 @@ start_node_terminal_multi(){
             $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $DONGFENG_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
             $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $DONGFENG_CONTROLLER';bash" $TitleOpt "controller" &
         else
-            echo "undefined vehicle type"
+            Logging "undefined vehicle type"
         fi   
     else
         $GuiTerminal --tab -e "bash -c 'sleep 7; $LOG_ENV && $BASHRC && $PERCEPTION_FUSION';bash" $TitleOpt "perception_fusion" &
@@ -89,7 +89,7 @@ start_node_terminal_multi(){
 
 # silence mode will not display log on terminal
 start_node_silence_multi(){
-    echo "start_node_silence_multi"
+    Logging "start_node_silence_multi"
     if [ "$ros_machine" = "rosmaster" ];then
         #ros core
         roscore 1>>${ROS_LOG_DIR}/roscore.log 2>>${ROS_LOG_DIR}/roscore.err &
@@ -122,7 +122,7 @@ start_node_silence_multi(){
             sleep 3 && roslaunch --wait can_adapter byd_can_adapter.launch 1>>${ROS_LOG_DIR}/byd_can_adapter.launch.log 2>>${ROS_LOG_DIR}/byd_can_adapter.launch.err &
             sleep 2 && roslaunch --wait controller controller_qinpro.launch 1>>${ROS_LOG_DIR}/controller_qinpro.launch.log 2>>${ROS_LOG_DIR}/controller_qinpro.launch.err &
         else
-            echo "undefined vehicle type"
+            Logging "undefined vehicle type"
         fi
     else 
         sleep 2 && roslaunch --wait $ABS_PATH/../config/vehicle/drivers/lidar/lidar.launch 1>>${ROS_LOG_DIR}/lidar.launch.log 2>>${ROS_LOG_DIR}/lidar.launch.err &
@@ -134,82 +134,45 @@ start_node_silence_multi(){
 
 
 start_node_terminal(){
-    echo "start_node_terminal"
-    # echo "func::GuiTerminal:$GuiTerminal"
-    # echo "func::TitleOpt:$TitleOpt"
+    Logging "start_node_terminal"
+    $GuiTerminal --tab -e "bash -c '$LOG_ENV && $BASHRC && $ROSCORE';bash" $TitleOpt "core" &
+    sleep 1
+    $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $LOCALIZATION';bash" $TitleOpt "localization" &
+    $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GNSS_DRIVERS';bash" $TitleOpt "gnss_drivers"  &
+    $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $CAMERA_DRIVER';bash" $TitleOpt "camera_drivers"  &
+    $GuiTerminal --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $PERCEPTION_CAMERA';bash" $TitleOpt "perception_camera" &
+    $GuiTerminal --tab -e "bash -c 'sleep 15; $LOG_ENV && $BASHRC && $CHEJI';bash" $TitleOpt "cheji" &
+    $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LOCAL_PLANNER';bash" $TitleOpt "local_planner" &
+    $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $HAD_MAP';bash" $TitleOpt "had_map" &
+    $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GUARDIAN';bash" $TitleOpt "guardian" &
+    $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $OPERATOR_TOOL';bash" $TitleOpt "operator_tool" &
+    $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $TRACK_RECORDER';bash" $TitleOpt "track_recorder" &
+    $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $HADMAP_ENGINE';bash" $TitleOpt "hadmap_engine" &
+    $GuiTerminal --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $RECORD_CACHE';bash" $TitleOpt "record_cache" &
+    $GuiTerminal --tab -e "bash -c 'sleep 7; $LOG_ENV && $BASHRC && $PERCEPTION_FUSION';bash" $TitleOpt "perception_fusion" &
+    $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LIDAR_DRIVERS';bash" $TitleOpt "drivers_lidar"  &
+    $GuiTerminal --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $PERCEPTION_LIDAR';bash" $TitleOpt "perception_lidar" &
     if [ "$VehicleType" == "wey" ];then
-        $GuiTerminal  --window -e "bash -c '$LOG_ENV && $BASHRC && $ROSCORE';bash" $TitleOpt "core" \
-            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $LOCALIZATION';bash" $TitleOpt "localization" \
-            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $VV6_CAN_ADAPTER';bash" $TitleOpt "canadapter"  \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LIDAR_CAMERA_DRIVERS';bash" $TitleOpt "drivers"  \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $VV6_CONTROLLER';bash" $TitleOpt "controller"  \
-            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $PERCEPTION';bash" $TitleOpt "perception" \
-            --tab -e "bash -c 'sleep 15; $LOG_ENV && $BASHRC && $CHEJI';bash" $TitleOpt "cheji" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LOCAL_PLANNER';bash" $TitleOpt "local_planner" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $HAD_MAP';bash" $TitleOpt "had_map" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GUARDIAN';bash" $TitleOpt "guardian" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $OPERATOR_TOOL';bash" $TitleOpt "operator_tool" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $TRACK_RECORDER';bash" $TitleOpt "track_recorder" \
-            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $HADMAP_ENGINE';bash" $TitleOpt "hadmap_engine" \
-            --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $RECORD_CACHE';bash" $TitleOpt "record_cache" \
-            --tab -e "bash -c 'sleep 2';bash";
+        $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $VV6_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
+        $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $VV6_CONTROLLER';bash" $TitleOpt "controller" &
     elif [ "$VehicleType" == "jinlv" ];then
-        $GuiTerminal  --window -e "bash -c '$LOG_ENV && $BASHRC && $ROSCORE';bash" $TitleOpt "core" \
-            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $LOCALIZATION';bash" $TitleOpt "localization" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LIDAR_CAMERA_DRIVERS';bash" $TitleOpt "drivers"  \
-            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $JINLV_CAN_ADAPTER';bash" $TitleOpt "canadapter"  \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $JINLV_CONTROLLER';bash" $TitleOpt "controller"  \
-            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $PERCEPTION';bash" $TitleOpt "perception" \
-            --tab -e "bash -c 'sleep 15; $LOG_ENV && $BASHRC && $CHEJI';bash" $TitleOpt "cheji" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LOCAL_PLANNER';bash" $TitleOpt "local_planner" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $HAD_MAP';bash" $TitleOpt "had_map" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GUARDIAN';bash" $TitleOpt "guardian" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $OPERATOR_TOOL';bash" $TitleOpt "operator_tool" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $TRACK_RECORDER';bash" $TitleOpt "track_recorder" \
-            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $HADMAP_ENGINE';bash" $TitleOpt "hadmap_engine" \
-            --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $RECORD_CACHE';bash" $TitleOpt "record_cache" \
-            --tab -e "bash -c 'sleep 2';bash";
+        $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $JINLV_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
+        $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $JINLV_CONTROLLER';bash" $TitleOpt "controller" &
     elif [ "$VehicleType" == "byd" ];then
-        $GuiTerminal  --window -e "bash -c '$LOG_ENV && $BASHRC && $ROSCORE';bash" $TitleOpt "core" \
-            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $LOCALIZATION';bash" $TitleOpt "localization" \
-            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $BYD_CAN_ADAPTER';bash" $TitleOpt "canadapter"  \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LIDAR_CAMERA_DRIVERS';bash" $TitleOpt "drivers"  \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $BYD_CONTROLLER';bash" $TitleOpt "controller"  \
-            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $PERCEPTION';bash" $TitleOpt "perception" \
-            --tab -e "bash -c 'sleep 15; $LOG_ENV && $BASHRC && $CHEJI';bash" $TitleOpt "cheji" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LOCAL_PLANNER';bash" $TitleOpt "local_planner" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $HAD_MAP';bash" $TitleOpt "had_map" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GUARDIAN';bash" $TitleOpt "guardian" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $OPERATOR_TOOL';bash" $TitleOpt "operator_tool" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $TRACK_RECORDER';bash" $TitleOpt "track_recorder" \
-            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $HADMAP_ENGINE';bash" $TitleOpt "hadmap_engine" \
-            --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $RECORD_CACHE';bash" $TitleOpt "record_cache" \
-            --tab -e "bash -c 'sleep 2';bash";
+        $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $BYD_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
+        $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $BYD_CONTROLLER';bash" $TitleOpt "controller" &
     elif [ "$VehicleType" == "df" ];then
-        $GuiTerminal  --window -e "bash -c '$LOG_ENV && $BASHRC && $ROSCORE';bash" $TitleOpt "core" \
-            --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $LOCALIZATION';bash" $TitleOpt "localization" \
-            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $DONGFENG_CAN_ADAPTER';bash" $TitleOpt "canadapter"  \
-            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $LIDAR_CAMERA_DRIVERS';bash" $TitleOpt "drivers"  \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $DONGFENG_CONTROLLER';bash" $TitleOpt "controller"  \
-            --tab -e "bash -c 'sleep 7; $LOG_ENV && $BASHRC && $PERCEPTION';bash" $TitleOpt "perception" \
-            --tab -e "bash -c 'sleep 15; $LOG_ENV && $BASHRC && $CHEJI';bash" $TitleOpt "cheji" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LOCAL_PLANNER';bash" $TitleOpt "local_planner" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $HAD_MAP';bash" $TitleOpt "had_map" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GUARDIAN';bash" $TitleOpt "guardian" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $OPERATOR_TOOL';bash" $TitleOpt "operator_tool" \
-            --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $TRACK_RECORDER';bash" $TitleOpt "track_recorder" \
-            --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $HADMAP_ENGINE';bash" $TitleOpt "hadmap_engine" \
-            --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $RECORD_CACHE';bash" $TitleOpt "record_cache" \
-            --tab -e "bash -c 'sleep 2';bash";
+        $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $DONGFENG_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
+        $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $DONGFENG_CONTROLLER';bash" $TitleOpt "controller" &
     else
-        echo "undefined vehicle type"
+        Logging "undefined vehicle type"
     fi
 }
 
 
 # silence mode will not display log on terminal
 start_node_silence(){
-    echo "start_node_silence"
+    Logging "start_node_silence"
     roscore 1>>${ROS_LOG_DIR}/roscore.log 2>>${ROS_LOG_DIR}/roscore.err &
     sleep 3 && roslaunch --wait launch drivers.launch 1>>${ROS_LOG_DIR}/drivers.launch.log 2>>${ROS_LOG_DIR}/drivers.launch.err &
     sleep 2 && roslaunch --wait guardian system_guardian.launch 1>>${ROS_LOG_DIR}/system_guardian.launch.log 2>>${ROS_LOG_DIR}/system_guardian.launch.err &
@@ -239,18 +202,24 @@ start_node_silence(){
         sleep 3 && roslaunch --wait can_adapter byd_can_adapter.launch 1>>${ROS_LOG_DIR}/byd_can_adapter.launch.log 2>>${ROS_LOG_DIR}/byd_can_adapter.launch.err &
         sleep 2 && roslaunch --wait controller controller_qinpro.launch 1>>${ROS_LOG_DIR}/controller_qinpro.launch.log 2>>${ROS_LOG_DIR}/controller_qinpro.launch.err &
     else
-        echo "undefined vehicle type"
+        Logging "undefined vehicle type"
     fi
     sleep 17
 }
 
-
+Logging(){
+    datetime=$(date +"%Y-%m-%d %H:%M:%S")
+    echo "[$datetime] $*"
+    echo "[$datetime] $*" >> $LOGFILE
+}
 # main
+LOGFILE="/home/mogo/data/log/autopilot-`date +"%Y%m%d%H%M%S"`.log"
 if [ $# -eq 0 ];then 
-    echo "error:请指定车型"
+    Logging "error:请指定车型"
     Usage
     exit 0
 fi
+Logging "command : $0 $@"
 
 # GuiServer:
 # silence -- 后台启动
@@ -269,8 +238,25 @@ export TitleOpt # 指定terminal窗口标题的选项，xfce为'-T'，gnome为'-
 export SETUP_ROS # ros系统自带的setup.bash路径，一般位于/opt/ros/melodic/setup.bash
 export SETUP_AUTOPILOT # 用户程序的setup.bash
 
+# autopilot:/home/mogo/autopilot/share/launch
+# catkin_ws:/home/mogo/data/catkin_ws/src/system/launch
+ABS_PATH="$(cd "$(dirname $0)" && pwd)"
+RunMode=$(echo $ABS_PATH | grep -w "/home/mogo/autopilot" | wc -l)
+SETUP_ROS="/opt/ros/melodic/setup.bash"
+
+if [ $RunMode -eq 0 ];then
+    SETUP_AUTOPILOT="$ABS_PATH/../../../devel/setup.bash"
+    ROSCONSOLE_CONFIG_FILE="$ABS_PATH/../config/rosnodeInfo.config" 
+elif [ $RunMode -eq 1 ];then
+    SETUP_AUTOPILOT="$ABS_PATH/../../setup.bash"
+    ROSCONSOLE_CONFIG_FILE="$ABS_PATH/../config/rosnodeErr.config" 
+else
+    Logging "RunMode is $RunMode"
+fi
+Logging "path : $ABS_PATH"
+
 if [ "$VehicleType" != "wey" -a "$VehicleType" != "df" -a "$VehicleType" != "byd" -a "$VehicleType" != "jinlv" ];then
-    echo "error:不支持此车型。车型：$VehicleType"
+    Logging "error:不支持此车型。车型：$VehicleType"
     Usage
     exit 0
 fi
@@ -278,29 +264,6 @@ export ros_master="localhost"
 export xavier_type="single" #单xavier or 双xavier
 export ros_machine="${ros_master}" #主机:rosmaster 从机:rosslave
 # 判断是否为双Xavier
-# export ip_domain #net domain
-# eth0_ip=$(ifconfig eth0 | grep -Eo '([0-9]+[.]){3}[0-9]+'| grep -v "255")
-# if [ -z "$eth0_ip" ];then
-#     ros_machine="rosmaster"
-#     xavier_type="single"
-# else
-#     ip_domain=$(echo $eth0_ip | awk -F. -v OFS=.  '{print $1,$2,$3}')
-#     private_addr=$(echo $eth0_ip | awk -F. '{print $4}')
-#     if [ $private_addr -eq 102 ];then
-#         ros_machine="rosmaster"
-#         ip_slave=$ip_domain.103
-#         ping -c 1 -W 2 $ip_slave > /dev/null
-#         if [ $? -eq 0 ];then #双xavier
-#             xavier_type="multi"
-#         else #单Xavier
-#             xavier_type="single"
-#         fi
-#     elif [ $private_addr -eq 103 ];then
-#         xavier_type="multi"
-#         ros_machine="rosslave"
-#     fi
-# fi
-
 master_ip=$(cat /etc/hosts | grep -w rosmaster | grep -v "^#" | awk '{print $1}')
 slave_ip=$(cat /etc/hosts | grep -w rosslave | grep -v "^#" | awk '{print $1}')
 if [ -z "$master_ip" -o -z "$slave_ip" ];then
@@ -310,7 +273,7 @@ if [ -z "$master_ip" -o -z "$slave_ip" ];then
 else
     # xavier_type="multi"
     ethnet_ip=$(ifconfig eth0 | grep -Eo '([0-9]+[.]){3}[0-9]+'| grep -v "255")
-    [[ -z "$ethnet_ip" ]] && echo "ip address is null" && exit 1
+    [[ -z "$ethnet_ip" ]] && Logging "ip address is null" && exit 1
     if [ "$master_ip" == "127.0.0.1" -o "$master_ip" == "$ethnet_ip" ];then
         ros_machine="rosmaster"
         ros_master=$ros_machine
@@ -330,15 +293,17 @@ else
                 xavier_type="multi"
                 check_env
             else #单Xavier
-                echo "cannot contact with ${ros_master}[${master_ip}],please check /etc/hosts or ip address"
+                Logging "cannot contact with ${ros_master}[${master_ip}],please check /etc/hosts or ip address"
                 exit 1
             fi
         else
-            echo "ip address is not matched with host,please check /etc/hosts or reset ip address"
+            Logging "ip address is not matched with host,please check /etc/hosts or reset ip address"
             exit 1
         fi
     fi
 fi
+
+Logging "rosmachine:${ros_machine} rosmaster:${ros_master} xavier_type:${xavier_type}"
 
 if [ "$GuiServer" = "x" ];then
     GuiTerminal="/usr/bin/xfce4-terminal"
@@ -348,21 +313,24 @@ elif [ "$GuiServer" = "g" ];then
     TitleOpt="-t"
 else
     GuiServer="silence"
-    echo "GuiServer is $GuiServer"
+    Logging "GuiServer is $GuiServer"
 fi
 
 # export DATE=`date +"%Y%m%d"`
 # export TIME=`date +"%H%M%S"`
 export GLOG_logtostderr=1
 export GLOG_colorlogtostderr=1
+export LOG_DIR="/home/mogo/data/log"
 # ros日志存储路径的环境变量
-export ROS_LOG_DIR="/home/mogo/data/log/$(date +"%Y%m%d_%H")"
+export ROS_LOG_DIR="${LOG_DIR}/$(date +"%Y%m%d_%H")"
 # ros日志配置文件的环境变量
 export ROSCONSOLE_CONFIG_FILE
 export ROS_HOSTNAME=${ros_machine}
 export ROS_MASTER_URI=http://${ros_master}:11311
 export LOG_ENV="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1; export ROS_LOG_DIR=${ROS_LOG_DIR}; export ROS_MASTER_URI=http://${ros_master}:11311; export ROS_HOSTNAME=${ros_machine}"
 [[ ! -d $ROS_LOG_DIR ]] && mkdir -p $ROS_LOG_DIR
+ln -snf $ROS_LOG_DIR ${LOG_DIR}/latest
+Logging "ROS_LOG_DIR=$ROS_LOG_DIR"
 
 core_pid=$(ps aux | grep -v grep | grep "roscore$" |awk '{print $2}')
 if [ ! -z "$core_pid" ];then
@@ -370,26 +338,9 @@ if [ ! -z "$core_pid" ];then
     kill $core_pid
 fi
 
-find ${ROS_LOG_DIR}/../ -mtime +3 -name *.log -exec rm -Rf {} \;
+find ${LOG_DIR} -maxdepth 1 -mtime +3 -type d -exec rm -Rf {} \;
 find /home/mogo/data/bags/ -maxdepth 1 -mtime +1 -type d -exec rm -Rf {} \;
-
-# autopilot:/home/mogo/autopilot/share/launch
-# catkin_ws:/home/mogo/data/catkin_ws/src/system/launch
-
-ABS_PATH="$(cd "$(dirname $0)" && pwd)"
-RunMode=$(echo $ABS_PATH | grep -w "/home/mogo/autopilot" | wc -l)
-SETUP_ROS="/opt/ros/melodic/setup.bash"
-
-if [ $RunMode -eq 0 ];then
-    SETUP_AUTOPILOT="$ABS_PATH/../../../devel/setup.bash"
-    ROSCONSOLE_CONFIG_FILE="$ABS_PATH/../config/rosnodeInfo.config" 
-elif [ $RunMode -eq 1 ];then
-    SETUP_AUTOPILOT="$ABS_PATH/../../setup.bash"
-    ROSCONSOLE_CONFIG_FILE="$ABS_PATH/../config/rosnodeErr.config" 
-else
-    echo "RunMode is $RunMode"
-fi
-echo $ABS_PATH
+find /home/mogo/data/log -name "autopilot*.log" -mtime +1 -exec rm -Rf {} \;
 ##########################################################
 ROSCORE="roscore 2>&1 | tee \${ROS_LOG_DIR}/roscore.log"
 LOCALIZATION="roslaunch --wait localization localization.launch 2>&1 | tee -i \${ROS_LOG_DIR}/localization.launch.log"
@@ -442,7 +393,7 @@ if [ "$GuiServer" == "silence" ];then
             start_node_silence
         fi
     else
-        echo "nodes can't be launch with silence mode in catkin_ws environment,please use silence mode in docker's autopilot environment"
+        Logging "nodes can't be launch with silence mode in catkin_ws environment,please use silence mode in docker's autopilot environment"
     fi
 fi
 
