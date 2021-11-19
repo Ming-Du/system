@@ -53,32 +53,4 @@ public:
     }
 };
 
-template <class ProtoMessage>
-void ProtoLightToRos(const ProtoMessage& proto_msg, 
-    autopilot_msgs::BinaryData& ros_msg)
-{
-    ros_msg.header.seq = proto_msg.header().seq();
-    ros_msg.header.stamp.sec = proto_msg.header().stamp().sec();
-    ros_msg.header.stamp.nsec = proto_msg.header().stamp().nsec();
-    ros_msg.header.frame_id = proto_msg.header().frame_id();
-    ros_msg.name = proto_msg.GetTypeName();
-    common::SerializeProto(proto_msg, ros_msg.data);
-    ros_msg.size = ros_msg.data.size();
-}
 
-template<class ProtoMessage>
-class ProtoPublisherLight
-{
-private:
-    autopilot_msgs::BinaryData data;
-    uint32_t seq;
-public:
-    ProtoPublisherLight() : seq(1) {}
-    void publish(ros::Publisher& pub, const ProtoMessage& msg)
-    {
-        ProtoLightToRos<ProtoMessage>(msg, data);
-        data.header.stamp = ros::Time::now();
-        data.header.seq = seq++;
-        pub.publish(data);
-    }
-};
