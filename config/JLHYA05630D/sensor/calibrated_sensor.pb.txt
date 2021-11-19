@@ -166,7 +166,7 @@ sensor_info {
   topic: "/sensor/lidar/front_right/point_cloud"
   extrinsic {
     translation {
-      x: 4.94
+      x: 5.04
       y: -0.99
       z: 0.68
     }
