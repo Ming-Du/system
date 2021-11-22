@@ -27,7 +27,7 @@ message Header {
 message LightInfo
 {
     //路口ID
-  optional int32       nCrossID = 1;
+  optional string       nCrossID = 1;
   //纬度
   optional double   lat = 2;
   //经度
@@ -35,7 +35,7 @@ message LightInfo
   //方向
   optional string      direction = 4;
   //航向角
-  optional double    heading  = 5;
+  optional string    heading  = 5;
   //信号灯ID
   optional int32 lightID = 6;
   //行车车道号
@@ -57,4 +57,5 @@ message LightInfo
   //optional lightstate.state right.remain = 14;
   //
   optional Header header = 15;
+
 }
