@@ -98,7 +98,7 @@ start_node_silence_multi(){
         sleep 2 && roslaunch --wait $ABS_PATH/../config/vehicle/drivers/gnss/gnss.launch 1>>${ROS_LOG_DIR}/gnss_drivers.launch.log 2>>${ROS_LOG_DIR}/gnss_drivers.launch.err &
         sleep 2 && roslaunch --wait guardian system_guardian.launch 1>>${ROS_LOG_DIR}/system_guardian.launch.log 2>>${ROS_LOG_DIR}/system_guardian.launch.err &
         sleep 5 && roslaunch --wait localization localization.launch 1>>${ROS_LOG_DIR}/localization.launch.log 2>>${ROS_LOG_DIR}/localization.launch.err &
-        sleep 15 && roslaunch --wait telematics telematics.launch 1>/dev/null 2>>${ROS_LOG_DIR}/telematics.launch.err &
+        sleep 15 && roslaunch --wait telematics telematics.launch 1>>${ROS_LOG_DIR}/telematics.launch.log 2>>${ROS_LOG_DIR}/telematics.launch.err &
         sleep 2 && roslaunch --wait launch local_planning.launch 1>>${ROS_LOG_DIR}/local_planning.launch.log 2>>${ROS_LOG_DIR}/local_planning.launch.err &
         sleep 2 && roslaunch --wait launch hadmap.launch 1>>${ROS_LOG_DIR}/hadmap.launch.log 2>>${ROS_LOG_DIR}/hadmap.launch.err &
         sleep 2 && roslaunch --wait track_recorder track_recorder.launch 1>>${ROS_LOG_DIR}/track_recorder.launch.log 2>>${ROS_LOG_DIR}/track_recorder.launch.err &
@@ -177,7 +177,7 @@ start_node_silence(){
     sleep 3 && roslaunch --wait launch drivers.launch 1>>${ROS_LOG_DIR}/drivers.launch.log 2>>${ROS_LOG_DIR}/drivers.launch.err &
     sleep 2 && roslaunch --wait guardian system_guardian.launch 1>>${ROS_LOG_DIR}/system_guardian.launch.log 2>>${ROS_LOG_DIR}/system_guardian.launch.err &
     sleep 5 && roslaunch --wait localization localization.launch 1>>${ROS_LOG_DIR}/localization.launch.log 2>>${ROS_LOG_DIR}/localization.launch.err &
-    sleep 15 && roslaunch --wait telematics telematics.launch 1>/dev/null 2>>${ROS_LOG_DIR}/telematics.launch.err &
+    sleep 15 && roslaunch --wait telematics telematics.launch 1>>${ROS_LOG_DIR}/telematics.launch.log 2>>${ROS_LOG_DIR}/telematics.launch.err &
     sleep 2 && roslaunch --wait launch local_planning.launch 1>>${ROS_LOG_DIR}/local_planning.launch.log 2>>${ROS_LOG_DIR}/local_planning.launch.err &
     sleep 2 && roslaunch --wait launch hadmap.launch 1>>${ROS_LOG_DIR}/hadmap.launch.log 2>>${ROS_LOG_DIR}/hadmap.launch.err &
     sleep 2 && roslaunch --wait track_recorder track_recorder.launch 1>>${ROS_LOG_DIR}/track_recorder.launch.log 2>>${ROS_LOG_DIR}/track_recorder.launch.err &
@@ -277,25 +277,42 @@ else
     if [ "$master_ip" == "127.0.0.1" -o "$master_ip" == "$ethnet_ip" ];then
         ros_machine="rosmaster"
         ros_master=$ros_machine
-        ping -c 1 -W 2 $slave_ip > /dev/null
-        if [ $? -eq 0 ];then #双xavier
-            xavier_type="multi"
-            check_env
-        else #单Xavier
-            xavier_type="single"
-        fi
+        try_times=0
+        while [ true ];do
+            try_times=$((try_times + 1))
+            ping -c 1 -W 2 $slave_ip > /dev/null
+            if [ $? -eq 0 ];then #双xavier
+                xavier_type="multi"
+                check_env
+                break
+            else #try 5 times
+                if [ $try_times -eq 5 ];then
+                    Logging "double Xavier config has be set,but cannot contact with rosslave[$slave_ip],startup with single Xavier type"
+                    xavier_type="single"
+                    break
+                else
+                    Logging "cannot ping rosslave[$slave_ip],will try again after 3 seconds"
+                    sleep 3
+                    continue
+                fi
+            fi
+        done
     else
         if [ "$ethnet_ip" == "$slave_ip" ];then
             ros_machine="rosslave"
             ros_master="rosmaster"
-            ping -c 1 -W 2 $master_ip > /dev/null
-            if [ $? -eq 0 ];then #双xavier
-                xavier_type="multi"
-                check_env
-            else #单Xavier
-                Logging "cannot contact with ${ros_master}[${master_ip}],please check /etc/hosts or ip address"
-                exit 1
-            fi
+            while [ true ];do
+                ping -c 1 -W 2 $master_ip > /dev/null
+                if [ $? -eq 0 ];then #双xavier
+                    xavier_type="multi"
+                    check_env
+                    break
+                else #单Xavier
+                    Logging "cannot contact with ${ros_master}[${master_ip}],will try again after 3 seconds"
+                    sleep 3
+                    continue;
+                fi
+            done
         else
             Logging "ip address is not matched with host,please check /etc/hosts or reset ip address"
             exit 1
