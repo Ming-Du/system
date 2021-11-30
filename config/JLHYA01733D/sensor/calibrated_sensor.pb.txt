@@ -147,15 +147,23 @@ sensor_info {
   topic: "/sensor/lidar/front_left/point_cloud"
   extrinsic {
     translation {
-      x: 4.90
-      y: 1.00
+      x: 4.48
+      y: 1.01
       z: 0.66
     }
+<<<<<<< HEAD:config/JLHYA01733D/sensor/calibrated_sensor.pb.txt
     rotation {  # 2,0.6,121
       w: 0.492421
       x: 0.0040374
       y: 0.0177675
       z: 0.870166
+=======
+    rotation { #2,-3.0,110.5
+      w: 0.442125
+      x: 0.0171745
+      y: -0.00068647
+      z: 0.896789
+>>>>>>> (Fixes AUTOPILOT-71)fix[lidar]:add left Lidar new calibrated config:config/JLHY1861383/sensor/calibrated_sensor.pb.txt
     }
   }
 }
