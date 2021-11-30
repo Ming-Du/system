@@ -139,7 +139,6 @@ message TrackedObjects {
   repeated TrackedObject objs = 3;
 }
 
-
 message RadarObject {
   optional Object obj = 1;
 

@@ -10,6 +10,10 @@ input_sensor {
   sensor_name: "lidar_main"
   topic: "/perception/lidar/lidar_obstacle"
 }
+input_sensor {
+  sensor_name: "conti_radar"
+  topic: "/perception/radar/conti_radar_obstacle"
+}
 
 fusion_method: "ProbabilisticFusion"
 fusion_main_sensors: "lidar_main"
