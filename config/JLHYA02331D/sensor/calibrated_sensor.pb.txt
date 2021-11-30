@@ -159,6 +159,7 @@ sensor_info {
     }
   }
 }
+
 sensor_info {
   name: "c32_front_right"
   type: LSLIDAR_C32
