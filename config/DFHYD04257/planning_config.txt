@@ -1,7 +1,7 @@
 frequency : 10
-speed_max : 3.0
+speed_max : 11.1
 acc_min : -4.0
-acc_max : 2.0
+acc_max : 1.5
 jerk_min : -6.0
 jerk_max : 4.0
 time_sample : 0.1
