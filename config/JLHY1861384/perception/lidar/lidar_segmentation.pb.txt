@@ -6,7 +6,7 @@ downsampling_radius: 0.18
 # ground filter
 sensor_height: 0.68
 num_lpr: 5000
-th_dist: 0.5
+th_dist: 0.4
 th_seeds: 2.0
 min_distance: 0.8
 
