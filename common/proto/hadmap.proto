@@ -40,8 +40,23 @@ enum LaneType {
     LANE_TYPE_Parking				= 8;
     LANE_TYPE_MwyEntry				= 9;
     LANE_TYPE_MwyExit				= 10;
+    LANE_TYPE_Acceleration          = 11;//加速车道
+    LANE_TYPE_Deceleration          = 12;//减速车道
+    LANE_TYPE_Compound              = 13;//???,  todo
+    LANE_TYPE_HOV                   = 14;//美国/加拿大为提高效率,拼车或者公交车可行的车道,乘车人数需2人及以上
+    LANE_TYPE_Slow                  = 15;//????  todo
+    LANE_TYPE_Reversible            = 16;//潮汐车道
+    LANE_TYPE_EmergencyParking      = 17;//紧急停车带
     LANE_TYPE_Emergency 			= 20;	
-    LANE_TYPE_TurnWaiting 			= 21;
+    LANE_TYPE_TurnLeftWaiting 	    = 21;
+    LANE_TYPE_Ramp                  = 22;//匝道
+    LANE_TYPE_UTurnWaiting          = 23;//掉头待转区车道
+    LANE_TYPE_TurnRightWaiting      = 24;//右转待转区车道
+    LANE_TYPE_JuncTurnLeft          = 25;//路口左转车道
+    LANE_TYPE_JuncStraight          = 26;//路口直行车道
+    LANE_TYPE_JuncTurnRight         = 27;//路口右转车道
+    LANE_TYPE_Turn                  = 28;//掉头车道
+    LANE_TYPE_Diversion             = 29;//导流带车道
 }
 
 enum LaneArrow {
