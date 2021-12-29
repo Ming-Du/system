@@ -151,12 +151,20 @@ sensor_info {
       y: 1.01
       z: 0.69
     }
+<<<<<<< HEAD:config/JLSCA01486D/sensor/calibrated_sensor.pb.txt
     rotation {
 
       w: 0.518141
       x: 0.00299889
       y: 0.03694
       z: 0.854492
+=======
+    rotation {#-2.2,-2.4,109
+      w: 0.580796
+      x: 0.00590084
+      y: -0.0277846
+      z: 0.813554
+>>>>>>> fix[system]:update JinLv bus front-lidar config files(80/83):config/JLBJ1861380/sensor/calibrated_sensor.pb.txt
     }
   }
 }
