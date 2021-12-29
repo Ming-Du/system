@@ -83,6 +83,9 @@ start_node_terminal_multi(){
         sleep 1
         $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LIDAR_DRIVERS';bash" $TitleOpt "drivers_lidar"  &
         $GuiTerminal --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $PERCEPTION_LIDAR';bash" $TitleOpt "perception_lidar" &
+        if [ "$VehicleType" == "jinlv" ];then
+            $GuiTerminal --tab -e "bash -c 'sleep 1; $LOG_ENV && $BASHRC && $SLAM_LOCALIZATION';bash" $TitleOpt "slam_localization" &
+        fi
     fi
 }
 
@@ -125,9 +128,12 @@ start_node_silence_multi(){
             Logging "undefined vehicle type"
         fi
     else 
-        sleep 2 && roslaunch --wait $ABS_PATH/../config/vehicle/drivers/lidar/lidar.launch 1>>${ROS_LOG_DIR}/lidar.launch.log 2>>${ROS_LOG_DIR}/lidar.launch.err &
-        sleep 5 && roslaunch --wait $ABS_PATH/../config/vehicle/perception/lidar/perception_lidar.launch 1>>${ROS_LOG_DIR}/perception_lidar.launch.log 2>>${ROS_LOG_DIR}/perception_lidar.launch.err &
-        sleep 7 && roslaunch --wait $ABS_PATH/../config/vehicle/perception/fusion/perception_fusion.launch 1>>${ROS_LOG_DIR}/perception_fusion.launch.log 2>>${ROS_LOG_DIR}/perception_fusion.launch.err &
+        sleep 2 && roslaunch --wait $ABS_PATH/../config/vehicle/drivers/lidar/lidar.launch >>${ROS_LOG_DIR}/lidar.launch.log 2>>${ROS_LOG_DIR}/lidar.launch.err &
+        sleep 5 && roslaunch --wait $ABS_PATH/../config/vehicle/perception/lidar/perception_lidar.launch >>${ROS_LOG_DIR}/perception_lidar.launch.log 2>>${ROS_LOG_DIR}/perception_lidar.launch.err &
+        sleep 7 && roslaunch --wait $ABS_PATH/../config/vehicle/perception/fusion/perception_fusion.launch >>${ROS_LOG_DIR}/perception_fusion.launch.log 2>>${ROS_LOG_DIR}/perception_fusion.launch.err &
+        if [ "$VehicleType" == "jinlv" ];then
+            sleep 1 && roslaunch --wait slam_localization localization_mogo_bus_right.launch >>${ROS_LOG_DIR}/localization_mogo_bus_right.launch.log 2>>${ROS_LOG_DIR}/localization_mogo_bus_right.launch.err
+        fi
     fi 
     sleep 17
 }
@@ -213,6 +219,25 @@ Logging(){
     echo "[$datetime] $*" >> $LOGFILE
 }
 # main
+export ABS_PATH # autopilot.sh脚本的路径
+ABS_PATH="$(cd "$(dirname $0)" && pwd)"
+
+export last_launch_time
+if [ -f $ABS_PATH/launch_time ];then
+    last_launch_time=$(cat $ABS_PATH/launch_time)
+fi
+if [ -z "$last_launch_time" ];then
+    last_launch_time="20211222211202" #随便初始的一个日期时间
+fi
+while [ true ];do
+    systime=$(date +"%Y%m%d%H%M%S")
+    if [ $systime -gt $last_launch_time ];then
+        echo "systime synchronization at $systime"
+        echo $systime > $ABS_PATH/launch_time
+        break
+    fi
+    sleep 1
+done
 LOGFILE="/home/mogo/data/log/autopilot-`date +"%Y%m%d%H%M%S"`.log"
 if [ $# -eq 0 ];then 
     Logging "error:请指定车型"
@@ -230,7 +255,6 @@ export GuiServer=$2
 export VehicleType=$1
 # RunMode    1:autopilot    0:catkin_ws
 export RunMode # 运行方式  0：在catkin_ws环境中运行的debug模式  1：在autopilot环境中运行的release模式
-export ABS_PATH # autopilot.sh脚本的路径
 
 export GuiTerminal # 使用的terminal程序的绝对路径，如/usr/bin/xfce4-terminal
 export TitleOpt # 指定terminal窗口标题的选项，xfce为'-T'，gnome为'-t'
@@ -240,7 +264,6 @@ export SETUP_AUTOPILOT # 用户程序的setup.bash
 
 # autopilot:/home/mogo/autopilot/share/launch
 # catkin_ws:/home/mogo/data/catkin_ws/src/system/launch
-ABS_PATH="$(cd "$(dirname $0)" && pwd)"
 RunMode=$(echo $ABS_PATH | grep -w "/home/mogo/autopilot" | wc -l)
 SETUP_ROS="/opt/ros/melodic/setup.bash"
 
@@ -387,6 +410,7 @@ PERCEPTION_FUSION="roslaunch --wait $ABS_PATH/../config/vehicle/perception/fusio
 LIDAR_DRIVERS="roslaunch --wait $ABS_PATH/../config/vehicle/drivers/lidar/lidar.launch 2>&1 | tee -i \${ROS_LOG_DIR}/lidar_drivers.launch.log"
 CAMERA_DRIVER="roslaunch --wait $ABS_PATH/../config/vehicle/drivers/camera/camera.launch 2>&1 | tee -i \${ROS_LOG_DIR}/camera_drivers.launch.log"
 GNSS_DRIVERS="roslaunch --wait $ABS_PATH/../config/vehicle/drivers/gnss/gnss.launch 2>&1 | tee -i \${ROS_LOG_DIR}/gnss_drivers.launch.log"
+SLAM_LOCALIZATION="roslaunch --wait slam_localization localization_mogo_bus_right.launch 2>&1 | tee -i \${ROS_LOG_DIR}/localization_mogo_bus_right.launch.log"
 ##########################################################
 
 export BASHRC="source ${SETUP_ROS} && source ${SETUP_AUTOPILOT}"
