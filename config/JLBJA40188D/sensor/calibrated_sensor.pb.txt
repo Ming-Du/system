@@ -200,6 +200,27 @@ sensor_info {
   }
 }
 
+sensor_info {
+  name: "c16_rear"
+  type: LSLIDAR_C16
+  orientation: REAR
+  topic: "/sensor/lidar/rear/point_cloud"
+  calibrated: 0     #not calibrated
+  extrinsic {
+    translation {
+      x: -1.45
+      y: 0.0
+      z: 0.72
+    }
+    rotation { #-2,-1.5,-1.5
+      w: 0.9996734
+      x: -0.0176207
+      y: -0.0128581
+      z: -0.0133149
+    }
+  }
+}
+
 sensor_info{
   name:"lidar_main"
   type:LSLIDAR_C32

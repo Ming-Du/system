@@ -184,6 +184,7 @@ sensor_info {
   type: LSLIDAR_C16
   orientation: REAR
   topic: "/sensor/lidar/rear/point_cloud"
+  calibrated: 0     #not calibrated
   extrinsic {
     translation {
       x: -1.45

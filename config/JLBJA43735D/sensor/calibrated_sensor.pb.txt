@@ -146,7 +146,7 @@ sensor_info {
   orientation: LEFT_FORWARD
   topic: "/sensor/lidar/front_left/point_cloud"
   extrinsic {
-    translation {
+    translation {#0,-1.5,97.8
       x: 4.96
       y: 0.97
       z: 0.68
@@ -159,6 +159,7 @@ sensor_info {
     }
   }
 }
+
 sensor_info {
   name: "c32_front_right"
   type: LSLIDAR_C32
@@ -170,7 +171,7 @@ sensor_info {
       y: -1.00
       z: 0.68
     }
-    rotation {
+    rotation {#1.2,2.37.34.84
       w: 0.953956
       x: 0.00378795
       y: 0.022828
