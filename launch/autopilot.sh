@@ -93,7 +93,7 @@ start_node_terminal_multi(){
         $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GUARDIAN_SLAVE';bash" $TitleOpt "guardian" &
     fi
 }
-
+ 
 
 # silence mode will not display log on terminal
 start_node_silence_multi(){
