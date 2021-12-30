@@ -17,7 +17,14 @@ install(FILES
   system_guardian.launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
-
+install(FILES
+  system_guardian_master.launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+install(FILES
+  system_guardian_slave.launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
 install(DIRECTORY rostopic/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/rostopic
 )

@@ -5,6 +5,7 @@ import rosnode
 import rosparam
 import os
 from threading import Thread
+import threading
 from std_msgs.msg import String
 import json
 import psutil
@@ -18,6 +19,9 @@ import datetime
 from subprocess import Popen,PIPE,STDOUT
 from multiprocessing import Process, Manager
 import multiprocessing
+from std_msgs.msg import String, UInt8, Int32
+from rospy import init_node, Subscriber, Publisher
+
 logging.basicConfig()
 
 flow_dict = {}
@@ -59,7 +63,8 @@ class Process(Thread):
             self.node_state_dict[node_name] = "on" 
             ps_num +=1
         else:
-            rospy.logerr(node_name + " is off, trying to restart...")
+            #rospy.logerr(node_name + " is off, trying to restart...")
+            rospy.logerr(node_name + " is off")
             self.node_state_dict[node_name] = "off"
             self.start_node(node_name)
       #node_list = [ node for node in rosnode.get_node_names() if node not in '/rosout' ]
@@ -79,6 +84,7 @@ class Process(Thread):
       nodemsg=json.dumps(self.node_state_dict)
       pub_node.publish(nodemsg)
       print nodemsg
+      '''
       #cpustat
       cpu_dict=collections.OrderedDict()
       #cpu_dict={}
@@ -201,6 +207,7 @@ class Process(Thread):
           #p.join()
       netmsg = json.dumps(self.flow_dict)
       pub_netflow.publish(netmsg)
+      '''
 
       rate.sleep()
   
@@ -292,6 +299,24 @@ def topicFun(rostopic_file, brandtopicfile):
         
     topics_size = len(topic_list)
     pub_topics = rospy.Publisher('/system/rostopics_hz',String, queue_size=100)
+    pub_topics_slave = rospy.Publisher('/system/rostopics_hz_slave',String, queue_size=100)
+    def pubtopic_mache(msg):
+        global rosmachetype;
+        if rosmachetype == "slave":
+            pub_topics_slave.publish(msg)
+        else:
+            Guardian_sub.slave_mutex.acquire() 
+            slavemsg = Guardian_sub.topicslavemsg 
+            Guardian_sub.slave_mutex.release() 
+            rospy.logerr("slavemsg:" + slavemsg)
+            tmpmaster = json.loads(msg)
+            if slavemsg != "":
+                tmpslave = json.loads(slavemsg)
+                tmpfusion = dict(tmpmaster.items() + tmpslave.items())
+                msg  = json.dumps(tmpfusion)
+            rospy.logerr("fusionmsg:" + msg)
+            pub_topics.publish(msg)
+
     while True:
         topic_first = True;
         pub_first = True;
@@ -302,21 +327,22 @@ def topicFun(rostopic_file, brandtopicfile):
         topic_li = p.stdout.read()
         topicAlive = topic_li.split("\n")
         #print(topicAlive)
-        print("topicalive:")
-        print(topicAlive)
-        print("topic_list_after:")
-        print(topic_list)
+        #print("topicalive:")
+        #print(topicAlive)
+        #print("topic_list_after:")
+        #print(topic_list)
 
         for topic_g in topic_list:
             if topic_g in topicAlive:
-                print("yes:" + topic_g)
+                #print("yes:" + topic_g)
                 topic_str=topic_str +" " + topic_g  ######rostopic
                 topic_monitor_list.append(topic_g)
             else:
-                print("no:" + topic_g )
+                pass
+                #print("no:" + topic_g )
 
         topics_size = len(topic_monitor_list)
-        print("topics_size:%d"%topics_size)
+        #print("topics_size:%d"%topics_size)
         cmd = "python " + rostopic_file + " hz --window=50 " +  topic_str
         print(cmd)
         r = Popen(cmd, shell=True, stdout=PIPE,stderr=STDOUT)
@@ -327,19 +353,28 @@ def topicFun(rostopic_file, brandtopicfile):
             line = line.strip('\n')
             line = line.strip()
             out_list=re.split(r'\s+',line)
-            print(line)
+            #print(line)
             #print("out_list[0]:%s"%out_list[0])
             topic_msg_dict = {}
             if topics_size==1:
+                print("topics_size=1")
                 if out_list[0]=="average":
-                    topic_msg_dict["topic_name"] = topic_list[0]
+                    for topic_g in topic_list:
+                        if topic_g not in topic_monitor_list:
+                            topic_msg_dict["topic_name"] = topic_g
+                            topic_msg_dict["run_hz"] = "0"
+                            topic_msg_dict["set_hz"] = topic_orig_dict[topic_g]
+                            topic_dict[topic_g]  = topic_msg_dict
+                            topic_msg_dict = {}
+                    topic_msg_dict["topic_name"] = topic_monitor_list[0]
                     topic_msg_dict["run_hz"] = out_list[2]
-                    topic_msg_dict["set_hz"] = topic_orig_dict[topic_list[0]]
+                    topic_msg_dict["set_hz"] = topic_orig_dict[topic_monitor_list[0]]
                     #topic_dict[topic_list[0]] = out_list[2]
-                    topic_dict[topic_list[0]] = topic_msg_dict
+                    topic_dict[topic_monitor_list[0]] = topic_msg_dict
                     topicsmsg = json.dumps(topic_dict)
                     print(topicsmsg)
-                    pub_topics.publish(topicsmsg)
+                    #pub_topics.publish(topicsmsg)
+                    pubtopic_mache(topicsmsg)
                     topic_first = False
             if out_list[0]=="topic":
                 for topic_g in topic_list:
@@ -352,7 +387,8 @@ def topicFun(rostopic_file, brandtopicfile):
                 if pub_first == False:
                     topicsmsg = json.dumps(topic_dict)
                     print(topicsmsg)
-                    pub_topics.publish(topicsmsg)
+                    #pub_topics.publish(topicsmsg)
+                    pubtopic_mache(topicsmsg)
                     topic_first = False
                 else:
                     print("first pub")
@@ -391,7 +427,8 @@ def topicFun(rostopic_file, brandtopicfile):
                 print("topicsmsg")
                 if topic_first == False or out_list[0] == 'Usage:':
                     print(topicsmsg)
-                    pub_topics.publish(topicsmsg)
+                    #pub_topics.publish(topicsmsg)
+                    pubtopic_mache(topicsmsg)
                 else:
                     print("topic_first")
                     topic_first = False
@@ -412,6 +449,7 @@ def topicFun(rostopic_file, brandtopicfile):
 
 def topicconfig(configfile):
     global brand
+    global rosmachetype;
     topic_list = []
     node_list = []
     with open(configfile, 'r') as f:
@@ -419,14 +457,16 @@ def topicconfig(configfile):
     for model in config:
         for node in  model["value"]:
             brand_list = node["brand"].split(":")
+            machetype_config = node["rosmachetype"]
             for brand_tmp in brand_list:
                 if brand_tmp.strip() == brand.strip():
-                    node_list.append(node["node_name"].strip())
-                    for topic in node["value"]:
-                        if brand.strip() in topic["brand"].split(":"):
-                            if topic["topic_name"].strip() != '':
-                                str_tmp = topic["topic_name"] + ":" + topic["set_hz"]
-                                topic_list.append(str_tmp.strip())
+                    if  machetype_config.strip() == rosmachetype.strip() or rosmachetype.strip() == "single":
+                        node_list.append(node["node_name"].strip())
+                        for topic in node["value"]:
+                            if brand.strip() in topic["brand"].split(":") and topic["guardian"] == "y":
+                                if topic["topic_name"].strip() != '':
+                                    str_tmp = topic["topic_name"] + ":" + topic["set_hz"]
+                                    topic_list.append(str_tmp.strip())
     print("topic_list:")
     print(topic_list) 
     return topic_list              
@@ -463,14 +503,28 @@ def get_brand(vehicle_config):
             break;
         line  = f.readline()
     return brand
-
-
+class Guardian_sub:
+    topicslavemsg = ""
+    slave_mutex = threading.Lock()
+    def __init__(self):
+        #rospy.Subscriber("/system/rostopics_hz_slave", String, self.topicslave_callback)
+        pass
+    def topicslave_callback(self,msg):
+        Guardian_sub.slave_mutex.acquire()
+        Guardian_sub.topicslavemsg = msg.data
+        Guardian_sub.slave_mutex.release()
+    def rosslavesub(self):
+        self.slavesub = rospy.Subscriber("/system/rostopics_hz_slave", String, self.topicslave_callback)
+        
 def main():
     global brand
+    global rosmachetype;
     if len(sys.argv) < 4:
         rospy.logerr("please use:system_guardian.py configfilename, rostopicfilename")
         exit(-1)
     rospy.init_node('system_guardian')
+    rosmachetype = rospy.get_param('rosmachetype')
+    print("rosmachetype:%s" %rosmachetype)
     config_file = sys.argv[1].strip() #no use 
     rostopic_file = sys.argv[2].strip()
     brandtopicfile = sys.argv[3].strip()
@@ -483,8 +537,10 @@ def main():
     print("pth:vehicleconfigfile:%s"%vehicleconfigfile)
     pth_topic.setDaemon(True)
     pth_topic.start()
-
-    p = Process(brandtopicfile)
+    if rosmachetype != "slave":
+        p = Process(brandtopicfile)
+        guar_sub = Guardian_sub()
+        guar_sub.rosslavesub()
     rospy.spin()
 
 if __name__ == '__main__':

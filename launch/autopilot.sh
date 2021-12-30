@@ -58,7 +58,7 @@ start_node_terminal_multi(){
         $GuiTerminal --tab -e "bash -c 'sleep 15; $LOG_ENV && $BASHRC && $CHEJI';bash" $TitleOpt "cheji" &
         $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $LOCAL_PLANNER';bash" $TitleOpt "local_planner" &
         $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $HAD_MAP';bash" $TitleOpt "had_map" &
-        $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GUARDIAN';bash" $TitleOpt "guardian" &
+        $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GUARDIAN_MASTER';bash" $TitleOpt "guardian" &
         $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $OPERATOR_TOOL';bash" $TitleOpt "operator_tool" &
         $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $TRACK_RECORDER';bash" $TitleOpt "track_recorder" &
         $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $HADMAP_ENGINE';bash" $TitleOpt "hadmap_engine" &
@@ -86,6 +86,7 @@ start_node_terminal_multi(){
         if [ "$VehicleType" == "jinlv" ];then
             $GuiTerminal --tab -e "bash -c 'sleep 1; $LOG_ENV && $BASHRC && $SLAM_LOCALIZATION';bash" $TitleOpt "slam_localization" &
         fi
+        $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GUARDIAN_SLAVE';bash" $TitleOpt "guardian" &
     fi
 }
 
@@ -99,7 +100,7 @@ start_node_silence_multi(){
         #node
         sleep 3 && roslaunch --wait $ABS_PATH/../config/vehicle/drivers/camera/camera.launch 1>>${ROS_LOG_DIR}/camera_drivers.launch.log 2>>${ROS_LOG_DIR}/camera_drivers.launch.err &
         sleep 2 && roslaunch --wait $ABS_PATH/../config/vehicle/drivers/gnss/gnss.launch 1>>${ROS_LOG_DIR}/gnss_drivers.launch.log 2>>${ROS_LOG_DIR}/gnss_drivers.launch.err &
-        sleep 2 && roslaunch --wait guardian system_guardian.launch 1>>${ROS_LOG_DIR}/system_guardian.launch.log 2>>${ROS_LOG_DIR}/system_guardian.launch.err &
+        sleep 2 && roslaunch --wait guardian system_guardian_master.launch 1>>${ROS_LOG_DIR}/system_guardian_master.launch.log 2>>${ROS_LOG_DIR}/system_guardian_master.launch.err &
         sleep 5 && roslaunch --wait localization localization.launch 1>>${ROS_LOG_DIR}/localization.launch.log 2>>${ROS_LOG_DIR}/localization.launch.err &
         sleep 15 && roslaunch --wait telematics telematics.launch 1>>${ROS_LOG_DIR}/telematics.launch.log 2>>${ROS_LOG_DIR}/telematics.launch.err &
         sleep 2 && roslaunch --wait launch local_planning.launch 1>>${ROS_LOG_DIR}/local_planning.launch.log 2>>${ROS_LOG_DIR}/local_planning.launch.err &
@@ -134,6 +135,7 @@ start_node_silence_multi(){
         if [ "$VehicleType" == "jinlv" ];then
             sleep 1 && roslaunch --wait slam_localization localization_mogo_bus_right.launch >>${ROS_LOG_DIR}/localization_mogo_bus_right.launch.log 2>>${ROS_LOG_DIR}/localization_mogo_bus_right.launch.err
         fi
+        sleep 2 && roslaunch --wait guardian system_guardian_slave.launch 1>>${ROS_LOG_DIR}/system_guardian_slave.launch.log 2>>${ROS_LOG_DIR}/system_guardian_slave.launch.err &
     fi 
     sleep 17
 }
@@ -397,6 +399,8 @@ LOCAL_PLANNER="roslaunch --wait launch local_planning.launch 2>&1 | tee -i \${RO
 HAD_MAP="roslaunch --wait launch hadmap.launch 2>&1 | tee -i \${ROS_LOG_DIR}/hadmap.launch.log"
 OPERATOR_TOOL="roslaunch --wait operator_tool operator_tool.launch 2>&1 | tee -i \${ROS_LOG_DIR}/operator_tool.launch.log"
 GUARDIAN="roslaunch --wait guardian system_guardian.launch 2>&1 | tee -i \${ROS_LOG_DIR}/system_guardian.launch.log"
+GUARDIAN_MASTER="roslaunch --wait guardian system_guardian_master.launch 2>&1 | tee -i \${ROS_LOG_DIR}/system_guardian_master.launch.log"
+GUARDIAN_SLAVE="roslaunch --wait guardian system_guardian_slave.launch 2>&1 | tee -i \${ROS_LOG_DIR}/system_guardian_slave.launch.log"
 TRACK_RECORDER="roslaunch --wait track_recorder track_recorder.launch 2>&1 | tee -i \${ROS_LOG_DIR}/track_recorder.launch.log"
 RECORD_CACHE="roslaunch --wait record_cache record_cache.launch 2>&1 | tee -i \${ROS_LOG_DIR}/record_cache.launch.log"
 HADMAP_ENGINE="roslaunch --wait hadmap_engine hadmap_engine.launch 2>&1 | tee -i \${ROS_LOG_DIR}/hadmap_engine.launch.log"
