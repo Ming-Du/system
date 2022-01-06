@@ -27,7 +27,7 @@
     <param name="degree_mode" value="$(arg degree_mode)"/>
     <param name="time_synchronization" value="$(arg time_synchronization)"/>
   </node>
-
+ 
   <node name="c32_rear_decoder" output="screen"
         pkg="drivers_lslidar" type="lslidar_c32_decoder_node" 
         args="--sensor_meta_path=$(arg sensor_meta)" >
