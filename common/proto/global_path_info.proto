@@ -33,6 +33,12 @@ enum MotionType {
   MOVE_U_TURN = 4;
 }
 
+enum LightType {
+  NO_LIGHT = 0;
+  LEFT_LIGHT = 1;
+  RIGHT_LIGHT = 2;
+}
+
 message PathRemains {
   optional double dis_remain = 1; // distance to end, wbq 20211025
   optional uint64 points_remain = 2; // points size to end, wbq 20211025
@@ -57,5 +63,7 @@ message PathMsg {
   optional PathNodeInfo next_node_info = 4;
   optional PathNodeInfo next_junct_info = 5;
   optional int32 path_set_state = 6 [default = 0]; // set path status, wbq 20211110
+  optional LightType light_suggestion = 7; // add for traj_record, wbq 20220105
+  optional double distance_to_junc_est = 8; // add for traj_record, wbq 20220105
 }
 
