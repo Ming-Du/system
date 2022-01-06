@@ -48,5 +48,5 @@
     <param name="time_synchronization" value="$(arg time_synchronization)"/>
   </node>
   </group>
-  
+
 </launch>
