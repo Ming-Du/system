@@ -219,25 +219,7 @@ sensor_info {
     }
   }
 }
-sensor_info {
-  name: "c32_rear"
-  type: LSLIDAR_C32
-  orientation: REAR
-  topic: "/sensor/lidar/rear/point_cloud"
-  extrinsic {
-    translation {
-      x: -1.1
-      y: 0.1
-      z: 0.75
-    }
-    rotation {
-      w: 0.713131
-      x: 0.0130595
-      y: -0.0116102
-      z: -0.700813
-    }
-  }
-}
+
 sensor_info{
   name:"lidar_main"
   type:LSLIDAR_C32
