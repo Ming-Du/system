@@ -103,7 +103,7 @@ start_node_silence_multi(){
         sleep 2 && roslaunch --wait guardian system_guardian_master.launch 1>>${ROS_LOG_DIR}/system_guardian_master.launch.log 2>>${ROS_LOG_DIR}/system_guardian_master.launch.err &
         sleep 5 && roslaunch --wait localization localization.launch 1>>${ROS_LOG_DIR}/localization.launch.log 2>>${ROS_LOG_DIR}/localization.launch.err &
         sleep 15 && roslaunch --wait telematics telematics.launch 1>>${ROS_LOG_DIR}/telematics.launch.log 2>>${ROS_LOG_DIR}/telematics.launch.err &
-        sleep 2 && roslaunch --wait launch local_planning.launch 1>>${ROS_LOG_DIR}/local_planning.launch.log 2>>${ROS_LOG_DIR}/local_planning.launch.err &
+        # sleep 2 && roslaunch --wait launch local_planning.launch 1>>${ROS_LOG_DIR}/local_planning.launch.log 2>>${ROS_LOG_DIR}/local_planning.launch.err &
         sleep 2 && roslaunch --wait launch hadmap.launch 1>>${ROS_LOG_DIR}/hadmap.launch.log 2>>${ROS_LOG_DIR}/hadmap.launch.err &
         sleep 2 && roslaunch --wait track_recorder track_recorder.launch 1>>${ROS_LOG_DIR}/track_recorder.launch.log 2>>${ROS_LOG_DIR}/track_recorder.launch.err &
         sleep 5 && roslaunch --wait record_cache record_cache.launch 1>>${ROS_LOG_DIR}/record_cache.launch.log 2>>${ROS_LOG_DIR}/record_cache.launch.err &
@@ -132,6 +132,7 @@ start_node_silence_multi(){
         sleep 2 && roslaunch --wait $ABS_PATH/../config/vehicle/drivers/lidar/lidar.launch >>${ROS_LOG_DIR}/lidar.launch.log 2>>${ROS_LOG_DIR}/lidar.launch.err &
         sleep 5 && roslaunch --wait $ABS_PATH/../config/vehicle/perception/lidar/perception_lidar.launch >>${ROS_LOG_DIR}/perception_lidar.launch.log 2>>${ROS_LOG_DIR}/perception_lidar.launch.err &
         sleep 7 && roslaunch --wait $ABS_PATH/../config/vehicle/perception/fusion/perception_fusion.launch >>${ROS_LOG_DIR}/perception_fusion.launch.log 2>>${ROS_LOG_DIR}/perception_fusion.launch.err &
+        sleep 2 && roslaunch --wait launch local_planning.launch 1>>${ROS_LOG_DIR}/local_planning.launch.log 2>>${ROS_LOG_DIR}/local_planning.launch.err &
         if [ "$VehicleType" == "jinlv" ];then
             sleep 1 && roslaunch --wait slam_localization localization_mogo_bus_right.launch >>${ROS_LOG_DIR}/localization_mogo_bus_right.launch.log 2>>${ROS_LOG_DIR}/localization_mogo_bus_right.launch.err
         fi
