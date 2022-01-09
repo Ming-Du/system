@@ -199,7 +199,7 @@ sensor_info {
     }
   }
 }
-
+ 
 sensor_info{
   name:"lidar_main"
   type:LSLIDAR_C32
