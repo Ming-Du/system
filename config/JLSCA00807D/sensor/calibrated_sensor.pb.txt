@@ -149,16 +149,17 @@ sensor_info {
     translation {
       x: 4.93
       y: 0.90
-      z: 0.69
+      z: 0.70
     }
-    rotation {#0.5,0,126.2
-      w: 0.45243
-      x: 0.0019741
-      y: 0.0038912
-      z: 0.891789
+    rotation {#-0.7,-0.5,126.2
+      w: 0.4524457
+      x: 0.0011274
+      y: -0.0074217
+      z: 0.8917603
     }
   }
 }
+
 sensor_info {
   name: "c32_front_right"
   type: LSLIDAR_C32
@@ -167,34 +168,34 @@ sensor_info {
   extrinsic {
     translation {
       x: 4.93
-      y: -1.0
-      z: 0.69
+      y: -1.08
+      z: 0.75
     }
-    rotation {#0.5,4,81
-      w: 0.760034
-      x: -0.0193493
-      y: 0.0293695
-      z: 0.64893
+    rotation {#-0.5,4.4,80.5
+      w: 0.7625544
+      x: -0.0281308
+      y: 0.0264814
+      z: 0.6457694
     }
   }
 }
 
 sensor_info {
-  name: "c16_rear"
-  type: LSLIDAR_C16
+  name: "c32_rear"
+  type: LSLIDAR_C32
   orientation: REAR
   topic: "/sensor/lidar/rear/point_cloud"
   extrinsic {
     translation {
       x: -1.1
-      y: -0.1
-      z: 0.72
+      y: 0.15
+      z: 0.85
     }
-    rotation { #3,1.5,1.5
-      w: 0.999491
-      x: 0.0260012
-      y: 0.0134266
-      z: 0.0127414
+    rotation {#-0.5,1.8,-86.5
+      w: 0.7283211
+      x: 0.0075846
+      y: 0.0144299
+      z: -0.685042
     }
   }
 }
