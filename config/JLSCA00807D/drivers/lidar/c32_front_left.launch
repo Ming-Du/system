@@ -40,8 +40,8 @@
     <param name="config_vert" value="true"/>
     <param name="print_vert" value="false"/>
 
-    <param name="scan_start_angle" value="0" />
-    <param name="scan_end_angle" value="26000" />
+    <param name="scan_start_angle" value="2000" />
+    <param name="scan_end_angle" value="29000" />
     
     <param name="frame_id" value="$(arg frame_id)"/>
     <param name="scan_num" value="15"/>
