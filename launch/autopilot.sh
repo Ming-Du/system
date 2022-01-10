@@ -286,7 +286,7 @@ else
 fi
 Logging "path : $ABS_PATH"
 
-if [ "$VehicleType" != "wey" -a "$VehicleType" != "df" -a "$VehicleType" != "byd" -a "$VehicleType" != "jinlv" -a "$VehicleType" != "df" ];then
+if [ "$VehicleType" != "wey" -a "$VehicleType" != "df" -a "$VehicleType" != "byd" -a "$VehicleType" != "jinlv" -a "$VehicleType" != "df" -a "$VehicleType" != "hq" ];then
     Logging "error:不支持此车型。车型：$VehicleType"
     Usage
     exit 0
