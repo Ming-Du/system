@@ -8,6 +8,7 @@ Usage(){
     echo "byd        --byd车"
     echo "jinlv      --小巴车"
     echo "df         --东风车"
+    echo "hq         --红旗车"
     echo "silence    --后台启动[默认值]"
     echo "x          --xfce4窗口启动"
     echo "g          --gnome窗口启动"
