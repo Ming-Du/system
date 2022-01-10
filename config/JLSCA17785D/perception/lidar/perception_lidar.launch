@@ -20,5 +20,5 @@
           --sensor_meta_path=$(arg sensor_meta)
           --lidar_segmentation_conf_path=$(arg config_path)/perception/lidar/lidar_segmentation.pb.txt
           --publish_lidar_cluster=true
-          --lidar_input=c32_front_left;c32_front_right" />
+          --lidar_input=c32_front_left;c32_front_right;c32_rear" />
 </launch>
