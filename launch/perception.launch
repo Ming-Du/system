@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <include file="$(find config)/vehicle/perception/camera/perception_camera.launch" />
+  <include file="$(find config)/vehicle/perception/camera/perception_2camera.launch" />
   <include file="$(find config)/vehicle/perception/lidar/perception_lidar.launch" />
   <include file="$(find config)/vehicle/perception/fusion/perception_fusion.launch" />
 </launch>
