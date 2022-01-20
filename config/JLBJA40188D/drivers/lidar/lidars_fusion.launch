@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="config_path" default="$(find config)/vehicle" />
+  <arg name="sensor_meta" default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
+  <node name="xiaoba_lidars_fusion" pkg="xiaoba_fusion" type="xiaoba_fusion_node" output="screen"
+    args="--logtostderr=0 --stderrthreshold=1 --v=5
+          --sensor_meta_path=$(arg sensor_meta)
+          --lidar_input=c32_front_left;c32_front_right;c32_rear" >
+    <param name="master_sensor_name" type="string" value="c32_front_left" />
+    <param name="lidar_output" type="string" value="base_link" />
+    <param name="output_cloud_topic" type="string" value="/sensor/lidar/middle/point_cloud" />
+  </node>
+</launch>

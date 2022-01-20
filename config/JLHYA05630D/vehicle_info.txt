@@ -1,0 +1,2 @@
+vehicle_num:JLHYA05630D
+vehicle_color:255255000

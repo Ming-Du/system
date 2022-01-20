@@ -1,2 +1,0 @@
-vehicle_num:JLBJ1861378
-vehicle_color:255255000

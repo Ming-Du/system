@@ -19,6 +19,8 @@ enum SensorType {
   SENSING_120 = 12;
   HESAI_128 = 13;
   RSLIDAR_80 = 14;
+  CONTI_RADAR_ARS408 = 15;
+  CONTI_RADAR_SRR308 = 16;
 }
 
 enum SensorOrientation {

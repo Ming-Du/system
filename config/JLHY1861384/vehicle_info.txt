@@ -1,2 +1,0 @@
-vehicle_num:JLHY1861384
-vehicle_color:255255000

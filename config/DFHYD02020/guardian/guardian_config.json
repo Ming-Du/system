@@ -4,6 +4,7 @@
      [
         {
           "brand":"JINLV:DF:WEY",
+          "rosmachetype":"master",
           "node_name":"/controller",
           "value":
              [
@@ -18,6 +19,7 @@
         {
           "brand":"JINLV",
           "node_name":"/jinlv_can_adapter",
+          "rosmachetype":"master",
           "value":
              [
                 {
@@ -31,6 +33,7 @@
         {
           "brand":"DF",
           "node_name":"/DongFeng_E70_can_adapter",
+          "rosmachetype":"master",
           "value":
              [
                 {
@@ -50,6 +53,7 @@
         {
           "node_name":"/hadmap_server",
           "brand":"JINLV:DF:WEY",
+          "rosmachetype":"master",
           "value":
              [
                 {
@@ -81,6 +85,7 @@
         {
           "node_name":"/local_planning",
           "brand":"JINLV:DF:WEY",
+          "rosmachetype":"master",
           "value":
              [
                 {
@@ -100,6 +105,7 @@
         {
           "node_name":"/trt_yolov5",
           "brand":"JINLV:DF:WEY",
+          "rosmachetype":"master",
           "value":
              [
                 {
@@ -119,6 +125,7 @@
         {
           "node_name":"/perception/fusion/perception_fusion",
           "brand":"JINLV",
+          "rosmachetype":"slave",
           "value":
              [
                 {
@@ -144,6 +151,7 @@
         {
           "node_name":"/perception/fusion/perception_fusion2",
           "brand":"JINLV:DF",
+          "rosmachetype":"slave",
           "value":
              [
                 {
@@ -175,6 +183,7 @@
         {
           "node_name":"/perception/lidar/rs_perception_node",
           "brand":"DF:JINLV",
+          "rosmachetype":"slave",
           "value":
              [
                 {
@@ -194,6 +203,7 @@
         {
           "node_name":"/perception/lidar/perception_lidar",
           "brand":"JINLV",
+          "rosmachetype":"slave",
           "value":
              [
                 {
@@ -225,6 +235,7 @@
         {
           "node_name":"/localization",
           "brand":"JINLV:DF:WEY",
+          "rosmachetype":"master",
           "value":
              [
                 {
@@ -256,10 +267,11 @@
         {
           "node_name":"/sensor/lidar/c32/front_right/c32_right_driver",
           "brand":"JINLV",
+          "rosmachetype":"slave",
           "value":
              [
                 {
-                    "topic_name": "/sensor/lidar/front_righrt/point_cloud",
+                    "topic_name": "/sensor/lidar/front_right/point_cloud",
                     "set_hz":"10",
                     "brand":"JINLV",
                     "guardian":"y"
@@ -269,6 +281,7 @@
         {
           "node_name":"/sensor/lidar/c32/front_left/c32_left_driver",
           "brand":"JINLV",
+          "rosmachetype":"slave",
           "value":
              [
                 {
@@ -282,6 +295,7 @@
         {
           "node_name":"/sensor/lidar/robosense/drivers_robosense_node",
           "brand":"DF",
+          "rosmachetype":"slave",
           "value":
              [
                 {
@@ -295,6 +309,7 @@
         {
           "node_name":"/sensor/camera/sensing60/drivers_camera_sensing60",
           "brand":"DF:JINLV",
+          "rosmachetype":"master",
           "value":
              [
                 {
@@ -314,6 +329,7 @@
         {
           "node_name":"/sensor/gnss/drivers_gnss_zy",
           "brand":"WEY:JINLV:DF",
+          "rosmachetype":"master",
           "value":
              [
                 {
@@ -351,6 +367,7 @@
         {
           "node_name":"/system_guardian",
           "brand":"WEY:JINLV:DF",
+          "rosmachetype":"master",
           "value":
              [
                 {
@@ -406,6 +423,7 @@
         {
           "node_name":"/telematics_node",
           "brand":"WEY:JINLV:DF",
+          "rosmachetype":"master",
           "value":
              [
                 {
