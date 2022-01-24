@@ -5,11 +5,6 @@ add_definitions(-std=c++11)
 
 # list(APPEND CMAKE_PREFIX_PATH /home/opencv_test/)
 
-option(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
-set(CMAKE_CXX_STANDARD 11)
-find_package(CUDA REQUIRED)
-set(CUDA_NVCC_PLAGS ${CUDA_NVCC_PLAGS};-std=c++11;-g;-G;-gencode;arch=compute_30;code=sm_30)
-
 
 add_compile_options(-Wno-deprecated-declarations)
 ## Find catkin macros and libraries
@@ -42,7 +37,6 @@ if (CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
 else()
     message("embed_platform off")
     include_directories(/usr/include/)
-    link_directories(/usr/local/cuda/lib64)
     link_directories(/usr/lib/aarch64-linux-gnu/)
 endif()
 
