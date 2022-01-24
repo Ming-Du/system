@@ -150,7 +150,7 @@ while [ true ]; do
     if [ -f $stat_file ];then
         [[ $(head -1 $stat_file) -ne 0 ]] && Logging "system check failed" && continue
     fi
-    bash $ABS_PATH/check.sh >>$LOGFILE
+    bash $ABS_PATH/check.sh c >>$LOGFILE
     if [ $? -eq 0 ]; then
         break
     fi
