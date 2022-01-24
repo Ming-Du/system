@@ -530,6 +530,8 @@ void init(int& argc, char** argv, const std::string& name, uint32_t options)
   el::Configurations confFromFile(strConfigFileName);
   el::Loggers::reconfigureAllLoggers(confFromFile);
   el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Filename,strLoggerFile);
+  el::Loggers::reconfigureAllLoggers(el::ConfigurationType::ToStandardOutput,"false");
+  el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format,"%msg");
   el::Loggers::getLogger("default")->reconfigure();
 }
 
