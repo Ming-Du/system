@@ -1,0 +1,10 @@
+dep:
+	jsoncpp-dev
+conf:
+	/home/mogo/data/log/ros_statics.conf
+compile:
+	catkin_make -DCMAKE_BUILD_TYPE=Debug --source ros_comm
+
+set env:
+    source  devel/setup.bash
+    run app
