@@ -5,19 +5,42 @@ package record_cache;
 import "header.proto";
 
 message RecordItem {
-  optional string topic = 1;
-  optional int32 nums = 2;
+  optional string topic = 1; //topic name of record data
+  optional int32 nums = 2; //quantity of this topic's data
+}
+
+message TriggerInfo {
+  required bool auto_trig = 1; //trigger mode: true - auto trig when autopilot mode turn to handle | false - subscribe topic to trig 
+  optional string trig_topic = 2; //name of topic used to trig(mode is 0 available)
+  optional string trig_msg = 3; //topic message(mode is 0 available)
 }
 
 message RecordPanel {
   optional common.Header header = 1;
-  optional bool stat = 2; //记录状态：false：写入异常 true：正常
-  optional int64 disk_free = 3; //磁盘剩余空间
-  optional int64 total_size = 4; //此次占用空间
-  optional string timestamp = 5; //记录的时间戳
-  optional float duration = 6; //记录时长
-  repeated RecordItem records = 7; //每个topic的数据信息
-  optional string note = 8; //备注消息
+  optional int32 stat = 2; //record stat：100 - record succeed,auto stop | 101 - record succeed,handle stop | 200 - record failed
+  optional int64 disk_free = 3; //disk space available
+  optional int64 total_size = 4; //space used by bag 
+  optional string timestamp = 5; //timestamp
+  optional float duration = 6; //data duration
+  optional TriggerInfo triggerinfo = 7; //information of trigger
+  optional string filename = 8; //bag's filename
+  repeated RecordItem records = 9; //information of each topic's record
+  optional string note = 10; //other message(warn,error or other message included)
+  optional int32 type = 11;
+  optional int32 id = 12;
+  required uint64 key = 13;
+  repeated string topics = 14;
 }
 
+message Task {
+  optional common.Header header = 1;
+  required int32 id = 2;
+  required int32 type = 3; //1-badcase 2-map
+  required bool action = 4; //true:start false:stop
+  optional bool sustain = 5; //true:collection until stop command;false:collect 'duraiton' seconds
+  optional int32 duration = 6; //collection duraiton(s) 
+  optional string note = 7; //note 
+  optional bool auto_trig = 8;
+  optional uint64 key = 9;
+}
 

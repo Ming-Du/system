@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find config)/vehicle/perception/fusion/perception_fusion.launch" />
+</launch>
