@@ -14,6 +14,10 @@ bool UpdatePbFile()
 	std::string SN = pCurl->GetPlate();
 	char szMac[18];
 	int nRtn = get_mac(szMac, sizeof(szMac));
+	for(int i=0; i<strlen(szMac); i++)
+        {
+                szMac[i] = tolower(szMac[i]);
+        }
 	bool flag = true;
 	flag = pCurl->DownloadFileContentImpl(url_list, url_pull, url_sync, szMac, SN);
 	if(flag == false)
