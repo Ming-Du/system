@@ -302,7 +302,7 @@ source $SETUP_ROS
 source $SETUP_AUTOPILOT
 
 # 配置更新
-rosrun update_config update_config
+rosrun update_config update_config 2>&1 > $ROS_LOG_DIR/update_config.log
 
 if [ "$ros_machine" == "rosmaster" ]; then
     roscore 2>&1 >$ROS_LOG_DIR/roscore.log &
