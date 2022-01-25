@@ -140,9 +140,9 @@ Logging() {
 }
 install_ros_log()
 {
-     src_so_path='find  /home/mogo/ -name 'libroscpp.so' | head -n 1'
-     dst_so_path='find  /opt -name  'libroscpp.so' | head -n 1'
-     conf_path='find  /home/mogo/ -name 'ros_statics.conf' | head -n 1'
+     src_so_path=`find  /home/mogo/ -name 'libroscpp.so' | head -n 1`
+     dst_so_path=`find  /opt -name  'libroscpp.so' | head -n 1`
+     conf_path=`find  /home/mogo/ -name 'ros_statics.conf' | head -n 1`
      \cp -rf $src_so_path  $dst_so_path	
 }
 # main
