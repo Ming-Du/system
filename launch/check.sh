@@ -53,6 +53,7 @@ if [ "$1" == "c" ]; then
         [[ -z "$dev" ]] && continue
         [[ ! -e $dev ]] && echo "camera device[$dev] is abnormal"
     done
+    exit 0
 fi
 
 #check node
