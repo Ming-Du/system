@@ -138,11 +138,19 @@ Logging() {
     echo "[$datetime] $*"
     echo "[$datetime] $*" >>$LOGFILE
 }
+install_ros_log()
+{
+     src_so_path='find  /home/mogo/ -name 'libroscpp.so' | head -n 1'
+     dst_so_path='find  /opt -name  'libroscpp.so' | head -n 1'
+     conf_path='find  /home/mogo/ -name 'ros_statics.conf' | head -n 1'
+     \cp -rf $src_so_path  $dst_so_path	
+}
 # main
 export ABS_PATH # autopilot.sh脚本的路径
 ABS_PATH="$(cd "$(dirname $0)" && pwd)"
 LOGFILE="/home/mogo/data/log/autopilot.log"
 
+install_ros_log
 # 自动驾驶自检
 stat_file="/home/mogo/data/vehicle_monitor/check_system.txt"
 while [ true ]; do
