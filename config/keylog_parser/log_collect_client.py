@@ -12,7 +12,7 @@ def run_once():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # 连不上会抛异常
     try:
-        sock.connect(('192.168.8.103', 1119))
+        sock.connect(('rosslave', 1119))
     except Exception as e:
         return
 

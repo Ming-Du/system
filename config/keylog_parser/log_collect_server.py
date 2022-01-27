@@ -37,7 +37,7 @@ def run():
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # 监听端口:
-    s.bind(('192.168.8.103', 1119))
+    s.bind(('0.0.0.0', 1119))
     s.listen(10)
     # print('Waiting for connection...')
     while True:
