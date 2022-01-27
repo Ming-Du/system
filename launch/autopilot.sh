@@ -318,6 +318,10 @@ rosrun update_config update_config 2>&1 > $ROS_LOG_DIR/update_config.log
 
 if [ "$ros_machine" == "rosmaster" ]; then
     roscore 2>&1 >$ROS_LOG_DIR/roscore.log &
+    python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_client.py & 
+else
+    python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_server.py & 
+    python3 /home/mogo/autopilot/share/config/keylog_parser/log_resolver.py &
 fi
 # create_roslog_config_file
 start_node
