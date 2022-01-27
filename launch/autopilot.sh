@@ -145,6 +145,7 @@ install_ros_log()
      conf_path=`find   /autocar-code/install/   -name 'ros_statics.conf' | head -n 1`
      dst_conf_path="/home/mogo/data/log/ros_statics.conf"
      mkdir -p /home/mogo/data/log/ROS_STAT/
+     mkdir -p /home/mogo/data/log/ROS_STAT/EXPORT
      chmod 777 -R /home/mogo/data/log/
      \cp -rf $src_so_path  $dst_so_path	
      \cp -rf $conf_path    $dst_conf_path
