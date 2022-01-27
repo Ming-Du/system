@@ -28,7 +28,7 @@ if [ "$1" == "c" ]; then
         #check gnss
         if [ ! -e /dev/ttyUSB0 -o ! -e /dev/ttyUSB1 ]; then
             echo "gnss device is abnormal"
-            exit 2
+            #exit 2
         fi
 
         #check lidar
@@ -42,7 +42,7 @@ if [ "$1" == "c" ]; then
             ping -c 1 -W 2 $ip
             if [ $? -ne 0 ]; then
                 echo "cannot connect with lidar[$ip]"
-                exit 3
+                #exit 3
             fi
         done
     fi
