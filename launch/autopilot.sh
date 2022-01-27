@@ -143,7 +143,7 @@ install_ros_log()
      src_so_path=`find  /autocar-code/install/  -name 'libroscpp.so' | head -n 1`
      dst_so_path=`find  /opt -name  'libroscpp.so' | head -n 1`
      conf_path=`find   /autocar-code/install/   -name 'ros_statics.conf' | head -n 1`
-     dst_conf_path="/home/mogo/data/log/ROS_STAT/ros_statics.conf"
+     dst_conf_path="/home/mogo/data/log/ros_statics.conf"
      mkdir -p /home/mogo/data/log/ROS_STAT/
      chmod 777 -R /home/mogo/data/log/
      \cp -rf $src_so_path  $dst_so_path	
