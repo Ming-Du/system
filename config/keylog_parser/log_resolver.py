@@ -7,7 +7,7 @@ import time
 
 work_dir = "/home/mogo/data/log"
 #work_dir = "/Users/dengwrex/Desktop/mogo_ros/keylog_parser"
-input_dir = os.path.join(work_dir, "ROS_STAT")
+input_dir = os.path.join(work_dir, "ROS_STAT", "EXPORT")
 tmp_dir = os.path.join(work_dir, "ROS_STAT_TMP")
 output_dir = os.path.join(work_dir, "ROS_STAT_RESULT")
 output_path = os.path.join(output_dir, "topic_stat")

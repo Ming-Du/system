@@ -5,7 +5,7 @@ import threading
 
 work_dir = "/home/mogo/data/log"
 #work_dir = "/tmp/keylog_parser"
-output_dir = os.path.join(work_dir, "ROS_STAT")
+output_dir = os.path.join(work_dir, "ROS_STAT", "EXPORT")
 tmp_dir = os.path.join(work_dir, "ROS_STAT_REMOTE")
 
 def recv_data(sock, addr):

@@ -4,7 +4,7 @@ import time
 
 work_dir = "/home/mogo/data/log"
 #work_dir = "/tmp/keylog_parser"
-src_dir = os.path.join(work_dir, "ROS_STAT")
+src_dir = os.path.join(work_dir, "ROS_STAT", "EXPORT")
 tmp_dir = os.path.join(work_dir, "ROS_STAT_TMP")
 
 # scp -l Kb/s
