@@ -13,9 +13,13 @@ output_dir = os.path.join(work_dir, "ROS_STAT_RESULT")
 output_path = os.path.join(output_dir, "topic_stat")
 
 node_config = {}
-node_config["/DongFeng_E70_can_adapter"] = {}
-node_config["/DongFeng_E70_can_adapter"]["sub"] = ["/chassis/command"]
-node_config["/DongFeng_E70_can_adapter"]["pub"] = ""
+#node_config["/DongFeng_E70_can_adapter"] = {}
+#node_config["/DongFeng_E70_can_adapter"]["sub"] = ["/chassis/command"]
+#node_config["/DongFeng_E70_can_adapter"]["pub"] = ""
+
+node_config["/jinlv_can_adapter"] = {}
+node_config["/jinlv_can_adapter"]["sub"] = ["/chassis/command"]
+node_config["/jinlv_can_adapter"]["pub"] = ""
 
 node_config["/controller"] = {}
 node_config["/controller"]["sub"] = ["/planning/trajectory"]
@@ -174,12 +178,12 @@ def load_one_log(path):
 
         start += 10
     
-        #try:
-        one = json.loads(line[start:])
-        update_one_log(one)
-        #except Exception as e:
-        #    print("update log failed {0}".format(line[start:]))
-        #    continue
+        try:
+            one = json.loads(line[start:])
+            update_one_log(one)
+        except Exception as e:
+            print("update log failed {0}".format(line[start:]))
+            continue
 
 def load_logs(input_paths):
     global handle_index
@@ -295,12 +299,18 @@ def analyze_logs():
     result = {}
     target = "/chassis/command"
 
-    # 正常不太可能走到这里，做个容错
+    '''
+    print("all_sub_msg")
+    for topic in all_sub_msg:
+        print("{0}  {1}".format(topic, len(all_sub_msg[topic])))
+
+    print("all_pub_msg")
+    for topic in all_pub_msg:
+        print("{0}  {1}".format(topic, len(all_pub_msg[topic])))
+    '''
+
     if target not in all_sub_msg:
-        # 清掉避免内存泄漏
-        all_sub_msg.clear()
-        all_pub_msg.clear()
-        return result
+        all_sub_msg[target] = {}
 
     # 我们从target逆向找的，所以有比target小的信息都可以在本轮完成后丢弃
     for uuid in all_sub_msg[target]:
@@ -358,6 +368,7 @@ def analyze_logs():
         # TODO 优雅一点，按时间排个序把老的删了，新的留下
         all_pub_msg.clear()
         all_sub_msg.clear()
+        print("too many msg, clear all")
 
     return result
 
