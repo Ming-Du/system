@@ -8,9 +8,9 @@ bool UpdatePbFile()
 {
 	MogoCurl *pCurl = new MogoCurl;
 	pCurl->Init();
-	std::string url_list = "https://mdev-qa.zhidaohulian.com/config/driver/list";
-	std::string url_pull = "https://mdev-qa.zhidaohulian.com/config/driver/pull";
-	std::string url_sync = "https://mdev-qa.zhidaohulian.com/config/driver/sync";
+	std::string url_list = "https://mdev.zhidaohulian.com/config/driver/list";
+	std::string url_pull = "https://mdev.zhidaohulian.com/config/driver/pull";
+	std::string url_sync = "https://mdev.zhidaohulian.com/config/driver/sync";
 	std::string SN = pCurl->GetPlate();
 	char szMac[18];
 	int nRtn = get_mac(szMac, sizeof(szMac));
