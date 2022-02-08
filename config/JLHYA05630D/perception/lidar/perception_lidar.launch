@@ -9,16 +9,8 @@
           --sensor_meta_path=$(arg sensor_meta)
           --lidar_segmentation_conf_path=$(arg config_path)/perception/lidar/lidar_segmentation.pb.txt
           --publish_lidar_cluster=true
-          --lidar_input=c32_front_left;c32_front_right" >
+          --lidar_input=c32_front_left;c32_front_right;c32_rear" >
 	  <param name="perception_config_path" type="string" value="$(arg perception_path)" />
+    <param name="vehicle_type" type="string" value="bus" />
   </node>
-
-  <node name="perception_lidar" ns="perception/lidar"
-    pkg="perception_lidar" type="perception_lidar_node" output="screen"
-    args="--logtostderr=0 --stderrthreshold=1 --v=5
-          --lidar_obstacle_topic=/perception/lidar/lidar_obstacle_cluster
-          --sensor_meta_path=$(arg sensor_meta)
-          --lidar_segmentation_conf_path=$(arg config_path)/perception/lidar/lidar_segmentation.pb.txt
-          --publish_lidar_cluster=true
-          --lidar_input=c32_front_left;c32_front_right;c16_rear" />
 </launch>
