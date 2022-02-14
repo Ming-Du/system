@@ -155,7 +155,7 @@ export ABS_PATH # autopilot.sh脚本的路径
 ABS_PATH="$(cd "$(dirname $0)" && pwd)"
 LOGFILE="/home/mogo/data/log/autopilot.log"
 
-#install_ros_log
+install_ros_log
 # 自动驾驶自检
 stat_file="/home/mogo/data/vehicle_monitor/check_system.txt"
 while [ true ]; do
