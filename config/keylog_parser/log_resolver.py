@@ -4,7 +4,9 @@ import json
 import os
 import copy
 import time
+from config import node_config
 
+#config_path = "/root/config.json"
 work_dir = "/home/mogo/data/log"
 #work_dir = "/Users/dengwrex/Desktop/mogo_ros/keylog_parser"
 input_dir = os.path.join(work_dir, "ROS_STAT", "EXPORT")
@@ -12,14 +14,15 @@ tmp_dir = os.path.join(work_dir, "ROS_STAT_TMP")
 output_dir = os.path.join(work_dir, "ROS_STAT_RESULT")
 output_path = os.path.join(output_dir, "topic_stat")
 
+'''
 node_config = {}
-#node_config["/DongFeng_E70_can_adapter"] = {}
-#node_config["/DongFeng_E70_can_adapter"]["sub"] = ["/chassis/command"]
-#node_config["/DongFeng_E70_can_adapter"]["pub"] = ""
+node_config["/DongFeng_E70_can_adapter"] = {}
+node_config["/DongFeng_E70_can_adapter"]["sub"] = ["/chassis/command"]
+node_config["/DongFeng_E70_can_adapter"]["pub"] = ""
 
-node_config["/jinlv_can_adapter"] = {}
-node_config["/jinlv_can_adapter"]["sub"] = ["/chassis/command"]
-node_config["/jinlv_can_adapter"]["pub"] = ""
+#node_config["/jinlv_can_adapter"] = {}
+#node_config["/jinlv_can_adapter"]["sub"] = ["/chassis/command"]
+#node_config["/jinlv_can_adapter"]["pub"] = ""
 
 node_config["/controller"] = {}
 node_config["/controller"]["sub"] = ["/planning/trajectory"]
@@ -29,37 +32,37 @@ node_config["/local_planning"] = {}
 node_config["/local_planning"]["sub"] = ["/perception/fusion/obstacles"]
 node_config["/local_planning"]["pub"] = "/planning/trajectory"
 
-#node_config["/perception/fusion/perception_fusion2"] = {}
-#node_config["/perception/fusion/perception_fusion2"]["sub"] = ["/perception/lidar/lidar_obstacle", "/perception/camera/camera_obstacle"]
-#node_config["/perception/fusion/perception_fusion2"]["pub"] = "/perception/fusion/obstacles"
+node_config["/perception/fusion/perception_fusion2"] = {}
+node_config["/perception/fusion/perception_fusion2"]["sub"] = ["/perception/lidar/lidar_obstacle", "/perception/camera/camera_obstacle"]
+node_config["/perception/fusion/perception_fusion2"]["pub"] = "/perception/fusion/obstacles"
 
-node_config["/perception/fusion/perception_fusion"] = {}
-node_config["/perception/fusion/perception_fusion"]["sub"] = ["/perception/lidar/lidar_obstacle_cluster", "/perception/camera/camera_obstacle"]
-node_config["/perception/fusion/perception_fusion"]["pub"] = "/perception/fusion/obstacles"
+#node_config["/perception/fusion/perception_fusion"] = {}
+#node_config["/perception/fusion/perception_fusion"]["sub"] = ["/perception/lidar/lidar_obstacle_cluster", "/perception/camera/camera_obstacle"]
+#node_config["/perception/fusion/perception_fusion"]["pub"] = "/perception/fusion/obstacles"
 
-#node_config["/perception/lidar/rs_perception_node"] = {}
-#node_config["/perception/lidar/rs_perception_node"]["sub"] = ["/sensor/lidar/middle/point_cloud"]
-#node_config["/perception/lidar/rs_perception_node"]["pub"] = "/perception/lidar/lidar_obstacle"
+node_config["/perception/lidar/rs_perception_node"] = {}
+node_config["/perception/lidar/rs_perception_node"]["sub"] = ["/sensor/lidar/middle/point_cloud"]
+node_config["/perception/lidar/rs_perception_node"]["pub"] = "/perception/lidar/lidar_obstacle"
 
-node_config["/perception/lidar/perception_lidar"] = {}
-node_config["/perception/lidar/perception_lidar"]["sub"] = ["/sensor/lidar/front_left/point_clound", "/sensor/lidar/front_right/point_cloud"]
-node_config["/perception/lidar/perception_lidar"]["pub"] = "/perception/lidar/lidar_obstacle"
+#node_config["/perception/lidar/perception_lidar"] = {}
+#node_config["/perception/lidar/perception_lidar"]["sub"] = ["/sensor/lidar/front_left/point_clound", "/sensor/lidar/front_right/point_cloud"]
+#node_config["/perception/lidar/perception_lidar"]["pub"] = "/perception/lidar/lidar_obstacle"
 
-#node_config["/sensor/lidar/robosense/drivers_robosense_node"] = {}
-#node_config["/sensor/lidar/robosense/drivers_robosense_node"]["sub"] = []
-#node_config["/sensor/lidar/robosense/drivers_robosense_node"]["pub"] = "/sensor/lidar/middle/point_cloud"
+node_config["/sensor/lidar/robosense/drivers_robosense_node"] = {}
+node_config["/sensor/lidar/robosense/drivers_robosense_node"]["sub"] = []
+node_config["/sensor/lidar/robosense/drivers_robosense_node"]["pub"] = "/sensor/lidar/middle/point_cloud"
 
-#node_config["/sensor/lidar/robosense/drivers_robosense_node"] = {}
-#node_config["/sensor/lidar/robosense/drivers_robosense_node"]["sub"] = []
-#node_config["/sensor/lidar/robosense/drivers_robosense_node"]["pub"] = "/sensor/lidar/middle/point_cloud"
+node_config["/sensor/lidar/robosense/drivers_robosense_node"] = {}
+node_config["/sensor/lidar/robosense/drivers_robosense_node"]["sub"] = []
+node_config["/sensor/lidar/robosense/drivers_robosense_node"]["pub"] = "/sensor/lidar/middle/point_cloud"
 
-node_config["/sensor/lidar/c32/front_left/c32_left_decoder"] = {}
-node_config["/sensor/lidar/c32/front_left/c32_left_decoder"]["sub"] = []
-node_config["/sensor/lidar/c32/front_left/c32_left_decoder"]["pub"] = "/sensor/lidar/front_left/point_clound"
+#node_config["/sensor/lidar/c32/front_left/c32_left_decoder"] = {}
+#node_config["/sensor/lidar/c32/front_left/c32_left_decoder"]["sub"] = []
+#node_config["/sensor/lidar/c32/front_left/c32_left_decoder"]["pub"] = "/sensor/lidar/front_left/point_clound"
 
-node_config["/sensor/lidar/c32/front_right/c32_right_decoder"] = {}
-node_config["/sensor/lidar/c32/front_right/c32_right_decoder"]["sub"] = []
-node_config["/sensor/lidar/c32/front_right/c32_right_decoder"]["pub"] = "/sensor/lidar/front_right/point_clound"
+#node_config["/sensor/lidar/c32/front_right/c32_right_decoder"] = {}
+#node_config["/sensor/lidar/c32/front_right/c32_right_decoder"]["sub"] = []
+#node_config["/sensor/lidar/c32/front_right/c32_right_decoder"]["pub"] = "/sensor/lidar/front_right/point_clound"
 
 node_config["/trt_yolov5"] = {}
 node_config["/trt_yolov5"]["sub"] = ["/sensor/camera/sensing/image_raw_60"]
@@ -68,6 +71,7 @@ node_config["/trt_yolov5"]["pub"] = "/perception/camera/camera_obstacle"
 node_config["/sensor/camera/sensing60/drivers_camera_sensing60"] = {}
 node_config["/sensor/camera/sensing60/drivers_camera_sensing60"]["sub"] = []
 node_config["/sensor/camera/sensing60/drivers_camera_sensing60"]["pub"] = "/sensor/camera/sensing/image_raw_60"
+'''
 
 handle_rate = 1     # 日志过大时切分处理
 handle_index = -1
@@ -77,6 +81,22 @@ all_sub_msg = {}
 node_callback_history = {}
 
 car_info = {}
+
+
+def load_config_info():
+    if os.path.exists(tmp_dir) == False:
+        return False
+
+    try:
+        with open(config_path, 'r', encoding='utf-8') as f:
+            node_config = json.load(f)
+    except Exception as e:
+        return False
+    print(node_config)
+    for kv in node_config.items():
+       print(kv)
+    return True;
+
 
 def set_car_info(data):
     data["code_version"] = car_info.get("code_version", "")
@@ -105,10 +125,14 @@ def read_car_info():
         car_info["carplate"] = plate
         car_info["cartype"] = brand
     except Exception as e:
-        pass
+        return False
+    return True
 
 def update_one_log(one):
     if one["node"] not in node_config:
+        #if one["node"] == "/DongFeng_E70_can_adapter":
+        #    print("node not in node_config ")
+        #    print(one["node"])
         return
 
     # 0是pub记录
@@ -124,19 +148,20 @@ def update_one_log(one):
             one["uuid"] = one["feature"]
 
         one["use_callback"] = []
+        #指定节点下面订阅字典
         if len(node_config[one["node"]]["sub"]) == 0:
             one["no_callback"] = True
         for sub_topic in node_config[one["node"]]["sub"]:
-            if sub_topic not in node_callback_history:
+            if sub_topic not in node_callback_history: #如果不在history里面
                 if sub_topic != "":
                     #print("can not find sub {0}".format(sub_topic))
                     pass
             else:
                 if node_callback_history[sub_topic]["thread"] != one["thread"]:
-                    #print("pub/sub in different thread")
+                    print("pub/sub in different thread")
                     pass
                 elif one["stamp"] - node_callback_history[sub_topic]["stamp"] > 2000000000 or one["stamp"] < node_callback_history[sub_topic]["stamp"]:
-                    #print("mismatch sub")
+                    print("mismatch sub")
                     pass
                 else:
                     one["use_callback"].append(node_callback_history[sub_topic])
@@ -202,7 +227,7 @@ def load_one_log(path):
             one = json.loads(line[start:])
             update_one_log(one)
         except Exception as e:
-            print("update log failed {0}".format(line[start:]))
+            #print("update log failed {0}".format(line[start:]))
             continue
 
 def load_logs(input_paths):
@@ -234,12 +259,12 @@ def load_logs(input_paths):
 
 def analyze_outside_node(callback, data, record):
     if callback["topic"] not in all_pub_msg:
-        #print("no topic")
-        data["wrong"] = "on topic in pub"
+        print("no topic")
+        #data["wrong"] = "on topic in pub"
         return
 
     if callback.get("uuid_wrong", False) == True:
-        #print("uuid wrong 1")
+        print("uuid wrong 1")
         #print(callback)
         data["wrong"] = "uuid wrong"
         return
@@ -258,8 +283,12 @@ def analyze_outside_node(callback, data, record):
 
     use_time = round(float(callback["recv_stamp"] - pub["stamp"])/1000000, 2)
     wait_time = round(float(callback["stamp"] - callback["recv_stamp"])/1000000, 2)
+    if use_time<0 or wait_time<0:
+        print("callbckrecv_stamp {0}".format(callback["recv_stamp"]))
+        print("pubstamp {0} ".format(pub["stamp"]/1000000))
+        print("callbackstamp {0}".format(callback["stamp"]))
     if use_time + wait_time > 2000:
-        #print("pub-callback use time {0}".format(use_time))
+        print("pub-callback use time {0}".format(use_time))
         data["wrong"] = ">2000"
         return
 
@@ -275,9 +304,9 @@ def analyze_inside_node(pub, data, record):
         return
 
     if "use_callback" not in pub or len(pub["use_callback"]) == 0:
-        #print("no use_callback")
-        data["wrong"] = "can't find callback"
-        return
+        print("no use_callback")
+        #data["wrong"] = "can't find callback"
+        #return
 
     callback_size = len(pub["use_callback"])
     index = 0
@@ -296,7 +325,7 @@ def analyze_inside_node(pub, data, record):
 
         simple_path = False
         if pub.get("uuid_wrong", False) == True or callback.get("uuid_wrong", False) == True:
-            #print("uuid wrong 3")
+            print("uuid wrong 3")
             #print(pub)
             #print(callback)
             pdata["wrong"] = "uuid wrong"
@@ -304,7 +333,7 @@ def analyze_inside_node(pub, data, record):
 
         use_time = round(float(pub["stamp"] - callback["stamp"])/1000000, 2)
         if use_time > 2000:
-            #print("callback-pub use time {0}".format(use_time))
+            print("callback-pub use time {0}".format(use_time))
             pdata["wrong"] = ">2000"
             continue
 
@@ -329,9 +358,14 @@ def analyze_logs():
         print("{0}  {1}".format(topic, len(all_pub_msg[topic])))
     '''
 
+    #print("all sub message is {0}".format(all_sub_msg))
+
     if target not in all_sub_msg:
         all_sub_msg[target] = {}
+    else:
+        print("target is {0}".format(target))
 
+    #print("all_sub_msg[target] is {0}".format(all_sub_msg[target]))
     # 我们从target逆向找的，所以有比target小的信息都可以在本轮完成后丢弃
     for uuid in all_sub_msg[target]:
         pub = all_sub_msg[target][uuid]
@@ -349,7 +383,7 @@ def analyze_logs():
     
         for data in record:
             if data.get("wrong", False) != False:
-                #print(data["wrong"])
+                print(data["wrong"])
                 continue
 
             data["use_time"] = round(data["use_time"], 2)
@@ -463,6 +497,7 @@ def handle_logs(output_path, input_paths):
     save_logs(output_path, result)
     end = time.time()
     print("save log use time {0}".format(end-start))
+    print("result is {0}".format(result))
 
 def prepare_input_files():
     global handle_index
@@ -508,7 +543,12 @@ def run():
     if os.path.exists(output_dir) == False:
         os.mkdir(output_dir)
 
-    read_car_info()
+
+    if read_car_info() == False:
+        return;
+
+    #if load_config_info() == False:
+    #    return;
 
     # dxc 读系统信息
     while True:
@@ -533,5 +573,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
