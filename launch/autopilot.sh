@@ -314,23 +314,26 @@ export BASHRC="source ${SETUP_ROS} && source ${SETUP_AUTOPILOT}"
 source $SETUP_ROS
 source $SETUP_AUTOPILOT
 
-# 配置更新
 rosrun update_config update_config 2>&1 > $ROS_LOG_DIR/update_config.log
-
+  
 local_ip = $(ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"|grep 103)
 
-#一个server 5个client
+
+#䷾@个server 5个client
 if [ "$ros_machine" == "rosmaster" ]; then
     roscore 2>&1 >$ROS_LOG_DIR/roscore.log &
     python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_client.py &
-fi
 
-if ["$local_ip" == "192.168.0.103"]; then
+elif ["$local_ip" == "192.168.1.103"]; then
     python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_server.py &
     python3 /home/mogo/autopilot/share/config/keylog_parser/log_resolver.py &
+
+elif ["$local_ip" == "192.168.8.103"]; then
+    python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_server.py &
+    python3 /home/mogo/autopilot/share/config/keylog_parser/log_resolver.py &
+
 else
     python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_client.py &
 fi
-
 # create_roslog_config_file
 start_node
