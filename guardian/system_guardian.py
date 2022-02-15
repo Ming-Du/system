@@ -21,7 +21,8 @@ from multiprocessing import Process, Manager
 import multiprocessing
 from std_msgs.msg import String, UInt8, Int32
 from rospy import init_node, Subscriber, Publisher
-
+import guardian_hardware
+import gethosttopic
 logging.basicConfig()
 
 flow_dict = {}
@@ -53,9 +54,10 @@ class Process(Thread):
     while True:
       ps_num = 0
       self.node_state_dict = {}
-      d = os.popen("rosnode list")
-      node_li = d.read()
-      self.NodeAlive = node_li.split("\n")
+      #d = os.popen("rosnode list")
+      #node_li = d.read()
+      #self.NodeAlive = node_li.split("\n")
+      self.NodeAlive = self.node_ping_alive()
       print self.NodeAlive
       for node_name in self.NodeList:
         if node_name in self.NodeAlive:
@@ -280,7 +282,29 @@ class Process(Thread):
         #print(netmsg)
         #print(flow_dict)
 
+  def node_ping_alive(self):
+      ping_flag = False
+      node_alive_li = []
+      prog = Popen("rosnode ping -a", shell=True, stdout=PIPE)
+      node_li = prog.stdout.read()
+      #output = prog.communicate()
+      #output_li = list(output)
+      node_li = node_li.split("\n")
+      for ping_line in node_li:
+          ping_li = ping_line.split(" ")
+          if ping_li[0] == "pinging":
+             if ping_flag and len(node_alive_li) > 0:
+                node_alive_li.pop()
+             ping_flag = True
+             node_alive_li.append(ping_li[1])
+          else:
+             ping_flag = False
+      print(node_alive_li)
+      return node_alive_li        
+      
+    
 def topicFun(rostopic_file, brandtopicfile):
+    global rosmachetype
     topic_orig_dict = {}
     topic_orig_list = []
     topic_list=[]
@@ -299,22 +323,34 @@ def topicFun(rostopic_file, brandtopicfile):
         
     topics_size = len(topic_list)
     pub_topics = rospy.Publisher('/system/rostopics_hz',String, queue_size=100)
-    pub_topics_slave = rospy.Publisher('/system/rostopics_hz_slave',String, queue_size=100)
+    topic_string  = '/system/rostopics_hz_' + rosmachetype
+    pub_topics_slave = rospy.Publisher(topic_string,String, queue_size=100)
     def pubtopic_mache(msg):
         global rosmachetype;
-        if rosmachetype == "slave":
+        if rosmachetype != "master":
             pub_topics_slave.publish(msg)
         else:
+            '''
             Guardian_sub.slave_mutex.acquire() 
             slavemsg = Guardian_sub.topicslavemsg 
             Guardian_sub.slave_mutex.release() 
-            rospy.logerr("slavemsg:" + slavemsg)
+            '''
+            slavemsg1 = getslavemsg(Guardian_sub.slave_mutex1, Guardian_sub.topicslavemsg1)
+            slavemsg2 = getslavemsg(Guardian_sub.slave_mutex2, Guardian_sub.topicslavemsg2)
+            slavemsg3 = getslavemsg(Guardian_sub.slave_mutex3, Guardian_sub.topicslavemsg3)
+            slavemsg4 = getslavemsg(Guardian_sub.slave_mutex4, Guardian_sub.topicslavemsg4)
+            slavemsg5 = getslavemsg(Guardian_sub.slave_mutex5, Guardian_sub.topicslavemsg5)
+            slavemsg6 = getslavemsg(Guardian_sub.slave_mutex6, Guardian_sub.topicslavemsg6)
+            #rospy.loginfo("slavemsg:" + slavemsg)
             tmpmaster = json.loads(msg)
-            if slavemsg != "":
-                tmpslave = json.loads(slavemsg)
-                tmpfusion = dict(tmpmaster.items() + tmpslave.items())
-                msg  = json.dumps(tmpfusion)
-            rospy.logerr("fusionmsg:" + msg)
+            tmpmaster = fusiontopic(slavemsg1, tmpmaster)
+            tmpmaster = fusiontopic(slavemsg2, tmpmaster)
+            tmpmaster = fusiontopic(slavemsg3, tmpmaster)
+            tmpmaster = fusiontopic(slavemsg4, tmpmaster)
+            tmpmaster = fusiontopic(slavemsg5, tmpmaster)
+            tmpmaster = fusiontopic(slavemsg6, tmpmaster)
+            msg  = json.dumps(tmpmaster)
+            rospy.loginfo("fusionmsg:" + msg)
             pub_topics.publish(msg)
 
     while True:
@@ -323,6 +359,7 @@ def topicFun(rostopic_file, brandtopicfile):
         topic_str=""
         topic_monitor_list=[]
         count = 0
+        '''
         p = Popen("rostopic list -p",shell=True,stdout=PIPE)
         topic_li = p.stdout.read()
         topicAlive = topic_li.split("\n")
@@ -331,7 +368,8 @@ def topicFun(rostopic_file, brandtopicfile):
         #print(topicAlive)
         #print("topic_list_after:")
         #print(topic_list)
-
+        '''
+        topicAlive = gethosttopic.gethosttopics(); 
         for topic_g in topic_list:
             if topic_g in topicAlive:
                 #print("yes:" + topic_g)
@@ -399,7 +437,7 @@ def topicFun(rostopic_file, brandtopicfile):
                 topic_dict_list = []
 
             if 'WARING' in out_list:
-                p.terminate()
+                #p.terminate()
                 r.terminate()
                 print(out_list)
                 break
@@ -438,7 +476,7 @@ def topicFun(rostopic_file, brandtopicfile):
             tend = time.time()
             if(tend - tbegin > 20.0):
                 tbegin = time.time()
-                p.terminate()
+                #p.terminate()
                 r.terminate()
                 break;
 
@@ -460,13 +498,13 @@ def topicconfig(configfile):
             machetype_config = node["rosmachetype"]
             for brand_tmp in brand_list:
                 if brand_tmp.strip() == brand.strip():
-                    if  machetype_config.strip() == rosmachetype.strip() or rosmachetype.strip() == "single":
-                        node_list.append(node["node_name"].strip())
-                        for topic in node["value"]:
-                            if brand.strip() in topic["brand"].split(":") and topic["guardian"] == "y":
-                                if topic["topic_name"].strip() != '':
-                                    str_tmp = topic["topic_name"] + ":" + topic["set_hz"]
-                                    topic_list.append(str_tmp.strip())
+                    #if  machetype_config.strip() == rosmachetype.strip() or rosmachetype.strip() == "single":
+                    node_list.append(node["node_name"].strip())
+                    for topic in node["value"]:
+                        if brand.strip() in topic["brand"].split(":") and topic["guardian"] == "y":
+                            if topic["topic_name"].strip() != '':
+                                str_tmp = topic["topic_name"] + ":" + topic["set_hz"]
+                                topic_list.append(str_tmp.strip())
     print("topic_list:")
     print(topic_list) 
     return topic_list              
@@ -504,18 +542,75 @@ def get_brand(vehicle_config):
         line  = f.readline()
     return brand
 class Guardian_sub:
-    topicslavemsg = ""
-    slave_mutex = threading.Lock()
+    topicslavemsg1 = ""
+    topicslavemsg2 = ""
+    topicslavemsg3 = ""
+    topicslavemsg4 = ""
+    topicslavemsg5 = ""
+    topicslavemsg6 = ""
+    slave_mutex1 = threading.Lock()
+    slave_mutex2 = threading.Lock()
+    slave_mutex3 = threading.Lock()
+    slave_mutex4 = threading.Lock()
+    slave_mutex5 = threading.Lock()
+    slave_mutex6 = threading.Lock()
     def __init__(self):
         #rospy.Subscriber("/system/rostopics_hz_slave", String, self.topicslave_callback)
         pass
-    def topicslave_callback(self,msg):
-        Guardian_sub.slave_mutex.acquire()
-        Guardian_sub.topicslavemsg = msg.data
-        Guardian_sub.slave_mutex.release()
+    def topicslave_callback1(self,msg):
+        Guardian_sub.slave_mutex1.acquire()
+        Guardian_sub.topicslavemsg1 = msg.data
+        Guardian_sub.slave_mutex1.release()
+    def topicslave_callback2(self,msg):
+        Guardian_sub.slave_mutex2.acquire()
+        Guardian_sub.topicslavemsg2 = msg.data
+        Guardian_sub.slave_mutex2.release()
+    def topicslave_callback3(self,msg):
+        Guardian_sub.slave_mutex3.acquire()
+        Guardian_sub.topicslavemsg3 = msg.data
+        Guardian_sub.slave_mutex3.release()
+    def topicslave_callback4(self,msg):
+        Guardian_sub.slave_mutex4.acquire()
+        Guardian_sub.topicslavemsg4 = msg.data
+        Guardian_sub.slave_mutex4.release()
+    def topicslave_callback5(self,msg):
+        Guardian_sub.slave_mutex5.acquire()
+        Guardian_sub.topicslavemsg5 = msg.data
+        Guardian_sub.slave_mutex5.release()
+    def topicslave_callback6(self,msg):
+        Guardian_sub.slave_mutex6.acquire()
+        Guardian_sub.topicslavemsg6 = msg.data
+        Guardian_sub.slave_mutex6.release()
     def rosslavesub(self):
-        self.slavesub = rospy.Subscriber("/system/rostopics_hz_slave", String, self.topicslave_callback)
+        self.slavesub1 = rospy.Subscriber("/system/rostopics_hz_slave1", String, self.topicslave_callback1)
+        self.slavesub2 = rospy.Subscriber("/system/rostopics_hz_slave2", String, self.topicslave_callback2)
+        self.slavesub3 = rospy.Subscriber("/system/rostopics_hz_slave3", String, self.topicslave_callback3)
+        self.slavesub4 = rospy.Subscriber("/system/rostopics_hz_slave4", String, self.topicslave_callback4)
+        self.slavesub5 = rospy.Subscriber("/system/rostopics_hz_slave5", String, self.topicslave_callback5)
+        self.slavesub6 = rospy.Subscriber("/system/rostopics_hz_slave6", String, self.topicslave_callback6)
+def getslavemsg(mu_mutex, topicslavemsg):
+     mu_mutex.acquire()
+     msg = topicslavemsg
+     mu_mutex.release()
+     return msg
+
+def fusiontopic(slavemsg, tmpmaster):
+    if slavemsg != "":
+        tmpslave = json.loads(slavemsg)
+        for key in tmpslave.keys():
+            run_hz = tmpslave[key]["run_hz"]
+            if run_hz != "0" and run_hz != "":
+                if tmpmaster.has_key(key):
+                    tmpmaster[key]["run_hz"] = run_hz  
+        #tmpfusion = dict(tmpmaster.items() + tmpslave.items())
+        #msg  = json.dumps(tmpfusion)
+    return tmpmaster
         
+          
+    
+
+
+
 def main():
     global brand
     global rosmachetype;
@@ -537,10 +632,14 @@ def main():
     print("pth:vehicleconfigfile:%s"%vehicleconfigfile)
     pth_topic.setDaemon(True)
     pth_topic.start()
-    if rosmachetype != "slave":
+    if rosmachetype == "master":
         p = Process(brandtopicfile)
+        phard = guardian_hardware.Tail()
         guar_sub = Guardian_sub()
         guar_sub.rosslavesub()
+       
+        
+
     rospy.spin()
 
 if __name__ == '__main__':

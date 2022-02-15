@@ -11,6 +11,7 @@ catkin_package(CATKIN_DEPENDS message_runtime std_msgs metric_msgs)
 
 catkin_install_python(PROGRAMS
   system_guardian.py
+  guardian_hardware.py
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 install(FILES
