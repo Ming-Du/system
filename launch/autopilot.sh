@@ -104,7 +104,7 @@ create_roslog_config_file() {
 }
 
 start_node() {
-    while read node; do
+    while read node || [[ -n $node ]]; do
         Logging "roslaunch $node"
         include_file=$(roslaunch --files $node)
         for child_file in $include_file; do
