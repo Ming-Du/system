@@ -316,19 +316,22 @@ source $SETUP_AUTOPILOT
 
 rosrun update_config update_config 2>&1 > $ROS_LOG_DIR/update_config.log
   
-local_ip = $(ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"|grep 103)
+local_ip=`ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"|grep 103`
 
+
+ip_1103="192.168.1.103"
+ip_8103="192.168.8.103"
 
 #䷾@个server 5个client
 if [ "$ros_machine" == "rosmaster" ]; then
     roscore 2>&1 >$ROS_LOG_DIR/roscore.log &
     python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_client.py &
 
-elif ["$local_ip" == "192.168.1.103"]; then
+elif [ "$local_ip" == "$ip_1103" ]; then
     python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_server.py &
     python3 /home/mogo/autopilot/share/config/keylog_parser/log_resolver.py &
 
-elif ["$local_ip" == "192.168.8.103"]; then
+elif [ "$local_ip" == "$ip_8103" ]; then
     python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_server.py &
     python3 /home/mogo/autopilot/share/config/keylog_parser/log_resolver.py &
 
