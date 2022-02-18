@@ -131,7 +131,7 @@ def read_car_info():
 def update_one_log(one):
     if one["node"] not in node_config:
         #if one["node"] == "/DongFeng_E70_can_adapter":
-        print("node not in node_config ")
+        #print("node not in node_config ")
         #    print(one["node"])
         return
 
