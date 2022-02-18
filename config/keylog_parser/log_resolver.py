@@ -260,7 +260,7 @@ def load_logs(input_paths):
 def analyze_outside_node(callback, data, record):
     if callback["topic"] not in all_pub_msg:
         print("no topic")
-        #data["wrong"] = "on topic in pub"
+        data["wrong"] = "on topic in pub"
         return
 
     if callback.get("uuid_wrong", False) == True:
