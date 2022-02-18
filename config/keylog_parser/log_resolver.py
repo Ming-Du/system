@@ -131,7 +131,7 @@ def read_car_info():
 def update_one_log(one):
     if one["node"] not in node_config:
         #if one["node"] == "/DongFeng_E70_can_adapter":
-        #    print("node not in node_config ")
+        print("node not in node_config ")
         #    print(one["node"])
         return
 
@@ -476,7 +476,7 @@ def save_logs(output_path, results):
         save_data["path"] = split_path_str
         save_data["count"] = len(result)
         save_data["timestamp"] = int(last_timestamp/1000000)
-
+        set_car_info(save_data)
         #print(json.dumps(save_data, sort_keys=True, indent=4))
         with open(output_path, "a+") as fp:
             fp.write("{0}\n".format(json.dumps(save_data)))
