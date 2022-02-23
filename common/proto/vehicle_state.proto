@@ -25,7 +25,17 @@ message VehicleState {
   optional bool warn_light = 15 [default = false];   //报警灯
   optional bool parking_brake = 16 [default = false];
 
-  optional chassis.LongitudeDrivingMode longitude_driving_mode = 20;
-  optional chassis.EPSSteeringMode eps_steering_mode = 21;
-  optional uint32 steering_sign = 22;
+    optional chassis.LongitudeDrivingMode longitude_driving_mode = 20;
+    optional chassis.EPSSteeringMode eps_steering_mode = 21;
+    optional uint32 steering_sign = 22;
+
+    optional bool steer_inference = 23 [default = false]; //方向盘干预
+    optional bool brake_inference = 24 [default = false]; //制动踏板干预
+    optional bool accel_inference = 25 [default = false]; //加速踏板干预
+    optional bool gear_switch_inference = 26 [default = false]; //档位切换干预 
+    optional bool location_missing = 27 [default = false]; //未收到定位
+    optional bool trajectory_missing = 28 [default = false]; //未收到轨迹
+    optional bool chassis_status_missing = 29 [default = false]; //未收到车辆底盘反馈信息
+    optional bool brake_light_status = 30 [default = false]; //自驾模式下制动灯状态
+    optional bool pilot_mode_condition_met = 31 [default = false];
 }
