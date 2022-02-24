@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <launch>
-  <node name="trt_yolov5" pkg = "trt_yolov5" type = "trt_yolov5_node" output = "screen">
+  <node name="perception_camera_2D_front" pkg = "perception_camera_2D_front" type = "perception_camera_2D_front_node" output = "screen">
     <param name = "serialize" type = "string" value = "-s" />
     <param name = "weights" type = "string" value = "$(find models)/tensorRT_weights/mogo_5m.wts" />
     <param name = "names" type = "string" value = "$(find models)/tensorRT_weights/obj.names"/>

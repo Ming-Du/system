@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+
+  <node name="perception_camera_2D_front" pkg = "perception_camera_2D_front" type = "perception_camera_2D_front_node" output = "screen">
+    <param name = "model_weights" type = "string" value = "$(find models)/tensorRT_weights/cv2d_objdet_b2.engine" />
+    <param name = "obj_names" type = "string" value = "$(find models)/tensorRT_weights/obj.names"/>
+    <param name = "trfcLts_model_weights" type = "string" value = "$(find models)/tensorRT_weights/trfcLts_cls.engine" />
+    <param name = "trfcLts_names" type = "string" value = "$(find models)/tensorRT_weights/trfcLts.names"/>
+    <param name = "camera30_front_topic" type = "string" value = "/sensor/camera/sensing/image_raw_30" />
+    <param name = "camera60_front_topic" type = "string" value = "/sensor/camera/sensing/image_raw_60" />
+    <param name = "camera120_front_topic" type = "string" value = "/sensor/camera/sensing/image_raw_120" />
+    <param name = "camera_left_topic" type = "string" value = "/sensor/camera/sensing/image_raw_left" />
+    <param name = "camera_right_topic" type = "string" value = "/sensor/camera/sensing/image_raw_right" />
+    <param name = "camera_back_topic" type = "string" value = "/sensor/camera/sensing/image_raw_back" />
+    <param name = "use_camera_mode" type = "int" value = "2" />
+    <param name = "calibration_file" type = "string" value = "$(find config)/vehicle/sensor/calibrated_sensor.pb.txt" />
+  </node>
+
+
+</launch>
+
