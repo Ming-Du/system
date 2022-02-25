@@ -59,6 +59,7 @@ class Process(Thread):
       #self.NodeAlive = node_li.split("\n")
       self.NodeAlive = self.node_ping_alive()
       print self.NodeAlive
+      print self.NodeList
       for node_name in self.NodeList:
         if node_name in self.NodeAlive:
             rospy.loginfo(node_name +" on") 
