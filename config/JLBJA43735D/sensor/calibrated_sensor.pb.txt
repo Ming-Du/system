@@ -139,7 +139,6 @@ sensor_info {
     distort_matrix: -0.011960264065188755
   }
 }
-
 sensor_info {
   name: "c32_front_left"
   type: LSLIDAR_C32
@@ -152,10 +151,10 @@ sensor_info {
       z: 0.68
     }
     rotation {
-      w: 0.657319
-      x: 0.00986384
-      y: -0.00860478
-      z: 0.753499
+      w: 0.482384
+      x: 0.0206357
+      y: -0.011368
+      z: 0.875643
     }
   }
 }
@@ -177,6 +176,7 @@ sensor_info {
       y: 0.0164449
       z: 0.461562
     }
+
   }
 }
 sensor_info {
