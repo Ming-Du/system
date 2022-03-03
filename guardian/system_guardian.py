@@ -304,7 +304,7 @@ class Process(Thread):
              node_alive_li.append(ping_li[1])
           else:
              ping_flag = False
-        print "node_ping_alive for after======"
+      print "node_ping_alive for after======"
       print(node_alive_li)
       return node_alive_li        
       
