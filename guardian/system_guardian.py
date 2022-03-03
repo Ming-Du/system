@@ -42,6 +42,7 @@ class Process(Thread):
     self.start()
     
   def run(self):
+    print "entet run =========="
     pub_node = rospy.Publisher('/system/nodes',String, queue_size=100)
     pub_cpu = rospy.Publisher('/system/cpu',String, queue_size=100)
     pub_mem = rospy.Publisher('/system/mem',String, queue_size=100)
@@ -49,9 +50,10 @@ class Process(Thread):
     pub_progcpu = rospy.Publisher('/system/program/cpu',String, queue_size=100)
     pub_progmem = rospy.Publisher('/system/program/mem',String, queue_size=100)
     pub_netflow = rospy.Publisher('/system/netflow',String, queue_size=100)
-    
+    print "before rospy.Rate===="
     rate = rospy.Rate(1)
     while True:
+      print "enter run_while===="
       ps_num = 0
       self.node_state_dict = {}
       #d = os.popen("rosnode list")
