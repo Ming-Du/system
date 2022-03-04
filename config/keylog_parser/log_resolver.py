@@ -305,7 +305,7 @@ def analyze_inside_node(pub, data, record):
 
     if "use_callback" not in pub or len(pub["use_callback"]) == 0:
         print("no use_callback")
-        #data["wrong"] = "can't find callback"
+        data["wrong"] = "can't find callback"
         #return
 
     callback_size = len(pub["use_callback"])
