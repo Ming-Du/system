@@ -5,27 +5,36 @@ import "header.proto";
 import "chassis.proto";
 
 message VehicleState {
-  optional common.Header header = 1;
-  optional chassis.PilotMode pilot_mode = 2 [default = MODE_MANUAL];
-  optional float steering = 3 [default = 0]; // steering angle in degrees
-  optional float speed = 4 [default = 0];    // speed in m/s
-  optional float accel = 5 [default = 0];    // target acceleration in m/s^2
-  optional float throttle = 6 [default = 0]; // target throttle in percentage [0, 100]
-  optional float brake = 7 [default = 0];    // target brake in percentage [0, 100]
+    optional common.Header header = 1;
+    optional chassis.PilotMode pilot_mode = 2 [default = MODE_MANUAL];
+    optional float steering = 3 [default = 0]; // steering angle in degrees
+    optional float speed = 4 [default = 0];    // speed in m/s
+    optional float accel = 5 [default = 0];    // target acceleration in m/s^2
+    optional float throttle = 6 [default = 0]; // target throttle in percentage [0, 100]
+    optional float brake = 7 [default = 0];    // target brake in percentage [0, 100]
 
-  optional chassis.GearPosition gear = 8 [default = GEAR_NONE];
-  optional chassis.LightSwitch light = 9 [default = LIGHT_NONE];
+    optional chassis.GearPosition gear = 8 [default = GEAR_NONE];
+    optional chassis.LightSwitch light = 9 [default = LIGHT_NONE];
 
-  //TODO: move to chassis
-  optional bool horn = 10 [default = false];         //鸣笛
-  optional bool highbeam = 11 [default = false];     //远光灯
-  optional bool lowbeam = 12 [default = false];      //近光灯
-  optional bool foglight = 13 [default = false];     //雾灯
-  optional bool clearance_lamps = 14 [default = false];  //示廓灯
-  optional bool warn_light = 15 [default = false];   //报警灯
-  optional bool parking_brake = 16 [default = false];
+    //TODO: move to chassis
+    optional bool horn = 10 [default = false];         //鸣笛
+    optional bool highbeam = 11 [default = false];     //远光灯
+    optional bool lowbeam = 12 [default = false];      //近光灯
+    optional bool foglight = 13 [default = false];     //雾灯
+    optional bool clearance_lamps = 14 [default = false];  //示廓灯
+    optional bool warn_light = 15 [default = false];   //报警灯
+    optional bool parking_brake = 16 [default = false];
 
-  optional chassis.LongitudeDrivingMode longitude_driving_mode = 20;
-  optional chassis.EPSSteeringMode eps_steering_mode = 21;
-  optional uint32 steering_sign = 22;
+    optional chassis.LongitudeDrivingMode longitude_driving_mode = 20;
+    optional chassis.EPSSteeringMode eps_steering_mode = 21;
+    optional uint32 steering_sign = 22;
+
+    optional bool steer_inference = 23 [default = false]; //方向盘干预
+    optional bool brake_inference = 24 [default = false]; //制动踏板干预
+    optional bool accel_inference = 25 [default = false]; //加速踏板干预
+    optional bool gear_switch_inference = 26 [default = false]; //档位切换干预 
+    optional bool location_missing = 27 [default = false]; //未收到定位
+    optional bool trajectory_missing = 28 [default = false]; //未收到轨迹
+    optional bool chassis_status_missing = 29 [default = false]; //未收到车辆底盘反馈信息
+    optional bool brake_light_status = 30 [default = false]; //自驾模式下制动灯状态
 }

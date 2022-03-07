@@ -88,7 +88,8 @@ message Object {
   optional LidarObjectSupplement lidar_supplement = 18;
   // radar supplement
   optional RadarObjectSupplement radar_supplement = 19;
-  
+    //lidar polygon
+  repeated geometry.Point polygon = 20;  // polygon points
 }
 
 message VisualObject {
@@ -138,7 +139,6 @@ message TrackedObjects {
   optional string sensor_name = 2;
   repeated TrackedObject objs = 3;
 }
-
 
 message RadarObject {
   optional Object obj = 1;

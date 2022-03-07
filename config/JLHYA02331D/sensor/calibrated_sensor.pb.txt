@@ -151,7 +151,7 @@ sensor_info {
       y: 1.01
       z: 0.66
     }
-    rotation { #2,-3.0,110.5
+    rotation { #0.8,-1.8,127.5
       w: 0.442125
       x: 0.0171745
       y: -0.00068647
@@ -159,6 +159,7 @@ sensor_info {
     }
   }
 }
+ 
 sensor_info {
   name: "c32_front_right"
   type: LSLIDAR_C32
@@ -170,7 +171,7 @@ sensor_info {
       y: -0.95
       z: 0.66
     }
-    rotation { # 5,-1.3,77.1
+    rotation { # -0.2,4.5,65.15
       w: 0.842
       x: -0.0226072
       y: 0.0321447
@@ -179,7 +180,87 @@ sensor_info {
   }
 }
 
+sensor_info {
+  name: "c16_rear"
+  type: LSLIDAR_C16
+  orientation: REAR
+  topic: "/sensor/lidar/rear/point_cloud"
+  extrinsic {
+    translation {
+      x: -1.45
+      y: 0.0
+      z: 0.72
+    }
+    rotation { #-2,-1.5,-1.5
+      w: 0.9996734
+      x: -0.0176207
+      y: -0.0128581
+      z: -0.0133149
+    }
+  }
+}
+
 sensor_info{
   name:"lidar_main"
   type:LSLIDAR_C32
+}
+
+sensor_info {
+  name: "radar_front"
+  type: CONTI_RADAR_ARS408
+  orientation: FRONT
+  topic: "perception/radar/front/radar_obstacle"
+  extrinsic {
+    translation {
+      x: 3.8
+      y: 0.0
+      z: 0.35
+    }
+    rotation {
+      w: 0.999848
+      x: 0.00000
+      y: 0.00000
+      z: -0.017452
+    }
+  }
+}
+
+sensor_info {
+  name: "radar_rear_left"
+  type: CONTI_RADAR_SRR308
+  orientation: LEFT_BACKWARD
+  topic: "perception/radar/rear_left/radar_obstacle"
+  extrinsic {
+    translation {
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    }
+    rotation {
+      w: 1.00000
+      x: 0.00000
+      y: 0.00000
+      z: 0.00000
+    }
+  }
+}
+
+sensor_info {
+  name: "radar_rear_right"
+  type: CONTI_RADAR_SRR308
+  orientation: RIGHT_BACKWARD
+  topic: "perception/radar/rear_right/radar_obstacle"
+  extrinsic {
+    translation {
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    }
+    rotation {
+      w: 1.00000
+      x: 0.00000
+      y: 0.00000
+      z: 0.00000
+    }
+  }
 }

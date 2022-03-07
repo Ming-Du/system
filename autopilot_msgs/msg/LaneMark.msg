@@ -5,7 +5,8 @@ int32 LANE_MARK_NONE = 0
 int32 LANE_MARK_SOLID = 1
 int32 LANE_MARK_BROKEN = 2
 
-
+int32 track_id                # laneline id after tracked, added by wandanpan
+int32 frame_lane_line_id      # laneline id before tracked, added by wandanpan
 int32 color
 int32 type
 float32 confidence

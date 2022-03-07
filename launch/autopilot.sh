@@ -8,6 +8,7 @@ Usage(){
     echo "byd        --byd车"
     echo "jinlv      --小巴车"
     echo "df         --东风车"
+    echo "hq         --红旗车"
     echo "silence    --后台启动[默认值]"
     echo "x          --xfce4窗口启动"
     echo "g          --gnome窗口启动"
@@ -64,17 +65,20 @@ start_node_terminal_multi(){
         $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $HADMAP_ENGINE';bash" $TitleOpt "hadmap_engine" &
         $GuiTerminal --tab -e "bash -c 'sleep 5; $LOG_ENV && $BASHRC && $RECORD_CACHE';bash" $TitleOpt "record_cache" &
         if [ "$VehicleType" == "wey" ];then
-            $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $VV6_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
-            $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $VV6_CONTROLLER';bash" $TitleOpt "controller" &
+            $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $VV6_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
+            $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $VV6_CONTROLLER';bash" $TitleOpt "controller" &
         elif [ "$VehicleType" == "jinlv" ];then
-            $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $JINLV_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
-            $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $JINLV_CONTROLLER';bash" $TitleOpt "controller" &
+            $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $JINLV_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
+            $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $JINLV_CONTROLLER';bash" $TitleOpt "controller" &
         elif [ "$VehicleType" == "byd" ];then
-            $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $BYD_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
-            $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $BYD_CONTROLLER';bash" $TitleOpt "controller" &
+            $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $BYD_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
+            $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $BYD_CONTROLLER';bash" $TitleOpt "controller" &
         elif [ "$VehicleType" == "df" ];then
-            $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $DONGFENG_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
-            $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $DONGFENG_CONTROLLER';bash" $TitleOpt "controller" &
+            $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $DONGFENG_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
+            $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $DONGFENG_CONTROLLER';bash" $TitleOpt "controller" &
+        elif [ "$VehicleType" == "hq" ];then
+            $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $HONGQI_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
+            $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $HONGQI_CONTROLLER';bash" $TitleOpt "controller" &
         else
             Logging "undefined vehicle type"
         fi   
@@ -89,7 +93,7 @@ start_node_terminal_multi(){
         $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $GUARDIAN_SLAVE';bash" $TitleOpt "guardian" &
     fi
 }
-
+ 
 
 # silence mode will not display log on terminal
 start_node_silence_multi(){
@@ -110,21 +114,20 @@ start_node_silence_multi(){
         sleep 3 && roslaunch --wait hadmap_engine hadmap_engine.launch 1>>${ROS_LOG_DIR}/hadmap_engine.launch.log 2>>${ROS_LOG_DIR}/hadmap_engine.launch.err &
         sleep 5 && roslaunch --wait $ABS_PATH/../config/vehicle/perception/camera/perception_camera.launch 1>>${ROS_LOG_DIR}/perception_camera.launch.log 2>>${ROS_LOG_DIR}/perception_camera.launch.err &
         if [ "$VehicleType" == "wey" ]; then
-            # sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
             sleep 3 && roslaunch --wait can_adapter vv6_can_adapter.launch 1>>${ROS_LOG_DIR}/vv6_can_adapter.launch.log 2>>${ROS_LOG_DIR}/vv6_can_adapter.launch.err &
             sleep 2 && roslaunch --wait controller controller_vv6.launch 1>>${ROS_LOG_DIR}/controller_vv6.launch.log 2>>${ROS_LOG_DIR}/controller_vv6.launch.err &
         elif [ "$VehicleType" == "df" ]; then
-            # sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
             sleep 3 && roslaunch --wait can_adapter DongFeng_E70_can_adapter.launch 1>>${ROS_LOG_DIR}/DongFeng_E70_can_adapter.launch.log 2>>${ROS_LOG_DIR}/DongFeng_E70_can_adapter.launch.err &
             sleep 2 && roslaunch --wait controller controller_dfe70.launch 1>>${ROS_LOG_DIR}/controller_dfe70.launch.log 2>>${ROS_LOG_DIR}/controller_dfe70.launch.err &
         elif [ "$VehicleType" == "jinlv" ]; then
-            # sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
             sleep 3 && roslaunch --wait can_adapter jinlv_can_adapter.launch 1>>${ROS_LOG_DIR}/jinlv_can_adapter.launch.log 2>>${ROS_LOG_DIR}/jinlv_can_adapter.launch.err &
             sleep 2 && roslaunch --wait controller controller_jinlv.launch 1>>${ROS_LOG_DIR}/controller_jinlv.launch.log 2>>${ROS_LOG_DIR}/controller_jinlv.launch.err &
         elif [ "$VehicleType" == "byd" ]; then
-            # sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
             sleep 3 && roslaunch --wait can_adapter byd_can_adapter.launch 1>>${ROS_LOG_DIR}/byd_can_adapter.launch.log 2>>${ROS_LOG_DIR}/byd_can_adapter.launch.err &
             sleep 2 && roslaunch --wait controller controller_qinpro.launch 1>>${ROS_LOG_DIR}/controller_qinpro.launch.log 2>>${ROS_LOG_DIR}/controller_qinpro.launch.err &
+        elif [ "$VehicleType" == "hq" ]; then
+            sleep 3 && roslaunch --wait can_adapter Hongqi_H9_can_adapter.launch >>${ROS_LOG_DIR}/Hongqi_H9_can_adapter.launch.log 2>>${ROS_LOG_DIR}/Hongqi_H9_can_adapter.launch.err &
+            sleep 2 && roslaunch --wait controller controller_hqh9.launch >>${ROS_LOG_DIR}/controller_hqh9.launch.log 2>>${ROS_LOG_DIR}/controller_hqh9.launch.err &
         else
             Logging "undefined vehicle type"
         fi
@@ -173,6 +176,9 @@ start_node_terminal(){
     elif [ "$VehicleType" == "df" ];then
         $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $DONGFENG_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
         $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $DONGFENG_CONTROLLER';bash" $TitleOpt "controller" &
+    elif [ "$VehicleType" == "hq" ];then
+            $GuiTerminal --tab -e "bash -c 'sleep 2; $LOG_ENV && $BASHRC && $HONGQI_CAN_ADAPTER';bash" $TitleOpt "canadapter" &
+            $GuiTerminal --tab -e "bash -c 'sleep 3; $LOG_ENV && $BASHRC && $HONGQI_CONTROLLER';bash" $TitleOpt "controller" &
     else
         Logging "undefined vehicle type"
     fi
@@ -195,21 +201,20 @@ start_node_silence(){
     sleep 7 && roslaunch --wait launch perception.launch 1>>${ROS_LOG_DIR}/perception.launch.log 2>>${ROS_LOG_DIR}/perception.launch.err &
          
     if [ "$VehicleType" == "wey" ]; then
-        # sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
         sleep 3 && roslaunch --wait can_adapter vv6_can_adapter.launch 1>>${ROS_LOG_DIR}/vv6_can_adapter.launch.log 2>>${ROS_LOG_DIR}/vv6_can_adapter.launch.err &
         sleep 2 && roslaunch --wait controller controller_vv6.launch 1>>${ROS_LOG_DIR}/controller_vv6.launch.log 2>>${ROS_LOG_DIR}/controller_vv6.launch.err &
     elif [ "$VehicleType" == "df" ]; then
-        # sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
         sleep 3 && roslaunch --wait can_adapter DongFeng_E70_can_adapter.launch 1>>${ROS_LOG_DIR}/DongFeng_E70_can_adapter.launch.log 2>>${ROS_LOG_DIR}/DongFeng_E70_can_adapter.launch.err &
         sleep 2 && roslaunch --wait controller controller_dfe70.launch 1>>${ROS_LOG_DIR}/controller_dfe70.launch.log 2>>${ROS_LOG_DIR}/controller_dfe70.launch.err &
     elif [ "$VehicleType" == "jinlv" ]; then
-        # sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
         sleep 3 && roslaunch --wait can_adapter jinlv_can_adapter.launch 1>>${ROS_LOG_DIR}/jinlv_can_adapter.launch.log 2>>${ROS_LOG_DIR}/jinlv_can_adapter.launch.err &
         sleep 2 && roslaunch --wait controller controller_jinlv.launch 1>>${ROS_LOG_DIR}/controller_jinlv.launch.log 2>>${ROS_LOG_DIR}/controller_jinlv.launch.err &
     elif [ "$VehicleType" == "byd" ]; then
-        # sleep 2 && roslaunch operator_tool operator_tool.launch 2>&1 | tee ${ROS_LOG_DIR}/operator_tool.launch.log &
         sleep 3 && roslaunch --wait can_adapter byd_can_adapter.launch 1>>${ROS_LOG_DIR}/byd_can_adapter.launch.log 2>>${ROS_LOG_DIR}/byd_can_adapter.launch.err &
         sleep 2 && roslaunch --wait controller controller_qinpro.launch 1>>${ROS_LOG_DIR}/controller_qinpro.launch.log 2>>${ROS_LOG_DIR}/controller_qinpro.launch.err &
+    elif [ "$VehicleType" == "hq" ]; then
+        sleep 3 && roslaunch --wait can_adapter Hongqi_H9_can_adapter.launch >>${ROS_LOG_DIR}/Hongqi_H9_can_adapter.launch.log 2>>${ROS_LOG_DIR}/Hongqi_H9_can_adapter.launch.err &
+        sleep 2 && roslaunch --wait controller controller_hqh9.launch >>${ROS_LOG_DIR}/controller_hqh9.launch.log 2>>${ROS_LOG_DIR}/controller_hqh9.launch.err &
     else
         Logging "undefined vehicle type"
     fi
@@ -281,7 +286,7 @@ else
 fi
 Logging "path : $ABS_PATH"
 
-if [ "$VehicleType" != "wey" -a "$VehicleType" != "df" -a "$VehicleType" != "byd" -a "$VehicleType" != "jinlv" ];then
+if [ "$VehicleType" != "wey" -a "$VehicleType" != "df" -a "$VehicleType" != "byd" -a "$VehicleType" != "jinlv" -a "$VehicleType" != "df" -a "$VehicleType" != "hq" ];then
     Logging "error:不支持此车型。车型：$VehicleType"
     Usage
     exit 0
@@ -391,10 +396,12 @@ VV6_CAN_ADAPTER="roslaunch --wait can_adapter vv6_can_adapter.launch 2>&1 | tee 
 BYD_CAN_ADAPTER="roslaunch --wait can_adapter byd_can_adapter.launch 2>&1 | tee -i \${ROS_LOG_DIR}/byd_can_adapter.launch.log"
 JINLV_CAN_ADAPTER="roslaunch --wait can_adapter jinlv_can_adapter.launch 2>&1 | tee -i \${ROS_LOG_DIR}/jinlv_can_adapter.launch.log"
 DONGFENG_CAN_ADAPTER="roslaunch --wait can_adapter DongFeng_E70_can_adapter.launch 2>&1 | tee -i \${ROS_LOG_DIR}/DongFeng_E70_can_adapter.launch.log"
+HONGQI_CAN_ADAPTER="roslaunch --wait can_adapter Hongqi_H9_can_adapter.launch 2>&1 | tee -i \${ROS_LOG_DIR}/Hongqi_H9_can_adapter.launch.log"
 VV6_CONTROLLER="roslaunch --wait controller controller_vv6.launch 2>&1 | tee -i \${ROS_LOG_DIR}/controller_vv6.launch.log"
 BYD_CONTROLLER="roslaunch --wait controller controller_qinpro.launch 2>&1 | tee -i \${ROS_LOG_DIR}/controller_qinpro.launch.log"
 JINLV_CONTROLLER="roslaunch --wait controller controller_jinlv.launch 2>&1 | tee -i \${ROS_LOG_DIR}/controller_jinlv.launch.log"
 DONGFENG_CONTROLLER="roslaunch --wait controller controller_dfe70.launch 2>&1 | tee -i \${ROS_LOG_DIR}/controller_dfe70.launch.log"
+HONGQI_CONTROLLER="roslaunch --wait controller controller_hqh9.launch 2>&1 | tee -i \${ROS_LOG_DIR}/controller_hqh9.launch.log"
 CHEJI="roslaunch --wait telematics telematics.launch 2>\${ROS_LOG_DIR}/telematics.launch.log"
 LOCAL_PLANNER="roslaunch --wait launch local_planning.launch 2>&1 | tee -i \${ROS_LOG_DIR}/local_planning.launch.log"
 HAD_MAP="roslaunch --wait launch hadmap.launch 2>&1 | tee -i \${ROS_LOG_DIR}/hadmap.launch.log"

@@ -53,9 +53,10 @@ class Process(Thread):
     while True:
       ps_num = 0
       self.node_state_dict = {}
-      d = os.popen("rosnode list")
-      node_li = d.read()
-      self.NodeAlive = node_li.split("\n")
+      #d = os.popen("rosnode list")
+      #node_li = d.read()
+      #self.NodeAlive = node_li.split("\n")
+      self.NodeAlive = self.node_ping_alive()
       print self.NodeAlive
       for node_name in self.NodeList:
         if node_name in self.NodeAlive:
@@ -280,6 +281,27 @@ class Process(Thread):
         #print(netmsg)
         #print(flow_dict)
 
+  def node_ping_alive(self):
+      ping_flag = False
+      node_alive_li = []
+      prog = Popen("rosnode ping -a", shell=True, stdout=PIPE)
+      node_li = prog.stdout.read()
+      #output = prog.communicate()
+      #output_li = list(output)
+      node_li = node_li.split("\n")
+      for ping_line in node_li:
+          ping_li = ping_line.split(" ")
+          if ping_li[0] == "pinging":
+             if ping_flag and len(node_alive_li) > 0:
+                node_alive_li.pop()
+             ping_flag = True
+             node_alive_li.append(ping_li[1])
+          else:
+             ping_flag = False
+      print(node_alive_li)
+      return node_alive_li        
+      
+    
 def topicFun(rostopic_file, brandtopicfile):
     topic_orig_dict = {}
     topic_orig_list = []
