@@ -14,6 +14,8 @@
     <param name = "camera_right_topic" type = "string" value = "/sensor/camera/sensing/image_raw_right" />
     <param name = "camera_back_topic" type = "string" value = "/sensor/camera/sensing/image_raw_back" />
     <param name = "use_camera_mode" type = "int" value = "1" />
+    <param name = "v2x_enable" type = "int" value = "0" />
+    <param name = "stop_line_dir_debug" type = "string" value = "" />
     <param name = "calibration_file" type = "string" value = "$(find config)/vehicle/sensor/calibrated_sensor.pb.txt" />
   </node>
 
