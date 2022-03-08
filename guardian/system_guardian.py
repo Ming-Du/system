@@ -289,14 +289,11 @@ class Process(Thread):
   def node_ping_alive(self):
       ping_flag = False
       node_alive_li = []
-      print "bebore rosnode ping -a ========="
       prog = Popen("rosnode ping -a", shell=True, stdout=PIPE)
-      print "after rosnode ping -a ========"
       node_li = prog.stdout.read()
       #output = prog.communicate()
       #output_li = list(output)
       node_li = node_li.split("\n")
-      print "node_ping_alive for before====="
       for ping_line in node_li:
           ping_li = ping_line.split(" ")
           if ping_li[0] == "pinging":
@@ -306,7 +303,6 @@ class Process(Thread):
              node_alive_li.append(ping_li[1])
           else:
              ping_flag = False
-      print "node_ping_alive for after======"
       print(node_alive_li)
       return node_alive_li        
       

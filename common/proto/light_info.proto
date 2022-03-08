@@ -23,17 +23,17 @@ message Header {
   // Module name.
   optional string module_name = 4;
 }
-
+ 
 message LightInfo
 {
-    //路口ID
-  optional string       nCrossID = 1;
+  //路口ID
+  optional string nCrossID = 1;
   //纬度
   optional double   lat = 2;
   //经度
   optional double   lon = 3;
   //方向
-  optional string      direction = 4;
+  optional string direction = 4;
   //航向角
   optional string    heading  = 5;
   //信号灯ID
@@ -53,9 +53,5 @@ message LightInfo
   //optional lightstate.state mid.remain = 12;
   //右转灯色
   optional lightstate.state right = 13;
-  //右转剩余时间
-  //optional lightstate.state right.remain = 14;
-  //
   optional Header header = 15;
-
 }

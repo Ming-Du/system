@@ -139,26 +139,26 @@ sensor_info {
     distort_matrix: -0.011960264065188755
   }
 }
-
 sensor_info {
   name: "c32_front_left"
   type: LSLIDAR_C32
   orientation: LEFT_FORWARD
   topic: "/sensor/lidar/front_left/point_cloud"
   extrinsic {
-    translation {
+    translation {#0,-1.5,97.8
       x: 4.96
       y: 0.97
       z: 0.68
     }
-    rotation {
-      w: 0.482384
-      x: 0.0206357
-      y: -0.011368
-      z: 0.875643
+    rotation {#-0.45,-2.7,119.3
+      w: 0.5052166
+      x: 0.0183472
+      y: -0.0152921
+      z: 0.862662
     }
   }
 }
+
 sensor_info {
   name: "c32_front_right"
   type: LSLIDAR_C32
@@ -166,18 +166,20 @@ sensor_info {
   topic: "/sensor/lidar/front_right/point_cloud"
   extrinsic {
     translation {
-      x: 4.95
-      y: -1.00
-      z: 0.65
+      x: 4.91
+      y: -0.95
+      z: 0.68
     }
-    rotation {# 1.2,1.5,55
-      w: 0.88695
-      x: 0.00324402
-      y: 0.0164449
-      z: 0.461562
+    rotation {#1.4,1.4,52.4
+      w: 0.8971903
+      x: 0.0055675
+      y: 0.0163545
+      z: 0.441306
     }
+
   }
 }
+
 sensor_info {
   name: "c32_rear"
   type: LSLIDAR_C32
@@ -186,17 +188,18 @@ sensor_info {
   extrinsic {
     translation {
       x: -1.1
-      y: -0.16
-      z: 0.73
+      y: 0.05
+      z: 0.8
     }
-    rotation {#x,2.0 y,0.7 z,-89.0
-      w: 0.713054
-      x: 0.0167286
-      y: -0.00787602
-      z: -0.700865
+    rotation {#2,0.2,-91.6
+      w: 0.697036
+      x: 0.0134182
+      y: -0.0112952
+      z: -0.7168216
     }
   }
 }
+
 sensor_info{
   name:"lidar_main"
   type:LSLIDAR_C32

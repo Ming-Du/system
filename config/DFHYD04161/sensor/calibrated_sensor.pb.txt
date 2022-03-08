@@ -218,3 +218,23 @@ sensor_info {
     }
   }
 }
+
+sensor_info {
+  name: "radar_rear_right"
+  type: CONTI_RADAR_SRR308
+  orientation: RIGHT_BACKWARD
+  topic: "perception/radar/rear_right/radar_obstacle"
+  extrinsic {
+    translation {
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    }
+    rotation {
+      w: 1.00000
+      x: 0.00000
+      y: 0.00000
+      z: 0.00000
+    }
+  }
+}
