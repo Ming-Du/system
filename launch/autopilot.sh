@@ -76,59 +76,36 @@ log4j.appender.${ErrorAppender}.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH
     # "
 }
 
-create_roslog_config_file() {
-    local pkg_set
-    if [ -f $ROSCONSOLE_CONFIG_FILE ]; then
-        rm -f $ROSCONSOLE_CONFIG_FILE
-    fi
-    Logging "${#nodes_array[@]} nodes will be launched"
-    for root_file in "${nodes_array[@]}"; do
-        include_file=$(roslaunch --files $root_file)
-        for child_file in $include_file; do
-            if [ -z "$child_file" ]; then
-                continue
+start_onenode() {
+    local node="$1"
+    include_file=$(roslaunch --files $node)
+    for child_file in $include_file; do
+        if [ -z "$child_file" ]; then
+            continue
+        fi
+        pkg_name=$(xmllint --xpath "//@pkg" $child_file 2>/dev/null | sed 's/\"//g')
+        if [ -z "$pkg_name" ]; then
+            continue
+        fi
+        for value in $pkg_name; do
+            pkg=$(echo "$value" | awk -F= '{print $2}')
+            if [ $(echo $pkg_set | grep -o "$pkg" | wc -l) -eq 0 ]; then
+                pkg_set="$pkg_set|$pkg"
+                add_config $pkg INFO >$ROSCONSOLE_CONFIG_FILE
             fi
-            pkg_name=$(xmllint --xpath "//@pkg" $child_file | sed 's/\"//g')
-            if [ -z "$pkg_name" ]; then
-                continue
-            fi
-            for value in $pkg_name; do
-                pkg=$(echo "$value" | awk -F= '{print $2}')
-                if [ $(echo $pkg_set | grep -o "$pkg" | wc -l) -eq 0 ]; then
-                    pkg_set="$pkg_set|$pkg"
-                    add_config $pkg
-                fi
-            done
         done
     done
+    launch_file=$(echo $node | awk '{print $NF}' | awk -F/ '{print $NF}')
+    if [ "$GuiServer" == "silence" ]; then
+        roslaunch --wait $node >${ROS_LOG_DIR}/${launch_file}.log 2>${ROS_LOG_DIR}/${launch_file}.err &
+    else
+        $GuiTerminal --tab -e "bash -c 'sleep 3; $BASHRC && roslaunch --wait $node 2>${ROS_LOG_DIR}/${launch_file}.err 2>&1 | tee -i ${ROS_LOG_DIR}/${launch_file}.log';bash" $TitleOpt "${launch_file}" &
+    fi
 }
-
 start_node() {
     while read node || [[ -n $node ]]; do
         Logging "roslaunch $node"
-        include_file=$(roslaunch --files $node)
-        for child_file in $include_file; do
-            if [ -z "$child_file" ]; then
-                continue
-            fi
-            pkg_name=$(xmllint --xpath "//@pkg" $child_file | sed 's/\"//g')
-            if [ -z "$pkg_name" ]; then
-                continue
-            fi
-            for value in $pkg_name; do
-                pkg=$(echo "$value" | awk -F= '{print $2}')
-                if [ $(echo $pkg_set | grep -o "$pkg" | wc -l) -eq 0 ]; then
-                    pkg_set="$pkg_set|$pkg"
-                    add_config $pkg INFO >$ROSCONSOLE_CONFIG_FILE
-                fi
-            done
-        done
-        launch_file=$(echo $node | awk '{print $NF}' | awk -F/ '{print $NF}')
-        if [ "$GuiServer" == "silence" ]; then
-            roslaunch --wait $node >${ROS_LOG_DIR}/${launch_file}.log 2>${ROS_LOG_DIR}/${launch_file}.err &
-        else
-            $GuiTerminal --tab -e "bash -c 'sleep 3; $BASHRC && roslaunch --wait $node 2>${ROS_LOG_DIR}/${launch_file}.err 2>&1 | tee -i ${ROS_LOG_DIR}/${launch_file}.log';bash" $TitleOpt "${launch_file}" &
-        fi
+        start_onenode "$node"
         sleep 1
     done <$ListFile
 }
@@ -136,68 +113,51 @@ start_node() {
 Logging() {
     datetime=$(date +"%Y-%m-%d %H:%M:%S")
     echo "[$datetime] $*"
-    echo "[$datetime] $*" >>$LOGFILE
+    [[ -n "$LOGFILE" ]] && echo "[$datetime] $*" >>$LOGFILE
 }
+
 install_ros_log()
 {
-     src_so_path=`find  /autocar-code/install/  -name 'libroscpp.so' | head -n 1`
+     src_so_path=`find /autocar-code/install/   -name 'libroscpp.so' | head -n 1`
      dst_so_path=`find  /opt -name  'libroscpp.so' | head -n 1`
-     conf_path=`find   /autocar-code/install/   -name 'ros_statics.conf' | head -n 1`
+     conf_path=`find  /autocar-code/install/  -name 'ros_statics.conf' | head -n 1`
      dst_conf_path="/home/mogo/data/log/ros_statics.conf"
      mkdir -p /home/mogo/data/log/ROS_STAT/
-     mkdir -p /home/mogo/data/log/ROS_STAT/EXPORT
+     mkdir -p /home/mogo/data/log/ROS_STAT/EXPORT/
      chmod 777 -R /home/mogo/data/log/
-     \cp -rf $src_so_path  $dst_so_path	
+     \cp -rf $src_so_path  $dst_so_path
      \cp -rf $conf_path    $dst_conf_path
 }
+
 # main
+
+param=$(getopt -o r --long start-node: -n 'example.bash' -- "$@")
+eval set -- "$param"
+while true; do
+    case "$1" in
+    -r)
+        echo "-r"
+        shift
+        ;;
+    --start-node)
+        startnode=$2
+        shift 2
+        ;;
+    --)
+        shift
+        break
+        ;;
+    *)
+        echo "error"
+        exit 1
+        ;;
+    esac
+done
+
 export ABS_PATH # autopilot.sh脚本的路径
 ABS_PATH="$(cd "$(dirname $0)" && pwd)"
-LOGFILE="/home/mogo/data/log/autopilot.log"
+[[ -z "$startnode" ]] && LOGFILE="/home/mogo/data/log/autopilot.log"
 
-install_ros_log
-# 自动驾驶自检
-stat_file="/home/mogo/data/vehicle_monitor/check_system.txt"
-while [ true ]; do
-    # 运维自检状态
-    if [ -f $stat_file ];then
-        [[ $(head -1 $stat_file) -ne 0 ]] && Logging "system check failed" && continue
-    fi
-    bash $ABS_PATH/check.sh c >>$LOGFILE
-    if [ $? -eq 0 ]; then
-        break
-    fi
-    Logging "autopilot check failed"
-    sleep 1
-    continue
-done
-
-export last_launch_time
-if [ -f $ABS_PATH/launch_time ]; then
-    last_launch_time=$(cat $ABS_PATH/launch_time)
-fi
-if [ -z "$last_launch_time" ]; then
-    last_launch_time="20211222211202" #随便初始的一个日期时间，不要在意细节
-fi
-while [ true ]; do
-    systime=$(date +"%Y%m%d%H%M%S")
-    if [ $systime -gt $last_launch_time ]; then
-        Logging "systime synchronization at $systime"
-        echo $systime >$ABS_PATH/launch_time
-        break
-    fi
-    sleep 1
-done
-curtime=$(date +"%Y%m%d%H%M%S")
-mv $LOGFILE "/home/mogo/data/log/autopilot-${curtime}.log"
-LOGFILE="/home/mogo/data/log/autopilot-${curtime}.log"
-Logging "path : $ABS_PATH"
-if [ $# -eq 0 ]; then
-    Logging "error:请指定车型"
-    Usage
-    exit 0
-fi
-Logging "command : $0 $@"
 # GuiServer:
 # silence -- 后台启动
 # xfce4 -- docker中启动 终端使用xfce4-terminal
@@ -211,7 +171,7 @@ export TitleOpt        # 指定terminal窗口标题的选项，xfce为'-T'，gno
 export SETUP_ROS       # ros系统自带的setup.bash路径，一般位于/opt/ros/melodic/setup.bash
 export SETUP_AUTOPILOT # 用户程序的setup.bash
 export VEHICLE_PLATE
-if [ -f /home/mogo/data/vehicle_monitor/vehicle_config.txt ];then
+if [ -f /home/mogo/data/vehicle_monitor/vehicle_config.txt ]; then
     VEHICLE_PLATE=$(grep plate /home/mogo/data/vehicle_monitor/vehicle_config.txt | awk -F: '{print $2}' | sed -e 's/ //g' -e 's/\"//g')
 fi
 # autopilot:/home/mogo/autopilot/share/launch
@@ -267,6 +227,7 @@ else
         ListFile=${ABS_PATH}/${ros_machine}.list
     fi
 fi
+Logging "start list file:$ListFile"
 check_env
 Logging "rosmachine:${ros_machine} rosmaster:${ros_master} xavier_type:${xavier_type}"
 
@@ -285,7 +246,7 @@ export GLOG_logtostderr=1
 export GLOG_colorlogtostderr=1
 export LOG_DIR="/home/mogo/data/log"
 # ros日志存储路径的环境变量
-export ROS_LOG_DIR="${LOG_DIR}/$(date +"%Y%m%d_%H%M%S")"
+export ROS_LOG_DIR
 export BAG_DIR="/home/mogo/data/bags"
 # ros日志配置文件的环境变量
 # export ROSCONSOLE_FORMAT='[${severity}] ${time} [${function}(${line})]:${message}'
@@ -294,49 +255,106 @@ Logging "ROSCONSOLE_CONFIG_FILE=${ROSCONSOLE_CONFIG_FILE}"
 export ROS_HOSTNAME=${ros_machine}
 export ROS_MASTER_URI=http://${ros_master}:11311
 export launch_prefix="roslaunch --wait"
-export LOG_ENV="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1; export ROS_LOG_DIR=${ROS_LOG_DIR}; export ROS_MASTER_URI=http://${ros_master}:11311; export ROS_HOSTNAME=${ros_machine}"
+export OMP_NUM_THREADS=1
+
+export BASHRC="source ${SETUP_ROS} && source ${SETUP_AUTOPILOT}"
+source $SETUP_ROS
+source $SETUP_AUTOPILOT
+
+if [ -n "$startnode" ]; then
+    ROS_LOG_DIR=$(readlink ${LOG_DIR}/latest)
+    node=$(grep -w $startnode $ListFile)
+    start_onenode "$node"
+    sleep 1
+    exit 0
+fi
+
+install_ros_log
+# 自动驾驶自检
+stat_file="/home/mogo/data/vehicle_monitor/check_system.txt"
+while [ true ]; do
+    # 运维自检状态
+    if [ -f $stat_file ]; then
+        [[ $(head -1 $stat_file) -ne 0 ]] && Logging "system check failed" && continue
+    fi
+    bash $ABS_PATH/check.sh >>$LOGFILE
+    if [ $? -eq 0 ]; then
+        break
+    fi
+    Logging "autopilot check failed"
+    sleep 1
+    continue
+done
+
+#check system time
+export last_launch_time
+if [ -f $ABS_PATH/launch_time ]; then
+    last_launch_time=$(cat $ABS_PATH/launch_time)
+fi
+if [ -z "$last_launch_time" ]; then
+    last_launch_time="20211222211202" #随便初始的一个日期时间，不要在意细节
+fi
+while [ true ]; do
+    systime=$(date +"%Y%m%d%H%M%S")
+    if [ $systime -gt $last_launch_time ]; then
+        Logging "systime synchronization at $systime"
+        echo $systime >$ABS_PATH/launch_time
+        break
+    fi
+    sleep 1
+done
+curtime=$(date +"%Y%m%d%H%M%S")
+mv $LOGFILE "/home/mogo/data/log/autopilot-${curtime}.log"
+LOGFILE="/home/mogo/data/log/autopilot-${curtime}.log"
+
+ROS_LOG_DIR="${LOG_DIR}/$(date +"%Y%m%d_%H%M%S")"
 [[ ! -d $ROS_LOG_DIR ]] && mkdir -p $ROS_LOG_DIR
 ln -snf $ROS_LOG_DIR ${LOG_DIR}/latest
 Logging "ROS_LOG_DIR=$ROS_LOG_DIR"
 [[ ! -d $BAG_DIR ]] && mkdir -p $BAG_DIR
+export LOG_ENV="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1; export ROS_LOG_DIR=${ROS_LOG_DIR}; export ROS_MASTER_URI=http://${ros_master}:11311; export ROS_HOSTNAME=${ros_machine}"
 
+Logging "path : $ABS_PATH"
+if [ $# -eq 0 ]; then
+    Logging "error:请指定车型"
+    Usage
+    exit 0
+fi
+Logging "command : $0 $@"
+
+find ${LOG_DIR} -maxdepth 1 -mtime +3 -type d -exec rm -Rf {} \;
+find ${LOG_DIR} -name "autopilot*.log" -mtime +1 -exec rm -Rf {} \;
+find $BAG_DIR -maxdepth 1 -mtime +1 -type d -exec rm -Rf {} \;
 core_pid=$(ps aux | grep -v grep | grep "roscore$" | awk '{print $2}')
 if [ ! -z "$core_pid" ]; then
     rosnode kill -a
     kill $core_pid
 fi
 
-find ${LOG_DIR} -maxdepth 1 -mtime +3 -type d -exec rm -Rf {} \;
-find ${LOG_DIR} -name "autopilot*.log" -mtime +1 -exec rm -Rf {} \;
-find $BAG_DIR -maxdepth 1 -mtime +1 -type d -exec rm -Rf {} \;
 
-export BASHRC="source ${SETUP_ROS} && source ${SETUP_AUTOPILOT}"
-source $SETUP_ROS
-source $SETUP_AUTOPILOT
-
-rosrun update_config update_config 2>&1 > $ROS_LOG_DIR/update_config.log
-  
 local_ip=`ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"|grep 103`
-
-
 ip_1103="192.168.1.103"
 ip_8103="192.168.8.103"
 
-#䷾@个server 5个client
-if [ "$ros_machine" == "rosmaster" ]; then
+if [ "$ros_machine" == "$ros_master" ]; then
     roscore 2>&1 >$ROS_LOG_DIR/roscore.log &
-    python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_client.py &
-
+    python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_client.py >/dev/null 2>&1 &
 elif [ "$local_ip" == "$ip_1103" ]; then
-    python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_server.py &
-    python3 /home/mogo/autopilot/share/config/keylog_parser/log_resolver.py &
-
+    python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_server.py >/dev/null 2>&1 &
+    python3 /home/mogo/autopilot/share/config/keylog_parser/log_resolver.py >/dev/null 2>&1 &
 elif [ "$local_ip" == "$ip_8103" ]; then
-    python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_server.py &
-    python3 /home/mogo/autopilot/share/config/keylog_parser/log_resolver.py &
-
+    python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_server.py >/dev/null 2>&1 &
+    python3 /home/mogo/autopilot/share/config/keylog_parser/log_resolver.py >/dev/null 2>&1 &
 else
-    python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_client.py &
+    python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_client.py >/dev/null 2>&1 &
 fi
-# create_roslog_config_file
+
+sleep 1
+# 配置更新
+timeout 120 roslaunch --wait update_config update_config.launch > $ROS_LOG_DIR/update_config.launch.log 2> $ROS_LOG_DIR/update_config.launch.err
+
+if [ $? -eq 124 ];then
+    Logging "update config timeout"
+fi
+
 start_node

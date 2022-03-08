@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(update_config)
+project(update_map)
 
 add_definitions(-std=c++11)
 
 # list(APPEND CMAKE_PREFIX_PATH /home/opencv_test/)
-
 
 add_compile_options(-Wno-deprecated-declarations)
 ## Find catkin macros and libraries
@@ -72,7 +71,6 @@ install(DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
   FILES_MATCHING PATTERN "*.launch"
 )
-
 # install(DIRECTORY include/${PROJECT_NAME}/
 #    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 #    FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"

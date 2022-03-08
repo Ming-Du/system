@@ -37,10 +37,6 @@ node_config["/sensor/lidar/robosense/drivers_robosense_node"] = {}
 node_config["/sensor/lidar/robosense/drivers_robosense_node"]["sub"] = []
 node_config["/sensor/lidar/robosense/drivers_robosense_node"]["pub"] = "/sensor/lidar/middle/point_cloud"
 
-node_config["/sensor/lidar/robosense/drivers_robosense_node"] = {}
-node_config["/sensor/lidar/robosense/drivers_robosense_node"]["sub"] = []
-node_config["/sensor/lidar/robosense/drivers_robosense_node"]["pub"] = "/sensor/lidar/middle/point_cloud"
-
 node_config["/sensor/lidar/c32/front_left/c32_left_decoder"] = {}
 node_config["/sensor/lidar/c32/front_left/c32_left_decoder"]["sub"] = []
 node_config["/sensor/lidar/c32/front_left/c32_left_decoder"]["pub"] = "/sensor/lidar/front_left/point_clound"

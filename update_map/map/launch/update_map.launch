@@ -1,0 +1,4 @@
+<launch>
+  <node name="update_map" pkg="update_map" type="update_map">
+  </node>
+</launch>

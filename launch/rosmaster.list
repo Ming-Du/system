@@ -1,4 +1,5 @@
 launch drivers_gnss.launch
+update_map update_map.launch
 launch drivers_camera.launch
 launch can_adapter.launch
 localization localization.launch

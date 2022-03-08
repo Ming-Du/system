@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iostream>
 #include <list>
+#include <map>
 #include <string>
 #include <functional>
 #include <sys/types.h>
@@ -23,9 +24,6 @@ struct DownloadFile
 	std::string map_url;
 	std::string version;
 };
-
-
-
 
 struct FileInfo 
 {
@@ -54,7 +52,7 @@ struct MemoryStruct
 
 static size_t my_write_func(void *ptr, size_t size, size_t nmemb, int *stream)
 {
-	return write(*stream, ptr, size*nmemb);
+  return write(*stream, ptr, size*nmemb);
 }
 
 static int my_progress_func(char *progress_data,
@@ -67,6 +65,21 @@ static int my_progress_func(char *progress_data,
   return 0;
 }
 
+/*
+static size_t my_fwrite(void *buffer, size_t size, size_t nmemb, void *stream)
+{
+	struct FileInfo *out=(struct FileInfo *)stream;
+	if(out && !out->stream) 
+	{
+		std::cout << "file name is " << out->filename << std::endl;
+		out->stream=fopen(out->filename, "wb");
+		if(!out->stream)
+			return -1;
+	}
+	return fwrite(buffer, size, nmemb, out->stream);
+}
+
+*/
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *data)
 {
     size_t realsize = size * nmemb;
@@ -123,25 +136,17 @@ class MogoCurl
 		~MogoCurl();
 		CURLcode Init();
 		std::string GetPlate();
-		bool DownloadBinaryFileImpl(const std::string &update_url, const std::string &check_url, 
-				const std::string &mac_addr, const std::string &SN);
+		bool DownloadFileMapImpl(const std::string &update_url, const std::string &check_url, 
+				const std::string &mac_addr, const std::string &SN, double longtitude, double latitude, double altitude);
+	//private:
+		bool GetUpdateFileList(const std::string &update_url, const std::string &mac_addr, const std::string &SN, 
+			std::list<DownloadFile> &file_list, double longtitude, double latitude, double altitude);
 
-		bool DownloadFileContentImpl(const std::string &update_url, const std::string &download_url, const std::string &check_url, const std::string &mac_addr, const std::string &SN);
-	private:
-		bool GetUpdateBinaryFileList(const std::string &update_url, const std::string &mac_addr, const std::string &SN, 
-			std::list<DownloadFile> &file_list);
-
-
-		bool GetUpdateFileList(const std::string &update_url, const std::string &mac_addr, 
-				const std::string &SN, std::list<std::string> &file_list);
-
-		bool DownloadBinaryFile(const std::string check_url, const std::string &SN, const std::string &mac_addr, const DownloadFile &pFile);
-
-		bool DownloadFileContent(const std::string &download_url, const std::string check_url, const std::string &SN, const std::string &mac_addr, const std::string &fileName);
-	private:
-		CURLcode Download(const std::string &url, std::string &file_path);
+		bool DownloadFileMap(const std::string check_url, const std::string &SN, const std::string &mac_addr, const DownloadFile &pFile);
+	//private:
 		CURLcode Get(const std::string &url, std::string &rstr);
 		CURLcode Post(const std::string &url, const std::string &pstr, std::string &rstr);
+		CURLcode Download(const std::string &url, std::string &file_path);
 	private:
 		CURL *m_curl_handle;
 		MD5 m_md5;
