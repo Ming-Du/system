@@ -353,6 +353,7 @@ export ROSCONSOLE_CONFIG_FILE="$ABS_PATH/../config/rosconsole.config"
 LoggingINFO "ROSCONSOLE_CONFIG_FILE=${ROSCONSOLE_CONFIG_FILE}"
 export ROS_HOSTNAME=${ros_machine}
 export ROS_MASTER_URI=http://${ros_master}:11311
+export OMP_NUM_THREADS=1
 
 export BASHRC="source ${SETUP_ROS} && source ${SETUP_AUTOPILOT}"
 source $SETUP_ROS
