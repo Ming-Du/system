@@ -1,0 +1,3 @@
+<launch>
+    <node name="monitor_gnss" pkg="monitor_gnss" type="monitor_gnss.py" output="screen"></node>
+</launch>

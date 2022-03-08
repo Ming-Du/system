@@ -5,3 +5,4 @@ launch slam_localization.launch
 launch local_planning.launch
 guardian system_guardian_slave1.launch
 record_cache record_cache.launch
+launch monitor_gnss.launch
