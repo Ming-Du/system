@@ -11,6 +11,8 @@ catkin_package(CATKIN_DEPENDS message_runtime std_msgs metric_msgs)
 
 catkin_install_python(PROGRAMS
   system_guardian.py
+  guardian_hardware.py
+  gethosttopic.py
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 install(FILES
@@ -18,11 +20,27 @@ install(FILES
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 install(FILES
-  system_guardian_master.launch
+  system_guardian_slave1.launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 install(FILES
-  system_guardian_slave.launch
+  system_guardian_slave2.launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+install(FILES
+  system_guardian_slave3.launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+install(FILES
+  system_guardian_slave4.launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+install(FILES
+  system_guardian_slave5.launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+install(FILES
+  system_guardian_slave6.launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 install(DIRECTORY rostopic/
