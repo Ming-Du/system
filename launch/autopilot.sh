@@ -376,7 +376,7 @@ while [ true ]; do
     if [ -f $stat_file ]; then
         [[ $(head -1 $stat_file) -ne 0 ]] && LoggingERR "system check failed" && continue
     fi
-    bash $ABS_PATH/check.sh >>$LOGFILE 2>>$ERRFILE
+    bash $ABS_PATH/check.sh c>>$LOGFILE 2>>$ERRFILE
     if [ $? -eq 0 ]; then
         break
     fi
