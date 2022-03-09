@@ -202,6 +202,9 @@ install_ros_log() {
     \cp -rf $src_so_path $dst_so_path
     \cp -rf $conf_path $dst_conf_path
 }
+add_privilege_monitor_gnss(){
+     chmod -R  777 /autocar-code/install/share/monitor_gnss
+}
 
 _exit() {
     LoggingINFO "receive quit signal"
@@ -369,6 +372,7 @@ if [ -n "$startnode" ]; then
 fi
 
 install_ros_log
+add_privilege_monitor_gnss
 # 自动驾驶自检
 stat_file="/home/mogo/data/vehicle_monitor/check_system.txt"
 while [ true ]; do
