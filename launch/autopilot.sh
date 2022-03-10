@@ -203,6 +203,7 @@ install_ros_log() {
     \cp -rf $conf_path $dst_conf_path
 }
 add_privilege_monitor_gnss(){
+     rm  /home/mogo/data/log/location.txt  -rf
      chmod -R  777 /autocar-code/install/share/monitor_gnss
 }
 
