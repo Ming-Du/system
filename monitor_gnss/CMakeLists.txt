@@ -18,5 +18,10 @@ install(
     FILES monitor_gnss.py
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/
   )
+install(
+    DIRECTORY  proto entity launch busi_module core_module
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/
+  )
+
 
 
