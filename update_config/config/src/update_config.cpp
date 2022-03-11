@@ -21,7 +21,7 @@ bool MoveTempMapFile()
 		size_t pos = temp_file_path.find(".sqlite.temp");
 		if(pos != -1)
 		{
-			std::string mv_cmd = "mv " + temp_file_path + " " + temp_file_path.substr(0, temp_file_path.size()-5);
+			std::string mv_cmd = "mv " + map_path + temp_file_path + " " + map_path + temp_file_path.substr(0, temp_file_path.size()-5);
 			system(mv_cmd.c_str());
 		}
 	}
