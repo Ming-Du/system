@@ -3,7 +3,6 @@ update_map update_map.launch
 launch perception_lidar.launch
 launch perception_fusion.launch
 launch slam_localization.launch
-launch local_planning.launch
 telematics telematics_slave.launch
 guardian system_guardian_slave1.launch
 record_cache record_cache.launch

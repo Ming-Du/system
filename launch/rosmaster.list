@@ -6,6 +6,7 @@ localization localization.launch
 launch hadmap.launch
 hadmap_engine hadmap_engine.launch
 launch perception_camera.launch
+launch local_planning.launch
 launch controller.launch
 telematics telematics.launch
 guardian system_guardian.launch
