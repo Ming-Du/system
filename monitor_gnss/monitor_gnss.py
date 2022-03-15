@@ -38,6 +38,8 @@ from entity.CollectVehicleInfo import   CollectVehicleInfo
 globalLocationPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_Location')
 globalCollectVehicleInfo  = CollectVehicleInfo()
 globalCommonPara = CommonPara()
+globalLastMicroSec = 0
+globalListPostion = []
 
 
 def task_localization(pb_msg):
@@ -57,26 +59,59 @@ def task_localization(pb_msg):
     #                                                                                 instanceLocInfoUnit.sec,
     #                                                                                 instanceLocInfoUnit.nsec)
 
-    dictInfoLog={}
-    dictInfoLog["sec"]=instanceLocInfoUnit.sec
-    dictInfoLog["nsec"]=instanceLocInfoUnit.nsec
-    dictInfoLog["car_info"]=globalCommonPara.dictCarInfo
-    dictInfoLog["pilotMode"]=int(globalCollectVehicleInfo.int_pilot_mode)
-    dictInfoLog["takeover_reason_code"] = int(globalCollectVehicleInfo.int_error_code)
-    dictInfoLog["takeover_reason_message"]=str(globalCollectVehicleInfo.str_err_msg)
-    dictInfoLog["position_x"]=instanceLocInfoUnit.MarkMapPosition_x
-    dictInfoLog["position_y"]=instanceLocInfoUnit.MarkMapPosition_y
-    dictInfoLog["location_longitude"]=instanceLocInfoUnit.MarkMapPosition_longitude
-    dictInfoLog["location_latitude"]= instanceLocInfoUnit.MarkMapPosition_latitude
-    strJsonLineContent = json.dumps(dictInfoLog)
-    # print strJsonLineContent
-    try:
-        with open('/home/mogo/data/log/location.txt', 'a+') as f:
-            f.write(strJsonLineContent)
-            f.write("\n")
-    except IOError:
-        print "operate file failed"
-        exit(-1)
+    dictPostionLog={}
+    #dictPostionLog["sec"]=instanceLocInfoUnit.sec
+    #dictPostionLog["nsec"]=instanceLocInfoUnit.nsec
+    # dictInfoLog["car_info"]=globalCommonPara.dictCarInfo
+    dictPostionLog["pilotMode"]=int(globalCollectVehicleInfo.int_pilot_mode)
+    dictPostionLog["takeover_reason_code"] = int(globalCollectVehicleInfo.int_error_code)
+    dictPostionLog["takeover_reason_message"]=str(globalCollectVehicleInfo.str_err_msg)
+    dictPostionLog["position_x"]=instanceLocInfoUnit.MarkMapPosition_x
+    dictPostionLog["position_y"]=instanceLocInfoUnit.MarkMapPosition_y
+    dictPostionLog["location_longitude"]=instanceLocInfoUnit.MarkMapPosition_longitude
+    dictPostionLog["location_latitude"]= instanceLocInfoUnit.MarkMapPosition_latitude
+    CurrentMicroSec = instanceLocInfoUnit.sec*1000 + instanceLocInfoUnit.nsec/1000000
+    dictPostionLog["msec"] = CurrentMicroSec
+
+
+    while True:
+        if globalLastMicroSec == 0:
+            print "enter first update globalLastMicroSec"
+            global globalListPostion
+            globalListPostion.append(dictPostionLog)
+            ## update last micro sec
+            global globalLastMicroSec
+            globalLastMicroSec = CurrentMicroSec
+            break
+        if (CurrentMicroSec  - globalLastMicroSec > 50) || (CurrentMicroSec  - globalLastMicroSec == 50):
+            print "enter second globalLastMicroSec"
+            global globalListPostion
+            globalListPostion.append(dictPostionLog)
+            ### update  last micro sec
+            global globalLastMicroSec
+            globalLastMicroSec = CurrentMicroSec
+            break
+        break
+    while True:
+        if (len(globalListPostion)  > 20)  ||   (len(globalListPostion) == 20):
+            dictLogInfo = {}
+            dictLogInfo["car_info"]=globalCommonPara.dictCarInfo
+            dictLogInfo["positions"]=globalListPostion
+            strJsonLineContent = json.dumps(dictPostionLog)
+            # print strJsonLineContent
+            try:
+                with open('/home/mogo/data/log/location.txt', 'a+') as f:
+                    f.write(strJsonLineContent)
+                    f.write("\n")
+                    global globalListPostion
+                    globalListPostion.clear()
+                    print "write finished, now clean globalListPostion"
+            except IOError:
+                print "operate file failed"
+                exit(-1)
+            break
+        break
+
 
 
 def localizationCallback(msg):
