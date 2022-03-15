@@ -73,27 +73,25 @@ def task_localization(pb_msg):
     CurrentMicroSec = instanceLocInfoUnit.sec*1000 + instanceLocInfoUnit.nsec/1000000
     dictPostionLog["msec"] = CurrentMicroSec
 
-
+    print "before while"
+    global globalListPostion
+    global globalLastMicroSec
     while True:
         if globalLastMicroSec == 0:
             print "enter first update globalLastMicroSec"
-            global globalListPostion
             globalListPostion.append(dictPostionLog)
             ## update last micro sec
-            global globalLastMicroSec
             globalLastMicroSec = CurrentMicroSec
             break
-        if (CurrentMicroSec  - globalLastMicroSec > 50) || (CurrentMicroSec  - globalLastMicroSec == 50):
+        if (CurrentMicroSec  - globalLastMicroSec > 50) or  (CurrentMicroSec  - globalLastMicroSec == 50):
             print "enter second globalLastMicroSec"
-            global globalListPostion
             globalListPostion.append(dictPostionLog)
             ### update  last micro sec
-            global globalLastMicroSec
             globalLastMicroSec = CurrentMicroSec
             break
         break
     while True:
-        if (len(globalListPostion)  > 20)  ||   (len(globalListPostion) == 20):
+        if (len(globalListPostion)  > 20)  or   (len(globalListPostion) == 20):
             dictLogInfo = {}
             dictLogInfo["car_info"]=globalCommonPara.dictCarInfo
             dictLogInfo["positions"]=globalListPostion
@@ -103,9 +101,9 @@ def task_localization(pb_msg):
                 with open('/home/mogo/data/log/location.txt', 'a+') as f:
                     f.write(strJsonLineContent)
                     f.write("\n")
-                    global globalListPostion
+                    #global globalListPostion
                     globalListPostion.clear()
-                    print "write finished, now clean globalListPostion"
+                    print "=================================write finished, now clean globalListPostion"
             except IOError:
                 print "operate file failed"
                 exit(-1)
