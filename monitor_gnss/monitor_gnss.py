@@ -40,6 +40,7 @@ globalCollectVehicleInfo  = CollectVehicleInfo()
 globalCommonPara = CommonPara()
 globalLastMicroSec = 0
 globalListPostion = []
+globalWriteInterval = 50
 
 
 def task_localization(pb_msg):
@@ -76,6 +77,7 @@ def task_localization(pb_msg):
     print "before while"
     global globalListPostion
     global globalLastMicroSec
+    print '=========c:%d---g:%d---len:%d' %(CurrentMicroSec,globalLastMicroSec,len(globalListPostion))
     while True:
         if globalLastMicroSec == 0:
             print "enter first update globalLastMicroSec"
@@ -83,32 +85,34 @@ def task_localization(pb_msg):
             ## update last micro sec
             globalLastMicroSec = CurrentMicroSec
             break
-        if (CurrentMicroSec  - globalLastMicroSec > 50) or  (CurrentMicroSec  - globalLastMicroSec == 50):
+        if (CurrentMicroSec  - globalLastMicroSec >  globalWriteInterval ) or  (CurrentMicroSec  - globalLastMicroSec == globalWriteInterval ):
             print "enter second globalLastMicroSec"
             globalListPostion.append(dictPostionLog)
             ### update  last micro sec
             globalLastMicroSec = CurrentMicroSec
             break
         break
-    while True:
-        if (len(globalListPostion)  > 20)  or   (len(globalListPostion) == 20):
-            dictLogInfo = {}
-            dictLogInfo["car_info"]=globalCommonPara.dictCarInfo
-            dictLogInfo["positions"]=globalListPostion
-            strJsonLineContent = json.dumps(dictPostionLog)
-            # print strJsonLineContent
-            try:
-                with open('/home/mogo/data/log/location.txt', 'a+') as f:
-                    f.write(strJsonLineContent)
-                    f.write("\n")
-                    #global globalListPostion
-                    globalListPostion.clear()
-                    print "=================================write finished, now clean globalListPostion"
-            except IOError:
-                print "operate file failed"
-                exit(-1)
-            break
-        break
+    #print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    if (len(globalListPostion)  >  (1000/globalWriteInterval) )  or   ( len(globalListPostion) == (1000/globalWriteInterval) ):
+        dictLogInfo = {}
+        dictLogInfo["car_info"]=globalCommonPara.dictCarInfo
+        dictLogInfo["positions"]=globalListPostion
+        strJsonLineContent = json.dumps(dictPostionLog)
+        # print strJsonLineContent
+        #print "bbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        try:
+            with open('/home/mogo/data/log/location.txt', 'a+') as f:
+                #print "dddddddddddddddddddddddd"
+                f.write(strJsonLineContent)
+                f.write("\n")
+                #global globalListPostion
+                #print "eeeeeeeeeeeeeeeeeeeeee"
+                globalListPostion=[]
+                #print "cccccccccccccccccccccccccccc"
+                print "#########################=================================write finished, now clean globalListPostion"
+        except IOError:
+            print "operate file failed"
+            exit(-1)
 
 
 
