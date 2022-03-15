@@ -97,7 +97,7 @@ def task_localization(pb_msg):
         dictLogInfo = {}
         dictLogInfo["car_info"]=globalCommonPara.dictCarInfo
         dictLogInfo["positions"]=globalListPostion
-        strJsonLineContent = json.dumps(dictPostionLog)
+        strJsonLineContent = json.dumps(dictLogInfo)
         # print strJsonLineContent
         #print "bbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         try:
@@ -199,6 +199,13 @@ def main():
     globalCommonPara.initPara()
     rospy.init_node('monitor_gnss', anonymous=True)
     # add listener
+    global globalWriteInterval
+    temp  = rospy.get_param('monitor_gnss_interval')
+    if temp  >= 1000 or temp <= 0 :
+        globalWriteInterval =  1000
+    else:
+        globalWriteInterval =  temp
+    print "=============================set globalWriteInterval:%d" %(globalWriteInterval)
     addLocalizationListener()
     ## wait msg
     rospy.spin()
