@@ -1,4 +1,5 @@
 launch drivers_lidar.launch
+update_map update_map.launch
 launch perception_lidar.launch
 launch perception_fusion.launch
 launch slam_localization.launch
