@@ -2,16 +2,30 @@
 
 Usage() {
     echo "Usage:"
-    echo "$(basename $0) <wey|byd|jinlv|df|hq> [silence|x|g]"
-    echo "Options:"
-    echo "wey        --长城车"
-    echo "byd        --byd车"
-    echo "jinlv      --小巴车"
-    echo "df         --东风车"
-    echo "hq         --红旗车"
-    echo "silence    --后台启动[默认值]"
-    echo "x          --xfce4窗口启动"
-    echo "g          --gnome窗口启动"
+    echo -e "\t$(basename $0) <VehicleType> [Style] [Options]"
+    echo
+    echo -e "\t<wey|byd|jinlv|df|hq> [silence|x|g] [[-n|--start-node <node-name>]|[-k|--keep-alive]|[-h|--help]]"
+    echo -e "\tVehicleType                    \t\twey:长城 byd:比亚迪 jinlv:小巴 df:东风 hq:红旗 "
+    echo -e "\tStyle                          \t\tsilence:后台启动(默认) x:xfce4窗口启动 g:gnome窗口启动"
+    echo -e "\tOptions:"
+    echo -e "\t\t-n|--start-node <node-name>  \t启动单个节点\tnode-name 节点名,eg:telematics"
+    echo -e "\t\t-k|--keep-alive              \t监控模式,指定此选项当某节点退出时会重新启动该节点"
+    echo -e "\t\t-h|--help                    \t帮助"
+    echo
+    echo "eg:"
+    echo -e "\t.================================================"
+    echo -e "\t|$(basename $0) df \t非监控模式后台启动东风车的所有节点"
+    echo -e "\t|================================================"
+    echo -e "\t|$(basename $0) df x\t非监控模式xface4窗口启动东风车的所有节点(容器内)"
+    echo -e "\t|================================================"
+    echo -e "\t|$(basename $0) df g\t非监控模式gnome窗口启动东风车的所有节点(宿主机)"
+    echo -e "\t|================================================"
+    echo -e "\t|$(basename $0) jinlv -k"
+    echo -e "\t|$(basename $0) jinlv --keep-alive \t监控模式后台启动小巴车的所有节点"
+    echo -e "\t|================================================"
+    echo -e "\t|$(basename $0) hq -n local_planning"
+    echo -e "\t|$(basename $0) hq --start-node local_planning \t只后台启动红旗车local_planning节点(不会启动roscore,需要手动启动)"
+    echo -e "\t|================================================"
 }
 kill_ros() {
     core_pid=$(ps aux | grep -v grep | grep -w "rosmaster --core" | awk '{print $2}')
@@ -20,7 +34,7 @@ kill_ros() {
         kill $core_pid
     fi
 }
-check_env() {
+set_bashrc() {
     HOSTNAME="export ROS_HOSTNAME=$ros_machine"
     MASTER_URI="export ROS_MASTER_URI=http://$ros_master:11311"
     #add environment to /root/.bashrc
@@ -38,6 +52,15 @@ check_env() {
     elif [ "$bashrc_masteruri" != "http://$ros_master:11311" ]; then
         sed -i "s#^$env_rosmasteruri_user#$MASTER_URI#g" ~/.bashrc
     fi
+
+    add_alias="alias cdl='cd /home/mogo/data/log/latest'"
+    alias_log=$(grep "alias\b[[:space:]]*cdl" ~/.bashrc | grep -v "^#" | tail -1)
+    c_alias_log=$(echo $alias_log | awk -F= '{print $2}')
+    if [ -z "$c_alias_log" ]; then
+        echo "$add_alias" >>~/.bashrc
+    elif [ "$alias_log" != "'cd /home/mogo/data/log/latest'" ]; then
+        sed -i "s#^$alias_log#$add_alias#g" ~/.bashrc
+    fi
     #add environment to /home/mogo/.bashrc
     if [ "$HOME" == "/root" ]; then
         env_roshostname_mogo=$(grep "export\b[[:space:]]*ROS_HOSTNAME" /home/mogo/.bashrc | grep -v "^#" | tail -1)
@@ -53,6 +76,15 @@ check_env() {
             echo "$MASTER_URI" >>/home/mogo/.bashrc
         elif [ "$bashrc_masteruri_mogo" != "http://$ros_master:11311" ]; then
             sed -i "s#^$env_rosmasteruri_mogo#$MASTER_URI#g" /home/mogo/.bashrc
+        fi
+
+        add_alias="alias cdl='cd /home/mogo/data/log/latest'"
+        alias_log=$(grep "alias\b[[:space:]]*cdl" /home/mogo/.bashrc | grep -v "^#" | tail -1)
+        c_alias_log=$(echo $alias_log | awk -F= '{print $2}')
+        if [ -z "$c_alias_log" ]; then
+            echo "$add_alias" >>/home/mogo/.bashrc
+        elif [ "$alias_log" != "'cd /home/mogo/data/log/latest'" ]; then
+            sed -i "s#^$alias_log#$add_alias#g" /home/mogo/.bashrc
         fi
     fi
 }
@@ -99,8 +131,8 @@ log4j.appender.${ErrorAppender}.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH
 }
 
 get_all_launch_files() {
-    if [ -n "$startnode" ]; then
-        launch_line=$(grep -w $startnode $ListFile)
+    if [ -n "$opt_onenode" ]; then
+        launch_line=$(grep -w $opt_onenode $ListFile)
         include_files=$(roslaunch --files $launch_line 2>/dev/null)
         if [ $? -ne 0 ]; then
             LoggingERR "cannot find $launch_line"
@@ -125,6 +157,7 @@ get_all_launch_files() {
             [[ -z "$child_file" ]] && continue
             pkg_name=$(xmllint --xpath "//@pkg" $child_file 2>/dev/null | sed 's/\"//g')
             [[ -z "$pkg_name" ]] && continue
+            map_restart_times[$child_file]="0"
             launch_files_array[$arr_idx]="$child_file"
             arr_idx=$((arr_idx + 1))
         done
@@ -150,6 +183,7 @@ start_onenode() {
     else
         $GuiTerminal --tab -e "bash -c 'sleep 3; $BASHRC && roslaunch --wait $real_launch_file 2>${ROS_LOG_DIR}/${launch_file}.err 2>&1 | tee -i ${ROS_LOG_DIR}/${launch_file}.log';bash" $TitleOpt "${launch_file}" &
     fi
+    map_restart_times[$real_launch_file]=$((map_restart_times[$real_launch_file] + 1))
 }
 
 start_node() {
@@ -162,20 +196,33 @@ start_node() {
 keep_alive() {
     # check node launch status
     while [ true ]; do
-        sleep 3
+        sleep 5
         for launch_file in ${launch_files_array[*]}; do
-            pkg_type=$(xmllint --xpath "//node[@type]/@type" $launch_file 2>/dev/null | sed 's/\"//g')
-            [[ -z "$pkg_type" ]] && continue
-            for t in $pkg_type; do
-                real_proc=$(echo $t | awk -F= '{print $2}')
-                [[ "$real_proc" =~ "rviz" ]] && continue
-                if [ $(ps -ef | grep -w $real_proc | grep -v grep | wc -l) -eq 0 ]; then
-                    LoggingERR "$real_proc died,will restart..."
-                    start_onenode "$launch_file"
+            # pkg_type=$(xmllint --xpath "//node[@type]/@type" $launch_file 2>/dev/null | sed 's/\"//g')
+            nodes=$(roslaunch --nodes $launch_file | awk -F/ '{print $NF}')
+            [[ -z "$nodes" ]] && continue
+            proc_stat=0
+            for t in $nodes; do
+                # real_proc=$(echo $t | awk -F= '{print $2}')
+                [[ "$t" =~ "rviz" ]] && continue
+                if [ $(ps -ef | grep "__name:=$real_proc" | grep -v grep | wc -l) -eq 0 ]; then
+                    proc_stat=1
+                    if [ ${map_restart_times[$launch_file]} -le 5 ]; then
+                        LoggingERR "$t died"
+                        LoggingINFO "will restart $t in $launch_file [${map_restart_times[$launch_file]}/5]"
+                        start_onenode "$launch_file"
+                        break
+                    fi
                 fi
             done
+            [[ $proc_stat -eq 0 ]] && map_restart_times[$launch_file]=1
         done
     done
+}
+
+MOGO_LOG() {
+    echo -e "{\"timestamp\": {\"sec\": $(date +"%s"), \"nsec\": $(date +"%N")}, \"src\": \"$this\",\
+    \"level\": \"error\", \"msg\": \"can bus has no data\", \"code\": "", \"result\": [], \"actions\": []}"
 }
 
 LoggingINFO() {
@@ -192,6 +239,7 @@ LoggingERR() {
 }
 
 install_ros_log() {
+    [[ ! -d /autocar-code/install ]] && return 
     src_so_path=$(find /autocar-code/install/ -name 'libroscpp.so' | head -n 1)
     dst_so_path=$(find /opt -name 'libroscpp.so' | head -n 1)
     conf_path=$(find /autocar-code/install/ -name 'ros_statics.conf' | head -n 1)
@@ -202,6 +250,7 @@ install_ros_log() {
     \cp -rf $src_so_path $dst_so_path
     \cp -rf $conf_path $dst_conf_path
 }
+
 add_privilege_monitor_gnss(){
      rm  /home/mogo/data/log/location.txt  -rf
      chmod -R  777 /autocar-code/install/share/monitor_gnss
@@ -209,24 +258,39 @@ add_privilege_monitor_gnss(){
 
 _exit() {
     LoggingINFO "receive quit signal"
-    rosnode kill -a
-    kill $roscore_pid
+    [[ ! -z "$roscore_pid" ]] && rosnode kill -a && kill $roscore_pid
     exit 6
 }
 # main
-trap '_exit' INT
+trap '_exit' INT TERM
 
-param=$(getopt -o r --long start-node: -n 'autopilot.sh' -- "$@")
+declare -A -g map_restart_times=()
+declare -g opt_onenode
+declare -g opt_alive=1
+declare -g launch_files_array
+declare -g arr_idx=0
+declare roscore_pid
+declare -g LOGFILE
+declare -g ERRFILE
+self_pid=$$
+this=$(basename $0)
+
+param=$(getopt -a -o n:h --long start-node:,no-keep-alive,help -n 'autopilot.sh' -- "$@")
 eval set -- "$param"
 while true; do
     case "$1" in
-    -r)
-        echo "-r"
+    -h | --help)
+        Usage
         shift
+        exit 0
         ;;
-    --start-node)
-        startnode=$2
+    -n | --start-node)
+        opt_onenode=$2
         shift 2
+        ;;
+    --no-keep-alive)
+        opt_alive=0
+        shift 1
         ;;
     --)
         shift
@@ -239,13 +303,7 @@ while true; do
     esac
 done
 
-declare launch_files_array
-declare arr_idx=0
-declare roscore_pid
-declare LOGFILE
-declare ERRFILE
-self_pid=$$
-if [ -z "$startnode" ]; then
+if [ -z "$opt_onenode" ]; then
     LOGFILE="/home/mogo/data/log/autopilot.log"
     ERRFILE="/home/mogo/data/log/autopilot.err"
     pids=$(ps -ef | grep -w "autopilot\.sh" | grep -v grep | awk '!($3 in arr) && $2 != "'$self_pid'" && $3 != "'$self_pid'" {arr[$2]=$2};END{for(idx in arr){print arr[idx]}}')
@@ -304,7 +362,7 @@ export ros_master="localhost"
 export xavier_type="single"        #单xavier or 双xavier
 export ros_machine="${ros_master}" #主机:rosmaster 从机:rosslave
 # 判断是否为双Xavier
-ethnet_ip=$(ifconfig eth0 | grep -Eo '([0-9]+[.]){3}[0-9]+' | grep -v "255")
+ethnet_ip=$(ifconfig | grep -v "inet6" | grep -Eo '192[.]168([.][0-9]+){2}' | grep -v "255")
 [[ -z "$ethnet_ip" ]] && LoggingERR "ip address is null" && exit 1
 
 ros_machine=$(grep -E "$ethnet_ip.*ros.*" /etc/hosts | grep -v "^#" | uniq | head -1 | awk '{print $2}')
@@ -331,7 +389,7 @@ else
     fi
 fi
 LoggingINFO "start list file:$ListFile"
-check_env
+set_bashrc
 LoggingINFO "rosmachine:${ros_machine} rosmaster:${ros_master} xavier_type:${xavier_type}"
 
 if [ "$GuiServer" = "x" ]; then
@@ -364,8 +422,7 @@ source $SETUP_ROS
 source $SETUP_AUTOPILOT
 
 get_all_launch_files
-
-if [ -n "$startnode" ]; then
+if [ -n "$opt_onenode" ]; then
     ROS_LOG_DIR=$(readlink ${LOG_DIR}/latest)
     start_node
     sleep 1
@@ -460,4 +517,4 @@ if [ $? -eq 124 ]; then
 fi
 
 start_node
-keep_alive
+[[ $opt_alive -ne 0 ]] && keep_alive
