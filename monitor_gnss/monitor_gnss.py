@@ -38,6 +38,9 @@ from entity.CollectVehicleInfo import   CollectVehicleInfo
 globalLocationPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_Location')
 globalCollectVehicleInfo  = CollectVehicleInfo()
 globalCommonPara = CommonPara()
+globalLastMicroSec = 0
+globalListPostion = []
+globalWriteInterval = 50
 
 
 def task_localization(pb_msg):
@@ -57,26 +60,60 @@ def task_localization(pb_msg):
     #                                                                                 instanceLocInfoUnit.sec,
     #                                                                                 instanceLocInfoUnit.nsec)
 
-    dictInfoLog={}
-    dictInfoLog["sec"]=instanceLocInfoUnit.sec
-    dictInfoLog["nsec"]=instanceLocInfoUnit.nsec
-    dictInfoLog["car_info"]=globalCommonPara.dictCarInfo
-    dictInfoLog["pilotMode"]=int(globalCollectVehicleInfo.int_pilot_mode)
-    dictInfoLog["takeover_reason_code"] = int(globalCollectVehicleInfo.int_error_code)
-    dictInfoLog["takeover_reason_message"]=str(globalCollectVehicleInfo.str_err_msg)
-    dictInfoLog["position_x"]=instanceLocInfoUnit.MarkMapPosition_x
-    dictInfoLog["position_y"]=instanceLocInfoUnit.MarkMapPosition_y
-    dictInfoLog["location_longitude"]=instanceLocInfoUnit.MarkMapPosition_longitude
-    dictInfoLog["location_latitude"]= instanceLocInfoUnit.MarkMapPosition_latitude
-    strJsonLineContent = json.dumps(dictInfoLog)
-    # print strJsonLineContent
-    try:
-        with open('/home/mogo/data/log/location.txt', 'a+') as f:
-            f.write(strJsonLineContent)
-            f.write("\n")
-    except IOError:
-        print "operate file failed"
-        exit(-1)
+    dictPostionLog={}
+    #dictPostionLog["sec"]=instanceLocInfoUnit.sec
+    #dictPostionLog["nsec"]=instanceLocInfoUnit.nsec
+    # dictInfoLog["car_info"]=globalCommonPara.dictCarInfo
+    dictPostionLog["pilotMode"]=int(globalCollectVehicleInfo.int_pilot_mode)
+    dictPostionLog["takeover_reason_code"] = int(globalCollectVehicleInfo.int_error_code)
+    dictPostionLog["takeover_reason_message"]=str(globalCollectVehicleInfo.str_err_msg)
+    dictPostionLog["position_x"]=instanceLocInfoUnit.MarkMapPosition_x
+    dictPostionLog["position_y"]=instanceLocInfoUnit.MarkMapPosition_y
+    dictPostionLog["location_longitude"]=instanceLocInfoUnit.MarkMapPosition_longitude
+    dictPostionLog["location_latitude"]= instanceLocInfoUnit.MarkMapPosition_latitude
+    CurrentMicroSec = instanceLocInfoUnit.sec*1000 + instanceLocInfoUnit.nsec/1000000
+    dictPostionLog["msec"] = CurrentMicroSec
+
+    print "before while"
+    global globalListPostion
+    global globalLastMicroSec
+    print '=========c:%d---g:%d---len:%d' %(CurrentMicroSec,globalLastMicroSec,len(globalListPostion))
+    while True:
+        if globalLastMicroSec == 0:
+            print "enter first update globalLastMicroSec"
+            globalListPostion.append(dictPostionLog)
+            ## update last micro sec
+            globalLastMicroSec = CurrentMicroSec
+            break
+        if (CurrentMicroSec  - globalLastMicroSec >  globalWriteInterval ) or  (CurrentMicroSec  - globalLastMicroSec == globalWriteInterval ):
+            print "enter second globalLastMicroSec"
+            globalListPostion.append(dictPostionLog)
+            ### update  last micro sec
+            globalLastMicroSec = CurrentMicroSec
+            break
+        break
+    #print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    if (len(globalListPostion)  >  (1000/globalWriteInterval) )  or   ( len(globalListPostion) == (1000/globalWriteInterval) ):
+        dictLogInfo = {}
+        dictLogInfo["car_info"]=globalCommonPara.dictCarInfo
+        dictLogInfo["positions"]=globalListPostion
+        strJsonLineContent = json.dumps(dictLogInfo)
+        # print strJsonLineContent
+        #print "bbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        try:
+            with open('/home/mogo/data/log/location.txt', 'a+') as f:
+                #print "dddddddddddddddddddddddd"
+                f.write(strJsonLineContent)
+                f.write("\n")
+                #global globalListPostion
+                #print "eeeeeeeeeeeeeeeeeeeeee"
+                globalListPostion=[]
+                #print "cccccccccccccccccccccccccccc"
+                print "#########################=================================write finished, now clean globalListPostion"
+        except IOError:
+            print "operate file failed"
+            exit(-1)
+
 
 
 def localizationCallback(msg):
@@ -162,6 +199,13 @@ def main():
     globalCommonPara.initPara()
     rospy.init_node('monitor_gnss', anonymous=True)
     # add listener
+    global globalWriteInterval
+    temp  = rospy.get_param('monitor_gnss_interval')
+    if temp  >= 1000 or temp <= 0 :
+        globalWriteInterval =  1000
+    else:
+        globalWriteInterval =  temp
+    print "=============================set globalWriteInterval:%d" %(globalWriteInterval)
     addLocalizationListener()
     ## wait msg
     rospy.spin()
