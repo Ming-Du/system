@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+message TransmissionState_PB {
+   enum TransmissionState {
+	TransmissionState_neutral	= 0;
+	TransmissionState_park	= 1;
+	TransmissionState_forwardGears	= 2;
+	TransmissionState_reverseGears	= 3;
+	TransmissionState_reserved1	= 4;
+	TransmissionState_reserved2	= 5;
+	TransmissionState_reserved3	= 6;
+	TransmissionState_unavailable	= 7;
+    };
+    required  TransmissionState    transmission = 1;
+  
+}

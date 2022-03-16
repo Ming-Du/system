@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+import "String_PB.proto";
+
+message ExteriorLights_PB {
+    enum ExteriorLights {
+    ExteriorLights_lowBeamHeadlightsOn	= 0;
+    ExteriorLights_highBeamHeadlightsOn	= 1;
+    ExteriorLights_leftTurnSignalOn	= 2;
+    ExteriorLights_rightTurnSignalOn	= 3;
+    ExteriorLights_hazardSignalOn	= 4;
+    ExteriorLights_automaticLightControlOn	= 5;
+    ExteriorLights_daytimeRunningLightsOn	= 6;
+    ExteriorLights_fogLightOn	= 7;
+    ExteriorLights_parkingLightsOn	= 8;
+    };
+    required  String_PB   eteriorlights_t=1;
+}

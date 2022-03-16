@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+
+import "VehicleEventFlags_PB.proto";
+import "ExteriorLights_PB.proto";
+
+message VehicleSafetyExtensions_PB {
+  
+   optional VehicleEventFlags_PB  events=1;
+   /* RadiusOfCurvature */
+   optional	int32  radiusOfCurvature_t=2;;    
+   optional int32	 radiusOfCurvature_t_condience=3;	/* OPTIONAL */;
+   optional ExteriorLights_PB	 lights=4;
+}

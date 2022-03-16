@@ -1,0 +1,6 @@
+syntax = "proto2";
+
+message VehicleClassification_PB {
+   required int32 classification = 1;
+   optional int32 fuelType = 2;	
+}
