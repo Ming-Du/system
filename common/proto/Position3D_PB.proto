@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+message Position3D_PB {
+   required int64 lat = 1;
+   required int64 Long = 2;
+   optional int64 elevation = 3;	
+}

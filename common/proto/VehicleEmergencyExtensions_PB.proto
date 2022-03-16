@@ -1,0 +1,34 @@
+syntax = "proto2";
+
+message VehicleEmergencyExtensions_PB {
+    enum ResponseType_PB {
+		ResponseType_notInUseOrNotEquipped	= 0;
+		ResponseType_emergency	= 1;
+		ResponseType_nonEmergency	= 2;
+		ResponseType_pursuit	= 3;
+		ResponseType_stationary	= 4;
+		ResponseType_slowMoving	= 5;
+		ResponseType_stopAndGoMovement	= 6;
+    };
+    optional ResponseType_PB responseType = 1;
+
+    enum SirenInUse_PB {
+		SirenInUse_unavailable	= 0;
+		SirenInUse_notInUse	= 1;
+		SirenInUse_inUse	= 2;
+		SirenInUse_reserved	= 3;
+    };
+    optional SirenInUse_PB sirenUse = 2;
+	
+    enum LightbarInUse_PB {
+		LightbarInUse_unavailable	= 0;
+		LightbarInUse_notInUse	= 1;
+		LightbarInUse_inUse	= 2;
+		LightbarInUse_yellowCautionLights	= 3;
+		LightbarInUse_schooldBusLights	= 4;
+		LightbarInUse_arrowSignsActive	= 5;
+		LightbarInUse_slowMovingVehicle	= 6;
+		LightbarInUse_freqStops	= 7;
+    };
+    optional LightbarInUse_PB lightsUse = 3;
+}
