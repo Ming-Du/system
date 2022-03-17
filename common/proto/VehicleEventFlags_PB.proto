@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+import "String_PB.proto";
+
+message VehicleEventFlags_PB {
+   /* Dependencies */
+    enum VehicleEventFlags {
+    VehicleEventFlags_eventHazardLights	= 0; 
+    VehicleEventFlags_eventStopLineViolation	= 1;
+    VehicleEventFlags_eventABSactivated	= 2;
+    VehicleEventFlags_eventTractionControlLoss	= 3;
+    VehicleEventFlags_eventStabilityControlactivated	= 4;
+    VehicleEventFlags_eventHazardousMaterials	= 5;
+    VehicleEventFlags_eventReserved1	= 6;
+    VehicleEventFlags_eventHardBraking	= 7;
+    VehicleEventFlags_eventLightsChanged	= 8;
+    VehicleEventFlags_eventWipersChanged	= 9;
+    VehicleEventFlags_eventFlatTire	= 10;
+    VehicleEventFlags_eventDisabledVehicle	= 11;
+    VehicleEventFlags_eventAirBagDeployment	= 12 ;
+    };  
+   required String_PB lat = 1;
+}

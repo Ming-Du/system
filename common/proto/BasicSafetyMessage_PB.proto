@@ -1,0 +1,45 @@
+syntax = "proto2";
+
+import "String_PB.proto";
+import "TimeConfidence_PB.proto";
+import "TransmissionState_PB.proto";
+import "MotionConfidenceSet_PB.proto";
+import  "AccelerationSet4Way_PB.proto";
+import  "BrakeSystemStatus_PB.proto";
+import "VehicleSize_PB.proto";
+import "VehicleSafetyExtensions_PB.proto";
+import  "Position3D_PB.proto";
+import  "PositionalAccuracy_PB.proto";
+import  "PositionConfidenceSet_PB.proto";
+import  "VehicleClassification_PB.proto";
+import  "VehicleEmergencyExtensions_PB.proto";
+
+message BasicSafetyMessage_PB {
+    /* MsgCount */
+//发送方为自己发送的同类消息,依次进行编号。编号数值为 0 ~ 127。
+//当发送方开始发起某一类数据时,它可以随机选择起始编号,随后依次递增。发送方也可以在
+//连续发送相同的数据帧时,选择使用相同的 MsgCount 消息编号。编号到达 127 后,则下一个回到 0。
+    required 	int64  msgCnt = 1;
+    required    String_PB	 id=2; //Hex_String
+	 /* DSecond */ //1分钟内的毫秒级时刻分辨率为1毫秒，有效范围时0~59999.60000及以上表示未知或无效数值
+    required    int64	 secMark=3;
+    optional    TimeConfidence_PB timeConfidence=4; 	    
+    /* Position3D */ //三维的坐标位置，包括经纬度，高程
+    required Position3D_PB	 Pos=5;
+    optional PositionalAccuracy_PB posAccuracy=6;
+    optional PositionConfidenceSet_PB	 posConfidence=7;
+    required TransmissionState_PB	 transmission=8;
+    //速度 
+    required    int32    speed=9;
+    //航向角
+    required    int32    heading=10;      
+    //SteeringWheelAngle_t  方向盘转角
+    optional    int32   angle=11;
+    optional MotionConfidenceSet_PB	motionCfd=12;
+    required AccelerationSet4Way_PB	 accelSet=13;
+    required BrakeSystemStatus_PB	 brakes=14;
+    required VehicleSize_PB	 size=15;
+    required VehicleClassification_PB vehicleClass=16;
+    optional VehicleSafetyExtensions_PB	 safetyExt=17;
+    optional VehicleEmergencyExtensions_PB	 emergencyExt=18;
+} 

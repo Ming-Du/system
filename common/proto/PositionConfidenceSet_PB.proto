@@ -1,0 +1,43 @@
+syntax = "proto2";
+
+message PositionConfidenceSet_PB {
+    enum PositionConfidence_PB {
+	    PositionConfidence_unavailable	= 0;
+	    PositionConfidence_a500m	= 1;
+	    PositionConfidence_a200m	= 2;
+	    PositionConfidence_a100m	= 3;
+	    PositionConfidence_a50m	= 4;
+	    PositionConfidence_a20m	= 5;
+	    PositionConfidence_a10m	= 6;
+	    PositionConfidence_a5m	= 7;
+	    PositionConfidence_a2m	= 8;
+	    PositionConfidence_a1m	= 9;
+	    PositionConfidence_a50cm	= 10;
+	    PositionConfidence_a20cm	= 11;
+	    PositionConfidence_a10cm	= 12;
+	    PositionConfidence_a5cm	= 13;
+	    PositionConfidence_a2cm	= 14;
+	    PositionConfidence_a1cm	= 15;
+    }
+    required PositionConfidence_PB poscon = 1;
+
+    enum ElevationConfidence_PB {
+	    ElevationConfidence_unavailable	= 0;
+	    ElevationConfidence_elev_500_00	= 1;
+	    ElevationConfidence_elev_200_00	= 2;
+	    ElevationConfidence_elev_100_00	= 3;
+	    ElevationConfidence_elev_050_00	= 4;
+	    ElevationConfidence_elev_020_00	= 5;
+	    ElevationConfidence_elev_010_00	= 6;
+	    ElevationConfidence_elev_005_00	= 7;
+	    ElevationConfidence_elev_002_00	= 8;
+	    ElevationConfidence_elev_001_00	= 9;
+	    ElevationConfidence_elev_000_50	= 10;
+	    ElevationConfidence_elev_000_20	= 11;
+	    ElevationConfidence_elev_000_10	= 12;
+	    ElevationConfidence_elev_000_05	= 13;
+	    ElevationConfidence_elev_000_02	= 14;
+	    ElevationConfidence_elev_000_01	= 15;
+    }
+    optional ElevationConfidence_PB elevationCon = 2;
+}

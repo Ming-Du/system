@@ -1,2 +1,2 @@
-launch drivers_camera.launch
-launch perception_2camera.launch
+launch drivers_perception_camera120_left.launch
+launch drivers_perception_camera120_right.launch

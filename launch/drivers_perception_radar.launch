@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+  <include if="$(eval env('D_CAR_TYPE')=='jinlv' and env('ROS_HOSTNAME')=='rosslave-105')" file="$(find config)/vehicle/perception/radar/radar_408_front_308_rear.launch" />
+  <include if="$(eval env('D_CAR_TYPE')=='jinlv' and env('ROS_HOSTNAME')=='rosslave-104')" file="$(find config)/vehicle/perception/radar/radar_308_front.launch" />
+</launch>

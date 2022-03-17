@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+message PositionalAccuracy_PB {
+   required int64 semiMajor = 1;
+   required int64 semiMinor = 2;
+   required int64 orientation = 3;	
+}

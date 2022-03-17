@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+message AccelerationSet4Way_PB {
+    required int32  lon = 1;
+    required int32  lat = 2;
+    required int32  vert = 3;
+    required int32  yaw = 4;
+}

@@ -1,10 +1,9 @@
 launch drivers_gnss.launch
 launch drivers_camera60.launch
+launch perception_camera.launch
 launch can_adapter.launch
 localization localization.launch
-launch hadmap.launch
-hadmap_engine hadmap_engine.launch
-launch lane_detection.launch
+launch local_planning.launch
 launch controller.launch
 telematics telematics.launch
 guardian system_guardian.launch

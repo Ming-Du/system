@@ -14,7 +14,10 @@ def run_once():
     try:
         sock.connect(('rosslave', 1119))
     except Exception as e:
-        return
+        try:
+            sock.connect(('rosslave-103', 1119))
+        except Exception as e:
+            return
 
     # 先截取一遍文件
     files = os.listdir(src_dir)

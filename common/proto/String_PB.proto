@@ -1,0 +1,6 @@
+syntax = "proto2";
+
+message String_PB {
+   required  uint32   string_type=1;
+   required  string    str_value = 2;
+}

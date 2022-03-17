@@ -1,0 +1,35 @@
+syntax = "proto2";
+
+message MotionConfidenceSet_PB {
+    enum SpeedConfidence_PB {
+	    SpeedConfidence_unavailable	= 0;
+	    SpeedConfidence_prec100ms	= 1;
+	    SpeedConfidence_prec10ms	= 2;
+	    SpeedConfidence_prec5ms	= 3;
+	    SpeedConfidence_prec1ms	= 4;
+	    SpeedConfidence_prec0_1ms	= 5;
+	    SpeedConfidence_prec0_05ms	= 6;
+	    SpeedConfidence_prec0_01ms	= 7;
+    }
+    optional SpeedConfidence_PB speedCfd = 1;
+
+    enum HeadingConfidence_PB {
+	    HeadingConfidence_unavailable	= 0;
+	    HeadingConfidence_prec10deg	= 1;
+	    HeadingConfidence_prec05deg	= 2;
+	    HeadingConfidence_prec01deg	= 3;
+	    HeadingConfidence_prec0_d1deg	= 4;
+	    HeadingConfidence_prec0_d05deg	= 5;
+	    HeadingConfidence_prec0_d01deg	= 6;
+	    HeadingConfidence_prec0_d0125deg	= 7;
+    }
+    optional HeadingConfidence_PB headingCfd = 2;
+
+    enum SteeringWheelAngleConfidence_PB {
+	    SteeringWheelAngleConfidence_unavailable	= 0;
+	    SteeringWheelAngleConfidence_prec2deg	= 1;
+	    SteeringWheelAngleConfidence_prec1deg	= 2;
+	    SteeringWheelAngleConfidence_prec0_02deg	= 3;
+    }
+    optional SteeringWheelAngleConfidence_PB steerCfd = 3;
+}

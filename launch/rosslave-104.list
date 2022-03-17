@@ -1,5 +1,5 @@
-launch drivers_lidar.launch
-launch perception_lidar.launch
-launch perception_fusion.launch
+launch hadmap.launch
+hadmap_engine hadmap_engine.launch
+launch drivers_perception_radar.launch
 guardian system_guardian_slave2.launch
 record_cache record_cache.launch

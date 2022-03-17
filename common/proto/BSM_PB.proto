@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package common;
+
+import "header.proto";
+import "BasicSafetyMessage_PB.proto";
+
+
+message BSM_PB {
+	required BasicSafetyMessage_PB bsmFrame =1;
+	optional common.Header header = 2;
+}

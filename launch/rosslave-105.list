@@ -1,4 +1,4 @@
-launch drivers_camera120.launch
-launch perception_vidar.launch
+launch drivers_perception_radar.launch
+launch drivers_perception_camera120_back.launch
 guardian system_guardian_slave3.launch
 record_cache record_cache.launch

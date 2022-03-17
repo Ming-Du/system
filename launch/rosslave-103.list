@@ -1,7 +1,7 @@
 launch drivers_camera30.launch
 launch drivers_camera120.launch
-launch perception_camera.launch
 launch slam_localization.launch
-launch local_planning.launch
+telematics telematics_slave.launch
 guardian system_guardian_slave1.launch
 record_cache record_cache.launch
+launch monitor_gnss.launch
