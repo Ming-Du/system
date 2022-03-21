@@ -12,7 +12,7 @@
         type="drivers_camera_sensing_node" output="screen" 
         args="--sensor_meta_path=$(arg sensor_meta)">
       <param name="video_device" value="$(arg video_device)" />
-      <param name="framerate" value="30"/>
+      <param name="framerate" value="20"/>
       <param name="camera_id" value="$(arg camera_id)" />
       <param name="image_width" value="1920" />
       <param name="image_height" value="1080" />
