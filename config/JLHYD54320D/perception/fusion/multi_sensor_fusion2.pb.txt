@@ -22,3 +22,4 @@ output_obstacles_topic_name: "/perception/fusion/obstacles"
 output_obstacles_topic_name_app: "/perception/fusion/obstacles_app"
 output_viz_fused_box_topic_name: "/perception/fusion/viz_obstacles_box"
 output_viz_fused_text_topic_name: "/perception/fusion/viz_obstacles_text"
+

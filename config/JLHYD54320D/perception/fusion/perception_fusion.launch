@@ -6,7 +6,7 @@
 
   <arg name="obs_enable_hdmap_input" default="true" />
   <arg name= "fusion_config_path" default="$(find perception_fusion2)/config/" />
-
+    
   <node name="perception_fusion2" ns="/perception/fusion"
     pkg="perception_fusion2" type="perception_fusion2_node" output="screen"
     args="--logtostderr=0 --stderrthreshold=0 --v=1
@@ -16,4 +16,3 @@
     <param name="use_filter" type="bool" value="true"/>
   </node>
 </launch>
-
