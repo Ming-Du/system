@@ -200,7 +200,9 @@ def main():
     rospy.init_node('monitor_gnss', anonymous=True)
     # add listener
     global globalWriteInterval
-    temp  = rospy.get_param('monitor_gnss_interval')
+    strFullParaName = "%s/monitor_gnss_interval" %(rospy.get_name())
+    print "strFullParaName:%s" %(strFullParaName)
+    temp  = rospy.get_param(strFullParaName)
     if temp  >= 1000 or temp <= 0 :
         globalWriteInterval =  1000
     else:

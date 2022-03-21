@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package log_reslove;
+
+import "geometry.proto";
+import "header.proto";
+
+message TopicHz
+{
+optional string name = 1;
+optional int32 hz = 2;
+}
+
+message PubLogInfo {
+  optional common.Header header = 1;
+  optional double start_stamp = 2;
+  optional double end_stamp = 3;
+  repeated TopicHz topic_hz = 4;
+ }

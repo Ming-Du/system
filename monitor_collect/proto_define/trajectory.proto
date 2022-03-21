@@ -1,0 +1,54 @@
+syntax = "proto2";
+package planning;
+
+import "header.proto";
+import "chassis.proto";
+
+enum LaneChange {
+  LANE_KEEPING = 0;
+  MERGE_LEFT = 1;
+  MERGE_RIGHT = 2;
+}
+
+enum CoordFrame {
+  FRAME_DEFAULT = 0;
+  FRAME_ENU = 1;
+  FRAME_LLH = 2;
+  FRAME_IMU = 3;
+  FRAME_VEHICLE = 5;
+}
+
+message TrajectoryPoint {
+  optional double x = 1;
+  optional double y = 2;
+  optional double z = 3;
+  optional double t = 4;  //time in seconds
+  optional double v = 5;  //velocity in m/s
+  optional double a = 6;  //acceleration in m/s^2
+  optional double theta = 7;  //direction of v
+  optional double kappa = 8;  //curvature
+  optional double s = 9; //accumulated distance in meters from beginning
+  optional double s_reverse = 10; // accumulated distance in meters from current to end - wbq 20211024
+}
+
+message Trajectory {
+  optional common.Header header = 1;
+  optional CoordFrame frame = 2;
+  repeated TrajectoryPoint points = 3;
+  optional double a = 4;
+  optional LaneChange lane_change = 5;
+  optional chassis.LightSwitch light = 6 [default = LIGHT_NONE];
+  optional bool stop = 7;
+}
+
+
+//message SLPoint {
+//  optional double s = 1;
+//  optional double l = 2;
+//}
+
+///message TrajectoryState {
+//  optional TrajectoryPoint state = 1;
+//  optional SLPoint sl = 2;
+//  optional double heading = 3;
+//}
