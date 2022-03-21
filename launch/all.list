@@ -14,3 +14,5 @@ track_recorder track_recorder.launch
 telematics telematics.launch
 guardian system_guardian.launch
 record_cache record_cache.launch
+launch monitor_gnss.launch
+launch monitor_collect.launch
