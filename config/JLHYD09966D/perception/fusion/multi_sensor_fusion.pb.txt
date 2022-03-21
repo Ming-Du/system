@@ -1,0 +1,22 @@
+use_camera: true
+use_lidar: true
+use_radar: false
+
+input_sensor {
+  sensor_name: "H60-D06170617"
+  topic: "/perception/camera/camera_obstacle"
+}
+input_sensor {
+  sensor_name: "c32_front_left"
+  topic: "/perception/lidar/lidar_obstacle_cluster"
+}
+
+obstacle_filter_dis: 100.0
+fusion_main_sensor: "c32_front_left"
+localization_topic: "/localization/global"
+
+enable_send_fusion_topic: true
+enable_send_fusion_topic_app: false
+
+send_fusion_topic: "/perception/fusion/obstacles"
+send_fusion_topic_app: "/perception/fusion/obstacles_app"

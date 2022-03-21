@@ -1,0 +1,2 @@
+vehicle_num:JLHYD65432D
+vehicle_color:255255000
