@@ -1,4 +1,5 @@
 <launch>
-  <node name="system_guardian_slave1" pkg="guardian" type="system_guardian.py"  args="$(find config)/vehicle/guardian/system_guardian.json $(find guardian)/rostopic/rostopic.py $(find config)/vehicle/guardian/guardian_config.json /home/mogo/data/vehicle_monitor/vehicle_config.txt"  output="screen"/>
+  <node name="system_guardian_slave1" pkg="guardian" type="system_guardian.py"  args="$(find config)/vehicle/guardian/system_guardian.json $(find guardian)/rostopic/rostopic.py $(find config)/vehicle/guardian/guardian_config.json /home/mogo/data/vehicle_monitor/vehicle_config.txt"  output="screen">
   <param name="rosmachetype" type="string" value="slave1" />
+ </node>
 </launch>
