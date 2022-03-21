@@ -1,4 +1,5 @@
 <launch>
-    <node name="monitor_gnss" pkg="monitor_gnss" type="monitor_gnss.py" output="screen"></node>
+    <node name="monitor_gnss" pkg="monitor_gnss" type="monitor_gnss.py" output="screen">
     <param name="monitor_gnss_interval" type="int" value="50" />
+    </node>
 </launch>
