@@ -9,25 +9,12 @@
     <arg name="viz_obstacle_topic" default="viz_obstacle" />
     <arg name="obstacles_topic" default="radar_obstacle" />
 
-  <group ns="perception/radar/front/">
-    <node name="conti_radar" pkg="perception_radar" 
-      type="perception_radar_conti_node" output="screen"    
-      args="--sensor_meta_path=$(arg sensor_meta)" >
-      <param name="config_file" value="$(arg config_file_path)/conti_radar_front_conf.pb.txt" />
-      <param name = "sensor_name" type = "string" value = "radar_front" />
-      <param name="viz_text_marker_topic_name" value="$(arg viz_text_topic)" />
-      <param name="viz_obstacle_marker_topic_name" value="$(arg viz_obstacle_topic)" />
-      <param name="conti_radar_obstacles_topic_name" value="$(arg obstacles_topic)" />
-      <param name="port" type = "int" value="0" />
-    </node>
-  </group>
-
-  <group ns="perception/radar/rear_left/">
+  <group ns="perception/radar/front_left/">
     <node name="conti_radar" pkg="perception_radar" 
       type="perception_radar_conti_node" output="screen"
       args="--sensor_meta_path=$(arg sensor_meta)" >
       <param name="config_file" value="$(arg config_file_path)/conti_radar_left_rear_conf.pb.txt" />
-      <param name = "sensor_name" type = "string" value = "radar_rear_left" />
+      <param name = "sensor_name" type = "string" value = "radar_front_left" />
       <param name="viz_text_marker_topic_name" value="$(arg viz_text_topic)" />
       <param name="viz_obstacle_marker_topic_name" value="$(arg viz_obstacle_topic)" />
       <param name="conti_radar_obstacles_topic_name" value="$(arg obstacles_topic)" />
@@ -35,12 +22,12 @@
     </node>
   </group>
 
-  <group ns="perception/radar/rear_right/">
+  <group ns="perception/radar/front_right/">
     <node name="conti_radar" pkg="perception_radar" 
       type="perception_radar_conti_node" output="screen"
       args="--sensor_meta_path=$(arg sensor_meta)" >
       <param name="config_file" value="$(arg config_file_path)/conti_radar_right_rear_conf.pb.txt" />
-      <param name = "sensor_name" type = "string" value = "radar_rear_right" />
+      <param name = "sensor_name" type = "string" value = "radar_front_right" />
       <param name="viz_text_marker_topic_name" value="$(arg viz_text_topic)" />
       <param name="viz_obstacle_marker_topic_name" value="$(arg viz_obstacle_topic)" />
       <param name="conti_radar_obstacles_topic_name" value="$(arg obstacles_topic)" />
