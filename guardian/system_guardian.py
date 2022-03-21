@@ -622,7 +622,10 @@ def main():
         rospy.logerr("please use:system_guardian.py configfilename, rostopicfilename")
         exit(-1)
     rospy.init_node('system_guardian')
-    rosmachetype = rospy.get_param('rosmachetype')
+    strFullParaName  = "%s/rosmachetype" %(rospy.get_name())
+    print "strFullParaName:%s" %(strFullParaName)
+    rosmachetype = rospy.get_param(strFullParaName)
+    print "node_name:%s" %(rospy.get_name())
     print("rosmachetype:%s" %rosmachetype)
     config_file = sys.argv[1].strip() #no use 
     rostopic_file = sys.argv[2].strip()
