@@ -596,11 +596,11 @@ while [ true ]; do
     if [ -f $stat_file ]; then
         [[ $(head -1 $stat_file) -ne 0 ]] && LoggingERR "system check failed" && continue
     fi
-    # python $ABS_PATH/mogodoctor.py c>>$LOGFILE 2>>$ERRFILE
-    # if [ $? -eq 0 ]; then
-    #     break
-    # fi
-    # LoggingERR "autopilot check failed"
+    python $ABS_PATH/mogodoctor.py c>>$LOGFILE 2>>$ERRFILE
+    if [ $? -eq 0 ]; then
+        break
+    fi
+    LoggingERR "autopilot check failed"
     break
 done
 python $ABS_PATH/mogodoctor.py c >>$LOGFILE 2>>$ERRFILE
@@ -660,4 +660,3 @@ fi
 
 start_node
 [[ $opt_alive -ne 0 ]] && keep_alive && LoggingINFO "keep alive is runing..."
-
