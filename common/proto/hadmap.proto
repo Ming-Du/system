@@ -151,13 +151,6 @@ enum ObjectShape {
 
 //////////////////////////////////////////////////
 
-message BoundaryPoint{
-    optional double x = 1;
-    optional double y = 2;
-    optional double z = 3;
-    optional LaneMarkType point_type = 4;
-}
-
 message LaneBoundary {
     // lane boundary primary key
     optional uint64 pkid = 1;
@@ -171,7 +164,6 @@ message LaneBoundary {
 
     // lane boundary geometry
     repeated geometry.Point geom = 5;
-    repeated BoundaryPoint point = 6;
 }
 
 message Lane {

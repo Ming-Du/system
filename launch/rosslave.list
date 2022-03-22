@@ -1,4 +1,6 @@
 launch drivers_lidar.launch
+log_collect_server log_collect_server.launch
+log_msg_collect_server log_msg_collect_server.launch
 update_map update_map.launch
 launch perception_lidar.launch
 launch perception_fusion.launch
