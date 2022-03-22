@@ -702,7 +702,7 @@ class NodeThread(threading.Thread):
 def recv_vstatus(ros_msg):
     #global  g_vehicle_state
     global auto_now_time
-    auto_now_time = ros_msg.header.stamp.secs*1000 + ros_msg.header.stamp.nsecs/1000
+    auto_now_time = ros_msg.header.stamp.secs*1000 + ros_msg.header.stamp.nsecs/1000000
     #print(now_time)
     g_vehicle_state = common_vehicle_state.VehicleState()
     g_vehicle_state.ParseFromString(ros_msg.data)
