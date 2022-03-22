@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-  <node pkg="update_config" type="update_config" name="update_config"  output="screen">	
-    <!-- param name="db_file" value="$(find map_data)/BXY/map.txt" /-->
-    <!-- param name="traj_file" value="$(find map_data)/BXY/demo_bxy_ql_gov_40km_af_loc_bias.csv:$(find map_data)/BXY/BXY_19_7_40km.csv:$(find map_data)/BXY/BXY_7_QL_40km.csv"/ -->
-  </node>
-</launch>
