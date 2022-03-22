@@ -150,10 +150,8 @@ def anlyzeLogCache():
                 topic_dict[one["topic"]]["dst"] = {}
                 topic_dict[one["topic"]]["dst"][one["link"]["dst"]] = 1
             else:
-                if topic_dict[one["topic"]]["dst"][one["link"]["dst"]] == None:
-                    continue
-
-                topic_dict[one["topic"]]["num"] = topic_dict[one["topic"]]["num"] + 1
+                if topic_dict[one["topic"]]["dst"][one["link"]["dst"]] != None:
+                    topic_dict[one["topic"]]["num"] = topic_dict[one["topic"]]["num"] + 1
             
             if topic_dict.get(one["topic"]) != None: 
                 if one["stamp"]/1000000000 < topic_dict[one["topic"]]["start_time"]:
