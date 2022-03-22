@@ -638,7 +638,7 @@ else
         break
     done
     if [ "$ros_machine" == "rosslave" -o "$ros_machine" == "rosslave-103" ]; then
-        python3 /home/mogo/autopilot/share/log_resolve/log_resolver.py >/dev/null 2>&1 &
+        python2 /home/mogo/autopilot/share/log_reslove/log_reslove.py >/dev/null 2>&1 &
     fi
 fi
 
