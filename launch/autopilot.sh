@@ -271,7 +271,7 @@ keep_alive() {
                     if [ -z "$pid" ];then
                         continue
                     fi
-					priority=$(top -n 1 -p $pid | grep $pid | awk '{print $(NF-10)}')
+                    priority=$(top -b -n 1 -p $pid | grep $pid | awk '{print $(NF-9)}')
                     if [ "$priority" == "rt" ];then
                         continue
                     fi
@@ -381,7 +381,7 @@ add_privilege_monitor_gnss(){
 start_core() {
     roscore 2>&1 >$ROS_LOG_DIR/roscore.log &
     roscore_pid=$!
-    chrt -p -r 10 $roscore_pid
+    chrt -p -r 99 $roscore_pid
 }
 
 _exit() {
