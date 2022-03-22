@@ -75,6 +75,10 @@ CURLcode MogoCurl::Post(const std::string &url, const std::string &pstr, std::st
 
 CURLcode MogoCurl::Download(const std::string &url, std::string &file_path)
 {
+	string download_cmd = "curl -o " + file_path + " " + url;
+        system(download_cmd.c_str());
+        return CURLE_OK;
+	/*
 	m_curl_handle = curl_easy_init();
         int outfile;
         CURLcode res;
@@ -96,6 +100,7 @@ CURLcode MogoCurl::Download(const std::string &url, std::string &file_path)
         }
         close(outfile);
         return res;
+	*/
 }
 
 bool MogoCurl::GetUpdateBinaryFileList(const std::string &update_url, const std::string &mac_addr, 
