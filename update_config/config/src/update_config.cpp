@@ -12,7 +12,7 @@
 
 bool MoveTempMapFile()
 {
-	std::string map_path = "/home/mogo/autopilot/share/hadmap_engine/data/";
+	std::string map_path = "/home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/";
 	DIR *dir = opendir(map_path.c_str());
 	struct dirent *ptr;
 	while((ptr = readdir(dir)) != NULL)

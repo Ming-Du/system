@@ -21,6 +21,4 @@ message PlanningConfig {
     optional double safe_lateral_buffer = 11;
     optional double car_follow_factor = 12;
     optional bool  flag_lane_change = 13;
-    optional double dis_stop = 14;
-    optional bool  flag_global_lane_change = 15;
 }

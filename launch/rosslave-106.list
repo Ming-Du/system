@@ -1,5 +1,0 @@
-launch drivers_lidar.launch
-launch perception_lidar.launch
-launch perception_fusion.launch
-v2x v2x.launch
-launch perception_v2x.launch

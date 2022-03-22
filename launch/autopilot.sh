@@ -131,7 +131,7 @@ log4j.appender.${ErrorAppender}.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH
 }
 
 get_all_launch_files() {
-    if [ ! -f $ListFile -o $(wc -l $ListFile | awk '{print $1}') -eq 0 ]; then
+    if [ ! -f $ListFile -o $(wc -l $ListFile| awk '{print $1}') -eq 0 ];then
         MOGO_LOG "EINIT_BOOT" "$ListFile doesn't exist or it's empty"
         LoggingERR "$ListFile doesn't exist or it's empty"
         return
@@ -163,6 +163,7 @@ get_all_launch_files() {
             [[ -z "$child_file" ]] && continue
             pkg_name=$(xmllint --xpath "//@pkg" $child_file 2>/dev/null | sed 's/\"//g')
             [[ -z "$pkg_name" ]] && continue
+            map_restart_times[$child_file]=-1
             launch_files_array[$arr_idx]="$child_file"
             arr_idx=$((arr_idx + 1))
         done
@@ -195,36 +196,13 @@ start_node() {
     for launch_file in ${launch_files_array[*]}; do
         LoggingINFO "roslaunch $launch_file"
         start_onenode "$launch_file"
-        map_restart_times[$launch_file]=-1
     done
 }
 
 keep_alive() {
-    local restart=0
     # check node launch status
     while [ true ]; do
         sleep 5
-        core_stat=$(timeout 1 cat </dev/tcp/$ros_master/11311) # check roscore
-        if [ $? -ne 124 ]; then                                #roscore exit
-            MOGO_LOG "EMAP_NODE" "disconnected with roscore"
-            LoggingERR "disconnected with roscore"
-            restart=1
-            # close child launch process
-            if [ $(jobs -p | wc -l) -ne 0 ]; then
-                jobs -p | xargs kill -2 >/dev/null 2>&1
-            fi
-            # restart roscore
-            [[ "$ros_machine" == "$ros_master" ]] && start_core
-            continue
-        fi
-        # nodes need to be restarted
-        if [ $restart -eq 1 ]; then
-            restart=0
-            LoggingINFO "roscore has been restarted,will start all local nodes..."
-            start_node
-            continue
-        fi
-
         for launch_file in ${launch_files_array[*]}; do
             # pkg_type=$(xmllint --xpath "//node[@type]/@type" $launch_file 2>/dev/null | sed 's/\"//g')
             nodes=$(roslaunch --nodes $launch_file | awk -F/ '{print $NF}')
@@ -243,12 +221,12 @@ keep_alive() {
                         start_onenode "$launch_file"
                         break
                     # try to restart failed
-                    elif [ ${map_restart_times[$launch_file]} -eq 6 ]; then
+                    elif [ ${map_restart_times[$launch_file]} -eq 6 ];then
                         map_restart_times[$launch_file]=999
                         MOGO_LOG "EMAP_NODE_DEAD" "restart $t failed 5 times,cancel to restart"
                         LoggingERR "restart $t failed 5 times,cancel to restart"
                     # launch error
-                    elif [ ${map_restart_times[$launch_file]} -eq 0 ]; then
+                    elif [ ${map_restart_times[$launch_file]} -eq 0 ];then
                         MOGO_LOG "EINIT_BOOT" "launch $t failed"
                         LoggingERR "launch $t failed"
                         map_restart_times[$launch_file]=1
@@ -257,20 +235,18 @@ keep_alive() {
                     if [ ${map_restart_times[$launch_file]} -gt 1 -a ${map_restart_times[$launch_file]} -lt 5 ]; then
                         MOGO_LOG "IBOOT_LOCAL_NODES_STATUS" "restart $t succeed"
                         LoggingINFO "$t restart succeed"
-                    elif [ ${map_restart_times[$launch_file]} -eq 0 ]; then
+                    elif [ ${map_restart_times[$launch_file]} -eq 0 ];then
                         MOGO_LOG "IBOOT_LOCAL_NODES_STATUS" "launch $t succeed"
                         LoggingINFO "launch $t succeed"
                         map_restart_times[$launch_file]=1
                     fi
                     #pr
                     pid=$(ps -ef | grep "__name:=$t" | grep -v grep | awk '{print $2}')  
-					if [ -z "$pid" ];then
-                        continue
-                    fi
-                    priority=$(top -n 1 -p $pid | grep $pid | awk '{print $(NF-10)}')
+					priority=$(top -n 1 -p $pid | grep $pid | awk '{print $(NF-10)}')
                     if [ "$priority" == "rt" ];then
                         continue
                     fi
+
 					case "$t" in
 					"DongFeng_E70_can_adapter" | "jinlv_can_adapter" | "hongqih9_can_adapter")
 						if [ $priority -gt 0 ];then
@@ -327,15 +303,15 @@ MOGO_LOG() {
     local code=$1
     local msg=$2
     local append=$(cat $ABS_PATH/../config/mogo_report_msg.json | python -c "import json,sys; sys.stdout.write(json.dumps(json.load(sys.stdin).get('$code')));sys.stdout.write('\n');" | sed 's/[\{\}]//g')
-    if [ -z "$append" ]; then
-        if [ "$(echo $code | cut -c 1)" == 'E' ]; then
+    if [ -z "$append" ];then
+        if [ "$(echo $code | cut -c 1)" == 'E' ];then
             level="error"
-        elif [ "$(echo $code | cut -c 1)" == 'I' ]; then
+        elif [ "$(echo $code | cut -c 1)" == 'I' ];then
             level="info"
         fi
         append="\"level\":\"$level\", \"code\":\"$code\""
     fi
-    echo "{\"timestamp\": {\"sec\": $(date +"%s"), \"nsec\": $(date +"%N")}, \"src\": \"$this\", $append, \"msg\": \"$msg\"}" >>$MOGOLOGFILE
+    echo "{\"timestamp\": {\"sec\": $(date +"%s"), \"nsec\": $(date +"%N")}, \"src\": \"$this\", $append, \"msg\": \"$msg\"}" >> $MOGOLOGFILE
 }
 
 LoggingINFO() {
@@ -352,7 +328,7 @@ LoggingERR() {
 }
 
 install_ros_log() {
-    [[ ! -d /autocar-code/install ]] && return
+    [[ ! -d /autocar-code/install ]] && return 
     src_so_path=$(find /autocar-code/install/ -name 'libroscpp.so' | head -n 1)
     dst_so_path=$(find /opt -name 'libroscpp.so' | head -n 1)
     conf_path=$(find /autocar-code/install/ -name 'ros_statics.conf' | head -n 1)
@@ -364,19 +340,13 @@ install_ros_log() {
     \cp -rf $conf_path $dst_conf_path
 }
 
-add_privilege_monitor_gnss() {
-    rm  /home/mogo/data/log/location.txt  -rf
-    rm  /home/mogo/data/log/msg_info_log.txt  -rf
-    rm  /home/mogo/data/log/msg_error_log.txt  -rf
-    rm  /home/mogo/data/log/topic_hz_log.txt  -rf
-    chmod -R  777 /autocar-code/install/share/monitor_gnss
-    chmod -R  777 /autocar-code/install/share/monitor_collect
-}
-
-start_core() {
-    roscore 2>&1 >$ROS_LOG_DIR/roscore.log &
-    roscore_pid=$!
-    chrt -p -r 10 $roscore_pid
+add_privilege_monitor_gnss(){
+     rm  /home/mogo/data/log/location.txt  -rf
+     rm  /home/mogo/data/log/msg_info_log.txt  -rf
+     rm  /home/mogo/data/log/msg_error_log.txt  -rf
+     rm  /home/mogo/data/log/topic_hz_log.txt  -rf
+     chmod -R  777 /autocar-code/install/share/monitor_gnss
+     chmod -R  777 /autocar-code/install/share/monitor_collect
 }
 
 _exit() {
@@ -493,8 +463,8 @@ export xavier_type="single"        #单xavier or 双xavier
 export ros_machine="${ros_master}" #主机:rosmaster 从机:rosslave
 # 判断是否为双Xavier
 ethnet_ip=$(ifconfig | grep -v "inet6" | grep -Eo '192[.]168([.][0-9]+){2}' | grep -v "255")
-if [ -z "$ethnet_ip" ]; then
-    LoggingERR "ip address is null"
+if [ -z "$ethnet_ip" ];then
+    LoggingERR "ip address is null" 
     MOGO_LOG "EHW_NET" "ip address is null"
     exit 1
 fi
@@ -596,14 +566,14 @@ while [ true ]; do
     if [ -f $stat_file ]; then
         [[ $(head -1 $stat_file) -ne 0 ]] && LoggingERR "system check failed" && continue
     fi
-    python $ABS_PATH/mogodoctor.py c>>$LOGFILE 2>>$ERRFILE
-    if [ $? -eq 0 ]; then
-        break
-    fi
-    LoggingERR "autopilot check failed"
+    # python $ABS_PATH/mogodoctor.py c>>$LOGFILE 2>>$ERRFILE
+    # if [ $? -eq 0 ]; then
+    #     break
+    # fi
+    # LoggingERR "autopilot check failed"
     break
 done
-python $ABS_PATH/mogodoctor.py c >>$LOGFILE 2>>$ERRFILE
+python $ABS_PATH/mogodoctor.py c>>$LOGFILE 2>>$ERRFILE
 
 ROS_LOG_DIR="${LOG_DIR}/$(date +"%Y%m%d_%H%M%S")"
 [[ ! -d $ROS_LOG_DIR ]] && mkdir -p $ROS_LOG_DIR
@@ -653,7 +623,7 @@ ret=$?
 if [ $ret -eq 124 ]; then
     LoggingERR "update config timeout"
     MOGO_LOG "EMAP_NODE" "update config timeout"
-elif [ $ret -eq 0 ]; then
+elif [ $ret -eq 0 ];then
     MOGO_LOG "IBOOT_CONFIG_UPDATE" "update config finished"
     LoggingINFO "update config finished"
 fi
