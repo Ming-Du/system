@@ -179,6 +179,9 @@ start_onenode() {
         pkg=$(echo "$value" | awk -F= '{print $2}')
         if [ $(echo $pkg_set | grep -o "$pkg" | wc -l) -eq 0 ]; then
             pkg_set="$pkg_set|$pkg"
+            # ros日志配置文件的环境变量
+            # export ROSCONSOLE_FORMAT='[${severity}] ${time} [${function}(${line})]:${message}'
+            ROSCONSOLE_CONFIG_FILE="$ABS_PATH/../config/${pkg}_console.config"
             add_config $pkg INFO >$ROSCONSOLE_CONFIG_FILE
         fi
     done
@@ -211,6 +214,7 @@ keep_alive() {
             for t in $nodes; do
                 # real_proc=$(echo $t | awk -F= '{print $2}')
                 [[ "$t" =~ "rviz" ]] && continue
+                [[ "$t" =~ "update_map" ]] && continue
                 if [ $(ps -ef | grep "__name:=$t" | grep -v grep | wc -l) -eq 0 ]; then
                     proc_stat=1
                     # runtime error
@@ -513,8 +517,7 @@ export ROS_LOG_DIR
 export BAG_DIR="/home/mogo/data/bags"
 # ros日志配置文件的环境变量
 # export ROSCONSOLE_FORMAT='[${severity}] ${time} [${function}(${line})]:${message}'
-export ROSCONSOLE_CONFIG_FILE="$ABS_PATH/../config/rosconsole.config"
-LoggingINFO "ROSCONSOLE_CONFIG_FILE=${ROSCONSOLE_CONFIG_FILE}"
+export ROSCONSOLE_CONFIG_FILE
 export ROS_HOSTNAME=${ros_machine}
 export ROS_MASTER_URI=http://${ros_master}:11311
 export OMP_NUM_THREADS=1

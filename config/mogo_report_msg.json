@@ -122,6 +122,17 @@
             "ACTION_REBOOT_VEHICLE"
         ]
     },
+    "EMAP_TOPIC":{
+        "level": "error",
+        "code": "EMAP_NODE",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE",
+            "RESULT_AUTOPILOT_INFERIOR"
+        ],
+        "action": [
+            "ACTION_CONTACT_TECH_SUPPORT"
+        ]
+    },
     "EMAP_TRA":{
         "level": "error",
         "code": "EMAP_TRA",
