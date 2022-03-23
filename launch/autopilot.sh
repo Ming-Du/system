@@ -163,7 +163,6 @@ get_all_launch_files() {
             [[ -z "$child_file" ]] && continue
             pkg_name=$(xmllint --xpath "//@pkg" $child_file 2>/dev/null | sed 's/\"//g')
             [[ -z "$pkg_name" ]] && continue
-            map_restart_times[$child_file]=-1
             launch_files_array[$arr_idx]="$child_file"
             arr_idx=$((arr_idx + 1))
         done
@@ -199,13 +198,36 @@ start_node() {
     for launch_file in ${launch_files_array[*]}; do
         LoggingINFO "roslaunch $launch_file"
         start_onenode "$launch_file"
+        map_restart_times[$launch_file]=-1
     done
 }
 
 keep_alive() {
+    local restart=0
     # check node launch status
     while [ true ]; do
         sleep 5
+        core_stat=$(timeout 1 cat </dev/tcp/$ros_master/11311) # check roscore
+        if [ $? -ne 124 ]; then                                #roscore exit
+            MOGO_LOG "EMAP_NODE" "disconnected with roscore"
+            LoggingERR "disconnected with roscore"
+            restart=1
+            # close child launch process
+            if [ $(jobs -p | wc -l) -ne 0 ]; then
+                jobs -p | xargs kill -2 >/dev/null 2>&1
+            fi
+            # restart roscore
+            [[ "$ros_machine" == "$ros_master" ]] && start_core
+            continue
+        fi
+        # nodes need to be restarted
+        if [ $restart -eq 1 ]; then
+            restart=0
+            LoggingINFO "roscore has been restarted,will start all local nodes..."
+            start_node
+            continue
+        fi
+
         for launch_file in ${launch_files_array[*]}; do
             # pkg_type=$(xmllint --xpath "//node[@type]/@type" $launch_file 2>/dev/null | sed 's/\"//g')
             nodes=$(roslaunch --nodes $launch_file | awk -F/ '{print $NF}')
@@ -246,6 +268,9 @@ keep_alive() {
                     fi
                     #pr
                     pid=$(ps -ef | grep "__name:=$t" | grep -v grep | awk '{print $2}')  
+                    if [ -z "$pid" ];then
+                        continue
+                    fi
 					priority=$(top -n 1 -p $pid | grep $pid | awk '{print $(NF-10)}')
                     if [ "$priority" == "rt" ];then
                         continue
@@ -351,6 +376,12 @@ add_privilege_monitor_gnss(){
      rm  /home/mogo/data/log/topic_hz_log.txt  -rf
      chmod -R  777 /autocar-code/install/share/monitor_gnss
      chmod -R  777 /autocar-code/install/share/monitor_collect
+}
+
+start_core() {
+    roscore 2>&1 >$ROS_LOG_DIR/roscore.log &
+    roscore_pid=$!
+    chrt -p -r 10 $roscore_pid
 }
 
 _exit() {
