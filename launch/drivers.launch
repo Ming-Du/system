@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-  <include file="$(find config)/vehicle/drivers/camera/4camera.launch"/>
-  <include file="$(find config)/vehicle/drivers/lidar/lidar.launch" />
-  <include file="$(find config)/vehicle/drivers/gnss/gnss.launch" />
-</launch>
