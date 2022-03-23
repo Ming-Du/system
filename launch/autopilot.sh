@@ -27,6 +27,22 @@ Usage() {
     echo -e "\t|$(basename $0) hq --start-node local_planning \t只后台启动红旗车local_planning节点(不会启动roscore,需要手动启动)"
     echo -e "\t|================================================"
 }
+
+MOGO_LOG() {
+    local code=$1
+    local msg=$2
+    local append=$(cat $ABS_PATH/../config/mogo_report_msg.json | python -c "import json,sys; sys.stdout.write(json.dumps(json.load(sys.stdin).get('$code')));sys.stdout.write('\n');" | sed 's/[\{\}]//g')
+    if [ -z "$append" ];then
+        if [ "$(echo $code | cut -c 1)" == 'E' ];then
+            level="error"
+        elif [ "$(echo $code | cut -c 1)" == 'I' ];then
+            level="info"
+        fi
+        append="\"level\":\"$level\", \"code\":\"$code\""
+    fi
+    echo "{\"timestamp\": {\"sec\": $(date +"%s"), \"nsec\": $(date +"%N")}, \"src\": \"$this\", $append, \"msg\": \"$msg\"}" >> $MOGOLOGFILE
+}
+
 kill_ros() {
     core_pid=$(ps aux | grep -v grep | grep -w "rosmaster --core" | awk '{print $2}')
     if [ ! -z "$core_pid" ]; then
@@ -328,21 +344,6 @@ keep_alive() {
     done
 }
 
-MOGO_LOG() {
-    local code=$1
-    local msg=$2
-    local append=$(cat $ABS_PATH/../config/mogo_report_msg.json | python -c "import json,sys; sys.stdout.write(json.dumps(json.load(sys.stdin).get('$code')));sys.stdout.write('\n');" | sed 's/[\{\}]//g')
-    if [ -z "$append" ];then
-        if [ "$(echo $code | cut -c 1)" == 'E' ];then
-            level="error"
-        elif [ "$(echo $code | cut -c 1)" == 'I' ];then
-            level="info"
-        fi
-        append="\"level\":\"$level\", \"code\":\"$code\""
-    fi
-    echo "{\"timestamp\": {\"sec\": $(date +"%s"), \"nsec\": $(date +"%N")}, \"src\": \"$this\", $append, \"msg\": \"$msg\"}" >> $MOGOLOGFILE
-}
-
 LoggingINFO() {
     datetime=$(date +"%Y-%m-%d %H:%M:%S")
     echo -e "\033[32m[ INFO] [$datetime] $*\033[0m"
@@ -409,7 +410,7 @@ declare -g MOGO_MSG_CONFIG="$ABS_PATH/../config/mogo_report_msg.json"
 declare -g MOGO_LOG_DIR="$LOG_DIR/msg_log"
 declare -g MOGOLOGFILE="$MOGO_LOG_DIR/autopilot_report.json"
 self_pid=$$
-this=$(basename $0)
+this=${ABS_PATH}/$(basename $0)
 
 param=$(getopt -a -o n:h --long start-node:,no-keep-alive,help -n 'autopilot.sh' -- "$@")
 eval set -- "$param"
@@ -626,7 +627,7 @@ fi
 LoggingINFO "command : $0 $@"
 
 find ${LOG_DIR} -maxdepth 1 -mtime +3 -type d -exec rm -Rf {} \;
-find ${LOG_DIR} -name "autopilot*.log" -mtime +1 -exec rm -Rf {} \;
+find ${LOG_DIR} -name "autopilot-*" -type f -mtime +1 -exec rm -Rf {} \;
 find $BAG_DIR -maxdepth 1 -mtime +1 -type d -exec rm -Rf {} \;
 
 kill_ros

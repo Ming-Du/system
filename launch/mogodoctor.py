@@ -241,7 +241,6 @@ def check_version():
             for line in file_obj.readlines():
                 if line.find('Version:') != -1:
                     version_info = line.strip()
-                    mogo_log("IINIT_VERSION",version_info)
                     loginfo(version_info)
                     break
     except IOError:
@@ -568,7 +567,7 @@ def checkall():
     if not check_lidar():
         mogo_log("EHW_LIDAR","cannot communicate with lidar")
     else:
-        mogo_log("IINIT_SENSOR_NORMAL","gnss device is normal")
+        mogo_log("IINIT_SENSOR_NORMAL","connected with lidar successfully")
 
 def diagnose():
     check_version()
