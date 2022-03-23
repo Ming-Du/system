@@ -1,4 +1,5 @@
 launch drivers_camera_back.launch
+perception_camera_3D vidar_2camera.launch
 log_collect_client log_collect_client.launch
 log_msg_collect_client log_msg_collect_client.launch
 launch perception_vidar.launch
