@@ -730,8 +730,12 @@ def PrepareMsgLogPath():
     files = os.listdir("/home/mogo/data/log/msg_log/")
     for file_name in files:
         file_path = os.path.join("/home/mogo/data/log/msg_log/", file_name)
-        tmp_file_path = os.path.join("/home/mogo/data/log/msg_log_temp/", file_name)
+        if file_path.find("remote") == -1:
+            t = time.time()
+            index = int(t) % 100000
+            file_name = "remote_{192.168.0.103}_{0}".format(index)
 
+        tmp_file_path = os.path.join("/home/mogo/data/log/msg_log_temp/", file_name)
         os.rename(file_path, tmp_file_path)
         input_paths.append(tmp_file_path)
     return input_paths
