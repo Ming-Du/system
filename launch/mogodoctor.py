@@ -7,10 +7,8 @@ import re
 import logging
 logging.basicConfig()
 from math import modf
-from time import sleep, strftime, time, localtime
-from xml.dom.expatbuilder import parseString
+from time import strftime, time, localtime
 import psutil
-from xml.dom.minidom import parse
 import xml.dom.minidom
 import rospy
 from rospy import Subscriber, logerr_once, loginfo, logerr, logwarn
@@ -640,7 +638,11 @@ def diagnose():
             loginfo("pilot mode of chassis is autopilot")
     return 0
 
+def sig_handler():
+    loginfo("shut down")
+    if file_stat:f_msg_obj.close()
 if __name__ == '__main__':
+    rospy.on_shutdown(sig_handler)
     file_stat = False
     opt = []
     act_check = False
@@ -671,5 +673,4 @@ if __name__ == '__main__':
         diagnose()
         rate.sleep()
     rospy.spin()
-    if file_stat:f_msg_obj.close()
     sys.exit(0)
