@@ -410,7 +410,7 @@ def topicFun(rostopic_file, brandtopicfile):
                             topic_dict[topic_g]  = topic_msg_dict
                             topic_msg_dict = {}
                     topic_msg_dict["topic_name"] = topic_monitor_list[0]
-                    topic_msg_dict["run_hz"] = out_list[2]
+                    topic_msg_dict["run_hz"] = str(out_list[2])
                     topic_msg_dict["set_hz"] = topic_orig_dict[topic_monitor_list[0]]
                     #topic_dict[topic_list[0]] = out_list[2]
                     topic_dict[topic_monitor_list[0]] = topic_msg_dict
@@ -448,7 +448,7 @@ def topicFun(rostopic_file, brandtopicfile):
                 break
             if out_list[0] in topic_list:
                 topic_msg_dict["topic_name"] =out_list[0] 
-                topic_msg_dict["run_hz"] = out_list[1]
+                topic_msg_dict["run_hz"] = str(out_list[1])
                 topic_msg_dict["set_hz"] = topic_orig_dict[out_list[0]]
                 #topic_dict[out_list[0]] = out_list[1]
                 topic_dict[out_list[0]] = topic_msg_dict;
@@ -612,7 +612,7 @@ def fusiontopic(slavemsg, tmpmaster):
         for key in topicInfo.keys():
             run_hz = topicInfo[key]
             if tmpmaster.has_key(key):
-                tmpmaster[key]["run_hz"] = run_hz
+                tmpmaster[key]["run_hz"] = str(run_hz)
     return tmpmaster
         
           
