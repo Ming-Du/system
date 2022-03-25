@@ -429,6 +429,7 @@ declare -g roscore_pid
 declare -g LOGFILE
 declare -g ERRFILE
 declare -g LOG_DIR="/home/mogo/data/log"
+declare -g BAG_DIR="/home/mogo/data/bags"
 declare -g MOGO_MSG_CONFIG="$ABS_PATH/../config/mogo_report_msg.json"
 declare -g MOGO_LOG_DIR="$LOG_DIR/msg_log"
 declare -g MOGOLOGFILE="$MOGO_LOG_DIR/autopilot_report.json"
@@ -484,6 +485,7 @@ curtime=$(date +"%Y%m%d%H%M%S")
 LOGFILE="/home/mogo/data/log/autopilot-${curtime}.log"
 ERRFILE="/home/mogo/data/log/autopilot-${curtime}.err"
 LoggingINFO "systime synchronization at $curtime"
+[[ ! -d $BAG_DIR ]] && mkdir -p $BAG_DIR
 find ${LOG_DIR} -maxdepth 1 -mtime +3 -type d -exec rm -Rf {} \;
 find ${LOG_DIR} -name "autopilot-*" -type f -mtime +1 -exec rm -Rf {} \;
 find $BAG_DIR -maxdepth 1 -mtime +1 -type d -exec rm -Rf {} \;
@@ -594,7 +596,6 @@ export GLOG_logtostderr=1
 export GLOG_colorlogtostderr=1
 # ros日志存储路径的环境变量
 export ROS_LOG_DIR
-export BAG_DIR="/home/mogo/data/bags"
 # ros日志配置文件的环境变量
 # export ROSCONSOLE_FORMAT='[${severity}] ${time} [${function}(${line})]:${message}'
 export ROSCONSOLE_CONFIG_FILE
@@ -605,7 +606,6 @@ export OMP_NUM_THREADS=1
 export BASHRC="source ${SETUP_ROS} && source ${SETUP_AUTOPILOT}"
 source $SETUP_ROS
 source $SETUP_AUTOPILOT
-[[ ! -d $BAG_DIR ]] && mkdir -p $BAG_DIR
 
 get_all_launch_files #获取所有需要启动的launch文件
 if [ -n "$opt_onenode" ]; then
