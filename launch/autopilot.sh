@@ -40,7 +40,7 @@ MOGO_LOG() {
         fi
         append="\"level\":\"$level\", \"code\":\"$code\""
     fi
-    echo "{\"timestamp\": {\"sec\": $(date +"%s"), \"nsec\": $(date +"%N")}, \"src\": \"$this\", $append, \"msg\": \"$msg\"}" >>$MOGOLOGFILE
+    echo "{\"timestamp\": {\"sec\": $(date +"%s"), \"nsec\": $(date +"%N" | sed '/^0*//g')}, \"src\": \"$this\", $append, \"msg\": \"$msg\"}" >>$MOGOLOGFILE
 }
 
 set_bashrc() {
@@ -415,7 +415,7 @@ _exit() {
     exit 6
 }
 # main
-trap '_exit;killall mogodoctor.py' INT TERM
+trap '_exit;killall mogodoctor.py' INT TERM EXIT
 
 export ABS_PATH # autopilot.sh脚本的路径
 ABS_PATH="$(cd "$(dirname $0)" && pwd)"
