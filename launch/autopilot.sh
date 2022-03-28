@@ -291,7 +291,8 @@ install_ros_log() {
 }
 
 add_privilege_monitor_gnss(){
-     rm  /home/mogo/data/log/location.txt  -rf
+     #rm  /home/mogo/data/log/location.txt  -rf
+     rm  -rf  /home/mogo/data/log/filebeat_upload/*
      chmod -R  777 /autocar-code/install/share/monitor_gnss
 }
 
