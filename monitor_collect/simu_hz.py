@@ -47,8 +47,8 @@ globalCommonPara = CommonPara()
 rDictHzTable = {}
 
 rospy.init_node("simu_hz")
-pub_hz = rospy.Publisher("/autopilot_info/report_topic_hz", BinaryData, queue_size=100)
-pub_msg = rospy.Publisher("/autopilot_info/report_msg_info", BinaryData, queue_size=100)
+pub_hz = rospy.Publisher("/autopilot_info/internal/report_topic_hz", BinaryData, queue_size=100)
+pub_msg = rospy.Publisher("/autopilot_info/internal/report_msg_info", BinaryData, queue_size=100)
 
 seq_hz = 1
 def simu_hz():
@@ -111,7 +111,7 @@ if __name__ == "__main__":
         while True:
             simu_mesg()
             simu_hz()
-            time.sleep(3)
+            time.sleep(1)
     except KeyboardInterrupt as e:
         print("monitor.py is failed !")
         exit(0)

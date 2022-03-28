@@ -41,6 +41,8 @@ import proto.monitor_msg_pb2 as  common_monitor_msg_pb2
 import proto.monitor_topic_hz_pb2 as monitor_topic_hz_pb2
 import collections
 import json
+from os import path, access, R_OK
+import os, sys, stat
 
 
 ### global area
@@ -55,6 +57,15 @@ rDictHzTable = {}
 listSubScriptHzItem =  []
 global_hz_time_write_interval = 0
 
+def folder_check():
+    PATH='/home/mogo/data/log/filebeat_upload/'
+    if os.path.isdir(PATH) and access(PATH, R_OK):
+        print "folder exists and is readable"
+    else:
+        print "folder not ready,now create path"
+        os.makedirs(PATH)
+        print os.path.isdir(PATH)
+        os.chmod(PATH,0777)
 
 def task_topic_hz(msg):
     print "++++++++++++++++++++++++"
@@ -72,6 +83,7 @@ def task_topic_hz(msg):
             print elemHz.hz
         pbMonitorHzWidthCarInfo.pLogInfo.header.seq  = pbTopicHz.header.seq
         print "pbMonitorHzWidthCarInfo.pLogInfo.header.seq:%d" %(pbMonitorHzWidthCarInfo.pLogInfo.header.seq)
+        dictHzRecord["log_type"]="topic_hz"
         dictHzRecord['pLogInfo']['header']['seq']=(pbTopicHz.header.seq)
         pbMonitorHzWidthCarInfo.pLogInfo.header.stamp.sec  = pbTopicHz.header.stamp.sec
         print "pbMonitorHzWidthCarInfo.pLogInfo.header.stamp.sec:%d" %(pbMonitorHzWidthCarInfo.pLogInfo.header.stamp.sec)
@@ -142,7 +154,8 @@ def task_topic_hz(msg):
     print "global_hz_time_write_interval:%d " %(global_hz_time_write_interval)
     print "#######################start write hz to log"
     try:
-        with open('/home/mogo/data/log/topic_hz_log.txt', 'ab+') as f:
+        folder_check()
+        with open('/home/mogo/data/log/filebeat_upload/topic_hz_log.log', 'ab+') as f:
             f.write(strJson)
             f.write('\n')
 
@@ -208,6 +221,14 @@ def task_topic_msg(msg):
         dictMsgInfoRecord['carinfo']['car_type']=globalCommonPara.dictCarInfo["car_type"]
         pbSend.carinfo.code_version   = globalCommonPara.dictCarInfo["code_version"]
         dictMsgInfoRecord['carinfo']['code_version']=globalCommonPara.dictCarInfo["code_version"]
+        while True:
+            if pbSend.reportmsg.level == "info":
+                dictMsgInfoRecord['log_type']="info_log"
+                break
+            if pbSend.reportmsg.level == "error":
+                dictMsgInfoRecord['log_type']="error_log"
+                break
+            break
         print "code_version:%s" %(pbSend.carinfo.code_version)
 
         strBuffer = pbSend.SerializeToString()
@@ -223,15 +244,16 @@ def task_topic_msg(msg):
     # /autopilot_info/report_msg_info
     ## Write dest file
     try:
+        folder_check()
         while True:
             if pbSend.reportmsg.level == "info":
-                with open('/home/mogo/data/log/msg_info_log.txt', 'ab+') as f:
+                with open('/home/mogo/data/log/filebeat_upload/msg_info_log.log', 'ab+') as f:
                     f.write(strJson)
                     f.write('\n')
                     print "finish write info to local disk"
                 break
             if pbSend.reportmsg.level == "error":
-                with open('/home/mogo/data/log/msg_error_log.txt', 'ab+') as f:
+                with open('/home/mogo/data/log/febeat_upload/msg_error_log.log', 'ab+') as f:
                     f.write(strJson)
                     f.write('\n')
                     print "finish write error to local disk"
