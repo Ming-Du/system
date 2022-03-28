@@ -106,8 +106,13 @@ def task_localization(pb_msg):
         break
     #print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     if (len(globalListPostion)  >  (1000/globalWriteInterval) )  or   ( len(globalListPostion) == (1000/globalWriteInterval) ):
-        dictLogInfo = {}
+        tree = lambda: collections.defaultdict(tree)
+        dictLogInfo = tree()
         dictLogInfo["log_type"]="location"
+        curSec = rospy.rostime.Time.now().secs
+        curNsec = rospy.rostime.Time.now().nsecs
+        dictLogInfo["timestamp"]['sec']=curSec
+        dictLogInfo["timestamp"]["nsec"]=curNsec
         dictLogInfo["car_info"]=globalCommonPara.dictCarInfo
         dictLogInfo["positions"]=globalListPostion
         strJsonLineContent = json.dumps(dictLogInfo)
