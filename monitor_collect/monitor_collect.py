@@ -223,10 +223,10 @@ def task_topic_msg(msg):
         dictMsgInfoRecord['carinfo']['code_version']=globalCommonPara.dictCarInfo["code_version"]
         while True:
             if pbSend.reportmsg.level == "info":
-                dictMsgInfoRecord['log_type']="info_log"
+                dictMsgInfoRecord['log_type']="msg_record"
                 break
             if pbSend.reportmsg.level == "error":
-                dictMsgInfoRecord['log_type']="error_log"
+                dictMsgInfoRecord['log_type']="msg_record"
                 break
             break
         print "code_version:%s" %(pbSend.carinfo.code_version)
@@ -247,13 +247,13 @@ def task_topic_msg(msg):
         folder_check()
         while True:
             if pbSend.reportmsg.level == "info":
-                with open('/home/mogo/data/log/filebeat_upload/msg_info_log.log', 'ab+') as f:
+                with open('/home/mogo/data/log/filebeat_upload/msg_record.log', 'ab+') as f:
                     f.write(strJson)
                     f.write('\n')
                     print "finish write info to local disk"
                 break
             if pbSend.reportmsg.level == "error":
-                with open('/home/mogo/data/log/febeat_upload/msg_error_log.log', 'ab+') as f:
+                with open('/home/mogo/data/log/filebeat_upload/msg_record.log', 'ab+') as f:
                     f.write(strJson)
                     f.write('\n')
                     print "finish write error to local disk"
