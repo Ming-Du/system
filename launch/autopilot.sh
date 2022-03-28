@@ -385,10 +385,11 @@ install_ros_log() {
 
 add_privilege_monitor_gnss() {
     [[ ! -d /autocar-code/install ]] && return
-    rm /home/mogo/data/log/location.txt -rf
-    rm /home/mogo/data/log/msg_info_log.txt -rf
-    rm /home/mogo/data/log/msg_error_log.txt -rf
-    rm /home/mogo/data/log/topic_hz_log.txt -rf
+    #rm /home/mogo/data/log/location.txt -rf
+    #rm /home/mogo/data/log/msg_info_log.txt -rf
+    #rm /home/mogo/data/log/msg_error_log.txt -rf
+    #rm /home/mogo/data/log/topic_hz_log.txt -rf
+    rm  -rf  /home/mogo/data/log/filebeat_upload/*
     chmod -R 777 /autocar-code/install/share/monitor_gnss >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/share/monitor_collect >/dev/null 2>&1
 }
