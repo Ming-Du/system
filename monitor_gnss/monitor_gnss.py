@@ -21,6 +21,8 @@ import logging
 import re
 import time
 import datetime
+from os import path, access, R_OK
+import os, sys, stat
 
 from autopilot_msgs.msg import BinaryData
 import proto.localization_pb2 as common_localization
@@ -41,6 +43,16 @@ globalCommonPara = CommonPara()
 globalLastMicroSec = 0
 globalListPostion = []
 globalWriteInterval = 50
+
+def folder_check():
+    PATH='/home/mogo/data/log/filebeat_upload/'
+    if os.path.isdir(PATH) and access(PATH, R_OK):
+        print "folder exists and is readable"
+    else:
+        print "folder not ready,now create path"
+        os.makedirs(PATH)
+        print os.path.isdir(PATH)
+        os.chmod(PATH,0777)
 
 
 def task_localization(pb_msg):
@@ -95,13 +107,15 @@ def task_localization(pb_msg):
     #print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     if (len(globalListPostion)  >  (1000/globalWriteInterval) )  or   ( len(globalListPostion) == (1000/globalWriteInterval) ):
         dictLogInfo = {}
+        dictLogInfo["log_type"]="location"
         dictLogInfo["car_info"]=globalCommonPara.dictCarInfo
         dictLogInfo["positions"]=globalListPostion
         strJsonLineContent = json.dumps(dictLogInfo)
         # print strJsonLineContent
         #print "bbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         try:
-            with open('/home/mogo/data/log/location.txt', 'a+') as f:
+            folder_check()
+            with open('/home/mogo/data/log/filebeat_upload/location.log', 'a+') as f:
                 #print "dddddddddddddddddddddddd"
                 f.write(strJsonLineContent)
                 f.write("\n")
