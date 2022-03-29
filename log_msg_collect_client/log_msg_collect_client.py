@@ -23,10 +23,11 @@ def run_once():
     # 先截取一遍文件
     files = os.listdir(src_dir)
     for file_name in files:
-        file_path = os.path.join(src_dir, file_name)
-        tmp_file_path = os.path.join(tmp_dir, file_name)
+        if file_name == "autopilot_report.json" or file_name == "mogodoctor_report.json":
+            file_path = os.path.join(src_dir, file_name)
+            tmp_file_path = os.path.join(tmp_dir, file_name)
 
-        os.rename(file_path, tmp_file_path)
+            os.rename(file_path, tmp_file_path)
 
     # 将截取数据发出去
     files = os.listdir(tmp_dir)

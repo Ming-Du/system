@@ -42,10 +42,9 @@ def run_once():
 def run():
     if os.path.exists(tmp_dir) == False:
         os.mkdir(tmp_dir)
-
     if os.path.exists(src_dir) == False:
-        os.mkdir(src_dir)
-    
+        os.makedirs(src_dir) 
+
     while True:
         start = time.time()
         run_once()

@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 import sys
 import json
@@ -99,7 +98,7 @@ def buildTopicLogMsg(topic_dict):
             topic_hz = log_pub_msg.topic_hz.add()
             topic_hz.name = k
             print("the topic dist is {0}".format(topic_dict[k]["dst"]))
-            topic_hz.hz = (int)(v["num"]/len(topic_dict[k]["dst"]))
+            topic_hz.hz = (int)(v["num"])
     except Exception as e:
         pass
     return log_pub_msg
@@ -165,13 +164,13 @@ def anlyzeLogCache():
     log_cache_list = []
     return True
 
-class topicThread (threading.Thread):
+class TopicThread (threading.Thread):
     def __init__(self, times):
         global set_topic_hz_pub
         threading.Thread.__init__(self)
         self.times = times
         set_topic_hz_pub  = Publisher('/autopilot_info/internal/report_topic_hz', BinaryData, queue_size=10)
-
+        time.sleep(10)
     def run(self):
         while True:
             time.sleep(self.times)
@@ -672,6 +671,8 @@ def run_once():
     clear_input_files(input_paths)
 
 def run():
+    if os.path.exists(input_dir) == False:
+        os.makedirs(input_dir)
     if os.path.exists(tmp_dir) == False:
         os.mkdir(tmp_dir)
     if os.path.exists(output_dir) == False:
@@ -685,7 +686,7 @@ def run():
         run_once()
         end = time.time()
 
-        sleep_time = 5 - (end - start)
+        sleep_time = 1 - (end - start)
         if sleep_time > 0.3:
             time.sleep(sleep_time)
 
@@ -725,15 +726,20 @@ class Autopilot:
         self.veh_state_thread.start()
 
 
+#t = time.time()
+#index = int(t) % 100000
+#filename = "remote_{0}_{1}".format(addr[0], index)
+
 def PrepareMsgLogPath():
     input_paths = []
     files = os.listdir("/home/mogo/data/log/msg_log/")
     for file_name in files:
         file_path = os.path.join("/home/mogo/data/log/msg_log/", file_name)
-        if file_path.find("remote") == -1:
-            t = time.time()
-            index = int(t) % 100000
-            file_name = "%s_{192.168.0.103}_%d" %(file_name, index)
+        #tmp_file_path = os.path.join("/home/mogo/data/log/msg_log_temp/", file_name)
+        #if file_path.find("remote") == -1:
+        #    t = time.time()
+        #    index = int(t) % 100000
+        #    file_name = "%s_{192.168.0.103}_%d" %(file_name, index) 
         tmp_file_path = os.path.join("/home/mogo/data/log/msg_log_temp/", file_name)
         os.rename(file_path, tmp_file_path)
         input_paths.append(tmp_file_path)
@@ -741,7 +747,8 @@ def PrepareMsgLogPath():
 
 def LoadMsglogs(input_paths):
     for path in input_paths:
-        LoadOneMsgLog(path)
+        if path.find("swp") == -1:
+            LoadOneMsgLog(path)
 
 def buildOneLogMsg(one_log_dict):
     #common_mogo_report_msg MogoReportMessage
@@ -798,12 +805,12 @@ def LoadOneMsgLog(path):
         if one_log_dict["level"] == "error":
             set_msg_log_pub_error.publish(binary_log_msg)
 
-        mogo_report_msg_test = common_mogo_report_msg.MogoReportMessage()
-        mogo_report_msg_test.ParseFromString(binary_log_msg.data)
-        for one_msg in mogo_report_msg_test.actions:
-            print(one_msg)
-        for one_msg in mogo_report_msg_test.result:
-            print(one_msg)
+        #mogo_report_msg_test = common_mogo_report_msg.MogoReportMessage()
+        #mogo_report_msg_test.ParseFromString(binary_log_msg.data)
+        #for one_msg in mogo_report_msg_test.actions:
+        #    print(one_msg)
+        #for one_msg in mogo_report_msg_test.result:
+        #    print(one_msg)
         time.sleep(1)
 
 
@@ -822,17 +829,17 @@ class MsgLogThread (threading.Thread):
         global set_msg_log_pub_info
         global set_msg_log_pub_error
         threading.Thread.__init__(self)
-        set_msg_log_pub_info  = Publisher('/autopilot_info/internal/report_msg_info', BinaryData, queue_size=10)
-        set_msg_log_pub_error = Publisher('/autopilot_info/internal/report_msg_error', BinaryData, queue_size=10)
-
+        set_msg_log_pub_info  = Publisher('/autopilot_info/internal/report_msg_info', BinaryData, queue_size=500)
+        set_msg_log_pub_error = Publisher('/autopilot_info/internal/report_msg_error', BinaryData, queue_size=500)
+        time.sleep(10)
     def run(self):
         UpdateMsgTopic()
 
 
 def main():
     autopilot_thread = Autopilot()
-    
-    topic_thread = topicThread(5)
+    time.sleep(5) 
+    topic_thread = TopicThread(5)
     topic_thread.start()
     
     msg_log_thread = MsgLogThread()

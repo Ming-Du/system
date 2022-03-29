@@ -662,9 +662,6 @@ else
         fi
         break
     done
-    if [ "$ros_machine" == "rosslave" -o "$ros_machine" == "rosslave-103" ]; then
-        python2 /home/mogo/autopilot/share/log_reslove/log_reslove.py >/dev/null 2>&1 &
-    fi
 fi
 
 sleep 1
@@ -684,4 +681,7 @@ elif [ $ret -eq 0 ]; then
 fi
 
 start_node
+if [ "$ros_machine" == "rosslave" -o "$ros_machine" == "rosslave-103" ]; then
+    python2 /home/mogo/autopilot/share/log_reslove/log_reslove.py >/dev/null 2>&1 &
+fi
 [[ $opt_alive -ne 0 ]] && keep_alive && LoggingINFO "keep alive is runing..."
