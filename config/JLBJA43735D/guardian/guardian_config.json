@@ -173,32 +173,6 @@
                     "guardian":"y"
                 }
              ]
-        },
-        {
-          "node_name":"/perception/lidar/perception_lidar",
-          "brand":"JINLV",
-          "rosmachetype":"slave",
-          "value":
-             [
-                {
-                    "topic_name": "/sensor/lidar/front_left/point_cloud",
-                    "set_hz":"10",
-                    "brand":"JINLV",
-                    "guardian":"y"
-                },
-                {
-                    "topic_name": "/sensor/lidar/front_right/point_cloud", 
-                    "set_hz":"10",
-                    "brand":"JINLV",
-                    "guardian":"y"
-                },    
-                {
-                    "topic_name": "/perception/lidar/lidar_obstacle_cluster",
-                    "set_hz":"10",
-                    "brand":"JINLV",
-                    "guardian":"y"
-                }    
-             ]
         }
      ]
    }
