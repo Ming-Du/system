@@ -46,11 +46,11 @@ node_config["/sensor/lidar/c32/front_right/c32_right_decoder"]["sub"] = []
 node_config["/sensor/lidar/c32/front_right/c32_right_decoder"]["pub"] = "/sensor/lidar/front_right/point_clound"
 
 node_config["/perception_camera_2D_front"] = {}
-node_config["/perception_camera_2D_front"]["sub"] = ["/sensor/camera/sensing/image_raw_60"]
+node_config["/perception_camera_2D_front"]["sub"] = ["/sensor/camera/sensing/image_raw_60/nvjpeg"]
 node_config["/perception_camera_2D_front"]["pub"] = "/perception/camera/camera_obstacle"
 
 node_config["/sensor/camera/sensing60/drivers_camera_sensing60"] = {}
 node_config["/sensor/camera/sensing60/drivers_camera_sensing60"]["sub"] = []
-node_config["/sensor/camera/sensing60/drivers_camera_sensing60"]["pub"] = "/sensor/camera/sensing/image_raw_60"
+node_config["/sensor/camera/sensing60/drivers_camera_sensing60"]["pub"] = "/sensor/camera/sensing/image_raw_60/nvjpeg"
 
 

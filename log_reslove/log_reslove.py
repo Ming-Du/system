@@ -733,13 +733,19 @@ class Autopilot:
 def PrepareMsgLogPath():
     input_paths = []
     files = os.listdir("/home/mogo/data/log/msg_log/")
+    tmp_files = os.listdir("/home/mogo/data/log/msg_log_temp/")
+
+    for file_name in tmp_files:
+        tmp_file_path = os.path.join("/home/mogo/data/log/msg_log_temp/", file_name)
+        input_paths.append(tmp_file_path)
+
     for file_name in files:
         file_path = os.path.join("/home/mogo/data/log/msg_log/", file_name)
-        #tmp_file_path = os.path.join("/home/mogo/data/log/msg_log_temp/", file_name)
-        #if file_path.find("remote") == -1:
-        #    t = time.time()
-        #    index = int(t) % 100000
-        #    file_name = "%s_{192.168.0.103}_%d" %(file_name, index) 
+        tmp_file_path = os.path.join("/home/mogo/data/log/msg_log_temp/", file_name)
+        if file_path.find("remote") == -1:
+            t = time.time()*1000000
+            index = int(t) % 100000
+            file_name = "%s_{192.168.0.103}_%d" %(file_name, index) 
         tmp_file_path = os.path.join("/home/mogo/data/log/msg_log_temp/", file_name)
         os.rename(file_path, tmp_file_path)
         input_paths.append(tmp_file_path)
@@ -749,6 +755,7 @@ def LoadMsglogs(input_paths):
     for path in input_paths:
         if path.find("swp") == -1:
             LoadOneMsgLog(path)
+            os.remove(path)
 
 def buildOneLogMsg(one_log_dict):
     #common_mogo_report_msg MogoReportMessage
