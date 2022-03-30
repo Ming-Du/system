@@ -4,17 +4,17 @@
   <arg name="sensor_meta"
     default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
 
-  <arg name="device_ip" default="192.168.8.201" />
+  <arg name="device_ip" default="192.168.1.201" />
   <arg name="msop_port" default="2370" />
   <arg name="difop_port" default="2371" />
   <arg name="return_mode" default="1" />
   <arg name="degree_mode" value="1"/>
-  <arg name="time_synchronization" default="false" />
+  <arg name="time_synchronization" default="true" />
   <arg name="frame_id" value="c32_front_left" />
 
   <group ns="sensor/lidar/c32/front_left">
-  <node pkg="drivers_lslidar" type="lslidar_c32_driver_node"
-        name="c32_left_driver" output="screen">
+  <node name="c32_left_driver" output="screen"
+        pkg="drivers_lslidar" type="lslidar_c32_driver_node">
     <param name="device_ip" value="$(arg device_ip)" />
     <param name="msop_port" value="$(arg msop_port)" />
     <param name="difop_port" value="$(arg difop_port)"/>
@@ -28,11 +28,12 @@
     <param name="time_synchronization" value="$(arg time_synchronization)"/>
   </node>
 
-  <node pkg="drivers_lslidar" type="lslidar_c32_decoder_node" 
-        name="c32_left_decoder" output="screen"
+  <node name="c32_left_decoder" output="screen"
+        pkg="drivers_lslidar" type="lslidar_c32_decoder_node" 
         args="--sensor_meta_path=$(arg sensor_meta)" >
     <param name="min_distance" value="0.3"/>
     <param name="max_distance" value="150.0"/>
+
     <param name="degree_mode" value="$(arg degree_mode)"/>
     <param name="distance_unit" value="0.4"/>
     <param name="return_mode" value="$(arg return_mode)"/>
@@ -40,7 +41,7 @@
     <param name="print_vert" value="false"/>
 
     <param name="scan_start_angle" value="0" />
-    <param name="scan_end_angle" value="29000" />
+    <param name="scan_end_angle" value="26000" />
     
     <param name="frame_id" value="$(arg frame_id)"/>
     <param name="scan_num" value="15"/>
