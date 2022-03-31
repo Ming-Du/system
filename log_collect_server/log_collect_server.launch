@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+  <node name="log_collect_server" pkg="log_collect_server" type="log_collect_server.py" output="screen"/>
+</launch>

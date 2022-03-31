@@ -27,13 +27,22 @@ Usage() {
     echo -e "\t|$(basename $0) hq --start-node local_planning \t只后台启动红旗车local_planning节点(不会启动roscore,需要手动启动)"
     echo -e "\t|================================================"
 }
-kill_ros() {
-    core_pid=$(ps aux | grep -v grep | grep -w "rosmaster --core" | awk '{print $2}')
-    if [ ! -z "$core_pid" ]; then
-        rosnode kill -a
-        kill $core_pid
+
+MOGO_LOG() {
+    local code=$1
+    local msg=$2
+    local append=$(cat $ABS_PATH/../config/mogo_report_msg.json | python -c "import json,sys; sys.stdout.write(json.dumps(json.load(sys.stdin).get('$code')));sys.stdout.write('\n');" | sed 's/[\{\}]//g')
+    if [ -z "$append" ]; then
+        if [ "$(echo $code | cut -c 1)" == 'E' ]; then
+            level="error"
+        elif [ "$(echo $code | cut -c 1)" == 'I' ]; then
+            level="info"
+        fi
+        append="\"level\":\"$level\", \"code\":\"$code\""
     fi
+    echo "{\"timestamp\": {\"sec\": $(date +"%s"), \"nsec\": $(date +"%N" | sed '/^0*//g')}, \"src\": \"$this\", $append, \"msg\": \"$msg\"}" >>$MOGOLOGFILE
 }
+
 set_bashrc() {
     HOSTNAME="export ROS_HOSTNAME=$ros_machine"
     MASTER_URI="export ROS_MASTER_URI=http://$ros_master:11311"
@@ -133,6 +142,7 @@ log4j.appender.${ErrorAppender}.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH
 get_all_launch_files() {
     local file_set
     if [ ! -f $ListFile -o $(sed '/^\s*$/d' $ListFile | wc -m) -eq 0 ]; then
+        MOGO_LOG "EINIT_BOOT" "$ListFile doesn't exist or it's empty"
         LoggingERR "$ListFile doesn't exist or it's empty"
         return
     fi
@@ -167,6 +177,7 @@ get_all_launch_files() {
         include_files=$(roslaunch --files $launch_file 2>/dev/null)
         if [ $? -ne 0 ]; then
             LoggingERR "cannot find $launch_file"
+            MOGO_LOG "EINIT_BOOT" "can not find $launch_file or the launch file is invalid"
             continue
         fi
         for child_file in $include_files; do
@@ -177,6 +188,7 @@ get_all_launch_files() {
             map_restart_times[$child_file]=-1
             launch_files_array[$arr_idx]="$child_file"
             arr_idx=$((arr_idx + 1))
+            # 可能存在的问题:当某launch文件中既包含节点又包含include时，如果roslaunch --files命令先打印子file,则还会出现启动多次的问题，待修复
             for f in $(roslaunch --files $child_file);do
                 [[ $(echo $file_set | grep -w -c "$f:") -ne 0 ]] && continue
                 file_set="$f:$file_set"
@@ -194,6 +206,9 @@ start_onenode() {
         pkg=$(echo "$value" | awk -F= '{print $2}')
         if [ $(echo $pkg_set | grep -o "$pkg" | wc -l) -eq 0 ]; then
             pkg_set="$pkg_set|$pkg"
+            # ros日志配置文件的环境变量
+            # export ROSCONSOLE_FORMAT='[${severity}] ${time} [${function}(${line})]:${message}'
+            ROSCONSOLE_CONFIG_FILE="$ABS_PATH/../config/${pkg}_console.config"
             add_config $pkg INFO >$ROSCONSOLE_CONFIG_FILE
         fi
     done
@@ -211,13 +226,36 @@ start_node() {
     for launch_file in ${launch_files_array[*]}; do
         LoggingINFO "roslaunch $launch_file"
         start_onenode "$launch_file"
+        map_restart_times[$launch_file]=-1
     done
 }
 
 keep_alive() {
+    local restart=0
     # check node launch status
     while [ true ]; do
         sleep 5
+        core_stat=$(timeout 1 cat </dev/tcp/$ros_master/11311) # check roscore
+        if [ $? -ne 124 ]; then                                #roscore exit
+            MOGO_LOG "EMAP_NODE" "disconnected with roscore"
+            LoggingERR "disconnected with roscore"
+            restart=1
+            # close child launch process
+            if [ $(jobs -p | wc -l) -ne 0 ]; then
+                jobs -p | xargs kill -2 >/dev/null 2>&1
+            fi
+            # restart roscore
+            [[ "$ros_machine" == "$ros_master" ]] && start_core
+            continue
+        fi
+        # nodes need to be restarted
+        if [ $restart -eq 1 ]; then
+            restart=0
+            LoggingINFO "roscore has been restarted,will start all local nodes..."
+            start_node
+            continue
+        fi
+
         for launch_file in ${launch_files_array[*]}; do
             # pkg_type=$(xmllint --xpath "//node[@type]/@type" $launch_file 2>/dev/null | sed 's/\"//g')
             nodes=$(roslaunch --nodes $launch_file | awk -F/ '{print $NF}')
@@ -232,36 +270,91 @@ keep_alive() {
                     # runtime error
                     if [ ${map_restart_times[$launch_file]} -ge 1 -a ${map_restart_times[$launch_file]} -le 5 ]; then
                         LoggingERR "$t died,will restart it [${map_restart_times[$launch_file]}/5]"
+                        MOGO_LOG "EMAP_NODE" "$t died,will restart it [${map_restart_times[$launch_file]}/5]"
                         LoggingINFO "will restart $t in $launch_file [${map_restart_times[$launch_file]}/5]"
                         start_onenode "$launch_file"
                         break
                     # try to restart failed
                     elif [ ${map_restart_times[$launch_file]} -eq 6 ]; then
                         map_restart_times[$launch_file]=999
+                        MOGO_LOG "EMAP_NODE_DEAD" "restart $t failed 5 times,cancel to restart"
                         LoggingERR "restart $t failed 5 times,cancel to restart"
                     # launch error
                     elif [ ${map_restart_times[$launch_file]} -eq 0 ]; then
+                        MOGO_LOG "EINIT_BOOT" "launch $t failed"
                         LoggingERR "launch $t failed"
                         # map_restart_times[$launch_file]=1 #bug:如果launch里面有多个node，则只打印一次日志
                     fi
                 else
                     if [ ${map_restart_times[$launch_file]} -gt 1 -a ${map_restart_times[$launch_file]} -lt 5 ]; then
+                        MOGO_LOG "IBOOT_LOCAL_NODES_STATUS" "restart $t succeed"
                         LoggingINFO "$t restart succeed"
                     elif [ ${map_restart_times[$launch_file]} -eq 0 ]; then
+                        MOGO_LOG "IBOOT_LOCAL_NODES_STATUS" "launch $t succeed"
                         LoggingINFO "launch $t succeed" 
                         # map_restart_times[$launch_file]=1 #bug:如果launch里面有多个node，则只打印一次日志
                     fi
+                    #pr
+                    pid=$(ps -ef | grep "__name:=$t" | grep -v grep | awk '{print $2}')
+                    if [ -z "$pid" ]; then
+                        continue
+                    fi
+                    priority=$(top -b -n 1 -p $pid | grep $pid | awk '{print $(NF-9)}')
+                    if [ "$priority" == "rt" ]; then
+                        continue
+                    fi
+
+                    case "$t" in
+                    "DongFeng_E70_can_adapter" | "jinlv_can_adapter" | "hongqih9_can_adapter")
+                        if [ $priority -gt 0 ]; then
+                            chrt -p -r 99 $pid
+                        fi
+                        ;;
+                    "controller")
+                        if [ $priority -gt 0 ]; then
+                            chrt -p -r 99 $pid
+                        fi
+                        ;;
+
+                    "localization" | "drivers_gnss" | "drivers_gnss_zy")
+                        if [ $priority -gt 0 ]; then
+                            chrt -p -r 99 $pid
+                        fi
+                        ;;
+                    "local_planning")
+                        if [ $priority -gt 0 ]; then
+                            chrt -p -r 99 $pid
+                        fi
+                        ;;
+                    "hadmap_server" | "hadmap_engine_node")
+                        if [ $priority -gt 0 ]; then
+                            chrt -p -r 80 $pid
+                        fi
+                        ;;
+                    "perception_fusion2" | "perception_fusion")
+                        if [ $priority -gt 0 ]; then
+                            chrt -p -r 79 $pid
+                        fi
+                        ;;
+                    "rs_perception_node" | "perception_camera_2D_front_node" | "trt_yolov5")
+                        if [ $priority -gt 0 ]; then
+                            chrt -p -r 69 $pid
+                        fi
+                        ;;
+                    "drivers_camera_sensing60" | "drivers_camera_sensing30" | "drivers_camera_sensing120" | "drivers_robosense_node")
+                        if [ $priority -gt 0 ]; then
+                            chrt -p -r 59 $pid
+                        fi
+                        ;;
+                    *) ;;
+
+                    esac
                 fi
             done
             [[ $proc_stat -eq 0 ]] && map_restart_times[$launch_file]=1
             [[ $proc_stat -ne 0 && ${map_restart_times[$launch_file]} -eq 0 ]] && map_restart_times[$launch_file]=1
         done
     done
-}
-
-MOGO_LOG() {
-    echo -e "{\"timestamp\": {\"sec\": $(date +"%s"), \"nsec\": $(date +"%N")}, \"src\": \"$this\",\
-    \"level\": \"error\", \"msg\": \"can bus has no data\", \"code\": "", \"result\": [], \"actions\": []}"
 }
 
 LoggingINFO() {
@@ -278,42 +371,68 @@ LoggingERR() {
 }
 
 install_ros_log() {
-    [[ ! -d /autocar-code/install ]] && return 
+    [[ ! -d /autocar-code/install ]] && return
     src_so_path=$(find /autocar-code/install/ -name 'libroscpp.so' | head -n 1)
     dst_so_path=$(find /opt -name 'libroscpp.so' | head -n 1)
-    conf_path=$(find /autocar-code/install/ -name 'ros_statics.conf' | head -n 1)
-    dst_conf_path="/home/mogo/data/log/ros_statics.conf"
     mkdir -p /home/mogo/data/log/ROS_STAT/
     mkdir -p /home/mogo/data/log/ROS_STAT/EXPORT/
     chmod 777 -R /home/mogo/data/log/
     \cp -rf $src_so_path $dst_so_path
-    \cp -rf $conf_path $dst_conf_path
 }
 
-add_privilege_monitor_gnss(){
-     #rm  /home/mogo/data/log/location.txt  -rf
-     rm  -rf  /home/mogo/data/log/filebeat_upload/*
-     chmod -R  777 /autocar-code/install/share/monitor_gnss
+add_privilege_monitor_gnss() {
+    [[ ! -d /autocar-code/install ]] && return
+    #rm /home/mogo/data/log/location.txt -rf
+    #rm /home/mogo/data/log/msg_info_log.txt -rf
+    #rm /home/mogo/data/log/msg_error_log.txt -rf
+    #rm /home/mogo/data/log/topic_hz_log.txt -rf
+    rm  -rf  /home/mogo/data/log/filebeat_upload/*
+    chmod -R 777 /autocar-code/install/share/monitor_gnss >/dev/null 2>&1
+    chmod -R 777 /autocar-code/install/share/monitor_collect >/dev/null 2>&1
+}
+
+start_core() {
+    [[ -n "$opt_onenode" ]] && return
+    roscore 2>&1 >$ROS_LOG_DIR/roscore.log &
+    roscore_pid=$!
+    chrt -p -r 99 $roscore_pid
+}
+kill_ros() {
+    [[ -n "$opt_onenode" ]] && return
+    core_pid=$(ps aux | grep -v grep | grep -w "rosmaster --core" | awk '{print $2}')
+    if [ ! -z "$core_pid" ]; then
+        rosnode kill -a
+        kill $core_pid
+    fi
 }
 
 _exit() {
+    MOGO_LOG "IBOOT_LOCAL_NODES_STATUS" "receive SIGINT/SIGTERM signal,will shutdown"
     LoggingINFO "receive quit signal"
     [[ ! -z "$roscore_pid" ]] && rosnode kill -a && kill $roscore_pid
     exit 6
 }
 # main
-trap '_exit' INT TERM
+trap '_exit;killall mogodoctor.py' INT TERM EXIT
+
+export ABS_PATH # autopilot.sh脚本的路径
+ABS_PATH="$(cd "$(dirname $0)" && pwd)"
 
 declare -A -g map_restart_times=()
 declare -g opt_onenode
 declare -g opt_alive=1
 declare -g launch_files_array
 declare -g arr_idx=0
-declare roscore_pid
+declare -g roscore_pid
 declare -g LOGFILE
 declare -g ERRFILE
+declare -g LOG_DIR="/home/mogo/data/log"
+declare -g BAG_DIR="/home/mogo/data/bags"
+declare -g MOGO_MSG_CONFIG="$ABS_PATH/../config/mogo_report_msg.json"
+declare -g MOGO_LOG_DIR="$LOG_DIR/msg_log"
+declare -g MOGOLOGFILE="$MOGO_LOG_DIR/autopilot_report.json"
 self_pid=$$
-this=$(basename $0)
+this=${ABS_PATH}/$(basename $0)
 
 param=$(getopt -a -o n:h --long start-node:,no-keep-alive,help -n 'autopilot.sh' -- "$@")
 eval set -- "$param"
@@ -343,6 +462,34 @@ while true; do
     esac
 done
 
+#check system time
+export last_launch_time
+if [ -f $ABS_PATH/launch_time ]; then
+    last_launch_time=$(cat $ABS_PATH/launch_time)
+fi
+if [ -z "$last_launch_time" ]; then
+    last_launch_time="20211222211202" #随便初始的一个日期时间，不要在意细节
+fi
+while [ true ]; do
+    systime=$(date +"%Y%m%d%H%M%S")
+    if [ $systime -gt $last_launch_time ]; then
+        MOGO_LOG "IINIT_TIME_SYNC" "systime synchronization at $systime"
+        echo $systime >$ABS_PATH/launch_time
+        break
+    fi
+    sleep 1
+done
+curtime=$(date +"%Y%m%d%H%M%S")
+LOGFILE="/home/mogo/data/log/autopilot-${curtime}.log"
+ERRFILE="/home/mogo/data/log/autopilot-${curtime}.err"
+LoggingINFO "systime synchronization at $curtime"
+[[ ! -d $BAG_DIR ]] && mkdir -p $BAG_DIR
+find ${LOG_DIR} -maxdepth 1 -mtime +3 -type d -exec rm -Rf {} \;
+find ${LOG_DIR} -name "autopilot-*" -type f -mtime +1 -exec rm -Rf {} \;
+find $BAG_DIR -maxdepth 1 -mtime +1 -type d -exec rm -Rf {} \;
+
+[[ ! -d $MOGO_LOG_DIR ]] && mkdir -p $MOGO_LOG_DIR
+[ ! -f $MOGO_MSG_CONFIG ] && MOGO_LOG "EINIT_BOOT" "cannot get mogo_msg_config,report could be incompletion"
 if [ -z "$opt_onenode" ]; then
     LOGFILE="/home/mogo/data/log/autopilot.log"
     ERRFILE="/home/mogo/data/log/autopilot.err"
@@ -354,9 +501,6 @@ if [ -z "$opt_onenode" ]; then
         fi
     done
 fi
-
-export ABS_PATH # autopilot.sh脚本的路径
-ABS_PATH="$(cd "$(dirname $0)" && pwd)"
 
 # GuiServer:
 # silence -- 后台启动
@@ -403,8 +547,11 @@ export xavier_type="single"        #单xavier or 双xavier
 export ros_machine="${ros_master}" #主机:rosmaster 从机:rosslave
 # 判断是否为双Xavier
 ethnet_ip=$(ifconfig | grep -v "inet6" | grep -Eo '192[.]168([.][0-9]+){2}' | grep -v "255")
-[[ -z "$ethnet_ip" ]] && LoggingERR "ip address is null" && exit 1
-
+if [ -z "$ethnet_ip" ]; then
+    LoggingERR "ip address is null"
+    MOGO_LOG "EHW_NET" "ip address is null"
+    exit 1
+fi
 ros_machine=$(grep -E "$ethnet_ip.*ros.*" /etc/hosts | grep -v "^#" | uniq | head -1 | awk '{print $2}')
 if [ -z "$ros_machine" ]; then
     xavier_type="single"
@@ -445,14 +592,11 @@ fi
 
 export GLOG_logtostderr=1
 export GLOG_colorlogtostderr=1
-export LOG_DIR="/home/mogo/data/log"
 # ros日志存储路径的环境变量
 export ROS_LOG_DIR
-export BAG_DIR="/home/mogo/data/bags"
 # ros日志配置文件的环境变量
 # export ROSCONSOLE_FORMAT='[${severity}] ${time} [${function}(${line})]:${message}'
-export ROSCONSOLE_CONFIG_FILE="$ABS_PATH/../config/rosconsole.config"
-LoggingINFO "ROSCONSOLE_CONFIG_FILE=${ROSCONSOLE_CONFIG_FILE}"
+export ROSCONSOLE_CONFIG_FILE
 export ROS_HOSTNAME=${ros_machine}
 export ROS_MASTER_URI=http://${ros_master}:11311
 export OMP_NUM_THREADS=1
@@ -461,87 +605,63 @@ export BASHRC="source ${SETUP_ROS} && source ${SETUP_AUTOPILOT}"
 source $SETUP_ROS
 source $SETUP_AUTOPILOT
 
-get_all_launch_files
+get_all_launch_files #获取所有需要启动的launch文件
 if [ -n "$opt_onenode" ]; then
     ROS_LOG_DIR=$(readlink ${LOG_DIR}/latest)
+    [[ -z "ROS_LOG_DIR" ]] && ROS_LOG_DIR="${LOG_DIR}/$(date +"%Y%m%d_%H%M%S")"
+    [[ ! -d $ROS_LOG_DIR ]] && mkdir -p $ROS_LOG_DIR
+    ln -snf $ROS_LOG_DIR ${LOG_DIR}/latest
     start_node
     sleep 1
     exit 0
-fi
-
-install_ros_log
-add_privilege_monitor_gnss
-# 自动驾驶自检
-stat_file="/home/mogo/data/vehicle_monitor/check_system.txt"
-while [ true ]; do
-    # 运维自检状态
-    if [ -f $stat_file ]; then
-        [[ $(head -1 $stat_file) -ne 0 ]] && LoggingERR "system check failed" && continue
-    fi
-    bash $ABS_PATH/check.sh c>>$LOGFILE 2>>$ERRFILE
-    if [ $? -eq 0 ]; then
+else
+    # 自动驾驶自检
+    stat_file="/home/mogo/data/vehicle_monitor/check_system.txt"
+    while [ true ]; do
+        # 运维自检状态
+        sleep 1
+        if [ -f $stat_file ]; then
+            [[ $(head -1 $stat_file) -ne 0 ]] && LoggingERR "system check failed" && continue
+        fi
+        # python $ABS_PATH/mogodoctor.py c>>$LOGFILE 2>>$ERRFILE
+        # if [ $? -eq 0 ]; then
+        #     break
+        # fi
+        # LoggingERR "autopilot check failed"
         break
-    fi
-    LoggingERR "autopilot check failed"
-    sleep 1
-    continue
-done
+    done
+    python $ABS_PATH/mogodoctor.py c >>$LOGFILE 2>>$ERRFILE
+    install_ros_log
+    add_privilege_monitor_gnss
+    ROS_LOG_DIR="${LOG_DIR}/$(date +"%Y%m%d_%H%M%S")"
 
-#check system time
-export last_launch_time
-if [ -f $ABS_PATH/launch_time ]; then
-    last_launch_time=$(cat $ABS_PATH/launch_time)
 fi
-if [ -z "$last_launch_time" ]; then
-    last_launch_time="20211222211202" #随便初始的一个日期时间，不要在意细节
-fi
-while [ true ]; do
-    systime=$(date +"%Y%m%d%H%M%S")
-    if [ $systime -gt $last_launch_time ]; then
-        LoggingINFO "systime synchronization at $systime"
-        echo $systime >$ABS_PATH/launch_time
-        break
-    fi
-    sleep 1
-done
-curtime=$(date +"%Y%m%d%H%M%S")
-[[ -f $LOGFILE ]] && mv $LOGFILE "/home/mogo/data/log/autopilot-${curtime}.log"
-[[ -f $ERRFILE ]] && mv $ERRFILE "/home/mogo/data/log/autopilot-${curtime}.err"
-LOGFILE="/home/mogo/data/log/autopilot-${curtime}.log"
-ERRFILE="/home/mogo/data/log/autopilot-${curtime}.err"
-
-ROS_LOG_DIR="${LOG_DIR}/$(date +"%Y%m%d_%H%M%S")"
 [[ ! -d $ROS_LOG_DIR ]] && mkdir -p $ROS_LOG_DIR
 ln -snf $ROS_LOG_DIR ${LOG_DIR}/latest
 LoggingINFO "ROS_LOG_DIR=$ROS_LOG_DIR"
-[[ ! -d $BAG_DIR ]] && mkdir -p $BAG_DIR
 export LOG_ENV="export GLOG_logtostderr=1; export GLOG_colorlogtostderr=1; export ROS_LOG_DIR=${ROS_LOG_DIR}; export ROS_MASTER_URI=http://${ros_master}:11311; export ROS_HOSTNAME=${ros_machine}"
 
 LoggingINFO "path : $ABS_PATH"
 if [ $# -eq 0 ]; then
     LoggingERR "error:请指定车型"
+    MOGO_LOG "EVHC_TYPE_UNDEFINED" "undefined vehicle type"
     Usage
     exit 0
 fi
 LoggingINFO "command : $0 $@"
 
-find ${LOG_DIR} -maxdepth 1 -mtime +3 -type d -exec rm -Rf {} \;
-find ${LOG_DIR} -name "autopilot-*.log" -mtime +1 -exec rm -Rf {} \;
-find $BAG_DIR -maxdepth 1 -mtime +1 -type d -exec rm -Rf {} \;
-
 kill_ros
-
 if [ "$ros_machine" == "$ros_master" ]; then
-    roscore 2>&1 >$ROS_LOG_DIR/roscore.log &
-    roscore_pid=$!
-    if [ "$xavier_type" != "single" ]; then
-        python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_client.py >/dev/null 2>&1 &
-    fi
-elif [ "$ros_machine" == "rosslave" -o "$ros_machine" == "rosslave-103" ]; then
-    python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_server.py >/dev/null 2>&1 &
-    python3 /home/mogo/autopilot/share/config/keylog_parser/log_resolver.py >/dev/null 2>&1 &
+    start_core
 else
-    python3 /home/mogo/autopilot/share/config/keylog_parser/log_collect_client.py >/dev/null 2>&1 &
+    while [ true ]; do
+        timeout 1 cat </dev/tcp/${ros_master}/11311
+        if [ $? -ne 124 ]; then
+            sleep 2
+            continue
+        fi
+        break
+    done
 fi
 
 sleep 1
@@ -551,10 +671,17 @@ timeout 120 roslaunch --wait update_config update_config.launch >$ROS_LOG_DIR/up
 # launch gnss
 
 # launch telematics
-
-if [ $? -eq 124 ]; then
+ret=$?
+if [ $ret -eq 124 ]; then
     LoggingERR "update config timeout"
+    MOGO_LOG "EMAP_NODE" "update config timeout"
+elif [ $ret -eq 0 ]; then
+    MOGO_LOG "IBOOT_CONFIG_UPDATE" "update config finished"
+    LoggingINFO "update config finished"
 fi
 
 start_node
-[[ $opt_alive -ne 0 ]] && keep_alive
+if [ "$ros_machine" == "rosslave" -o "$ros_machine" == "rosslave-103" ]; then
+    python2 /home/mogo/autopilot/share/log_reslove/log_reslove.py >/dev/null 2>&1 &
+fi
+[[ $opt_alive -ne 0 ]] && keep_alive && LoggingINFO "keep alive is runing..."

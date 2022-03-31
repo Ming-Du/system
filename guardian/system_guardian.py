@@ -23,6 +23,7 @@ from std_msgs.msg import String, UInt8, Int32
 from rospy import init_node, Subscriber, Publisher
 import guardian_hardware
 import gethosttopic
+import proto.log_reslove_pb2 as common_log_reslove_pb2
 logging.basicConfig()
 
 flow_dict = {}
@@ -601,17 +602,32 @@ def getslavemsg(mu_mutex, topicslavemsg):
 def fusiontopic(slavemsg, tmpmaster):
     if slavemsg != "":
         tmpslave = json.loads(slavemsg)
-        for key in tmpslave.keys():
-            run_hz = tmpslave[key]["run_hz"]
-            if run_hz != "0" and run_hz != "":
-                if tmpmaster.has_key(key):
-                    tmpmaster[key]["run_hz"] = str(run_hz)
+        #for key in tmpslave.keys():
+        #    run_hz = tmpslave[key]["run_hz"]
+        #    if run_hz != "0" and run_hz != "":
+        #        if tmpmaster.has_key(key):
+         #           tmpmaster[key]["run_hz"] = run_hz  
         #tmpfusion = dict(tmpmaster.items() + tmpslave.items())
         #msg  = json.dumps(tmpfusion)
+        for key in topicInfo.keys():
+            run_hz = topicInfo[key]
+            if tmpmaster.has_key(key):
+                tmpmaster[key]["run_hz"] = str(run_hz)
     return tmpmaster
         
           
+topicInfo = {}       
     
+def topics_callback(msg):
+    print "start recv topic hz ..."
+    global topicsmsg
+    global topicInfo
+    topicsmsg = common_log_reslove_pb2.PubLogInfo()
+    topicsmsg.ParseFromString(msg.data)
+    for item in topicsmsg.topic_hz:
+        topicInfo[item.name] = item.hz
+        print item.name
+        print item.hz    
 
 
 
@@ -622,16 +638,18 @@ def main():
         rospy.logerr("please use:system_guardian.py configfilename, rostopicfilename")
         exit(-1)
     rospy.init_node('system_guardian')
-    strFullParaName  = "%s/rosmachetype" %(rospy.get_name())
-    print "strFullParaName:%s" %(strFullParaName)
+    #rosmachetype = rospy.get_param('rosmachetype')
+    strFullParaName = "%s/rosmachetype" %(rospy.get_name())
+    print("strFullParaName:%s" %strFullParaName)
     rosmachetype = rospy.get_param(strFullParaName)
-    print "node_name:%s" %(rospy.get_name())
-    print("rosmachetype:%s" %rosmachetype)
+    print("node_name:%s" %(rospy.get_name()))
     config_file = sys.argv[1].strip() #no use 
     rostopic_file = sys.argv[2].strip()
     brandtopicfile = sys.argv[3].strip()
     vehicleconfigfile = sys.argv[4].strip()
     brand = get_brand(vehicleconfigfile)
+
+    rospy.Subscriber("/autopilot_info/internal/report_topic_hz", BinaryData, topics_callback)
 
     pth_topic = Thread(target=topicFun,args=(rostopic_file, brandtopicfile))
     print("pth:rostopic_file:%s"%rostopic_file)

@@ -5,12 +5,13 @@ launch can_adapter.launch
 localization localization.launch
 launch hadmap.launch
 hadmap_engine hadmap_engine.launch
-launch perception_camera.launch
+perception_camera_2D_front perception_2D_front_1camera.launch
 launch perception_lidar.launch
 launch perception_fusion.launch
 launch controller.launch
 launch local_planning.launch
-track_recorder track_recorder.launch
 telematics telematics.launch
 guardian system_guardian.launch
 record_cache record_cache.launch
+launch monitor_gnss.launch
+launch monitor_collect.launch

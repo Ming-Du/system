@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
+SET(CMAKE_BUILD_TYPE "Debug")
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+
+
 project(update_config)
 
 add_definitions(-std=c++11)
