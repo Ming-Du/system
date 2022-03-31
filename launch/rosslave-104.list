@@ -1,7 +1,5 @@
-launch drivers_lidar.launch
+launch drivers_perception_radar.launch
 log_collect_client log_collect_client.launch
 log_msg_collect_client log_msg_collect_client.launch
-launch perception_lidar.launch
-launch perception_fusion.launch
 guardian system_guardian_slave2.launch
 record_cache record_cache.launch
