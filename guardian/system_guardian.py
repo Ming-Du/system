@@ -357,14 +357,14 @@ def topicFun(rostopic_file, brandtopicfile):
             msg  = json.dumps(tmpmaster)
             rospy.loginfo("fusionmsg:" + msg)
             pub_topics.publish(msg)
-
+'''
     while True:
         topic_first = True;
         pub_first = True;
         topic_str=""
         topic_monitor_list=[]
         count = 0
-        '''
+        
         p = Popen("rostopic list -p",shell=True,stdout=PIPE)
         topic_li = p.stdout.read()
         topicAlive = topic_li.split("\n")
@@ -373,7 +373,7 @@ def topicFun(rostopic_file, brandtopicfile):
         #print(topicAlive)
         #print("topic_list_after:")
         #print(topic_list)
-        '''
+        
         topicAlive = gethosttopic.gethosttopics(); 
         for topic_g in topic_list:
             if topic_g in topicAlive:
@@ -488,7 +488,7 @@ def topicFun(rostopic_file, brandtopicfile):
 
         print("end for")
     print("end while") 
-
+'''
 
 def topicconfig(configfile):
     global brand
