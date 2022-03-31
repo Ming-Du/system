@@ -123,32 +123,6 @@
              ]
         },
         {
-          "node_name":"/perception/fusion/perception_fusion",
-          "brand":"JINLV",
-          "rosmachetype":"slave",
-          "value":
-             [
-                {
-                    "topic_name": "/perception/fusion/obstacles_debug",
-                    "set_hz":"",
-                    "brand":"JINLV",
-                    "guardian":"n"
-                },
-                {
-                    "topic_name": "/perception/fusion/visualisation",
-                    "set_hz":" ",
-                    "brand":"JINLV",
-                    "guardian":"n"
-                },    
-                {
-                    "topic_name": "/perception/fusion/obstacles",
-                    "set_hz":" ",
-                    "brand":"JINLV",
-                    "guardian":"y"
-                }    
-             ]
-        },
-        {
           "node_name":"/perception/fusion/perception_fusion2",
           "brand":"JINLV:DF",
           "rosmachetype":"slave",
@@ -198,32 +172,6 @@
                     "brand":"DF:JINLV",
                     "guardian":"y"
                 }
-             ]
-        },
-        {
-          "node_name":"/perception/lidar/perception_lidar",
-          "brand":"JINLV",
-          "rosmachetype":"slave",
-          "value":
-             [
-                {
-                    "topic_name": "/sensor/lidar/front_left/point_cloud",
-                    "set_hz":"10",
-                    "brand":"JINLV",
-                    "guardian":"y"
-                },
-                {
-                    "topic_name": "/sensor/lidar/front_right/point_cloud", 
-                    "set_hz":"10",
-                    "brand":"JINLV",
-                    "guardian":"y"
-                },    
-                {
-                    "topic_name": "/perception/lidar/lidar_obstacle_cluster",
-                    "set_hz":"10",
-                    "brand":"JINLV",
-                    "guardian":"y"
-                }    
              ]
         }
      ]
