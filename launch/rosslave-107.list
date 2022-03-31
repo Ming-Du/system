@@ -1,2 +1,7 @@
+launch drivers_perception_camera120_left.launch
+launch drivers_perception_camera120_right.launch
 perception_camera_2D_side perception_2D_side_2camera.launch
+launch hadmap.launch
+hadmap_engine hadmap_engine.launch
 record_cache record_cache.launch
+guardian system_guardian_slave5.launch
