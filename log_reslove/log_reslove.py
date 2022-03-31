@@ -265,7 +265,7 @@ def update_one_log(one):
                 if node_callback_history[sub_topic]["thread"] != one["thread"]:
                     #print("pub/sub in different thread")
                     pass
-                elif one["stamp"] - node_callback_history[sub_topic]["stamp"] > 2000000000 or one["stamp"] < node_callback_history[sub_topic]["stamp"]:
+                elif one["stamp"] - node_callback_history[sub_topic]["stamp"] > 10000000000 or one["stamp"] < node_callback_history[sub_topic]["stamp"]:
                     #print("mismatch sub")
                     pass
                 else:
