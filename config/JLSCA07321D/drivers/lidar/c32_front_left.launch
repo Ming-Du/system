@@ -9,7 +9,7 @@
   <arg name="difop_port" default="2371" />
   <arg name="return_mode" default="1" />
   <arg name="degree_mode" value="1"/>
-  <arg name="time_synchronization" default="false" />
+  <arg name="time_synchronization" default="true" />
   <arg name="frame_id" value="c32_front_left" />
 
   <group ns="sensor/lidar/c32/front_left">
@@ -40,8 +40,8 @@
     <param name="config_vert" value="true"/>
     <param name="print_vert" value="false"/>
 
-    <param name="scan_start_angle" value="0" />
-    <param name="scan_end_angle" value="26000" />
+    <param name="scan_start_angle" value="3000" />
+    <param name="scan_end_angle" value="27000" />
     
     <param name="frame_id" value="$(arg frame_id)"/>
     <param name="scan_num" value="15"/>
