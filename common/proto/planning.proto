@@ -23,5 +23,34 @@ message PlanningConfig {
     optional bool  flag_lane_change = 13;
     optional double dis_stop = 14;
     optional bool  flag_global_lane_change = 15;
+    // spdplan para
+    optional double vc_kp = 43;
+    optional double vc_ki = 44;
+    optional double dc_d_kp = 45;
+    optional double dc_d_ki = 46;
+    optional double dc_v_kp = 47;
+    optional double dc_v_ki = 48;
+    optional double dc_d_input_low = 49;
+    optional double dc_d_input_high = 50;
+    optional double dc_v_input_low = 51;
+    optional double dc_v_input_high = 52;
+    optional double dc_d_out_low = 53;
+    optional double dc_d_out_high = 54;
+    optional double dc_v_out_low = 55;
+    optional double dc_v_out_high = 56;
+    optional double dc_ttc = 57;
+    optional double dc_min_dis = 58;
+    optional double dc_safe_dis = 59;
+    optional double dc_ctrl_opt = 60;
+    optional double dc_flg_use_safe = 61;
+    optional double afcn_work = 62;
+    optional double afcn_low = 63;
+    optional int32 sw_use_stitch = 64;
+    optional int32 sw_stop_design = 65;
+    optional double utm_x = 66;
+    optional double utm_y = 67;
+    optional double pre_coef = 68;
+    optional int32 trj_num = 69;
+    optional double filter_coef = 70;
 
 }
