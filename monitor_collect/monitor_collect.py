@@ -118,9 +118,10 @@ def task_topic_hz(msg):
             dictHzUnit['name']=hzItem.name
             hzItem.hz = v
             dictHzUnit['hz']=hzItem.hz
+            dictHzRecord['pLogInfo']['topic_hz'][hzItem.name]=hzItem.hz
             listHzCollect.append(dictHzUnit)
             # print "send:%s" % (k)
-        dictHzRecord['pLogInfo']['topic_hz']=listHzCollect
+        #dictHzRecord['pLogInfo']['topic_hz']=listHzCollect
         pbMonitorHzWidthCarInfo.carinfo.car_type= globalCommonPara.dictCarInfo['car_type']
         dictHzRecord['carinfo']['car_type']=globalCommonPara.dictCarInfo['car_type']
         pbMonitorHzWidthCarInfo.carinfo.code_version = globalCommonPara.dictCarInfo['code_version']

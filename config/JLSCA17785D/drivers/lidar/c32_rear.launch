@@ -9,7 +9,7 @@
   <arg name="difop_port" default="2375" />
   <arg name="return_mode" default="1" />
   <arg name="degree_mode" value="1"/>
-  <arg name="time_synchronization" default="false" />
+  <arg name="time_synchronization" default="true" />
   <arg name="frame_id" value="c32_rear" />
 
   <group ns="sensor/lidar/c32/rear">
