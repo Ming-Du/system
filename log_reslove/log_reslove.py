@@ -1,4 +1,5 @@
-# -*- coding: UTF-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import sys
 import json
 import os
@@ -407,9 +408,9 @@ def analyze_outside_node(callback, data, record):
 
     use_time = round(float(callback["recv_stamp"] - pub["stamp"])/1000000, 2)
     wait_time = round(float(callback["stamp"] - callback["recv_stamp"])/1000000, 2)
-    if use_time + wait_time > 2000:
+    if use_time + wait_time > 20000:
         #print("pub-callback use time {0}".format(use_time))
-        data["wrong"] = ">2000"
+        data["wrong"] = ">20000"
         return
 
     data["use_time"] += use_time + wait_time
@@ -451,9 +452,9 @@ def analyze_inside_node(pub, data, record):
             continue
 
         use_time = round(float(pub["stamp"] - callback["stamp"])/1000000, 2)
-        if use_time > 2000:
+        if use_time > 20000:
             #print("callback-pub use time {0}".format(use_time))
-            pdata["wrong"] = ">2000"
+            pdata["wrong"] = ">20000"
             continue
 
         u_spend = round(float(pub["utime"] - callback["utime"])/1000000, 2)
@@ -461,8 +462,8 @@ def analyze_inside_node(pub, data, record):
         s_spend = round(float(pub["stime"] - callback["stime"])/1000000, 2)
         s_percent = round(float(s_spend / use_time), 2)
         w_spend = round(float(pub["wtime"] - callback["wtime"])/1000000, 2)
-        if w_spend > 2000:
-            pdata["wrong"] = "w_spend>2000, cb tid:{} {} {}, pub tid:{} {} {}".format(callback["tid"], callback["thread"], callback["wtime"], pub["tid"], pub["thread"], pub["wtime"])
+        if w_spend > 20000:
+            pdata["wrong"] = "w_spend>20000, cb tid:{} {} {}, pub tid:{} {} {}".format(callback["tid"], callback["thread"], callback["wtime"], pub["tid"], pub["thread"], pub["wtime"])
             continue
         w_percent = round(float(w_spend / use_time), 2)
         idle_spend = round(float(use_time - u_spend - s_spend - w_spend), 2)
@@ -753,9 +754,12 @@ def PrepareMsgLogPath():
 
 def LoadMsglogs(input_paths):
     for path in input_paths:
-        if path.find("swp") == -1:
-            LoadOneMsgLog(path)
-            os.remove(path)
+        try:
+            if path.find("swp") == -1:
+                LoadOneMsgLog(path)
+                os.remove(path)
+        except Exception as e:
+            pass
 
 def buildOneLogMsg(one_log_dict):
     #common_mogo_report_msg MogoReportMessage
@@ -783,34 +787,32 @@ def buildOneLogMsg(one_log_dict):
 
 
 def LoadOneMsgLog(path):
-    with open(path) as fp:
-        contents = fp.read()
-        lines = contents.split("\n")
-    for line in lines:
-        one_log_dict = {}
-        #print("line json is ")
-        #print(line)
-        try:
+    try:
+        with open(path) as fp:
+            contents = fp.read()
+            lines = contents.split("\n")
+        for line in lines:
+            one_log_dict = {}
+            #print("line json is ")
+            #print(line)
             one_log_dict = json.loads(line)
-        except Exception as e:
-            continue
-        #convert json to protobuf
-        log_pub_msg = buildOneLogMsg(one_log_dict)
-        log_pub_msg_str = log_pub_msg.SerializeToString()
-        binary_log_msg = BinaryData()
+            #convert json to protobuf
+            log_pub_msg = buildOneLogMsg(one_log_dict)
+            log_pub_msg_str = log_pub_msg.SerializeToString()
+            binary_log_msg = BinaryData()
 
-        binary_log_msg.header.seq         = 1
-        binary_log_msg.header.stamp.secs   = rostime.Time.now().secs
-        binary_log_msg.header.stamp.nsecs  = rostime.Time.now().nsecs
-        binary_log_msg.header.frame_id    = "log_reslove_frame_id"
-        binary_log_msg.name = "log_reslove"
-        binary_log_msg.size = len(log_pub_msg_str)
-        binary_log_msg.data = log_pub_msg_str
-        print(log_pub_msg_str)
-        if one_log_dict["level"] == "info":
-            set_msg_log_pub_info.publish(binary_log_msg)
-        if one_log_dict["level"] == "error":
-            set_msg_log_pub_error.publish(binary_log_msg)
+            binary_log_msg.header.seq         = 1
+            binary_log_msg.header.stamp.secs   = rostime.Time.now().secs
+            binary_log_msg.header.stamp.nsecs  = rostime.Time.now().nsecs
+            binary_log_msg.header.frame_id    = "log_reslove_frame_id"
+            binary_log_msg.name = "log_reslove"
+            binary_log_msg.size = len(log_pub_msg_str)
+            binary_log_msg.data = log_pub_msg_str
+            #print(log_pub_msg_str)
+            if one_log_dict["level"] == "info":
+                set_msg_log_pub_info.publish(binary_log_msg)
+            if one_log_dict["level"] == "error":
+                set_msg_log_pub_error.publish(binary_log_msg)
 
         #mogo_report_msg_test = common_mogo_report_msg.MogoReportMessage()
         #mogo_report_msg_test.ParseFromString(binary_log_msg.data)
@@ -818,14 +820,16 @@ def LoadOneMsgLog(path):
         #    print(one_msg)
         #for one_msg in mogo_report_msg_test.result:
         #    print(one_msg)
-        time.sleep(1)
+            time.sleep(1)
+    except Exception as e:
+        pass
 
 
 def UpdateMsgTopic():
     while(True):
         input_paths=PrepareMsgLogPath()
         if len(input_paths)>0:
-             LoadMsglogs(input_paths)
+            LoadMsglogs(input_paths)
         else:
             time.sleep(1)
         #os.system("rm -f /home/mogo/data/log/msg_log_temp/*")
