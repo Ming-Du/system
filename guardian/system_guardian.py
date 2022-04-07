@@ -409,7 +409,7 @@ def topicFun(rostopic_file, brandtopicfile):
                             topic_dict[topic_g]  = topic_msg_dict
                             topic_msg_dict = {}
                     topic_msg_dict["topic_name"] = topic_monitor_list[0]
-                    topic_msg_dict["run_hz"] = out_list[2]
+                    topic_msg_dict["run_hz"] = str(out_list[2])
                     topic_msg_dict["set_hz"] = topic_orig_dict[topic_monitor_list[0]]
                     #topic_dict[topic_list[0]] = out_list[2]
                     topic_dict[topic_monitor_list[0]] = topic_msg_dict
@@ -447,7 +447,7 @@ def topicFun(rostopic_file, brandtopicfile):
                 break
             if out_list[0] in topic_list:
                 topic_msg_dict["topic_name"] =out_list[0] 
-                topic_msg_dict["run_hz"] = out_list[1]
+                topic_msg_dict["run_hz"] = str(out_list[1])
                 topic_msg_dict["set_hz"] = topic_orig_dict[out_list[0]]
                 #topic_dict[out_list[0]] = out_list[1]
                 topic_dict[out_list[0]] = topic_msg_dict;
@@ -605,7 +605,7 @@ def fusiontopic(slavemsg, tmpmaster):
             run_hz = tmpslave[key]["run_hz"]
             if run_hz != "0" and run_hz != "":
                 if tmpmaster.has_key(key):
-                    tmpmaster[key]["run_hz"] = run_hz  
+                    tmpmaster[key]["run_hz"] = str(run_hz)
         #tmpfusion = dict(tmpmaster.items() + tmpslave.items())
         #msg  = json.dumps(tmpfusion)
     return tmpmaster
@@ -622,7 +622,10 @@ def main():
         rospy.logerr("please use:system_guardian.py configfilename, rostopicfilename")
         exit(-1)
     rospy.init_node('system_guardian')
-    rosmachetype = rospy.get_param('rosmachetype')
+    strFullParaName  = "%s/rosmachetype" %(rospy.get_name())
+    print "strFullParaName:%s" %(strFullParaName)
+    rosmachetype = rospy.get_param(strFullParaName)
+    print "node_name:%s" %(rospy.get_name())
     print("rosmachetype:%s" %rosmachetype)
     config_file = sys.argv[1].strip() #no use 
     rostopic_file = sys.argv[2].strip()

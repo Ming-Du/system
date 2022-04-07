@@ -131,8 +131,17 @@ log4j.appender.${ErrorAppender}.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH
 }
 
 get_all_launch_files() {
+    local file_set
+    if [ ! -f $ListFile -o $(sed '/^\s*$/d' $ListFile | wc -m) -eq 0 ]; then
+        LoggingERR "$ListFile doesn't exist or it's empty"
+        return
+    fi
     if [ -n "$opt_onenode" ]; then
         launch_line=$(grep -w $opt_onenode $ListFile)
+        if [ -z "$launch_line" ];then
+            LoggingERR "cannot find \"$opt_onenode\" in $ListFile"
+            exit 1
+        fi
         include_files=$(roslaunch --files $launch_line 2>/dev/null)
         if [ $? -ne 0 ]; then
             LoggingERR "cannot find $launch_line"
@@ -140,14 +149,21 @@ get_all_launch_files() {
         fi
         for child_file in $include_files; do
             [[ -z "$child_file" ]] && continue
-            pkg_name=$(xmllint --xpath "//@pkg" $child_file 2>/dev/null | sed 's/\"//g')
-            [[ -z "$pkg_name" ]] && continue
+            [[ $(echo $file_set | grep -w -c "$child_file:") -ne 0 ]] && continue
+            type_name=$(xmllint --xpath "//node[@pkg!='rviz']/@type" $child_file 2>/dev/null | sed 's/\"//g')
+            [[ -z "$type_name" ]] && continue
+            map_restart_times[$child_file]=-1
             launch_files_array[$arr_idx]="$child_file"
             arr_idx=$((arr_idx + 1))
+            for f in $(roslaunch --files $child_file);do
+                [[ $(echo $file_set | grep -w -c "$f:") -ne 0 ]] && continue
+                file_set="$f:$file_set"
+            done
         done
         return
     fi
     while read launch_file || [[ -n $launch_file ]]; do
+        [[ -z "$launch_file" ]] && continue
         include_files=$(roslaunch --files $launch_file 2>/dev/null)
         if [ $? -ne 0 ]; then
             LoggingERR "cannot find $launch_file"
@@ -155,11 +171,16 @@ get_all_launch_files() {
         fi
         for child_file in $include_files; do
             [[ -z "$child_file" ]] && continue
-            pkg_name=$(xmllint --xpath "//@pkg" $child_file 2>/dev/null | sed 's/\"//g')
-            [[ -z "$pkg_name" ]] && continue
-            map_restart_times[$child_file]="0"
+            [[ $(echo $file_set | grep -w -c "$child_file:") -ne 0 ]] && continue
+            type_name=$(xmllint --xpath "//node[@pkg!='rviz']/@type" $child_file 2>/dev/null | sed 's/\"//g')
+            [[ -z "$type_name" ]] && continue
+            map_restart_times[$child_file]=-1
             launch_files_array[$arr_idx]="$child_file"
             arr_idx=$((arr_idx + 1))
+            for f in $(roslaunch --files $child_file);do
+                [[ $(echo $file_set | grep -w -c "$f:") -ne 0 ]] && continue
+                file_set="$f:$file_set"
+            done
         done
     done <$ListFile
 }
@@ -205,17 +226,35 @@ keep_alive() {
             for t in $nodes; do
                 # real_proc=$(echo $t | awk -F= '{print $2}')
                 [[ "$t" =~ "rviz" ]] && continue
-                if [ $(ps -ef | grep "__name:=$real_proc" | grep -v grep | wc -l) -eq 0 ]; then
+                [[ "$t" =~ "update_map" ]] && continue
+                if [ $(ps -ef | grep "__name:=$t" | grep -v grep | wc -l) -eq 0 ]; then
                     proc_stat=1
-                    if [ ${map_restart_times[$launch_file]} -le 5 ]; then
-                        LoggingERR "$t died"
+                    # runtime error
+                    if [ ${map_restart_times[$launch_file]} -ge 1 -a ${map_restart_times[$launch_file]} -le 5 ]; then
+                        LoggingERR "$t died,will restart it [${map_restart_times[$launch_file]}/5]"
                         LoggingINFO "will restart $t in $launch_file [${map_restart_times[$launch_file]}/5]"
                         start_onenode "$launch_file"
                         break
+                    # try to restart failed
+                    elif [ ${map_restart_times[$launch_file]} -eq 6 ]; then
+                        map_restart_times[$launch_file]=999
+                        LoggingERR "restart $t failed 5 times,cancel to restart"
+                    # launch error
+                    elif [ ${map_restart_times[$launch_file]} -eq 0 ]; then
+                        LoggingERR "launch $t failed"
+                        # map_restart_times[$launch_file]=1 #bug:如果launch里面有多个node，则只打印一次日志
+                    fi
+                else
+                    if [ ${map_restart_times[$launch_file]} -gt 1 -a ${map_restart_times[$launch_file]} -lt 5 ]; then
+                        LoggingINFO "$t restart succeed"
+                    elif [ ${map_restart_times[$launch_file]} -eq 0 ]; then
+                        LoggingINFO "launch $t succeed" 
+                        # map_restart_times[$launch_file]=1 #bug:如果launch里面有多个node，则只打印一次日志
                     fi
                 fi
             done
             [[ $proc_stat -eq 0 ]] && map_restart_times[$launch_file]=1
+            [[ $proc_stat -ne 0 && ${map_restart_times[$launch_file]} -eq 0 ]] && map_restart_times[$launch_file]=1
         done
     done
 }
@@ -252,7 +291,8 @@ install_ros_log() {
 }
 
 add_privilege_monitor_gnss(){
-     rm  /home/mogo/data/log/location.txt  -rf
+     #rm  /home/mogo/data/log/location.txt  -rf
+     rm  -rf  /home/mogo/data/log/filebeat_upload/*
      chmod -R  777 /autocar-code/install/share/monitor_gnss
 }
 
@@ -486,7 +526,7 @@ fi
 LoggingINFO "command : $0 $@"
 
 find ${LOG_DIR} -maxdepth 1 -mtime +3 -type d -exec rm -Rf {} \;
-find ${LOG_DIR} -name "autopilot*.log" -mtime +1 -exec rm -Rf {} \;
+find ${LOG_DIR} -name "autopilot-*.log" -mtime +1 -exec rm -Rf {} \;
 find $BAG_DIR -maxdepth 1 -mtime +1 -type d -exec rm -Rf {} \;
 
 kill_ros
