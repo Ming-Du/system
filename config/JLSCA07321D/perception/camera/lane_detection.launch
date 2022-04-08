@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find perception_camera_SEG)/launch/lane_detection_model_downsample2.launch" />
+</launch>

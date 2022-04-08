@@ -7,7 +7,7 @@ sensor_info {
 
   extrinsic {
     translation {
-      x: 3.85
+      x: 3.59
       y: -0.53
       z: 0
     }
@@ -105,6 +105,46 @@ sensor_info {
   type: SENSING_120
   orientation: FRONT
   topic: "/sensor/camera/sensing/image_raw_120"
+  extrinsic {
+    translation {
+      x: 0
+      y: 0
+      z: 0
+    }
+    rotation {
+      x: 0
+      y: 0
+      z: 0
+      w: 1
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 963.53486862862223
+    matrix: 0
+    matrix: 965.30443325262036
+    matrix: 0
+    matrix: 961.99896324217855
+    matrix: 564.5263603881574
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.30286258391117687
+    distort_matrix: 0.089958752887863314
+    distort_matrix: 5.5322214919925752e-05
+    distort_matrix: -0.00018197796045640437
+    distort_matrix: -0.011960264065188755
+  }
+}
+
+sensor_info {
+  name: "H120-Dxxxxxx"
+  type: SENSING_120
+  orientation: REAR
+  topic: "/sensor/camera/sensing/image_raw_back"
   extrinsic {
     translation {
       x: 0

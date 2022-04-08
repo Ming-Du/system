@@ -1,0 +1,40 @@
+syntax = "proto2";
+
+package hadmap;
+
+import "geometry.proto";
+import "header.proto";
+
+message Waypoint {
+  optional string id = 1;
+  optional double s = 2;
+  optional geometry.Point pose = 3;//utm 坐标值
+}
+
+message RoutingRequest {
+  optional common.Header header = 1;
+  optional string map = 2;
+  optional string feature = 3;
+  optional Waypoint start = 4;
+  optional Waypoint end = 5;
+  repeated Waypoint waypoint = 6;
+
+
+  //message Lane {
+  //  optional string id = 1;
+  //  optional double start_s = 2;
+  //  optional double end_s = 3;
+  //}
+
+
+  //Route must go through each waypoint in the order from start to end.
+  //Ignored if empty.
+  //repeated Lane blacklisted_lane = 5;
+  //repeated string blacklisted_road = 6;
+  //optional bool broadcast = 7 [default = true];
+  optional double speedlimit = 7;
+  optional string startName = 8;
+  optional string endName = 9;
+  optional int32 vehicleType = 10;
+}
+

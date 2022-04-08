@@ -103,7 +103,7 @@
       "value":
      [
         {
-          "node_name":"/trt_yolov5",
+          "node_name":"/perception_camera_2D_front",
           "brand":"JINLV:DF:WEY",
           "rosmachetype":"master",
           "value":

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="perception_camera_3D" pkg="perception_camera_3D" type="perception_camera_3D_node" output="screen">
+    <!-- config path -->
+    <param name="model_path" value="$(find models)/vidar/vidar_mogo_1015_fp16.trt" />
+    <param name="calibrated_sensor_path" type = "string" value="$(find config)/vehicle/sensor/calibrated_sensor.pb.txt" />
+    <!-- <param name="camera_sensor_name"
+            type = "string" 
+            value="H60-D06170595" /> -->
+    <!-- <param name = "cameraTopicName" 
+            type = "string" 
+	    value = "/sensor/camera/sensing/image_raw_60" /> -->
+
+    <!-- <param name = "camera_30_front_topic" type = "string" value = "/sensor/camera/sensing/image_raw_30/compressed" /> -->
+    <param name = "camera_60_front_topic" type = "string" value = "/sensor/camera/sensing/image_raw_60/compressed" />
+    <param name = "camera_120_front_topic" type = "string" value = "/sensor/camera/sensing/image_raw_120/compressed" />
+    <param name = "camera_left_topic" type = "string" value = "/sensor/camera/sensing/image_raw_left" />
+    <param name = "camera_right_topic" type = "string" value = "/sensor/camera/sensing/image_raw_right" />
+    <param name = "camera_back_topic" type = "string" value = "/sensor/camera/sensing/image_raw_back" />
+    <param name = "batchsize"  type = "int" value = "1" />
+    <param name = "topic_names"  type = "string" value = "60_front" />
+  </node>
+</launch>

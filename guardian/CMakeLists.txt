@@ -46,7 +46,9 @@ install(FILES
 install(DIRECTORY rostopic/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/rostopic
 )
-
+install(DIRECTORY proto
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
 # if(CATKIN_ENABLE_TESTING)
 #   find_package(rostest)
 #   foreach(T

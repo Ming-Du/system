@@ -44,6 +44,10 @@ CURLcode MogoCurl::Get(const std::string &url, std::string &rstr)
 
 CURLcode MogoCurl::Download(const std::string &url, std::string &file_path)
 {
+	string download_cmd = "curl -o " + file_path + " " + url;
+	system(download_cmd.c_str());
+	return CURLE_OK;
+	/*
 	m_curl_handle = curl_easy_init();
         int outfile;
         CURLcode res;
@@ -64,6 +68,7 @@ CURLcode MogoCurl::Download(const std::string &url, std::string &file_path)
 	}
 	close(outfile);
         return res;
+	*/
 }
 
 CURLcode MogoCurl::Post(const std::string &url, const std::string &pstr, std::string &rstr)
@@ -72,20 +77,19 @@ CURLcode MogoCurl::Post(const std::string &url, const std::string &pstr, std::st
 	curl_easy_setopt(m_curl_handle, CURLOPT_URL, url.c_str());
 	curl_easy_setopt(m_curl_handle, CURLOPT_POST, 1);
 	curl_easy_setopt(m_curl_handle, CURLOPT_POSTFIELDS, pstr.c_str());
-	curl_easy_setopt(m_curl_handle, CURLOPT_READFUNCTION, NULL);
-	curl_easy_setopt(m_curl_handle, CURLOPT_NOSIGNAL, 1);
-	curl_easy_setopt(m_curl_handle, CURLOPT_CONNECTTIMEOUT_MS, 200);
-	curl_easy_setopt(m_curl_handle, CURLOPT_TIMEOUT, 200);
+	//curl_easy_setopt(m_curl_handle, CURLOPT_READFUNCTION, NULL);
+	//curl_easy_setopt(m_curl_handle, CURLOPT_NOSIGNAL, 1);
+	//curl_easy_setopt(m_curl_handle, CURLOPT_CONNECTTIMEOUT_MS, 200);
+	//curl_easy_setopt(m_curl_handle, CURLOPT_TIMEOUT, 200);
 
-	curl_easy_setopt(m_curl_handle, CURLOPT_FOLLOWLOCATION, 1);
-	curl_easy_setopt(m_curl_handle, CURLOPT_TCP_KEEPALIVE, 1L);  // enable TCP keep-alive for this transfer 
-	curl_easy_setopt(m_curl_handle, CURLOPT_TCP_KEEPIDLE, 120L);	// keep-alive idle time to 120 seconds 
-	curl_easy_setopt(m_curl_handle, CURLOPT_TCP_KEEPINTVL, 60L);
+	//curl_easy_setopt(m_curl_handle, CURLOPT_FOLLOWLOCATION, 1);
+	//curl_easy_setopt(m_curl_handle, CURLOPT_TCP_KEEPALIVE, 1L);  // enable TCP keep-alive for this transfer 
+	//curl_easy_setopt(m_curl_handle, CURLOPT_TCP_KEEPIDLE, 120L);	// keep-alive idle time to 120 seconds 
+	//curl_easy_setopt(m_curl_handle, CURLOPT_TCP_KEEPINTVL, 60L);
 
 	struct curl_slist* headers = NULL;
 	headers = curl_slist_append(headers, "Content-Type:application/json;charset=UTF-8");
 	curl_easy_setopt(m_curl_handle, CURLOPT_HTTPHEADER, headers);
-	curl_easy_setopt(m_curl_handle, CURLOPT_POST, 1);// set post
 
 	MemoryStruct oDataChunk;
 	curl_easy_setopt(m_curl_handle, CURLOPT_WRITEDATA, &oDataChunk);
