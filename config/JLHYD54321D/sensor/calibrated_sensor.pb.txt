@@ -8,7 +8,7 @@ sensor_info {
   extrinsic {
     translation {
       x: 3.93
-      y: -0.58
+      y: -0.48
       z: 0
     }
     rotation {
@@ -187,7 +187,7 @@ sensor_info {
   topic: "/sensor/lidar/front_left/point_cloud"
   extrinsic {
     translation {
-      x: 4.48
+      x: 4.98
       y: 1.01
       z: 0.72
     }
@@ -206,7 +206,7 @@ sensor_info {
   topic: "/sensor/lidar/front_right/point_cloud"
   extrinsic {
     translation {
-      x: 4.5
+      x: 5.00
       y: -1
       z: 0.72
     }
@@ -226,7 +226,7 @@ sensor_info {
   topic: "/sensor/lidar/rear/point_cloud"
   extrinsic {
     translation {
-      x: -1.55
+      x: -1.05
       y: 0.03
       z: 0.8
     }
