@@ -30,6 +30,8 @@ add_message_files(
   TrajectoryPoint.msg
   VisualObject.msg
   VisualObjects.msg
+  RoadArrow.msg
+  LaneArrowStoplineSegAndArrowClassify.msg
 )
 
 add_service_files(
