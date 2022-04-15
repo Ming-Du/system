@@ -687,7 +687,7 @@ def run():
         run_once()
         end = time.time()
 
-        sleep_time = 1 - (end - start)
+        sleep_time = 5 - (end - start)
         if sleep_time > 0.3:
             time.sleep(sleep_time)
 
