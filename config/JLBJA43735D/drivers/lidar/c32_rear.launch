@@ -41,7 +41,7 @@
     <param name="print_vert" value="false"/>
 
     <param name="scan_start_angle" value="8000" />
-    <param name="scan_end_angle" value="28500" />
+    <param name="scan_end_angle" value="27500" />
     
     <param name="frame_id" value="$(arg frame_id)"/>
     <param name="scan_num" value="15"/>
