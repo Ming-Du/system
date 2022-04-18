@@ -39,8 +39,8 @@
     <param name="config_vert" value="true"/>
     <param name="print_vert" value="false"/>
 
-    <param name="scan_start_angle" value="9000" />
-    <param name="scan_end_angle" value="36000" />
+    <param name="scan_start_angle" value="7000" />
+    <param name="scan_end_angle" value="32500" />
     
     <param name="frame_id" value="$(arg frame_id)"/>
     <param name="scan_num" value="15"/>

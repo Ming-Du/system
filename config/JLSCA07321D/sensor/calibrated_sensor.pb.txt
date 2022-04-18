@@ -187,15 +187,15 @@ sensor_info {
   topic: "/sensor/lidar/front_left/point_cloud"
   extrinsic {
     translation {
-      x: 4.91
-      y: 1.00
+      x: 5.03
+      y: 1.15
       z: 0.7
     }
-    rotation {#x,-1.5,y,-2.2,z,107.9
-      w: 0.588535
-      x: 0.00781818
-      y: -0.0218776
-      z: 0.808138
+    rotation {#-2.1	-2.65	119.95
+      x: 0.0108502
+      y: -0.0274302
+      z: 0.8652183
+      w: 0.5005269
     }
   }
 }
@@ -207,15 +207,15 @@ sensor_info {
   topic: "/sensor/lidar/front_right/point_cloud"
   extrinsic {
     translation {
-      x: 4.94
-      y: -0.95
-      z: 0.70
+      x: 5.15
+      y: -0.9
+      z: 0.71
     }
-    rotation {#x,-0.6,y,-4.2,z,78.1
-      w: 0.776185
-      x: 0.0190217
-      y: -0.0317534
-      z: 0.629418
+    rotation {#-0.25	-1.15	58.8
+      x: 0.0030258
+      y: -0.009814
+      z:  0.4908588
+      w: 0.8711786
     }
   }
 }
@@ -227,15 +227,15 @@ sensor_info {
   topic: "/sensor/lidar/rear/point_cloud"
   extrinsic {
     translation {
-      x: -1.1
-      y: -0.13
+      x: -1.0
+      y: -0.15
       z: 0.75
     }
-    rotation {#x,2.0,y,-0.8,z,-87.2
-      w: 0.724128
-      x: 0.00782455
-      y: -0.0170901
-      z: -0.689409
+    rotation {#0.2	-0.4	272.6
+      x: -0.00114982
+      y: 0.00372943
+      z: 0.690873
+      w:-0.722966
     }
   }
 }
