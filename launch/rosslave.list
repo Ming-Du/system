@@ -3,6 +3,8 @@ log_collect_server log_collect_server.launch
 log_msg_collect_server log_msg_collect_server.launch
 update_map update_map.launch
 v2x v2x.launch
+launch hadmap.launch
+hadmap_engine hadmap_engine.launch
 launch perception_v2x.launch
 launch perception_lidar.launch
 launch perception_fusion.launch
