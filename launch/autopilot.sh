@@ -312,7 +312,7 @@ keep_alive() {
                         ;;
                     "controller")
                         if [ $priority -gt 0 ]; then
-                            chrt -p -r 99 $pid
+                            chrt -p -ar 99 $pid
                         fi
                         ;;
 
@@ -336,7 +336,7 @@ keep_alive() {
                             chrt -p -r 79 $pid
                         fi
                         ;;
-                    "rs_perception_node" | "perception_camera_2D_front_node" | "trt_yolov5")
+                    "rs_perception_node" | "perception_camera_2D_front" | "trt_yolov5")
                         if [ $priority -gt 0 ]; then
                             chrt -p -r 69 $pid
                         fi
