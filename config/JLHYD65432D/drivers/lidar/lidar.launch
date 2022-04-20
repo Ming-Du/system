@@ -4,6 +4,7 @@
   <include file="$(find config)/vehicle/drivers/lidar/c32_front_right.launch" />
   <include file="$(find config)/vehicle/drivers/lidar/c32_rear.launch" />
   <include file="$(find config)/vehicle/drivers/lidar/lidars_fusion.launch" />
+  <include file="$(find config)/vehicle/drivers/lidar/drivers_innolidar.launch" />
 </launch>
 
 

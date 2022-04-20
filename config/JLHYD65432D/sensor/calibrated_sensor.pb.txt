@@ -304,3 +304,23 @@ sensor_info {
     }
   }
 }
+
+sensor_info {
+  name: "innolidar"
+  type: INNO_LIDAR
+  orientation: FRONT
+  topic: "/sensor/lidar/innolidar/point_cloud"
+  extrinsic {
+    translation {
+      x: 0
+      y: 0
+      z: 0
+    }
+    rotation {
+      w: 0
+      x: 0
+      y: 0
+      z: 0
+    }
+  }
+}
