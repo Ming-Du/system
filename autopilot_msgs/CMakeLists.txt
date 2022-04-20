@@ -31,7 +31,6 @@ add_message_files(
   VisualObject.msg
   VisualObjects.msg
   RoadArrow.msg
-  LaneArrowStoplineSegAndArrowClassify.msg
 )
 
 add_service_files(
