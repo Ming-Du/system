@@ -4,11 +4,11 @@
   <arg name="config_path" default="$(find config)/vehicle"/>
   <arg name="sensor_meta"
     default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
-  <arg name="camera_id" default="H120-D0xxxxxxx" />
+  <arg name="camera_id" default="H120-Dxxxxxx-left" />
   <arg name="calibed" default="1" />
   <arg name="undistort" default="0" />
-  <group ns="sensor/camera/sensing120">
-    <node name="drivers_camera_sensing120" pkg="drivers_camera"
+  <group ns="sensor/camera/sensing120_left">
+    <node name="drivers_camera_sensing120_left" pkg="drivers_camera"
         type="drivers_camera_sensing_node" output="screen" 
         args="--sensor_meta_path=$(arg sensor_meta)">
       <param name="video_device" value="$(arg video_device)" />
