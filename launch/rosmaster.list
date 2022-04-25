@@ -5,8 +5,6 @@ update_map update_map.launch
 launch drivers_camera.launch
 launch can_adapter.launch
 localization localization.launch
-launch hadmap.launch
-hadmap_engine hadmap_engine.launch
 perception_camera_2D_front perception_2D_front_1camera.launch
 launch local_planning.launch
 launch controller.launch

@@ -130,17 +130,38 @@ log4j.appender.${ErrorAppender}.DatePattern='.'yyyy-MM-dd-HH
 log4j.appender.${ErrorAppender}.layout=org.apache.log4j.PatternLayout
 log4j.appender.${ErrorAppender}.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH:mm:ss.SSS} LWP:%t(%r) %l: %m %n
 "
-    # log4j.appender.${Aconsole}=org.apache.log4j.ConsoleAppender
-    # log4j.appender.${Aconsole}.Threshold=${level}
-    # log4j.appender.${Aconsole}.ImmediateFlush=true
-    # log4j.appender.${Aconsole}.Target=System.out
-    # log4j.appender.${Aconsole}.layout=org.apache.log4j.PatternLayout
-    # log4j.appender.${Aconsole}.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH:mm:ss.SSS} %l: %m %n
-    # "
 }
 
-get_all_launch_files() {
+select_real_files(){
     local file_set
+    [[ -z "$1" ]] && return
+    include_files=$(roslaunch --files $1 2>/dev/null)
+    if [ $? -ne 0 ]; then
+        LoggingERR "cannot find $1"
+        MOGO_LOG "EINIT_BOOT" "can not find $1 or the launch file is invalid"
+        return -1
+    fi
+    local should_start_list=""
+    for child_file in $include_files; do
+        [[ -z "$child_file" ]] && continue
+        [[ $(echo $file_set | grep -w -c "$child_file:") -ne 0 ]] && continue
+        type_name=$(xmllint --xpath "//node[@pkg!='rviz']/@type" $child_file 2>/dev/null | sed 's/\"//g')
+        [[ -z "$type_name" ]] && continue
+        should_start_list=$should_start_list:$child_file
+        # 可能存在的问题:当某launch文件中既包含节点又包含include时，如果roslaunch --files命令先打印子file,则还会出现启动多次的问题，待修复
+        for f in $(roslaunch --files $child_file);do
+            [[ $(echo $file_set | grep -w -c "$f:") -ne 0 ]] && continue
+            file_set="$f:$file_set"
+            [[ "$f" != "$child_file" ]] && should_start_list=$(echo ${should_start_list} | sed "s#:*$f##g")
+        done
+    done
+    for v in $(echo ${should_start_list//:/ });do
+        map_restart_times[$v]=-1
+        launch_files_array+=("$v")
+    done
+    return 0
+}
+get_all_launch_files() {
     if [ ! -f $ListFile -o $(sed '/^\s*$/d' $ListFile | wc -m) -eq 0 ]; then
         MOGO_LOG "EINIT_BOOT" "$ListFile doesn't exist or it's empty"
         LoggingERR "$ListFile doesn't exist or it's empty"
@@ -148,52 +169,15 @@ get_all_launch_files() {
     fi
     if [ -n "$opt_onenode" ]; then
         launch_line=$(grep -w $opt_onenode $ListFile)
-        if [ -z "$launch_line" ];then
+        select_real_files "$launch_line"
+        if [ $? -ne 0 ];then
             LoggingERR "cannot find \"$opt_onenode\" in $ListFile"
             exit 1
         fi
-        include_files=$(roslaunch --files $launch_line 2>/dev/null)
-        if [ $? -ne 0 ]; then
-            LoggingERR "cannot find $launch_line"
-            exit 1
-        fi
-        for child_file in $include_files; do
-            [[ -z "$child_file" ]] && continue
-            [[ $(echo $file_set | grep -w -c "$child_file:") -ne 0 ]] && continue
-            type_name=$(xmllint --xpath "//node[@pkg!='rviz']/@type" $child_file 2>/dev/null | sed 's/\"//g')
-            [[ -z "$type_name" ]] && continue
-            map_restart_times[$child_file]=-1
-            launch_files_array[$arr_idx]="$child_file"
-            arr_idx=$((arr_idx + 1))
-            for f in $(roslaunch --files $child_file);do
-                [[ $(echo $file_set | grep -w -c "$f:") -ne 0 ]] && continue
-                file_set="$f:$file_set"
-            done
-        done
         return
     fi
     while read launch_file || [[ -n $launch_file ]]; do
-        [[ -z "$launch_file" ]] && continue
-        include_files=$(roslaunch --files $launch_file 2>/dev/null)
-        if [ $? -ne 0 ]; then
-            LoggingERR "cannot find $launch_file"
-            MOGO_LOG "EINIT_BOOT" "can not find $launch_file or the launch file is invalid"
-            continue
-        fi
-        for child_file in $include_files; do
-            [[ -z "$child_file" ]] && continue
-            [[ $(echo $file_set | grep -w -c "$child_file:") -ne 0 ]] && continue
-            type_name=$(xmllint --xpath "//node[@pkg!='rviz']/@type" $child_file 2>/dev/null | sed 's/\"//g')
-            [[ -z "$type_name" ]] && continue
-            map_restart_times[$child_file]=-1
-            launch_files_array[$arr_idx]="$child_file"
-            arr_idx=$((arr_idx + 1))
-            # 可能存在的问题:当某launch文件中既包含节点又包含include时，如果roslaunch --files命令先打印子file,则还会出现启动多次的问题，待修复
-            for f in $(roslaunch --files $child_file);do
-                [[ $(echo $file_set | grep -w -c "$f:") -ne 0 ]] && continue
-                file_set="$f:$file_set"
-            done
-        done
+        select_real_files "$launch_file"
     done <$ListFile
 }
 
