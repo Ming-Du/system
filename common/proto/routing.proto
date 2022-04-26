@@ -9,6 +9,7 @@ message Waypoint {
   optional string id = 1;
   optional double s = 2;
   optional geometry.Point pose = 3;//utm 坐标值
+  optional double theta = 4;  //direction of v
 }
 
 message RoutingRequest {

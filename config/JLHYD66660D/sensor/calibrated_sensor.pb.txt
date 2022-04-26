@@ -204,3 +204,123 @@ sensor_info{
   name:"lidar_main"
   type:LSLIDAR_C32
 }
+
+sensor_info {
+  name: "radar_front"
+  type: CONTI_RADAR_ARS408
+  orientation: FRONT
+  topic: "/perception/radar/front/radar_obstacle"
+  extrinsic {
+    translation {
+      x: 4.995
+      y: 0.0
+      z: 0.525
+    }
+    rotation {
+      w: 0.0000
+      x: 0.00000
+      y: 0.00000
+      z: 0.00000
+    }
+  }
+}
+
+sensor_info {
+  name: "radar_rear_left"
+  type: CONTI_RADAR_SRR308
+  orientation: LEFT_BACKWARD
+  topic: "/perception/radar/rear_left/radar_obstacle"
+  extrinsic {
+    translation {
+      x: -1.395
+      y: 0.83
+      z: 0.81
+    }
+    rotation {
+      w: 0.376
+      x: 0.00000
+      y: 0.00000
+      z: 0.927
+    }
+  }
+}
+
+sensor_info {
+  name: "radar_rear_right"
+  type: CONTI_RADAR_SRR308
+  orientation: RIGHT_BACKWARD
+  topic: "/perception/radar/rear_right/radar_obstacle"
+  extrinsic {
+    translation {
+      x: -1.37
+      y: -0.83
+      z: 0.81
+    }
+    rotation {
+      w: 0.397
+      x: 0.00000
+      y: 0.00000
+      z: -0.918
+    }
+  }
+}
+
+sensor_info {
+  name: "radar_front_left"
+  type: CONTI_RADAR_SRR308
+  orientation: LEFT_FORWARD
+  topic: "/perception/radar/front_left/radar_obstacle"
+  extrinsic {
+    translation {
+      x: 4.760
+      y: 0.885
+      z: 0.55
+    }
+    rotation {
+      w: 0.924
+      x: 0.00000
+      y: 0.00000
+      z: 0.383
+    }
+  }
+}
+
+sensor_info {
+  name: "radar_front_right"
+  type: CONTI_RADAR_SRR308
+  orientation: RIGHT_FORWARD
+  topic: "/perception/radar/front_right/radar_obstacle"
+  extrinsic {
+    translation {
+      x: 4.78
+      y: -1.01
+      z: 0.55
+    }
+    rotation {
+      w: 0.924
+      x: 0.00000
+      y: 0.00000
+      z: -0.383
+    }
+  }
+}
+
+sensor_info {
+  name: "innolidar"
+  type: INNO_LIDAR
+  orientation: FRONT
+  topic: "/sensor/lidar/innolidar/point_cloud"
+  extrinsic {
+    translation {
+      x: 0
+      y: 0
+      z: 0
+    }
+    rotation {
+      w: 0
+      x: 0
+      y: 0
+      z: 0
+    }
+  }
+}
