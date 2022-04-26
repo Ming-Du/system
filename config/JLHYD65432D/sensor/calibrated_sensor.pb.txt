@@ -7,8 +7,8 @@ sensor_info {
 
   extrinsic {
     translation {
-      x: 3.93
-      y: -0.58
+      x: 3.63
+      y: -0.53
       z: 0
     }
     rotation {
@@ -141,21 +141,61 @@ sensor_info {
 }
 
 sensor_info {
+  name: "H120-Dxxxxxx"
+  type: SENSING_120
+  orientation: REAR
+  topic: "/sensor/camera/sensing/image_raw_back"
+  extrinsic {
+    translation {
+      x: 0
+      y: 0
+      z: 0
+    }
+    rotation {
+      x: 0
+      y: 0
+      z: 0
+      w: 1
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 963.53486862862223
+    matrix: 0
+    matrix: 965.30443325262036
+    matrix: 0
+    matrix: 961.99896324217855
+    matrix: 564.5263603881574
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.30286258391117687
+    distort_matrix: 0.089958752887863314
+    distort_matrix: 5.5322214919925752e-05
+    distort_matrix: -0.00018197796045640437
+    distort_matrix: -0.011960264065188755
+  }
+}
+
+sensor_info {
   name: "c32_front_left"
   type: LSLIDAR_C32
   orientation: LEFT_FORWARD
   topic: "/sensor/lidar/front_left/point_cloud"
   extrinsic {
     translation {
-      x: 4.48
-      y: 1.01
+      x: 5.0
+      y: 1.0
       z: 0.72
     }
-    rotation { #1,-0.20,122.3
-      w: 0.482486
-      x: 0.00573936
-      y: 0.00680132
-      z: 0.875859
+    rotation {# 1.82,-1.2,118.45
+      w: 0.5114325
+      x: 0.0171218
+      y: 0.0082873
+      z: 0.8591129
     }
   }
 }
@@ -166,19 +206,18 @@ sensor_info {
   topic: "/sensor/lidar/front_right/point_cloud"
   extrinsic {
     translation {
-      x: 4.5
-      y: -1
+      x: 5.0
+      y: -1.02
       z: 0.72
     }
-    rotation { # -2.5,4,55.2
-      w: 0.8851
-      x: -0.0354856
-      y: 0.0208201
-      z: 0.463578
+    rotation {# 0.25,1.5,54.85
+      w: 0.8875495
+      x: -0.0040926
+      y: 0.0126232
+      z: 0.4605212
     }
   }
 }
-
 sensor_info {
   name: "c32_rear"
   type: LSLIDAR_C32
@@ -186,20 +225,18 @@ sensor_info {
   topic: "/sensor/lidar/rear/point_cloud"
   extrinsic {
     translation {
-      x: -1.55
+      x: -1.05
       y: 0.03
       z: 0.8
     }
-    rotation {#x,1.9,y,-1.5,z,268.7
-      w: -0.699039
-      x: -0.00223013
-      y: 0.0210039
-      z: 0.714772
+    rotation {# 1.38,0.35,268.7
+      w: -0.6990161
+      x: -0.0057462
+      y: 0.0102471
+      z: 0.7150094
     }
   }
 }
-
-
 sensor_info{
   name:"lidar_main"
   type:LSLIDAR_C32
