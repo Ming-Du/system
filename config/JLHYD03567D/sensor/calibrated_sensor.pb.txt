@@ -7,8 +7,8 @@ sensor_info {
 
   extrinsic {
     translation {
-      x: 3.88
-      y: -0.49
+      x: 3.96
+      y: -0.55
       z: 0
     }
     rotation {
@@ -141,21 +141,61 @@ sensor_info {
 }
 
 sensor_info {
+  name: "H120-Dxxxxxx"
+  type: SENSING_120
+  orientation: REAR
+  topic: "/sensor/camera/sensing/image_raw_back"
+  extrinsic {
+    translation {
+      x: 0
+      y: 0
+      z: 0
+    }
+    rotation {
+      x: 0
+      y: 0
+      z: 0
+      w: 1
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 963.53486862862223
+    matrix: 0
+    matrix: 965.30443325262036
+    matrix: 0
+    matrix: 961.99896324217855
+    matrix: 564.5263603881574
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.30286258391117687
+    distort_matrix: 0.089958752887863314
+    distort_matrix: 5.5322214919925752e-05
+    distort_matrix: -0.00018197796045640437
+    distort_matrix: -0.011960264065188755
+  }
+}
+
+sensor_info {
   name: "c32_front_left"
   type: LSLIDAR_C32
   orientation: LEFT_FORWARD
   topic: "/sensor/lidar/front_left/point_cloud"
   extrinsic {
     translation {
-      x: 4.5
+      x: 5.00
       y: 1.01
       z: 0.75
     }
-    rotation {# 2,1,121.95
-      w: 0.485232
-      x: 0.000838041
-      y: 0.0194933
-      z: 0.874168
+    rotation {# 2.3,1.5,123.0
+      w: 0.4772527
+      x: -0.0019253
+      y: 0.0238809
+      z: 0.8784395
     }
   }
 }
@@ -166,15 +206,15 @@ sensor_info {
   topic: "/sensor/lidar/front_right/point_cloud"
   extrinsic {
     translation {
-      x: 4.55
-      y: -1.05
+      x: 5.05
+      y: -1.0
       z: 0.75
     }
-    rotation {# 1.5,2.8,57.7
-      w: 0.875704
-      x: -0.000326391
-      y: 0.0277121
-      z: 0.482053
+    rotation {# -2.0,2.5,57.95
+      w: 0.8743053 
+      x: -0.0258304
+      y: 0.010629
+      z: 0.484572
     }
   }
 }
@@ -185,19 +225,79 @@ sensor_info {
   topic: "/sensor/lidar/rear/point_cloud"
   extrinsic {
     translation {
-      x: -1.5
-      y: -0.17
+      x: -0.99
+      y: -0.10
       z: 0.78
     }
-    rotation {# 3,-2,270.50
-      w: -0.710156
-      x: -0.00630511
-      y: 0.0308163
-      z: 0.703342
+    rotation {# 2.9,-1.5,268.8
+      w: -0.699616
+      x: -0.008354
+      y: 0.0272333
+      z: 0.713951
     }
   }
 }
 sensor_info{
   name:"lidar_main"
   type:LSLIDAR_C32
+}
+
+sensor_info {
+  name: "radar_front"
+  type: CONTI_RADAR_ARS408
+  orientation: FRONT
+  topic: "perception/radar/front/radar_obstacle"
+  extrinsic {
+    translation {
+      x: 3.8
+      y: 0.0
+      z: 0.35
+    }
+    rotation {
+      w: 0.999848
+      x: 0.00000
+      y: 0.00000
+      z: -0.017452
+    }
+  }
+}
+
+sensor_info {
+  name: "radar_rear_left"
+  type: CONTI_RADAR_SRR308
+  orientation: LEFT_BACKWARD
+  topic: "perception/radar/rear_left/radar_obstacle"
+  extrinsic {
+    translation {
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    }
+    rotation {
+      w: 1.00000
+      x: 0.00000
+      y: 0.00000
+      z: 0.00000
+    }
+  }
+}
+
+sensor_info {
+  name: "radar_rear_right"
+  type: CONTI_RADAR_SRR308
+  orientation: RIGHT_BACKWARD
+  topic: "perception/radar/rear_right/radar_obstacle"
+  extrinsic {
+    translation {
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    }
+    rotation {
+      w: 1.00000
+      x: 0.00000
+      y: 0.00000
+      z: 0.00000
+    }
+  }
 }
