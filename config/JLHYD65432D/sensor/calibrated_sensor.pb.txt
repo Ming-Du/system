@@ -21,7 +21,7 @@ sensor_info {
 }
 
 sensor_info {
-  name: "H60-D06170617"
+  name: "H60L-D12310643"
   type: SENSING_60
   orientation: FRONT
   topic: "/sensor/camera/sensing/image_raw_60"
@@ -41,27 +41,27 @@ sensor_info {
   intrinsic {
     width: 1920
     height: 1080
-    matrix: 1968.1435602859058
+    matrix: 2009.3835689449008
     matrix: 0
-    matrix: 935.73824552105441
+    matrix: 988.2089538248387
     matrix: 0
-    matrix: 1969.0276646548698
-    matrix: 546.28824947904047
+    matrix: 2010.4196060276358
+    matrix: 547.0621054998837
     matrix: 0
     matrix: 0
     matrix: 1
   }
   distcoeff {
-    distort_matrix: -0.57787296417449807
-    distort_matrix: 0.3452587138288295
-    distort_matrix: 0.0012622364846943547
-    distort_matrix: 0.00034294071465058873
-    distort_matrix: -0.10211367100931869
+    distort_matrix: -0.5764250520574826
+    distort_matrix: 0.2846885580221174
+    distort_matrix: -0.0012697878397539746
+    distort_matrix: -0.0005743059865690209
+    distort_matrix: 0
   }
 }
 
 sensor_info {
-  name: "H30-D06170567"
+  name: "H30S-E01120549"
   type: SENSING_30
   orientation: FRONT
   topic: "/sensor/camera/sensing/image_raw_30"
@@ -101,7 +101,7 @@ sensor_info {
 }
 
 sensor_info {
-  name: "H120-D06170552"
+  name: "H120L-E01100639"
   type: SENSING_120
   orientation: FRONT
   topic: "/sensor/camera/sensing/image_raw_120"
@@ -141,7 +141,7 @@ sensor_info {
 }
 
 sensor_info {
-  name: "H120-Dxxxxxx"
+  name: "H120L-E01100632"
   type: SENSING_120
   orientation: REAR
   topic: "/sensor/camera/sensing/image_raw_back"
