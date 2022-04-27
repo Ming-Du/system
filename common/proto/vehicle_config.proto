@@ -41,4 +41,6 @@ message VehicleConfig {
     optional float center_to_left  = 24; //meter
     optional float center_to_right = 25; //meter
     optional string vehicle_color = 26;
+
+    optional bool new_jinlv = 27 [default = false];//新车型采用新标定数据
 }
