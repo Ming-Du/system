@@ -1,0 +1,5 @@
+<launch>
+    <node name="monitor_process_rosslave_106" pkg="monitor_process" type="monitor_process.py" output="screen">
+     <param name="net_card_name" type="string" value="eth0" />
+    </node>
+</launch>
