@@ -4,7 +4,6 @@ log_msg_collect_server log_msg_collect_server.launch
 launch drivers_camera120.launch
 perception_camera_2D_front perception_2D_front_2camera.launch
 launch slam_localization.launch
-telematics telematics_slave.launch
 guardian system_guardian_slave1.launch
 record_cache record_cache.launch
 launch monitor_gnss.launch
