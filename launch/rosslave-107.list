@@ -5,3 +5,4 @@ launch hadmap.launch
 hadmap_engine hadmap_engine.launch
 record_cache record_cache.launch
 guardian system_guardian_slave5.launch
+monitor_process  monitor_process_rosslave_107.launch

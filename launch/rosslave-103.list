@@ -6,5 +6,6 @@ perception_camera_2D_front perception_2D_front_2camera.launch
 launch slam_localization.launch
 guardian system_guardian_slave1.launch
 record_cache record_cache.launch
-launch monitor_gnss.launch
-launch monitor_collect.launch
+monitor_gnss  monitor_gnss.launch
+monitor_collect  monitor_collect.launch
+monitor_process  monitor_process_rosslave_103.launch

@@ -5,3 +5,4 @@ log_collect_client log_collect_client.launch
 log_msg_collect_client log_msg_collect_client.launch
 guardian system_guardian_slave3.launch
 record_cache record_cache.launch
+monitor_process  monitor_process_rosslave_105.launch
