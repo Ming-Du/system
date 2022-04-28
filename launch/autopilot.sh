@@ -358,10 +358,13 @@ install_ros_log() {
     [[ ! -d /autocar-code/install ]] && return
     src_so_path=$(find /autocar-code/install/ -name 'libroscpp.so' | head -n 1)
     dst_so_path=$(find /opt -name 'libroscpp.so' | head -n 1)
+    \cp -rf $src_so_path $dst_so_path
+    src_so_path=$(find /autocar-code/install/ -name 'libxmlrpcpp.so' | head -n 1)
+    dst_so_path=$(find /opt -name 'libxmlrpcpp.so' | head -n 1)
+    \cp -rf $src_so_path $dst_so_path
     mkdir -p /home/mogo/data/log/ROS_STAT/
     mkdir -p /home/mogo/data/log/ROS_STAT/EXPORT/
     chmod 777 -R /home/mogo/data/log/
-    \cp -rf $src_so_path $dst_so_path
 }
 
 add_privilege_monitor_gnss() {
