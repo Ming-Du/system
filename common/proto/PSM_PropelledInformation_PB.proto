@@ -1,0 +1,54 @@
+syntax = "proto2";
+
+
+message PSM_PropelledInformation_PB {
+	enum PSM_PropelledInformation_PR_PB_Enum {
+		PSM_PropelledInformation_PR_NOTHING = 0;	/* No components present */
+		PSM_PropelledInformation_PR_human = 1;
+		PSM_PropelledInformation_PR_animal = 2;
+		PSM_PropelledInformation_PR_motor =3;
+		/* Extensions may appear below */
+		
+	};
+	required	PSM_PropelledInformation_PR_PB_Enum  typesend = 1;
+	enum PSM_HumanPropelledType_PB {
+		PSM_HumanPropelledType_unavailable	= 0;
+		PSM_HumanPropelledType_otherTypes	= 1;
+		PSM_HumanPropelledType_onFoot	= 2;
+		PSM_HumanPropelledType_skateboard	= 3;
+		PSM_HumanPropelledType_pushOrKickScooter = 4;
+		PSM_HumanPropelledType_wheelchair	= 5;
+		/*
+		 * Enumeration is extensible
+		 */
+	};
+	enum PSM_AnimalPropelledType_PB {
+		PSM_AnimalPropelledType_unavailable	= 0;
+		PSM_AnimalPropelledType_otherTypes	= 1;
+		PSM_AnimalPropelledType_animalMounted = 2;
+		PSM_AnimalPropelledType_animalDrawnCarriage	= 3;
+		/*
+		 * Enumeration is extensible
+		 */
+	} ;
+	enum PSM_MotorizedPropelledType_PB {
+		PSM_MotorizedPropelledType_unavailable	= 0;
+		PSM_MotorizedPropelledType_otherTypes	= 1;
+		PSM_MotorizedPropelledType_wheelChair	= 2;
+		PSM_MotorizedPropelledType_bicycle	= 3;
+		PSM_MotorizedPropelledType_scooter	= 4;
+		PSM_MotorizedPropelledType_selfBalancingDevice	= 5;
+		/*
+		 * Enumeration is extensible
+		 */
+	};
+    oneof PSM_PropelledInformation_u_PB {
+		PSM_HumanPropelledType_PB	 human = 2;
+		PSM_AnimalPropelledType_PB	 animal = 3;
+		PSM_MotorizedPropelledType_PB	 motor = 4;
+		/*
+		 * This type is extensible,
+		 * possible extensions are below.
+		 */
+	}
+} 

@@ -1,5 +1,5 @@
 syntax = "proto2";
-package common;
+//package common;
 
 message VerticalOffset_PB{
     oneof VerticalOffset{

@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+
+message PSM_PersonalRequest_PB {
+	enum PSM_PersonalCrossing_PB {
+		PSM_PersonalCrossing_unavailable = 0;
+		PSM_PersonalCrossing_request = 1;
+		PSM_PersonalCrossing_crossing = 2;
+		PSM_PersonalCrossing_finish	= 3;
+		/*
+		 * Enumeration is extensible
+		 */
+	} ;
+    
+	optional	int32  crossing = 1;
+} 

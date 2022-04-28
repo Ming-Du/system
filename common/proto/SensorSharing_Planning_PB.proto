@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+import "String_PB.proto";
+import "VIR_PathPlanningPoint_PB.proto";
+
+message SensorSharing_Planning_PB {
+    optional	int32 duration = 1;
+	optional	int32 planConfidence = 2;
+	enum VIR_DriveBehavior_PB {
+		VIR_DriveBehavior_goStraightForward	= 0;
+		VIR_DriveBehavior_laneChangingToLeft	= 1;
+		VIR_DriveBehavior_laneChangingToRight	= 2;
+		VIR_DriveBehavior_rampIn	= 3;
+		VIR_DriveBehavior_rampOut	= 4;
+		VIR_DriveBehavior_intersectionStraightThrough	= 5;
+		VIR_DriveBehavior_intersectionTurnLeft	= 6;
+		VIR_DriveBehavior_intersectionTurnRight	= 7;
+		VIR_DriveBehavior_intersectionUTurn	= 8;
+		VIR_DriveBehavior_stop_and_go	= 9;
+		VIR_DriveBehavior_stop	= 10;
+		VIR_DriveBehavior_slow_down	= 11;
+		VIR_DriveBehavior_speed_up	= 12;
+		VIR_DriveBehavior_parking	= 13;
+	};
+	optional	String_PB drivingBehavior = 3;
+	optional	VIR_PathPlanningPoint_PB pathPlanning = 4;
+} 

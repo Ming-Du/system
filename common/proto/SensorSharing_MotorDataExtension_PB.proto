@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+import "String_PB.proto";
+import "SensorSharing_Attitude_PB.proto";
+import "SensorSharing_AttitudeConfidence_PB.proto";
+import "SensorSharing_AngularVelocity_PB.proto";
+import "SensorSharing_AngularVelocityConfidence_PB.proto";
+
+message SensorSharing_MotorDataExtension_PB {
+	enum VehStatus_ExteriorLights_PB {
+		VehStatus_ExteriorLights_lowBeamHeadlightsOn	= 0;
+		VehStatus_ExteriorLights_highBeamHeadlightsOn	= 1;
+		VehStatus_ExteriorLights_leftTurnSignalOn	= 2;
+		VehStatus_ExteriorLights_rightTurnSignalOn	= 3;
+		VehStatus_ExteriorLights_hazardSignalOn	= 4;
+		VehStatus_ExteriorLights_automaticLightControlOn	= 5;
+		VehStatus_ExteriorLights_daytimeRunningLightsOn	= 6;
+		VehStatus_ExteriorLights_fogLightOn	= 7;
+		VehStatus_ExteriorLights_parkingLightsOn  = 8;
+	};
+    optional String_PB lights = 1;
+	optional SensorSharing_Attitude_PB vehAttitude = 2;
+	optional SensorSharing_AttitudeConfidence_PB vehAttitudeConfidence = 3;
+	optional SensorSharing_AngularVelocity_PB vehAngVel = 4;
+	optional SensorSharing_AngularVelocityConfidence_PB vehAngVelConfidence = 5;
+} 

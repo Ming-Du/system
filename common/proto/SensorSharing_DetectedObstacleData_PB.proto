@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+import "String_PB.proto";
+import "Position3D_PB.proto";
+import "PositionOffsetLLV_PB.proto";
+import "PositionConfidenceSet_PB.proto";
+import "AccelerationSet4Way_PB.proto";
+import "VehicleSize_PB.proto";
+import "ObjectSizeConfidence_PB.proto";
+import "SensorSharing_Polygon_PB.proto";
+
+message SensorSharing_DetectedObstacleData_PB {
+    required	int64  obsType = 1;
+	optional	int32  objTypeConfidence = 2;
+	required	int64  obsId = 3;
+	required	int64  source = 4;
+	required	int64  secMark = 5;
+	required	PositionOffsetLLV_PB pos = 6;
+	required	PositionConfidenceSet_PB posConfidence = 7;
+	required	int64  speed = 8;
+	optional	int32  speedCfd = 9;
+	required	int64  heading = 10;
+	optional	int32  headingCfd = 11;
+	optional	int32  verSpeed = 12;
+	optional	int32  verSpeedConfidence = 13;
+	optional	AccelerationSet4Way_PB accelSet = 14;	
+	required	VehicleSize_PB size = 15;
+	optional	ObjectSizeConfidence_PB objSizeConfidence = 16;
+	optional	int32 tracking = 17;
+	optional	SensorSharing_Polygon_PB polygon = 18;
+} 

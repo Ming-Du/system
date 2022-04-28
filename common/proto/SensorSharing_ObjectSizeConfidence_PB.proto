@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+
+
+message SensorSharing_ObjectSizeConfidence_PB {
+    required int64 widthConf = 1;
+    required int64 lengthConf = 2;
+    optional int32 heightConf = 3;
+} 

@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+import "PositionConfidenceSet_PB.proto";
+
+message PathHistoryPoint_PB {
+   required int64  lat = 1;
+   required int64  Long = 2;
+   required int64  elevation = 3;
+   required int64  timeOffset=4;
+   required int64	speed =5;	/* OPTIONAL */;
+   optional PositionConfidenceSet_PB	posAccuracy =6;	/* OPTIONAL */;
+   optional	    int64  heading =7;	/* OPTIONAL */;	
+}

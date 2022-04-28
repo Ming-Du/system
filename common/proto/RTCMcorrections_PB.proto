@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+import "RTCM_RTCMmsg_PB.proto";
+
+message RTCMcorrections_PB {
+    required	int64  msgCnt = 1;
+	repeated  RTCM_RTCMmsg_PB list = 1 ;
+} 

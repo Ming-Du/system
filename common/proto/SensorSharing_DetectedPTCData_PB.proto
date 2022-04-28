@@ -1,0 +1,35 @@
+syntax = "proto2";
+
+import "RSM_ParticipantData_PB.proto";
+import "SensorSharing_ObjectSizeConfidence_PB.proto";
+import "AccelerationSet4Way_PB.proto";
+import "PathHistory_PB.proto";
+import "SensorSharing_Planning_PB.proto";
+import "PositionOffsetLLV_PB.proto";
+import "SensorSharing_MotorDataExtension_PB.proto";
+import "SensorSharing_Non_MotorDataExtension_PB.proto";
+
+message SensorSharing_DetectedPTCData_PB {
+    required	RSM_ParticipantData_PB  ptc = 1;
+	optional	SensorSharing_ObjectSizeConfidence_PB objSizeConfidence = 2;
+	optional	int32 detectedPTCType = 3;
+	optional	int32 typeConfidence = 4;
+	optional	AccelerationSet4Way_PB acc4WayConfidence = 5;
+	optional	int32 statusDuration = 6;
+	optional	PathHistory_PB pathHistory = 7;
+	repeated	SensorSharing_Planning_PB planningList = 8;
+	optional	int32 tracking = 9;
+	repeated	PositionOffsetLLV_PB polygon = 10;
+	enum SensorSharing_DetectedPTCData__type_relatedExt_PR_PB_Enum {
+		SensorSharing_DetectedPTCData__type_relatedExt_PR_NOTHING = 0;	/* No components present */
+		SensorSharing_DetectedPTCData__type_relatedExt_PR_motorExt = 1;
+		SensorSharing_DetectedPTCData__type_relatedExt_PR_non_motorExt = 2;
+		/* Extensions may appear below */
+		
+	};
+	required SensorSharing_DetectedPTCData__type_relatedExt_PR_PB_Enum typesend = 11 [default=SensorSharing_DetectedPTCData__type_relatedExt_PR_NOTHING];
+	oneof SensorSharing_DetectedPTCData__type_relatedExt_u_PB{
+		SensorSharing_MotorDataExtension_PB motorExt = 12;
+		SensorSharing_Non_MotorDataExtension_PB non_motorExt = 13;
+	}
+} 

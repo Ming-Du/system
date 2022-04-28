@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+import "SensorSharing_DetectedPTCData_PB.proto";
+
+message SensorSharing_DetectedPTCList_PB {
+    repeated SensorSharing_DetectedPTCData_PB list = 1;
+		
+} 

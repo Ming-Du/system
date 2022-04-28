@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+
+
+message SensorSharing_AccSet4WayConfidence_PB {
+	required	int64 lonAccConfidence = 1;
+	required	int64 latAccConfidence = 2;
+	required	int64 vertAccConfidence = 3;
+	required	int64 yawRateCon = 4;
+} 

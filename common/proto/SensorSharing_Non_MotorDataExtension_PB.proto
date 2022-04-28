@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+import "PSM_Non_motorData_PB.proto";
+
+message SensorSharing_Non_MotorDataExtension_PB {
+	required int64 overallRadius = 1;
+    required PSM_Non_motorData_PB non_motorData = 2;
+} 

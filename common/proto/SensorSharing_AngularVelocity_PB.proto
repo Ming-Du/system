@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+import "String_PB.proto";
+
+message SensorSharing_AngularVelocity_PB {
+	required int64 pitchRate = 1;
+	required int64 rollRate = 2;
+	required int64 yawRate = 3;
+}

@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+import "RTCM_RTCM_Revision_PB.proto";
+import "String_PB.proto";
+
+message RTCM_RTCMmsg_PB {
+    optional	RTCM_RTCM_Revision_PB  rev = 1;
+	optional	int32 rtcmID = 2;
+	required	String_PB payload = 3;
+} 

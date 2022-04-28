@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+import "PositionOffsetLLV_PB.proto";
+
+message SensorSharing_Polygon_PB {
+    repeated	PositionOffsetLLV_PB list = 1;
+		
+} 
