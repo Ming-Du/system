@@ -4,7 +4,7 @@ use_radar: true
 
 input_sensor {
   sensor_name: "H60-D06170617"
-  topic: "/perception/camera/camera_obstacle"
+  topic: "/perception/camera/camera_obstacle_front60"
 }
 input_sensor {
   sensor_name: "lidar_main"
