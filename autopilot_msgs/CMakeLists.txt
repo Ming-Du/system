@@ -33,6 +33,8 @@ add_message_files(
   VisualObject.msg
   VisualObjects.msg
   RoadArrow.msg
+  LaneLine.msg
+  LaneLines.msg
 )
 
 add_service_files(
