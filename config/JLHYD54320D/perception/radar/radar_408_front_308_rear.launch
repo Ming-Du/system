@@ -53,6 +53,6 @@
     args="--sensor_meta_path=$(arg sensor_meta)
                 --radar_fusion_conf_path=$(arg config_path)/perception/radar/radar_fusion.pb.txt" >
     <param name="match_min_distance_thresh" type = "double" value="0.3" />
-  </node>
+    </node>
 
 </launch>

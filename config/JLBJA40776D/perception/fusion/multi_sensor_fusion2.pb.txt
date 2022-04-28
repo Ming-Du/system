@@ -7,7 +7,7 @@ input_sensor {
   topic: "/perception/camera/camera_obstacle"
 }
 input_sensor {
-  sensor_name: "c32_front_left"
+  sensor_name: "lidar_main"
   topic: "/perception/lidar/lidar_obstacle"
 }
 

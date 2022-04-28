@@ -1,9 +1,27 @@
 module_name: "radar_fusion"
 frame_id: "base_link"
 
-main_input_topic : "/perception/radar/front/radar_obstacle"
-input_topic : "/perception/radar/front_left/radar_obstacle"
-input_topic : "/perception/radar/front_right/radar_obstacle"
-input_topic : "/perception/radar/rear_left/radar_obstacle"
-input_topic : "/perception/radar/rear_right/radar_obstacle"
-output_topic: "/perception/radar/radar_obstacle"
+input_sensor {
+    sensor_name:"radar_front"
+    topic: "/perception/radar/front/radar_obstacle"
+}
+input_sensor {
+    sensor_name:"radar_front_left"
+    topic: "/perception/radar/front_left/radar_obstacle"
+}
+input_sensor {
+    sensor_name:"radar_front_right"
+    topic: "/perception/radar/front_right/radar_obstacle"
+}
+input_sensor {
+    sensor_name:"radar_rear_left"
+    topic: "/perception/radar/rear_left/radar_obstacle"
+}
+input_sensor {
+    sensor_name:"radar_rear_right"
+    topic: "/perception/radar/rear_right/radar_obstacle"
+}
+
+fusion_main_sensor: "radar_front"
+output_obstacles_topic: "/perception/radar/radar_obstacle"
+output_viz_topic:"/perception/radar/viz_obstacle"
