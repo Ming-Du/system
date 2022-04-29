@@ -334,7 +334,7 @@ def main():
         globalNetCardName = "ens33"
     else:
         globalNetCardName = temp
-    global globalDictIpInfo
+    #global globalDictIpInfo
     tempNetToos = NetTools()
     global globalDictIpInfo
     globalDictIpInfo = tempNetToos.envInit(globalNetCardName)
