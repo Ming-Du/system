@@ -29,10 +29,10 @@ Usage() {
 }
 
 MOGO_LOG() {
-    [[ ! -f $MOGOLOGFILE ]] && return
     local code=$1
     local msg=$2
-    local append=$(cat $ABS_PATH/../config/mogo_report_msg.json | python -c "import json,sys; sys.stdout.write(json.dumps(json.load(sys.stdin).get('$code')));sys.stdout.write('\n');" 2>/dev/null | sed 's/[\{\}]//g')
+    local append
+    [[ -f $MOGO_MSG_CONFIG ]] && append=$(cat $MOGO_MSG_CONFIG | python -c "import json,sys; sys.stdout.write(json.dumps(json.load(sys.stdin).get('$code')));sys.stdout.write('\n');" 2>/dev/null | sed 's/[\{\}]//g')
     append=${append:-"\"level\":\"$([ "${code:0:1}" != "E" ] && echo error || echo info)\", \"code\":\"$code\""}
     echo "{\"timestamp\": {\"sec\": $(date +"%s"), \"nsec\": $(date +"%N" | sed 's/^0*//g')}, \"src\": \"$this\", $append, \"msg\": \"$msg\"}" >>$MOGOLOGFILE
 }
@@ -130,8 +130,9 @@ get_all_launch_files() {
     fi
     while read launch_file || [[ -n $launch_file ]]; do
         [[ -z "$launch_file" ]] && continue
-        [[ ! -f $launch_file ]] && LoggingERR "cannot locate $launch_file" "EINIT_BOOT" && continue
-        [[ -z "$(xmllint --xpath "//include/@file" $include_files 2>/dev/null)" ]] && include_files=$launch_file || include_files=$(roslaunch --files $launch_file 2>/dev/null)
+        [[ $(echo $launch_file | awk '{print NF}') -eq 1 ]] && real_file=$launch_file || real_file=$(find $(roscd  ${launch_file% *} && pwd) -name ${launch_file#* })
+        [[ ! -f $real_file ]] && LoggingERR "cannot locate $real_file" "EINIT_BOOT" && continue
+        [[ -z "$(xmllint --xpath "//include/@file" $real_file 2>/dev/null)" ]] && include_files=$real_file || include_files=$(roslaunch --files $real_file 2>/dev/null)
         local should_start_list=""
         for child_file in $include_files; do
             [[ -z "$child_file" ]] && continue
@@ -382,7 +383,7 @@ declare -g launch_files_array=()
 declare -g opt_onenode opt_alive=1 opt_pkg opt_launch_file
 declare -g LOG_DIR="/home/mogo/data/log"
 declare -g BAG_DIR="/home/mogo/data/bags"
-declare -g -r MOGO_MSG_CONFIG="$ABS_PATH/../config/mogo_report_msg.json"
+declare -g -r MOGO_MSG_CONFIG="$ABS_PATH/config/mogo_report_msg.json"
 declare -g -r MOGO_LOG_DIR="$LOG_DIR/msg_log"
 declare -g -r MOGOLOGFILE="$MOGO_LOG_DIR/autopilot_report.json"
 declare -g -r LOGFILE="/home/mogo/data/log/autopilot.log" #
