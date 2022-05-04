@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import threading
+import traceback
 
 from random import random
 
@@ -46,6 +47,9 @@ import psutil
 import collections
 from entity.NetTools import NetTools
 
+# from xml.dom.minidom import parse
+# import xml.dom.minidom
+
 globalTaskExecutePool = ThreadPoolExecutor(max_workers=4, thread_name_prefix='ThreadPoolTaskExecutePool')
 globalCollectVehicleInfo = CollectVehicleInfo()
 globalCommonPara = CommonPara()
@@ -61,118 +65,168 @@ globalNetCardName = ""
 
 
 def getHostName():
-    strCmd = "ifconfig  %s   | grep inet |  grep netmask | awk '{print $2}'" % globalNetCardName
-    (status, output) = commands.getstatusoutput(strCmd)
-    print "status:%d,output:%s" % (status, output)
-    strIp = output
+    strHostName = ""
+    try:
+        strCmd = "ifconfig  %s   | grep inet |  grep netmask | awk '{print $2}'" % globalNetCardName
+        (status, output) = commands.getstatusoutput(strCmd)
+        print "status:%d,output:%s" % (status, output)
+        strIp = output
 
-    strCmd2 = "cat /etc/hosts |  grep '%s' | awk '{print $2}'" % (strIp)
-    (status, output) = commands.getstatusoutput(strCmd2)
-    strHostName = output
-    print "status:%d,output:%s" % (status, strHostName)
+        strCmd2 = "cat /etc/hosts |  grep '%s' | awk '{print $2}'" % (strIp)
+        (status, output) = commands.getstatusoutput(strCmd2)
+        strHostName = output
+        print "status:%d,output:%s" % (status, strHostName)
+    except Exception as e:
+        print "exception happend"
+        print e.message
+        print str(e)
+        print 'str(Exception):\t', str(Exception)
+        print 'str(e):\t\t', str(e)
+        print 'repr(e):\t', repr(e)
+        print 'e.message:\t', e.message
+        print 'traceback.print_exc():';
+        traceback.print_exc()
+        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
     return strHostName
 
 
 def getPkgByFileName(strLaunchFileName):
     strPkgName = ""
-    strCmd = "xmllint --xpath \"//@pkg\" %s   | awk -F \"=\" '{print $2}'   2>/dev/null | sed 's/\"//g'" % (
-        strLaunchFileName)
-    (status, strCmdOutput) = commands.getstatusoutput(strCmd)
-    while True:
-        if status != 0:
+    try:
+        strCmd = "xmllint --xpath \"//@pkg\" %s   | awk -F \"=\" '{print $2}'   2>/dev/null | sed 's/\"//g'" % (
+            strLaunchFileName)
+        (status, strCmdOutput) = commands.getstatusoutput(strCmd)
+        while True:
+            if status != 0:
+                break
+            if status == 0:
+                strPkgName = strCmdOutput
+                break
             break
-        if status == 0:
-            strPkgName = strCmdOutput
-            break
-        break
+    except Exception as e:
+        print "exception happend"
+        print e.message
+        print str(e)
+        print 'str(Exception):\t', str(Exception)
+        print 'str(e):\t\t', str(e)
+        print 'repr(e):\t', repr(e)
+        print 'e.message:\t', e.message
+        print 'traceback.print_exc():';
+        traceback.print_exc()
+        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
     return strPkgName
 
 
 def getNodeNameByFileName(strLaunchFileName):
-    strNodeName = ""
-    strCmdOutput1 = ""
-    status1 = 0
-    strCmdOutput2 = ""
-    status2 = 0
+    strFullNodeName = ""
+    try:
+        DOMTree = xml.dom.minidom.parse(strLaunchFileName)
+        collection = DOMTree.documentElement
+        groups = collection.getElementsByTagName('group')
+        nodes = collection.getElementsByTagName("node")
+        print "groups: {0}".format(groups)
+        if len(groups) > 0:
+            for elem_group in groups:
+                if elem_group.hasAttribute("ns"):
+                    print "true"
+                    strNs = elem_group.getAttribute("ns")
+                    print "ns: {0}".format(strNs)
+                    nodes = collection.getElementsByTagName('node')
+                    for elem_node in nodes:
+                        if elem_node.hasAttribute("name"):
+                            strNodeName = elem_node.getAttribute("name")
+                            print "node name:{0}".format(strNodeName)
+                            strFullNodeName = "/{0}/{1}".format(strNs, strNodeName)
+        else:
+            if len(nodes) > 0:
+                for elem_node in nodes:
+                    if elem_node.hasAttribute("name"):
+                        strNodeName = elem_node.getAttribute("name")
+                        strFullNodeName = "/{0}".format(strNodeName)
 
-    strCmd1 = " xmllint  --xpath '/launch/group/node/@name'  %s  |  awk -F \"=\" '{print $2}'  2>/dev/null" % (
-        strLaunchFileName)
-    (status1, strCmdOutput1) = commands.getstatusoutput(strCmd1)
-    print "strCmd1:%s , status1:%d, strCmdOutput1:%s" % (strCmd1, status1, strCmdOutput1)
-
-    strCmd2 = " xmllint  --xpath '/launch/node/@name'  %s  |  awk -F \"=\" '{print $2}'  2>/dev/null " % (
-        strLaunchFileName)
-    (status2, strCmdOutput2) = commands.getstatusoutput(strCmd2)
-    print "strCmd2:%s, status1:%d, strCmdOutput2:%s" % (strCmd2, status2, strCmdOutput2)
-    while True:
-        if (status1 == 0) and (len(strCmdOutput1) > 0) and (strCmdOutput1.find("XPath") < 0):
-            strNodeName = strCmdOutput1.strip('"')
-            break
-        if (status2 == 0) and (len(strCmdOutput2) > 0) and (strCmdOutput2.find("XPath") < 0):
-            strNodeName = strCmdOutput2.strip('"')
-            break
-        break
-    print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     strNodeName:%s" % (strNodeName)
-    return strNodeName
+    except Exception as e:
+        print "exception happend"
+        print e.message
+        print str(e)
+        print 'str(Exception):\t', str(Exception)
+        print 'str(e):\t\t', str(e)
+        print 'repr(e):\t', repr(e)
+        print 'e.message:\t', e.message
+        print 'traceback.print_exc():';
+        traceback.print_exc()
+        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+    return strFullNodeName
 
 
 def readNodeList():
-    strHostName = getHostName()
-
-    strFileListName = "/autocar-code/install/share/launch/%s.list" % (strHostName)
-    print "strFileListName:%s" % (strFileListName)
-
-    if os.path.exists(strFileListName):
-        pass
-    else:
-        print "file :%s not exists ,checkt host name and net_card_name" % (strFileListName)
-        sys.exit(-1)
-    linesLaunchFile_1 = []
-    with open(strFileListName, 'r') as f:
-        listResult = (f.readlines())
-        for idx in range(len(listResult)):
-            linesLaunchFile_1.append(listResult[idx].strip('\n'))
-    print "start---------------------listResult"
-    print  linesLaunchFile_1
-    print "end---------------------listResult"
-
-    ## search launch file
     linesLaunchFile_2 = []
     linesNodeName = []
-    for idx in range(len(linesLaunchFile_1)):
-        print "start process : %s " % (linesLaunchFile_1[idx])
-        strCmdRoslanchSearch = "roslaunch --files  %s   2>/dev/null" % (linesLaunchFile_1[idx])
-        (status, include_files) = commands.getstatusoutput(strCmdRoslanchSearch)
-        print "start ---------------------include_files"
-        print include_files
-        print "end -----------------------include_files"
-        if status != 0:
-            print "status !=  0  ignore current , continue"
-            continue
-        else:
-            print "status == 0  normal process "
-            listIncludeFiles = include_files.split('\n', -1)
-            print listIncludeFiles
-            pass
+    try:
+        strHostName = getHostName()
+        strFileListName = "/autocar-code/install/share/launch/%s.list" % (strHostName)
+        print "strFileListName:%s" % (strFileListName)
 
-        for idx_child_file in range(len(listIncludeFiles)):
-            if len(listIncludeFiles[idx_child_file]) == 0:
+        if os.path.exists(strFileListName):
+            pass
+        else:
+            print "file :%s not exists ,checkt host name and net_card_name" % (strFileListName)
+            sys.exit(-1)
+        linesLaunchFile_1 = []
+        with open(strFileListName, 'r') as f:
+            listResult = (f.readlines())
+            for idx in range(len(listResult)):
+                linesLaunchFile_1.append(listResult[idx].strip('\n'))
+        print "start---------------------listResult"
+        print  linesLaunchFile_1
+        print "end---------------------listResult"
+
+        ## search launch file
+
+        for idx in range(len(linesLaunchFile_1)):
+            print "start process : %s " % (linesLaunchFile_1[idx])
+            strCmdRoslanchSearch = "roslaunch --files  %s   2>/dev/null" % (linesLaunchFile_1[idx])
+            (status, include_files) = commands.getstatusoutput(strCmdRoslanchSearch)
+            print "start ---------------------include_files"
+            print include_files
+            print "end -----------------------include_files"
+            if status != 0:
+                print "status !=  0  ignore current , continue"
                 continue
-            print "process include_files[idx_child_file]:%s" % listIncludeFiles[idx_child_file]
-            pkgName = getPkgByFileName(listIncludeFiles[idx_child_file])
-            if len(pkgName) == 0:
-                print "get file %s len(pkgName) == 0  now continue" % (listIncludeFiles[idx_child_file])
-                continue
-            strNodeName = getNodeNameByFileName(listIncludeFiles[idx_child_file])
-            if len(strNodeName) == 0:
-                print "len(strNodeName) == 0 %s" % strNodeName
-            if len(strNodeName.strip()) > 0:
-                linesLaunchFile_2.append(listIncludeFiles[idx_child_file])
-                print "##############################################now update  list  strNodeName:%s ,len1:%d,len2:%d " % (
-                    strNodeName.strip(), len(strNodeName.strip()), len(strNodeName))
-                linesNodeName.append(strNodeName)
+            else:
+                print "status == 0  normal process "
+                listIncludeFiles = include_files.split('\n', -1)
+                print listIncludeFiles
+                pass
+
+            for idx_child_file in range(len(listIncludeFiles)):
+                if len(listIncludeFiles[idx_child_file]) == 0:
+                    continue
+                print "process include_files[idx_child_file]:%s" % listIncludeFiles[idx_child_file]
+                pkgName = getPkgByFileName(listIncludeFiles[idx_child_file])
+                if len(pkgName) == 0:
+                    print "get file %s len(pkgName) == 0  now continue" % (listIncludeFiles[idx_child_file])
+                    continue
+                strNodeName = getNodeNameByFileName(listIncludeFiles[idx_child_file])
+                if len(strNodeName) == 0:
+                    print "len(strNodeName) == 0 %s" % strNodeName
+                if len(strNodeName.strip()) > 0:
+                    linesLaunchFile_2.append(listIncludeFiles[idx_child_file])
+                    print "##############################################now update  list  strNodeName:%s ,len1:%d,len2:%d " % (
+                        strNodeName.strip(), len(strNodeName.strip()), len(strNodeName))
+                    linesNodeName.append(strNodeName)
+    except Exception as e:
+        print "exception happend"
+        print e.message
+        print str(e)
+        print 'str(Exception):\t', str(Exception)
+        print 'str(e):\t\t', str(e)
+        print 'repr(e):\t', repr(e)
+        print 'e.message:\t', e.message
+        print 'traceback.print_exc():'
+        traceback.print_exc()
+        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
     print "start______________linesNodeName"
-    print  linesNodeName
+    print linesNodeName
     print "end----------------linesNodeName"
     return linesNodeName
 
@@ -214,7 +268,7 @@ def node_status_check(listNodeList, strUuid):
             node_state_dict['header']['ip'] = globalDictIpInfo['ip']
             node_state_dict['header']['mac'] = globalDictIpInfo['mac']
     nodemsg = json.dumps(node_state_dict)
-    print "node_health_status:%s" % (nodemsg)
+    print "node_health_status:%s" % nodemsg
     if len(nodemsg) > 0:
         rosSendMsg = BinaryData()
         rosSendMsg.size = len(nodemsg)
@@ -334,7 +388,7 @@ def main():
         globalNetCardName = "ens33"
     else:
         globalNetCardName = temp
-    #global globalDictIpInfo
+    # global globalDictIpInfo
     tempNetToos = NetTools()
     global globalDictIpInfo
     globalDictIpInfo = tempNetToos.envInit(globalNetCardName)
