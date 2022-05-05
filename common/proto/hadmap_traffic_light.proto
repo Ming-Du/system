@@ -1,0 +1,70 @@
+syntax = "proto2";
+package hadmap;
+
+import "header.proto";
+import "geometry.proto";
+import "hadmap.proto";
+
+// 红绿灯类型
+enum TrafficLightType{
+    TRAFFIC_LIGHT_TYPE_Regular              = 1;    // 常规交通灯
+    TRAFFIC_LIGHT_TYPE_Arrow                = 2;    // 箭头交通灯
+    TRAFFIC_LIGHT_TYPE_Countdown_Board      = 3;    // 读秒板
+    TRAFFIC_LIGHT_TYPE_UTurn                = 4;    // 调头交通灯
+    TRAFFIC_LIGHT_TYPE_Turn_Left            = 5;    // 左转交通灯
+    TRAFFIC_LIGHT_TYPE_Straight             = 6;    // 直行交通灯
+    TRAFFIC_LIGHT_TYPE_Turn_Right           = 7;    // 右转交通灯
+    TRAFFIC_LIGHT_TYPE_Non_Motorized        = 8;    // 非机动交通灯
+    TRAFFIC_LIGHT_TYPE_Lights_Off           = 9;    // 黑灯（不亮）
+}
+//红绿灯形状：
+enum TrafficLightShape{
+    TRAFFIC_LIGHT_SHAPE_Rectangle           = 1;    // 矩形
+    TRAFFIC_LIGHT_SHAPE_Circle              = 2;    // 圆形
+    TRAFFIC_LIGHT_SHAPE_Other               = 3;    // 其他
+}
+
+// 红绿灯 Object 对应的 road section lane
+message TrafficLightReliedInfo {
+    optional uint64 roadId = 1;
+    optional uint64 sectionId = 2;
+    optional uint64 laneId = 3;
+}
+
+message TrafficLight {
+    // object primary key
+    optional uint64 pkid                        = 1;   
+
+    // object name
+    optional string name                        = 2;
+
+    // object attribute
+    optional string attribute                   = 3;
+
+    // relied_info
+    repeated TrafficLightReliedInfo relied_info = 4;
+
+    // object geom
+    repeated geometry.Point geom                = 5;        //utm
+
+    optional uint64 row                         = 6;
+    optional uint64 col                         = 7;
+    // traffic light height
+    optional double height                      = 8;
+    // traffic light type
+    repeated TrafficLightType type              = 9;
+
+    // traffic light shape
+    optional TrafficLightShape shape            = 10; 
+}
+
+message TrafficLights {
+    repeated TrafficLight traffic_light = 1;
+}
+message TrafficLightsMsg {
+    optional common.Header header = 1;
+    optional TrafficLights traffic_lights = 2;
+}
+
+
+

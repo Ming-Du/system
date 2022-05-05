@@ -1,14 +1,18 @@
 launch drivers_lidar.launch
+log_reslove log_reslove.launch
 log_collect_server log_collect_server.launch
 log_msg_collect_server log_msg_collect_server.launch
 update_map update_map.launch
+v2x v2x.launch
 launch hadmap.launch
 hadmap_engine hadmap_engine.launch
+launch perception_v2x.launch
 launch perception_lidar.launch
 launch perception_fusion.launch
 launch slam_localization.launch
-telematics telematics_slave.launch
 guardian system_guardian_slave1.launch
 record_cache record_cache.launch
-launch monitor_gnss.launch
-launch monitor_collect.launch
+monitor_gnss  monitor_gnss.launch
+monitor_collect monitor_collect.launch
+monitor_process  monitor_process_rosslave.launch
+

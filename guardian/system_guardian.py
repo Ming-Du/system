@@ -24,6 +24,7 @@ from rospy import init_node, Subscriber, Publisher
 import guardian_hardware
 import gethosttopic
 import proto.log_reslove_pb2 as common_log_reslove_pb2
+from autopilot_msgs.msg import BinaryData
 logging.basicConfig()
 
 flow_dict = {}

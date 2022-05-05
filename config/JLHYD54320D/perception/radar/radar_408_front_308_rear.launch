@@ -48,4 +48,11 @@
     </node>
   </group>
 
+    <node name="radar_fusion" pkg="perception_radar"
+    type="perception_radar_fusion_node" output="screen"
+    args="--sensor_meta_path=$(arg sensor_meta)
+                --radar_fusion_conf_path=$(arg config_path)/perception/radar/radar_fusion.pb.txt" >
+    <param name="match_min_distance_thresh" type = "double" value="0.3" />
+    </node>
+
 </launch>

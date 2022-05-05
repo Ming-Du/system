@@ -48,7 +48,7 @@ rDictHzTable = {}
 
 rospy.init_node("simu_hz")
 pub_hz = rospy.Publisher("/autopilot_info/internal/report_topic_hz", BinaryData, queue_size=100)
-pub_msg = rospy.Publisher("/autopilot_info/internal/report_msg_info", BinaryData, queue_size=100)
+pub_msg = rospy.Publisher("/autopilot_info/report_msg_info", BinaryData, queue_size=100)
 
 seq_hz = 1
 def simu_hz():
@@ -65,13 +65,13 @@ def simu_hz():
     pbTopicHz.start_stamp = int(seq_hz)*1000+int(seq_hz)
     pbTopicHz.end_stamp = int(seq_hz)*1000+int(seq_hz)+1
     elemHz = pbTopicHz.topic_hz.add()
-    elemHz.name = "/app1"
+    elemHz.name = "topic_name_1"
     elemHz.hz = seq_hz
     elemHz = pbTopicHz.topic_hz.add()
-    elemHz.name = "/app2"
+    elemHz.name = "topic_name_2"
     elemHz.hz = seq_hz
     elemHz = pbTopicHz.topic_hz.add()
-    elemHz.name = "/app3"
+    elemHz.name = "topic_name_3"
     elemHz.hz = seq_hz
     strBuffer = pbTopicHz.SerializeToString()
     rosMsg.data = strBuffer

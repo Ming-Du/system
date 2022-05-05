@@ -1,0 +1,32 @@
+syntax = "proto2";
+package mogo_msg;
+
+enum ReportMsgCode {
+    DEFAULT = 0;
+    ITELEMATICS_AUTOPILOT_CMD_RECEIVED = 1;
+    ITELEMATICS_AUTOPILOT_CMD_FORWARDED = 2;
+    ITELEMATICS_PAD_CONNECTED = 3;
+    ITELEMATICS_PAD_DISCONNECTED = 4;
+    ITELEMATICS_AICLOUD_CONNECTED = 5;
+    ITELEMATICS_AICLOUD_AUTH_OK = 6;
+    ITELEMATICS_AICLOUD_DISCONNECTED = 7;
+    ITELEMATICS_ROUTING_REQUEST_SENT = 8;
+
+    ETELEMATICS_START_AUTO_PILOT_FAILED = 1000;
+    ETELEMATICS_PAD_SEND_ERROR = 1001;
+    ETELEMATICS_PAD_RECV_ERROR = 1002;
+    ETELEMATICS_QUIT = 1003;
+    ETELEMATICS_AICLOUD_AUTH_ERROR = 1004;
+}
+
+message ReportMsgItem {
+    required ReportMsgCode code = 1;
+    optional string msg = 2;
+    repeated string result = 3;
+    repeated string action = 4;
+}
+
+message ReportMsgList {
+    repeated ReportMsgItem info = 1;
+    repeated ReportMsgItem error = 2;
+}

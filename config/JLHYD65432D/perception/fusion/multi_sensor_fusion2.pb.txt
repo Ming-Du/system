@@ -1,14 +1,19 @@
 use_camera: true
 use_lidar: true
-use_radar: false
+use_radar: true
 
 input_sensor {
   sensor_name: "H60-D06170617"
-  topic: "/perception/camera/camera_obstacle"
+  topic: "/perception/camera/camera_obstacle_front60"
 }
 input_sensor {
-  sensor_name: "c32_front_left"
+  sensor_name: "lidar_main"
   topic: "/perception/lidar/lidar_obstacle"
+}
+
+input_sensor {
+  sensor_name: "radar_front"
+  topic: "/perception/radar/front/radar_obstacle"
 }
 
 fusion_method: "ProbabilisticFusion"

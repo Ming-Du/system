@@ -20,6 +20,9 @@ float32 vehicle_state_speed
 float64 localization_position_x
 float64 localization_position_y
 float64 localization_yaw
+float64 localization_yaw_v
+float64 localization_longitudinal_v
+float64 localization_longitudinal_a
 float64 TimenowInSeconds
 float64 steer_angle_feedback_augment
 uint16 seq_num

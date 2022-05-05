@@ -840,8 +840,8 @@ class MsgLogThread (threading.Thread):
         global set_msg_log_pub_info
         global set_msg_log_pub_error
         threading.Thread.__init__(self)
-        set_msg_log_pub_info  = Publisher('/autopilot_info/internal/report_msg_info', BinaryData, queue_size=500)
-        set_msg_log_pub_error = Publisher('/autopilot_info/internal/report_msg_error', BinaryData, queue_size=500)
+        set_msg_log_pub_info  = Publisher('/autopilot_info/report_msg_info', BinaryData, queue_size=500)
+        set_msg_log_pub_error = Publisher('/autopilot_info/report_msg_error', BinaryData, queue_size=500)
         time.sleep(10)
     def run(self):
         UpdateMsgTopic()
