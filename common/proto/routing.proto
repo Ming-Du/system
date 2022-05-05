@@ -36,6 +36,8 @@ message RoutingRequest {
   optional double speedlimit = 7;
   optional string startName = 8;
   optional string endName = 9;
-  optional int32 vehicleType = 10;
+  optional int32 vehicleType = 10;  // 9 - taxi, 10 - bus
+  optional uint32 bus_routeid = 11;
+  optional string bus_routename = 12;
 }
 
