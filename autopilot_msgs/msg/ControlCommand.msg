@@ -36,3 +36,7 @@ bool foglight     #雾灯
 bool clearance_lamps  #示廓灯
 bool epb         #电子手刹
 bool warn_light    #报警灯
+
+bool LocalitonMissing
+bool TrajectoryMissing
+bool VehicleStateMissing
