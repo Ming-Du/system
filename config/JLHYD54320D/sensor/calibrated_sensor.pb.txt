@@ -21,7 +21,7 @@ sensor_info {
 }
 
 sensor_info {
-  name: "H60-D06170617"
+  name: "H60L-D12310660"
   type: SENSING_60
   orientation: FRONT
   topic: "/sensor/camera/sensing/image_raw_60"
@@ -61,7 +61,7 @@ sensor_info {
 }
 
 sensor_info {
-  name: "H30-D06170567"
+  name: "H30S-E01120557"
   type: SENSING_30
   orientation: FRONT
   topic: "/sensor/camera/sensing/image_raw_30"
@@ -101,7 +101,7 @@ sensor_info {
 }
 
 sensor_info {
-  name: "H120-D06170552"
+  name: "H120L-E01100627"
   type: SENSING_120
   orientation: FRONT
   topic: "/sensor/camera/sensing/image_raw_120"
