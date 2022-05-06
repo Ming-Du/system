@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="config_path" default="$(find config)/vehicle"/>
+
+    <node name="perception_v2x" pkg="perception_v2x" 
+      type="perception_v2x_fusion_node" output="screen"  
+      args="--v2x_fusion_conf_path=$(arg config_path)/perception/v2x/v2x_fusion.pb.txt">
+      <param name="use_time_filter" type="bool" value="true"/>
+    </node>
+
+</launch>

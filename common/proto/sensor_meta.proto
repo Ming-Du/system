@@ -22,6 +22,9 @@ enum SensorType {
   INNO_LIDAR = 15;
   CONTI_RADAR_ARS408 = 16;
   CONTI_RADAR_SRR308 = 17;
+  // Modify(@liuxinyu): obu_test
+  V2X = 18;
+  OBU_RSM = 19;
 }
 
 enum SensorOrientation {

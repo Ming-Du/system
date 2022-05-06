@@ -22,7 +22,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hadmap.proto',
   package='hadmap',
   syntax='proto2',
-  serialized_pb=_b('\n\x0chadmap.proto\x12\x06hadmap\x1a\x0cheader.proto\x1a\x0egeometry.proto\"\x92\x01\n\x0cLaneBoundary\x12\x0c\n\x04pkid\x18\x01 \x01(\x04\x12\x0b\n\x03srs\x18\x02 \x01(\r\x12\"\n\x04type\x18\x03 \x01(\x0e\x32\x14.hadmap.LaneMarkType\x12$\n\x05\x63olor\x18\x04 \x01(\x0e\x32\x15.hadmap.LaneMarkColor\x12\x1d\n\x04geom\x18\x05 \x03(\x0b\x32\x0f.geometry.Point\"\x84\x02\n\x04Lane\x12\x11\n\troad_pkid\x18\x01 \x01(\x04\x12\x12\n\nsection_id\x18\x02 \x01(\r\x12\x0f\n\x07lane_id\x18\x03 \x01(\x05\x12\x0c\n\x04name\x18\x04 \x01(\t\x12\x0b\n\x03srs\x18\x05 \x01(\r\x12\x18\n\x10left_boundary_id\x18\x06 \x01(\x04\x12\x19\n\x11right_boundary_id\x18\x07 \x01(\x04\x12\x1e\n\x04type\x18\x08 \x01(\x0e\x32\x10.hadmap.LaneType\x12 \n\x05\x61rrow\x18\t \x01(\x0e\x32\x11.hadmap.LaneArrow\x12\x13\n\x0bspeed_limit\x18\n \x01(\r\x12\x1d\n\x04geom\x18\x0b \x03(\x0b\x32\x0f.geometry.Point\"\\\n\x07Section\x12\n\n\x02id\x18\x01 \x01(\r\x12\x1b\n\x05lanes\x18\x02 \x03(\x0b\x32\x0c.hadmap.Lane\x12(\n\nboundaries\x18\x03 \x03(\x0b\x32\x14.hadmap.LaneBoundary\"\x81\x03\n\x04Road\x12\x0c\n\x04pkid\x18\x01 \x01(\x04\x12\n\n\x02id\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x0b\n\x03srs\x18\x04 \x01(\r\x12\x0e\n\x06length\x18\x06 \x01(\x02\x12\x13\n\x0bsection_num\x18\x07 \x01(\r\x12#\n\troad_type\x18\x08 \x01(\x0e\x32\x10.hadmap.RoadType\x12(\n\tdirection\x18\t \x01(\x0e\x32\x15.hadmap.RoadDirection\x12\"\n\tcurvature\x18\n \x03(\x0b\x32\x0f.geometry.Point\x12\x1e\n\x05slope\x18\x0b \x03(\x0b\x32\x0f.geometry.Point\x12 \n\x07heading\x18\x0c \x03(\x0b\x32\x0f.geometry.Point\x12(\n\x0fsuper_elevation\x18\r \x03(\x0b\x32\x0f.geometry.Point\x12\x1d\n\x04geom\x18\x0e \x03(\x0b\x32\x0f.geometry.Point\x12!\n\x08sections\x18\x0f \x03(\x0b\x32\x0f.hadmap.Section\"X\n\x08Junction\x12\x0c\n\x04pkid\x18\x01 \x01(\x04\x12\x0b\n\x03srs\x18\x02 \x01(\r\x12\x10\n\x08\x61ltitude\x18\x03 \x01(\x02\x12\x1f\n\x04geom\x18\x04 \x01(\x0b\x32\x11.geometry.Polygon\"\xa0\x01\n\x08LaneLink\x12\x0c\n\x04pkid\x18\x01 \x01(\x04\x12\x16\n\x0e\x66rom_road_pkid\x18\x02 \x01(\x04\x12\x17\n\x0f\x66rom_section_id\x18\x03 \x01(\r\x12\x14\n\x0c\x66rom_lane_id\x18\x04 \x01(\x05\x12\x14\n\x0cto_road_pkid\x18\x05 \x01(\x04\x12\x15\n\rto_section_id\x18\x06 \x01(\r\x12\x12\n\nto_lane_id\x18\x07 \x01(\x05\"\xe3\x01\n\x06Object\x12\x0c\n\x04pkid\x18\x01 \x01(\x04\x12\x11\n\troad_pkid\x18\x02 \x01(\x04\x12\x12\n\nsection_id\x18\x03 \x01(\x04\x12\x0f\n\x07lane_id\x18\x04 \x01(\x05\x12 \n\x04type\x18\x05 \x01(\x0e\x32\x12.hadmap.ObjectType\x12\"\n\x05shape\x18\x06 \x01(\x0e\x32\x13.hadmap.ObjectShape\x12\x0c\n\x04text\x18\x07 \x01(\t\x12\x11\n\tattribute\x18\x08 \x01(\t\x12\x1d\n\x04geom\x18\t \x03(\x0b\x32\x0f.geometry.Point\x12\r\n\x05value\x18\n \x01(\x02\"\x8d\x01\n\x03Map\x12\x1b\n\x05roads\x18\x01 \x03(\x0b\x32\x0c.hadmap.Road\x12#\n\tlanelinks\x18\x02 \x03(\x0b\x32\x10.hadmap.LaneLink\x12#\n\tjunctions\x18\x03 \x03(\x0b\x32\x10.hadmap.Junction\x12\x1f\n\x07objects\x18\x04 \x03(\x0b\x32\x0e.hadmap.Object\"B\n\x06MapMsg\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x18\n\x03map\x18\x02 \x01(\x0b\x32\x0b.hadmap.Map*2\n\rLaneMarkColor\x12\x0f\n\x0b\x43OLOR_WHITE\x10\x00\x12\x10\n\x0c\x43OLOR_YELLOW\x10\x01*\xbc\x02\n\x0cLaneMarkType\x12\x12\n\x0eLANE_MARK_NONE\x10\x00\x12\x13\n\x0fLANE_MARK_SOLID\x10\x01\x12\x14\n\x10LANE_MARK_BROKEN\x10\x02\x12\x14\n\x10LANE_MARK_SOLID2\x10\x10\x12\x15\n\x11LANE_MARK_BROKEN2\x10 \x12\x18\n\x14LANE_MARK_SOLIDSOLID\x10\x11\x12\x19\n\x15LANE_MARK_SOLIDBROKEN\x10!\x12\x19\n\x15LANE_MARK_BROKENSOLID\x10\x12\x12\x1a\n\x16LANE_MARK_BROKENBROKEN\x10\"\x12\x13\n\x0eLANE_MARK_CURB\x10\x80\x02\x12\x14\n\x0fLANE_MARK_FENCE\x10\x80\x04\x12\x14\n\x0fLANE_MARK_GRASS\x10\x80\x08\x12\x13\n\x0eLANE_MARK_BOLD\x10\x80 *\xc0\x05\n\x08LaneType\x12\x12\n\x0eLANE_TYPE_None\x10\x00\x12\x15\n\x11LANE_TYPE_Driving\x10\x01\x12\x12\n\x0eLANE_TYPE_Stop\x10\x02\x12\x16\n\x12LANE_TYPE_Shoulder\x10\x03\x12\x14\n\x10LANE_TYPE_Biking\x10\x04\x12\x16\n\x12LANE_TYPE_Sidewalk\x10\x05\x12\x14\n\x10LANE_TYPE_Border\x10\x06\x12\x18\n\x14LANE_TYPE_Restricted\x10\x07\x12\x15\n\x11LANE_TYPE_Parking\x10\x08\x12\x16\n\x12LANE_TYPE_MwyEntry\x10\t\x12\x15\n\x11LANE_TYPE_MwyExit\x10\n\x12\x1a\n\x16LANE_TYPE_Acceleration\x10\x0b\x12\x1a\n\x16LANE_TYPE_Deceleration\x10\x0c\x12\x16\n\x12LANE_TYPE_Compound\x10\r\x12\x11\n\rLANE_TYPE_HOV\x10\x0e\x12\x12\n\x0eLANE_TYPE_Slow\x10\x0f\x12\x18\n\x14LANE_TYPE_Reversible\x10\x10\x12\x1e\n\x1aLANE_TYPE_EmergencyParking\x10\x11\x12\x17\n\x13LANE_TYPE_Emergency\x10\x14\x12\x1d\n\x19LANE_TYPE_TurnLeftWaiting\x10\x15\x12\x12\n\x0eLANE_TYPE_Ramp\x10\x16\x12\x1a\n\x16LANE_TYPE_UTurnWaiting\x10\x17\x12\x1e\n\x1aLANE_TYPE_TurnRightWaiting\x10\x18\x12\x1a\n\x16LANE_TYPE_JuncTurnLeft\x10\x19\x12\x1a\n\x16LANE_TYPE_JuncStraight\x10\x1a\x12\x1b\n\x17LANE_TYPE_JuncTurnRight\x10\x1b\x12\x12\n\x0eLANE_TYPE_Turn\x10\x1c\x12\x17\n\x13LANE_TYPE_Diversion\x10\x1d*\xba\x02\n\tLaneArrow\x12\x13\n\x0fLANE_ARROW_None\x10\x00\x12\x17\n\x13LANE_ARROW_Straight\x10\x01\x12\x13\n\x0fLANE_ARROW_Left\x10\x02\x12\x14\n\x10LANE_ARROW_Right\x10\x04\x12\x14\n\x10LANE_ARROW_Uturn\x10\x08\x12\x17\n\x13LANE_ARROW_SkewLeft\x10 \x12\x18\n\x14LANE_ARROW_SkewRight\x10@\x12\x1b\n\x17LANE_ARROW_StraightLeft\x10\x03\x12\x1c\n\x18LANE_ARROW_StraightRight\x10\x05\x12\x18\n\x14LANE_ARROW_LeftRight\x10\x06\x12\x18\n\x14LANE_ARROW_LeftUturn\x10\n\x12\x1c\n\x18LANE_ARROW_StraightUturn\x10\t*\xfb\x03\n\x08RoadType\x12\x14\n\x10ROAD_TYPE_Normal\x10\x00\x12\x13\n\x0fROAD_TYPE_OTHER\x10\x01\x12\x10\n\x0cROAD_TYPE_SA\x10\x02\x12\x10\n\x0cROAD_TYPE_PA\x10\x03\x12\x1b\n\x17ROAD_TYPE_ControlAccess\x10\x04\x12\x19\n\x15ROAD_TYPE_GenerapRamp\x10\x05\x12\x16\n\x12ROAD_TYPE_Overpass\x10\x06\x12\x17\n\x13ROAD_TYPE_Underpass\x10\x07\x12\x19\n\x15ROAD_TYPE_PrivateRoad\x10\x08\x12\x1c\n\x18ROAD_TYPE_PedestrainRoad\x10\t\x12\x1a\n\x16ROAD_TYPE_OverpassForP\x10\n\x12\x15\n\x11ROAD_TYPE_BusOnly\x10\x0b\x12\x19\n\x15ROAD_TYPE_BicycleOnly\x10\x0c\x12\x14\n\x10ROAD_TYPE_Tunnel\x10\r\x12\x11\n\rROAD_TYPE_UTA\x10\x0e\x12\x18\n\x14ROAD_TYPE_ICEntrance\x10\x0f\x12\x17\n\x13ROAD_TYPE_TollBooth\x10\x10\x12\x1e\n\x1aROAD_TYPE_ConstructionRoad\x10\x11\x12\x18\n\x14ROAD_TYPE_Roundabout\x10\x12\x12\x1a\n\x16ROAD_TYPE_Intersection\x10\x13*j\n\rRoadDirection\x12\x1a\n\x16ROAD_DIRECTION_FORWARD\x10\x00\x12\x1b\n\x17ROAD_DIRECTION_BACKWARD\x10\x01\x12 \n\x1cROAD_DIRECTION_BIDIRECTIONAL\x10\x02*\xfa\x05\n\nObjectType\x12\x14\n\x10OBJECT_TYPE_None\x10\x00\x12\x14\n\x10OBJECT_TYPE_Curb\x10\x01\x12\x1e\n\x1aOBJECT_TYPE_TrafficBarrier\x10\x02\x12 \n\x1cOBJECT_TYPE_OverheadCrossing\x10\x03\x12\x16\n\x12OBJECT_TYPE_Tunnel\x10\x04\x12\x16\n\x12OBJECT_TYPE_Gantry\x10\x05\x12\x1b\n\x17OBJECT_TYPE_TrafficSign\x10\x06\x12#\n\x1fOBJECT_TYPE_VariableMessageSign\x10\x07\x12#\n\x1fOBJECT_TYPE_PermanentDelineator\x10\x08\x12\x19\n\x15OBJECT_TYPE_TollBooth\x10\t\x12 \n\x1cOBJECT_TYPE_EmergencyCallbox\x10\n\x12\x15\n\x11OBJECT_TYPE_Ditch\x10\x0b\x12\x14\n\x10OBJECT_TYPE_Pole\x10\x0c\x12\x18\n\x14OBJECT_TYPE_Building\x10\r\x12\x18\n\x14OBJECT_TYPE_RoadSign\x10\x0e\x12\x19\n\x15OBJECT_TYPE_CrossWalk\x10\x0f\x12\x1d\n\x19OBJECT_TYPE_TrafficLights\x10\x10\x12\x1a\n\x16OBJECT_TYPE_TunnelWall\x10\x11\x12\x15\n\x11OBJECT_TYPE_Arrow\x10\x12\x12\x14\n\x10OBJECT_TYPE_Text\x10\x13\x12\x1d\n\x19OBJECT_TYPE_RoadSign_Text\x10\x14\x12\x14\n\x10OBJECT_TYPE_Stop\x10\x15\x12\x1c\n\x18OBJECT_TYPE_LaneBoundary\x10\x16\x12\x1c\n\x18OBJECT_TYPE_ParkingSpace\x10\x17\x12\x1b\n\x17OBJECT_TYPE_DrivingArea\x10\x18\x12\x1c\n\x18OBJECT_TYPE_FeaturePoint\x10\x19\x12\x1a\n\x16OBJECT_TYPE_SpeedLimit\x10\x1a*\xde\x02\n\x0bObjectShape\x12\x15\n\x11OBJECT_SHAPE_None\x10\x00\x12\x1a\n\x16OBJECT_SHAPE_Rectangle\x10\x01\x12\x19\n\x15OBJECT_SHAPE_Triangle\x10\x02\x12\x17\n\x13OBJECT_SHAPE_Circle\x10\x03\x12\x18\n\x14OBJECT_SHAPE_Diamond\x10\x04\x12\x1a\n\x16OBJECT_SHAPE_RTriangle\x10\x05\x12\x16\n\x12OBJECT_SHAPE_Arrow\x10\x06\x12\x18\n\x14OBJECT_SHAPE_Bicycle\x10\x07\x12\x1b\n\x17OBJECT_SHAPE_WheelChair\x10\x08\x12\x16\n\x12OBJECT_SHAPE_Cross\x10\t\x12\x19\n\x15OBJECT_SHAPE_Polyline\x10\n\x12\x18\n\x14OBJECT_SHAPE_Polygon\x10\x0b\x12\x16\n\x12OBJECT_SHAPE_Point\x10\x0c')
+  serialized_pb=_b('\n\x0chadmap.proto\x12\x06hadmap\x1a\x0cheader.proto\x1a\x0egeometry.proto\"Z\n\rBoundaryPoint\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\x12(\n\npoint_type\x18\x04 \x01(\x0e\x32\x14.hadmap.LaneMarkType\"\xb8\x01\n\x0cLaneBoundary\x12\x0c\n\x04pkid\x18\x01 \x01(\x04\x12\x0b\n\x03srs\x18\x02 \x01(\r\x12\"\n\x04type\x18\x03 \x01(\x0e\x32\x14.hadmap.LaneMarkType\x12$\n\x05\x63olor\x18\x04 \x01(\x0e\x32\x15.hadmap.LaneMarkColor\x12\x1d\n\x04geom\x18\x05 \x03(\x0b\x32\x0f.geometry.Point\x12$\n\x05point\x18\x06 \x03(\x0b\x32\x15.hadmap.BoundaryPoint\"\x84\x02\n\x04Lane\x12\x11\n\troad_pkid\x18\x01 \x01(\x04\x12\x12\n\nsection_id\x18\x02 \x01(\r\x12\x0f\n\x07lane_id\x18\x03 \x01(\x05\x12\x0c\n\x04name\x18\x04 \x01(\t\x12\x0b\n\x03srs\x18\x05 \x01(\r\x12\x18\n\x10left_boundary_id\x18\x06 \x01(\x04\x12\x19\n\x11right_boundary_id\x18\x07 \x01(\x04\x12\x1e\n\x04type\x18\x08 \x01(\x0e\x32\x10.hadmap.LaneType\x12 \n\x05\x61rrow\x18\t \x01(\x0e\x32\x11.hadmap.LaneArrow\x12\x13\n\x0bspeed_limit\x18\n \x01(\r\x12\x1d\n\x04geom\x18\x0b \x03(\x0b\x32\x0f.geometry.Point\"\\\n\x07Section\x12\n\n\x02id\x18\x01 \x01(\r\x12\x1b\n\x05lanes\x18\x02 \x03(\x0b\x32\x0c.hadmap.Lane\x12(\n\nboundaries\x18\x03 \x03(\x0b\x32\x14.hadmap.LaneBoundary\"\x81\x03\n\x04Road\x12\x0c\n\x04pkid\x18\x01 \x01(\x04\x12\n\n\x02id\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x0b\n\x03srs\x18\x04 \x01(\r\x12\x0e\n\x06length\x18\x06 \x01(\x02\x12\x13\n\x0bsection_num\x18\x07 \x01(\r\x12#\n\troad_type\x18\x08 \x01(\x0e\x32\x10.hadmap.RoadType\x12(\n\tdirection\x18\t \x01(\x0e\x32\x15.hadmap.RoadDirection\x12\"\n\tcurvature\x18\n \x03(\x0b\x32\x0f.geometry.Point\x12\x1e\n\x05slope\x18\x0b \x03(\x0b\x32\x0f.geometry.Point\x12 \n\x07heading\x18\x0c \x03(\x0b\x32\x0f.geometry.Point\x12(\n\x0fsuper_elevation\x18\r \x03(\x0b\x32\x0f.geometry.Point\x12\x1d\n\x04geom\x18\x0e \x03(\x0b\x32\x0f.geometry.Point\x12!\n\x08sections\x18\x0f \x03(\x0b\x32\x0f.hadmap.Section\"X\n\x08Junction\x12\x0c\n\x04pkid\x18\x01 \x01(\x04\x12\x0b\n\x03srs\x18\x02 \x01(\r\x12\x10\n\x08\x61ltitude\x18\x03 \x01(\x02\x12\x1f\n\x04geom\x18\x04 \x01(\x0b\x32\x11.geometry.Polygon\"\xa0\x01\n\x08LaneLink\x12\x0c\n\x04pkid\x18\x01 \x01(\x04\x12\x16\n\x0e\x66rom_road_pkid\x18\x02 \x01(\x04\x12\x17\n\x0f\x66rom_section_id\x18\x03 \x01(\r\x12\x14\n\x0c\x66rom_lane_id\x18\x04 \x01(\x05\x12\x14\n\x0cto_road_pkid\x18\x05 \x01(\x04\x12\x15\n\rto_section_id\x18\x06 \x01(\r\x12\x12\n\nto_lane_id\x18\x07 \x01(\x05\"\xe3\x01\n\x06Object\x12\x0c\n\x04pkid\x18\x01 \x01(\x04\x12\x11\n\troad_pkid\x18\x02 \x01(\x04\x12\x12\n\nsection_id\x18\x03 \x01(\x04\x12\x0f\n\x07lane_id\x18\x04 \x01(\x05\x12 \n\x04type\x18\x05 \x01(\x0e\x32\x12.hadmap.ObjectType\x12\"\n\x05shape\x18\x06 \x01(\x0e\x32\x13.hadmap.ObjectShape\x12\x0c\n\x04text\x18\x07 \x01(\t\x12\x11\n\tattribute\x18\x08 \x01(\t\x12\x1d\n\x04geom\x18\t \x03(\x0b\x32\x0f.geometry.Point\x12\r\n\x05value\x18\n \x01(\x02\"\x8d\x01\n\x03Map\x12\x1b\n\x05roads\x18\x01 \x03(\x0b\x32\x0c.hadmap.Road\x12#\n\tlanelinks\x18\x02 \x03(\x0b\x32\x10.hadmap.LaneLink\x12#\n\tjunctions\x18\x03 \x03(\x0b\x32\x10.hadmap.Junction\x12\x1f\n\x07objects\x18\x04 \x03(\x0b\x32\x0e.hadmap.Object\"B\n\x06MapMsg\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x18\n\x03map\x18\x02 \x01(\x0b\x32\x0b.hadmap.Map*2\n\rLaneMarkColor\x12\x0f\n\x0b\x43OLOR_WHITE\x10\x00\x12\x10\n\x0c\x43OLOR_YELLOW\x10\x01*\xbc\x02\n\x0cLaneMarkType\x12\x12\n\x0eLANE_MARK_NONE\x10\x00\x12\x13\n\x0fLANE_MARK_SOLID\x10\x01\x12\x14\n\x10LANE_MARK_BROKEN\x10\x02\x12\x14\n\x10LANE_MARK_SOLID2\x10\x10\x12\x15\n\x11LANE_MARK_BROKEN2\x10 \x12\x18\n\x14LANE_MARK_SOLIDSOLID\x10\x11\x12\x19\n\x15LANE_MARK_SOLIDBROKEN\x10!\x12\x19\n\x15LANE_MARK_BROKENSOLID\x10\x12\x12\x1a\n\x16LANE_MARK_BROKENBROKEN\x10\"\x12\x13\n\x0eLANE_MARK_CURB\x10\x80\x02\x12\x14\n\x0fLANE_MARK_FENCE\x10\x80\x04\x12\x14\n\x0fLANE_MARK_GRASS\x10\x80\x08\x12\x13\n\x0eLANE_MARK_BOLD\x10\x80 *\x88\x07\n\x08LaneType\x12\x12\n\x0eLANE_TYPE_None\x10\x00\x12\x15\n\x11LANE_TYPE_Driving\x10\x01\x12\x12\n\x0eLANE_TYPE_Stop\x10\x02\x12\x16\n\x12LANE_TYPE_Shoulder\x10\x03\x12\x14\n\x10LANE_TYPE_Biking\x10\x04\x12\x16\n\x12LANE_TYPE_Sidewalk\x10\x05\x12\x14\n\x10LANE_TYPE_Border\x10\x06\x12\x18\n\x14LANE_TYPE_Restricted\x10\x07\x12\x15\n\x11LANE_TYPE_Parking\x10\x08\x12\x16\n\x12LANE_TYPE_MwyEntry\x10\t\x12\x15\n\x11LANE_TYPE_MwyExit\x10\n\x12\x1a\n\x16LANE_TYPE_Acceleration\x10\x0b\x12\x1a\n\x16LANE_TYPE_Deceleration\x10\x0c\x12\x16\n\x12LANE_TYPE_Compound\x10\r\x12\x11\n\rLANE_TYPE_HOV\x10\x0e\x12\x12\n\x0eLANE_TYPE_Slow\x10\x0f\x12\x18\n\x14LANE_TYPE_Reversible\x10\x10\x12\x1e\n\x1aLANE_TYPE_EmergencyParking\x10\x11\x12\x17\n\x13LANE_TYPE_Emergency\x10\x14\x12\x1d\n\x19LANE_TYPE_TurnLeftWaiting\x10\x15\x12\x12\n\x0eLANE_TYPE_Ramp\x10\x16\x12\x1a\n\x16LANE_TYPE_UTurnWaiting\x10\x17\x12\x1e\n\x1aLANE_TYPE_TurnRightWaiting\x10\x18\x12\x1a\n\x16LANE_TYPE_JuncTurnLeft\x10\x19\x12\x1a\n\x16LANE_TYPE_JuncStraight\x10\x1a\x12\x1b\n\x17LANE_TYPE_JuncTurnRight\x10\x1b\x12\x12\n\x0eLANE_TYPE_Turn\x10\x1c\x12\x17\n\x13LANE_TYPE_Diversion\x10\x1d\x12\x19\n\x15LANE_TYPE_DrivingSide\x10\x1e\x12\x18\n\x14LANE_TYPE_BikingSide\x10\x1f\x12\x1a\n\x16LANE_TYPE_TurnRighSide\x10 \x12\x16\n\x12LANE_TYPE_TaxiLane\x10!\x12\x1e\n\x1aLANE_TYPE_LeftOrUturnWaite\x10\"\x12\x1b\n\x17LANE_TYPE_PoliceCarLane\x10#\x12 \n\x1cLANE_TYPE_AcceleOrDeceleLane\x10$*\xba\x02\n\tLaneArrow\x12\x13\n\x0fLANE_ARROW_None\x10\x00\x12\x17\n\x13LANE_ARROW_Straight\x10\x01\x12\x13\n\x0fLANE_ARROW_Left\x10\x02\x12\x14\n\x10LANE_ARROW_Right\x10\x04\x12\x14\n\x10LANE_ARROW_Uturn\x10\x08\x12\x17\n\x13LANE_ARROW_SkewLeft\x10 \x12\x18\n\x14LANE_ARROW_SkewRight\x10@\x12\x1b\n\x17LANE_ARROW_StraightLeft\x10\x03\x12\x1c\n\x18LANE_ARROW_StraightRight\x10\x05\x12\x18\n\x14LANE_ARROW_LeftRight\x10\x06\x12\x18\n\x14LANE_ARROW_LeftUturn\x10\n\x12\x1c\n\x18LANE_ARROW_StraightUturn\x10\t*\xfb\x03\n\x08RoadType\x12\x14\n\x10ROAD_TYPE_Normal\x10\x00\x12\x13\n\x0fROAD_TYPE_OTHER\x10\x01\x12\x10\n\x0cROAD_TYPE_SA\x10\x02\x12\x10\n\x0cROAD_TYPE_PA\x10\x03\x12\x1b\n\x17ROAD_TYPE_ControlAccess\x10\x04\x12\x19\n\x15ROAD_TYPE_GenerapRamp\x10\x05\x12\x16\n\x12ROAD_TYPE_Overpass\x10\x06\x12\x17\n\x13ROAD_TYPE_Underpass\x10\x07\x12\x19\n\x15ROAD_TYPE_PrivateRoad\x10\x08\x12\x1c\n\x18ROAD_TYPE_PedestrainRoad\x10\t\x12\x1a\n\x16ROAD_TYPE_OverpassForP\x10\n\x12\x15\n\x11ROAD_TYPE_BusOnly\x10\x0b\x12\x19\n\x15ROAD_TYPE_BicycleOnly\x10\x0c\x12\x14\n\x10ROAD_TYPE_Tunnel\x10\r\x12\x11\n\rROAD_TYPE_UTA\x10\x0e\x12\x18\n\x14ROAD_TYPE_ICEntrance\x10\x0f\x12\x17\n\x13ROAD_TYPE_TollBooth\x10\x10\x12\x1e\n\x1aROAD_TYPE_ConstructionRoad\x10\x11\x12\x18\n\x14ROAD_TYPE_Roundabout\x10\x12\x12\x1a\n\x16ROAD_TYPE_Intersection\x10\x13*j\n\rRoadDirection\x12\x1a\n\x16ROAD_DIRECTION_FORWARD\x10\x00\x12\x1b\n\x17ROAD_DIRECTION_BACKWARD\x10\x01\x12 \n\x1cROAD_DIRECTION_BIDIRECTIONAL\x10\x02*\xfa\x05\n\nObjectType\x12\x14\n\x10OBJECT_TYPE_None\x10\x00\x12\x14\n\x10OBJECT_TYPE_Curb\x10\x01\x12\x1e\n\x1aOBJECT_TYPE_TrafficBarrier\x10\x02\x12 \n\x1cOBJECT_TYPE_OverheadCrossing\x10\x03\x12\x16\n\x12OBJECT_TYPE_Tunnel\x10\x04\x12\x16\n\x12OBJECT_TYPE_Gantry\x10\x05\x12\x1b\n\x17OBJECT_TYPE_TrafficSign\x10\x06\x12#\n\x1fOBJECT_TYPE_VariableMessageSign\x10\x07\x12#\n\x1fOBJECT_TYPE_PermanentDelineator\x10\x08\x12\x19\n\x15OBJECT_TYPE_TollBooth\x10\t\x12 \n\x1cOBJECT_TYPE_EmergencyCallbox\x10\n\x12\x15\n\x11OBJECT_TYPE_Ditch\x10\x0b\x12\x14\n\x10OBJECT_TYPE_Pole\x10\x0c\x12\x18\n\x14OBJECT_TYPE_Building\x10\r\x12\x18\n\x14OBJECT_TYPE_RoadSign\x10\x0e\x12\x19\n\x15OBJECT_TYPE_CrossWalk\x10\x0f\x12\x1d\n\x19OBJECT_TYPE_TrafficLights\x10\x10\x12\x1a\n\x16OBJECT_TYPE_TunnelWall\x10\x11\x12\x15\n\x11OBJECT_TYPE_Arrow\x10\x12\x12\x14\n\x10OBJECT_TYPE_Text\x10\x13\x12\x1d\n\x19OBJECT_TYPE_RoadSign_Text\x10\x14\x12\x14\n\x10OBJECT_TYPE_Stop\x10\x15\x12\x1c\n\x18OBJECT_TYPE_LaneBoundary\x10\x16\x12\x1c\n\x18OBJECT_TYPE_ParkingSpace\x10\x17\x12\x1b\n\x17OBJECT_TYPE_DrivingArea\x10\x18\x12\x1c\n\x18OBJECT_TYPE_FeaturePoint\x10\x19\x12\x1a\n\x16OBJECT_TYPE_SpeedLimit\x10\x1a*\xde\x02\n\x0bObjectShape\x12\x15\n\x11OBJECT_SHAPE_None\x10\x00\x12\x1a\n\x16OBJECT_SHAPE_Rectangle\x10\x01\x12\x19\n\x15OBJECT_SHAPE_Triangle\x10\x02\x12\x17\n\x13OBJECT_SHAPE_Circle\x10\x03\x12\x18\n\x14OBJECT_SHAPE_Diamond\x10\x04\x12\x1a\n\x16OBJECT_SHAPE_RTriangle\x10\x05\x12\x16\n\x12OBJECT_SHAPE_Arrow\x10\x06\x12\x18\n\x14OBJECT_SHAPE_Bicycle\x10\x07\x12\x1b\n\x17OBJECT_SHAPE_WheelChair\x10\x08\x12\x16\n\x12OBJECT_SHAPE_Cross\x10\t\x12\x19\n\x15OBJECT_SHAPE_Polyline\x10\n\x12\x18\n\x14OBJECT_SHAPE_Polygon\x10\x0b\x12\x16\n\x12OBJECT_SHAPE_Point\x10\x0c')
   ,
   dependencies=[header__pb2.DESCRIPTOR,geometry__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -44,8 +44,8 @@ _LANEMARKCOLOR = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1643,
-  serialized_end=1693,
+  serialized_start=1773,
+  serialized_end=1823,
 )
 _sym_db.RegisterEnumDescriptor(_LANEMARKCOLOR)
 
@@ -111,8 +111,8 @@ _LANEMARKTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1696,
-  serialized_end=2012,
+  serialized_start=1826,
+  serialized_end=2142,
 )
 _sym_db.RegisterEnumDescriptor(_LANEMARKTYPE)
 
@@ -235,11 +235,39 @@ _LANETYPE = _descriptor.EnumDescriptor(
       name='LANE_TYPE_Diversion', index=27, number=29,
       options=None,
       type=None),
+    _descriptor.EnumValueDescriptor(
+      name='LANE_TYPE_DrivingSide', index=28, number=30,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='LANE_TYPE_BikingSide', index=29, number=31,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='LANE_TYPE_TurnRighSide', index=30, number=32,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='LANE_TYPE_TaxiLane', index=31, number=33,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='LANE_TYPE_LeftOrUturnWaite', index=32, number=34,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='LANE_TYPE_PoliceCarLane', index=33, number=35,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='LANE_TYPE_AcceleOrDeceleLane', index=34, number=36,
+      options=None,
+      type=None),
   ],
   containing_type=None,
   options=None,
-  serialized_start=2015,
-  serialized_end=2719,
+  serialized_start=2145,
+  serialized_end=3049,
 )
 _sym_db.RegisterEnumDescriptor(_LANETYPE)
 
@@ -301,8 +329,8 @@ _LANEARROW = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=2722,
-  serialized_end=3036,
+  serialized_start=3052,
+  serialized_end=3366,
 )
 _sym_db.RegisterEnumDescriptor(_LANEARROW)
 
@@ -396,8 +424,8 @@ _ROADTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=3039,
-  serialized_end=3546,
+  serialized_start=3369,
+  serialized_end=3876,
 )
 _sym_db.RegisterEnumDescriptor(_ROADTYPE)
 
@@ -423,8 +451,8 @@ _ROADDIRECTION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=3548,
-  serialized_end=3654,
+  serialized_start=3878,
+  serialized_end=3984,
 )
 _sym_db.RegisterEnumDescriptor(_ROADDIRECTION)
 
@@ -546,8 +574,8 @@ _OBJECTTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=3657,
-  serialized_end=4419,
+  serialized_start=3987,
+  serialized_end=4749,
 )
 _sym_db.RegisterEnumDescriptor(_OBJECTTYPE)
 
@@ -613,8 +641,8 @@ _OBJECTSHAPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=4422,
-  serialized_end=4772,
+  serialized_start=4752,
+  serialized_end=5102,
 )
 _sym_db.RegisterEnumDescriptor(_OBJECTSHAPE)
 
@@ -662,6 +690,13 @@ LANE_TYPE_JuncStraight = 26
 LANE_TYPE_JuncTurnRight = 27
 LANE_TYPE_Turn = 28
 LANE_TYPE_Diversion = 29
+LANE_TYPE_DrivingSide = 30
+LANE_TYPE_BikingSide = 31
+LANE_TYPE_TurnRighSide = 32
+LANE_TYPE_TaxiLane = 33
+LANE_TYPE_LeftOrUturnWaite = 34
+LANE_TYPE_PoliceCarLane = 35
+LANE_TYPE_AcceleOrDeceleLane = 36
 LANE_ARROW_None = 0
 LANE_ARROW_Straight = 1
 LANE_ARROW_Left = 2
@@ -740,6 +775,58 @@ OBJECT_SHAPE_Point = 12
 
 
 
+_BOUNDARYPOINT = _descriptor.Descriptor(
+  name='BoundaryPoint',
+  full_name='hadmap.BoundaryPoint',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='x', full_name='hadmap.BoundaryPoint.x', index=0,
+      number=1, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='y', full_name='hadmap.BoundaryPoint.y', index=1,
+      number=2, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='z', full_name='hadmap.BoundaryPoint.z', index=2,
+      number=3, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='point_type', full_name='hadmap.BoundaryPoint.point_type', index=3,
+      number=4, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=54,
+  serialized_end=144,
+)
+
+
 _LANEBOUNDARY = _descriptor.Descriptor(
   name='LaneBoundary',
   full_name='hadmap.LaneBoundary',
@@ -782,6 +869,13 @@ _LANEBOUNDARY = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='point', full_name='hadmap.LaneBoundary.point', index=5,
+      number=6, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -794,8 +888,8 @@ _LANEBOUNDARY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=55,
-  serialized_end=201,
+  serialized_start=147,
+  serialized_end=331,
 )
 
 
@@ -895,8 +989,8 @@ _LANE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=204,
-  serialized_end=464,
+  serialized_start=334,
+  serialized_end=594,
 )
 
 
@@ -940,8 +1034,8 @@ _SECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=466,
-  serialized_end=558,
+  serialized_start=596,
+  serialized_end=688,
 )
 
 
@@ -1062,8 +1156,8 @@ _ROAD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=561,
-  serialized_end=946,
+  serialized_start=691,
+  serialized_end=1076,
 )
 
 
@@ -1114,8 +1208,8 @@ _JUNCTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=948,
-  serialized_end=1036,
+  serialized_start=1078,
+  serialized_end=1166,
 )
 
 
@@ -1187,8 +1281,8 @@ _LANELINK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1039,
-  serialized_end=1199,
+  serialized_start=1169,
+  serialized_end=1329,
 )
 
 
@@ -1281,8 +1375,8 @@ _OBJECT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1202,
-  serialized_end=1429,
+  serialized_start=1332,
+  serialized_end=1559,
 )
 
 
@@ -1333,8 +1427,8 @@ _MAP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1432,
-  serialized_end=1573,
+  serialized_start=1562,
+  serialized_end=1703,
 )
 
 
@@ -1371,13 +1465,15 @@ _MAPMSG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1575,
-  serialized_end=1641,
+  serialized_start=1705,
+  serialized_end=1771,
 )
 
+_BOUNDARYPOINT.fields_by_name['point_type'].enum_type = _LANEMARKTYPE
 _LANEBOUNDARY.fields_by_name['type'].enum_type = _LANEMARKTYPE
 _LANEBOUNDARY.fields_by_name['color'].enum_type = _LANEMARKCOLOR
 _LANEBOUNDARY.fields_by_name['geom'].message_type = geometry__pb2._POINT
+_LANEBOUNDARY.fields_by_name['point'].message_type = _BOUNDARYPOINT
 _LANE.fields_by_name['type'].enum_type = _LANETYPE
 _LANE.fields_by_name['arrow'].enum_type = _LANEARROW
 _LANE.fields_by_name['geom'].message_type = geometry__pb2._POINT
@@ -1401,6 +1497,7 @@ _MAP.fields_by_name['junctions'].message_type = _JUNCTION
 _MAP.fields_by_name['objects'].message_type = _OBJECT
 _MAPMSG.fields_by_name['header'].message_type = header__pb2._HEADER
 _MAPMSG.fields_by_name['map'].message_type = _MAP
+DESCRIPTOR.message_types_by_name['BoundaryPoint'] = _BOUNDARYPOINT
 DESCRIPTOR.message_types_by_name['LaneBoundary'] = _LANEBOUNDARY
 DESCRIPTOR.message_types_by_name['Lane'] = _LANE
 DESCRIPTOR.message_types_by_name['Section'] = _SECTION
@@ -1418,6 +1515,13 @@ DESCRIPTOR.enum_types_by_name['RoadType'] = _ROADTYPE
 DESCRIPTOR.enum_types_by_name['RoadDirection'] = _ROADDIRECTION
 DESCRIPTOR.enum_types_by_name['ObjectType'] = _OBJECTTYPE
 DESCRIPTOR.enum_types_by_name['ObjectShape'] = _OBJECTSHAPE
+
+BoundaryPoint = _reflection.GeneratedProtocolMessageType('BoundaryPoint', (_message.Message,), dict(
+  DESCRIPTOR = _BOUNDARYPOINT,
+  __module__ = 'hadmap_pb2'
+  # @@protoc_insertion_point(class_scope:hadmap.BoundaryPoint)
+  ))
+_sym_db.RegisterMessage(BoundaryPoint)
 
 LaneBoundary = _reflection.GeneratedProtocolMessageType('LaneBoundary', (_message.Message,), dict(
   DESCRIPTOR = _LANEBOUNDARY,

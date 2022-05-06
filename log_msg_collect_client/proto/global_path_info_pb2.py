@@ -15,7 +15,6 @@ _sym_db = _symbol_database.Default()
 
 
 import header_pb2 as header__pb2
-import hadmap_pb2 as hadmap__pb2
 import geometry_pb2 as geometry__pb2
 
 
@@ -23,9 +22,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='global_path_info.proto',
   package='hadmap',
   syntax='proto2',
-  serialized_pb=_b('\n\x16global_path_info.proto\x12\x06hadmap\x1a\x0cheader.proto\x1a\x0chadmap.proto\x1a\x0egeometry.proto\"8\n\x0bPathRemains\x12\x12\n\ndis_remain\x18\x01 \x01(\x01\x12\x15\n\rpoints_remain\x18\x02 \x01(\x04\"\xc9\x02\n\x0cPathNodeInfo\x12\x0f\n\x07node_id\x18\x01 \x01(\x03\x12\x12\n\nsection_id\x18\x02 \x01(\x03\x12\x15\n\rtargetlane_id\x18\x03 \x01(\x03\x12\x30\n\tnode_type\x18\x04 \x01(\x0e\x32\x10.hadmap.NodeType:\x0bNODE_UNKNOW\x12<\n\x0ereference_type\x18\x05 \x01(\x0e\x32\x15.hadmap.ReferenceType:\rFOLLOW_UNKNOW\x12\x34\n\x0bmotion_type\x18\x06 \x01(\x0e\x32\x12.hadmap.MotionType:\x0bMOVE_UNKNOW\x12\x1b\n\x10\x64istance_to_node\x18\x07 \x01(\x01:\x01\x30\x12\x19\n\nnode_valid\x18\x08 \x01(\x08:\x05\x66\x61lse\x12\x1f\n\x06vertex\x18\t \x03(\x0b\x32\x0f.geometry.Point\"\xc4\x02\n\x07PathMsg\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12)\n\x0cpath_remains\x18\x02 \x01(\x0b\x32\x13.hadmap.PathRemains\x12+\n\rcur_node_info\x18\x03 \x01(\x0b\x32\x14.hadmap.PathNodeInfo\x12,\n\x0enext_node_info\x18\x04 \x01(\x0b\x32\x14.hadmap.PathNodeInfo\x12-\n\x0fnext_junct_info\x18\x05 \x01(\x0b\x32\x14.hadmap.PathNodeInfo\x12\x19\n\x0epath_set_state\x18\x06 \x01(\x05:\x01\x30\x12+\n\x10light_suggestion\x18\x07 \x01(\x0e\x32\x11.hadmap.LightType\x12\x1c\n\x14\x64istance_to_junc_est\x18\x08 \x01(\x01*Z\n\rPathSetStatus\x12\x11\n\rPATH_SET_FAIL\x10\x00\x12\x13\n\x0fPATH_SET_SUCESS\x10\x01\x12\x10\n\x0cPATH_INITIAL\x10\x02\x12\x0f\n\x0bPATH_FINISH\x10\x03*G\n\rReferenceType\x12\x11\n\rFOLLOW_UNKNOW\x10\x00\x12\x10\n\x0c\x46OLLOW_LOCAL\x10\x01\x12\x11\n\rFOLLOW_GLOBAL\x10\x02*=\n\x08NodeType\x12\x0f\n\x0bNODE_UNKNOW\x10\x00\x12\r\n\tNODE_ROAD\x10\x01\x12\x11\n\rNODE_JUNCTION\x10\x02*i\n\nMotionType\x12\x0f\n\x0bMOVE_UNKNOW\x10\x00\x12\x10\n\x0cMOVE_STRIGHT\x10\x01\x12\x12\n\x0eMOVE_LEFT_TURN\x10\x02\x12\x13\n\x0fMOVE_RIGHT_TURN\x10\x03\x12\x0f\n\x0bMOVE_U_TURN\x10\x04*:\n\tLightType\x12\x0c\n\x08NO_LIGHT\x10\x00\x12\x0e\n\nLEFT_LIGHT\x10\x01\x12\x0f\n\x0bRIGHT_LIGHT\x10\x02')
+  serialized_pb=_b('\n\x16global_path_info.proto\x12\x06hadmap\x1a\x0cheader.proto\x1a\x0egeometry.proto\"8\n\x0bPathRemains\x12\x12\n\ndis_remain\x18\x01 \x01(\x01\x12\x15\n\rpoints_remain\x18\x02 \x01(\x04\"\xc9\x02\n\x0cPathNodeInfo\x12\x0f\n\x07node_id\x18\x01 \x01(\x03\x12\x12\n\nsection_id\x18\x02 \x01(\x03\x12\x15\n\rtargetlane_id\x18\x03 \x01(\x03\x12\x30\n\tnode_type\x18\x04 \x01(\x0e\x32\x10.hadmap.NodeType:\x0bNODE_UNKNOW\x12<\n\x0ereference_type\x18\x05 \x01(\x0e\x32\x15.hadmap.ReferenceType:\rFOLLOW_UNKNOW\x12\x34\n\x0bmotion_type\x18\x06 \x01(\x0e\x32\x12.hadmap.MotionType:\x0bMOVE_UNKNOW\x12\x1b\n\x10\x64istance_to_node\x18\x07 \x01(\x01:\x01\x30\x12\x19\n\nnode_valid\x18\x08 \x01(\x08:\x05\x66\x61lse\x12\x1f\n\x06vertex\x18\t \x03(\x0b\x32\x0f.geometry.Point\"\xc4\x02\n\x07PathMsg\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12)\n\x0cpath_remains\x18\x02 \x01(\x0b\x32\x13.hadmap.PathRemains\x12+\n\rcur_node_info\x18\x03 \x01(\x0b\x32\x14.hadmap.PathNodeInfo\x12,\n\x0enext_node_info\x18\x04 \x01(\x0b\x32\x14.hadmap.PathNodeInfo\x12-\n\x0fnext_junct_info\x18\x05 \x01(\x0b\x32\x14.hadmap.PathNodeInfo\x12\x19\n\x0epath_set_state\x18\x06 \x01(\x05:\x01\x30\x12+\n\x10light_suggestion\x18\x07 \x01(\x0e\x32\x11.hadmap.LightType\x12\x1c\n\x14\x64istance_to_junc_est\x18\x08 \x01(\x01*Z\n\rPathSetStatus\x12\x11\n\rPATH_SET_FAIL\x10\x00\x12\x13\n\x0fPATH_SET_SUCESS\x10\x01\x12\x10\n\x0cPATH_INITIAL\x10\x02\x12\x0f\n\x0bPATH_FINISH\x10\x03*G\n\rReferenceType\x12\x11\n\rFOLLOW_UNKNOW\x10\x00\x12\x10\n\x0c\x46OLLOW_LOCAL\x10\x01\x12\x11\n\rFOLLOW_GLOBAL\x10\x02*=\n\x08NodeType\x12\x0f\n\x0bNODE_UNKNOW\x10\x00\x12\r\n\tNODE_ROAD\x10\x01\x12\x11\n\rNODE_JUNCTION\x10\x02*i\n\nMotionType\x12\x0f\n\x0bMOVE_UNKNOW\x10\x00\x12\x10\n\x0cMOVE_STRIGHT\x10\x01\x12\x12\n\x0eMOVE_LEFT_TURN\x10\x02\x12\x13\n\x0fMOVE_RIGHT_TURN\x10\x03\x12\x0f\n\x0bMOVE_U_TURN\x10\x04*:\n\tLightType\x12\x0c\n\x08NO_LIGHT\x10\x00\x12\x0e\n\nLEFT_LIGHT\x10\x01\x12\x0f\n\x0bRIGHT_LIGHT\x10\x02')
   ,
-  dependencies=[header__pb2.DESCRIPTOR,hadmap__pb2.DESCRIPTOR,geometry__pb2.DESCRIPTOR,])
+  dependencies=[header__pb2.DESCRIPTOR,geometry__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _PATHSETSTATUS = _descriptor.EnumDescriptor(
@@ -53,8 +52,8 @@ _PATHSETSTATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=795,
-  serialized_end=885,
+  serialized_start=781,
+  serialized_end=871,
 )
 _sym_db.RegisterEnumDescriptor(_PATHSETSTATUS)
 
@@ -80,8 +79,8 @@ _REFERENCETYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=887,
-  serialized_end=958,
+  serialized_start=873,
+  serialized_end=944,
 )
 _sym_db.RegisterEnumDescriptor(_REFERENCETYPE)
 
@@ -107,8 +106,8 @@ _NODETYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=960,
-  serialized_end=1021,
+  serialized_start=946,
+  serialized_end=1007,
 )
 _sym_db.RegisterEnumDescriptor(_NODETYPE)
 
@@ -142,8 +141,8 @@ _MOTIONTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1023,
-  serialized_end=1128,
+  serialized_start=1009,
+  serialized_end=1114,
 )
 _sym_db.RegisterEnumDescriptor(_MOTIONTYPE)
 
@@ -169,8 +168,8 @@ _LIGHTTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1130,
-  serialized_end=1188,
+  serialized_start=1116,
+  serialized_end=1174,
 )
 _sym_db.RegisterEnumDescriptor(_LIGHTTYPE)
 
@@ -229,8 +228,8 @@ _PATHREMAINS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=78,
-  serialized_end=134,
+  serialized_start=64,
+  serialized_end=120,
 )
 
 
@@ -316,8 +315,8 @@ _PATHNODEINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=137,
-  serialized_end=466,
+  serialized_start=123,
+  serialized_end=452,
 )
 
 
@@ -396,8 +395,8 @@ _PATHMSG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=469,
-  serialized_end=793,
+  serialized_start=455,
+  serialized_end=779,
 )
 
 _PATHNODEINFO.fields_by_name['node_type'].enum_type = _NODETYPE

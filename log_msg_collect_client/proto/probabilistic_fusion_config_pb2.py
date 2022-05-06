@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='probabilistic_fusion_config.proto',
   package='perception.fusion',
   syntax='proto2',
-  serialized_pb=_b('\n!probabilistic_fusion_config.proto\x12\x11perception.fusion\"\xa3\x03\n\x19ProbabilisticFusionConfig\x12\x17\n\tuse_lidar\x18\x01 \x01(\x08:\x04true\x12\x17\n\tuse_radar\x18\x02 \x01(\x08:\x04true\x12\x18\n\nuse_camera\x18\x03 \x01(\x08:\x04true\x12\"\n\x0etracker_method\x18\x04 \x01(\t:\nPbfTracker\x12.\n\x17\x64\x61ta_association_method\x18\x05 \x01(\t:\rHMAssociation\x12)\n\x12gate_keeper_method\x18\x06 \x01(\t:\rPbfGatekeeper\x12\x1b\n\x13prohibition_sensors\x18\x07 \x03(\t\x12(\n\x1amax_lidar_invisible_period\x18\x08 \x01(\x01:\x04\x30.25\x12\'\n\x1amax_radar_invisible_period\x18\t \x01(\x01:\x03\x30.5\x12)\n\x1bmax_camera_invisible_period\x18\n \x01(\x01:\x04\x30.75\x12 \n\x14max_cached_frame_num\x18\x0b \x01(\x03:\x02\x35\x30')
+  serialized_pb=_b('\n!probabilistic_fusion_config.proto\x12\x11perception.fusion\"\xe2\x03\n\x19ProbabilisticFusionConfig\x12\x17\n\tuse_lidar\x18\x01 \x01(\x08:\x04true\x12\x17\n\tuse_radar\x18\x02 \x01(\x08:\x04true\x12\x18\n\nuse_camera\x18\x03 \x01(\x08:\x04true\x12\"\n\x0etracker_method\x18\x04 \x01(\t:\nPbfTracker\x12.\n\x17\x64\x61ta_association_method\x18\x05 \x01(\t:\rHMAssociation\x12)\n\x12gate_keeper_method\x18\x06 \x01(\t:\rPbfGatekeeper\x12\x1b\n\x13prohibition_sensors\x18\x07 \x03(\t\x12(\n\x1amax_lidar_invisible_period\x18\x08 \x01(\x01:\x04\x30.25\x12\'\n\x1amax_radar_invisible_period\x18\t \x01(\x01:\x03\x30.5\x12)\n\x1bmax_camera_invisible_period\x18\n \x01(\x01:\x04\x30.75\x12 \n\x14max_cached_frame_num\x18\x0b \x01(\x03:\x02\x35\x30\x12\x15\n\x07use_obu\x18\x0c \x01(\x08:\x04true\x12&\n\x18max_obu_invisible_period\x18\r \x01(\x01:\x04\x30.75')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -110,6 +110,20 @@ _PROBABILISTICFUSIONCONFIG = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='use_obu', full_name='perception.fusion.ProbabilisticFusionConfig.use_obu', index=11,
+      number=12, type=8, cpp_type=7, label=1,
+      has_default_value=True, default_value=True,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='max_obu_invisible_period', full_name='perception.fusion.ProbabilisticFusionConfig.max_obu_invisible_period', index=12,
+      number=13, type=1, cpp_type=5, label=1,
+      has_default_value=True, default_value=float(0.75),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -123,7 +137,7 @@ _PROBABILISTICFUSIONCONFIG = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=57,
-  serialized_end=476,
+  serialized_end=539,
 )
 
 DESCRIPTOR.message_types_by_name['ProbabilisticFusionConfig'] = _PROBABILISTICFUSIONCONFIG

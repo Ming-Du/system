@@ -13,7 +13,6 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-import error_code_pb2 as error__code__pb2
 import header_pb2 as header__pb2
 import geometry_pb2 as geometry__pb2
 
@@ -22,9 +21,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='prediction.proto',
   package='prediction',
   syntax='proto2',
-  serialized_pb=_b('\n\x10prediction.proto\x12\nprediction\x1a\x10\x65rror_code.proto\x1a\x0cheader.proto\x1a\x0egeometry.proto\"\xe0\x01\n\x11mPredictionObject\x12\r\n\x05m_nid\x18\x01 \x01(\x03\x12\x12\n\nm_nquality\x18\x02 \x01(\x05\x12\x11\n\tclasstype\x18\x03 \x01(\x05\x12\x17\n\x0fm_preconfidence\x18\x04 \x01(\x05\x12.\n\x15prediction_trajectory\x18\x05 \x03(\x0b\x32\x0f.geometry.Point\x12(\n\x0fprediction_pose\x18\x06 \x03(\x0b\x32\x0f.geometry.Point\x12\"\n\x07objsize\x18\x07 \x01(\x0b\x32\x11.geometry.Vector3\"\xa9\x01\n\x12mPredictionObjects\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x0f\n\x07m_nnum0\x18\x02 \x01(\x05\x12\x13\n\x0b\x61llcyclenum\x18\x03 \x01(\x03\x12\x0f\n\x07m_ftime\x18\x04 \x01(\x01\x12\x0f\n\x07\x66\x64\x65ltat\x18\x05 \x01(\x01\x12+\n\x04objs\x18\x06 \x03(\x0b\x32\x1d.prediction.mPredictionObject')
+  serialized_pb=_b('\n\x10prediction.proto\x12\nprediction\x1a\x0cheader.proto\x1a\x0egeometry.proto\"\xe0\x01\n\x11mPredictionObject\x12\r\n\x05m_nid\x18\x01 \x01(\x03\x12\x12\n\nm_nquality\x18\x02 \x01(\x05\x12\x11\n\tclasstype\x18\x03 \x01(\x05\x12\x17\n\x0fm_preconfidence\x18\x04 \x01(\x05\x12.\n\x15prediction_trajectory\x18\x05 \x03(\x0b\x32\x0f.geometry.Point\x12(\n\x0fprediction_pose\x18\x06 \x03(\x0b\x32\x0f.geometry.Point\x12\"\n\x07objsize\x18\x07 \x01(\x0b\x32\x11.geometry.Vector3\"\xa9\x01\n\x12mPredictionObjects\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x0f\n\x07m_nnum0\x18\x02 \x01(\x05\x12\x13\n\x0b\x61llcyclenum\x18\x03 \x01(\x03\x12\x0f\n\x07m_ftime\x18\x04 \x01(\x01\x12\x0f\n\x07\x66\x64\x65ltat\x18\x05 \x01(\x01\x12+\n\x04objs\x18\x06 \x03(\x0b\x32\x1d.prediction.mPredictionObject')
   ,
-  dependencies=[error__code__pb2.DESCRIPTOR,header__pb2.DESCRIPTOR,geometry__pb2.DESCRIPTOR,])
+  dependencies=[header__pb2.DESCRIPTOR,geometry__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
@@ -98,8 +97,8 @@ _MPREDICTIONOBJECT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=81,
-  serialized_end=305,
+  serialized_start=63,
+  serialized_end=287,
 )
 
 
@@ -164,8 +163,8 @@ _MPREDICTIONOBJECTS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=308,
-  serialized_end=477,
+  serialized_start=290,
+  serialized_end=459,
 )
 
 _MPREDICTIONOBJECT.fields_by_name['prediction_trajectory'].message_type = geometry__pb2._POINT

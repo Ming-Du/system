@@ -1,0 +1,23 @@
+syntax = "proto2";
+package common;
+message PositionConfidence_PB{
+    enum PositionConfidence{
+        PositionConfidence_unavailable = 0;
+        PositionConfidence_a500m = 1;
+        PositionConfidence_a200m = 2;
+        PositionConfidence_a100m = 3;
+        PositionConfidence_a50m = 4;
+        PositionConfidence_a20m = 5;
+        PositionConfidence_a10m = 6;
+        PositionConfidence_a5m = 7;
+        PositionConfidence_a2m = 8;
+        PositionConfidence_a1m = 9;
+        PositionConfidence_a50cm = 10;
+        PositionConfidence_a20cm = 11;
+        PositionConfidence_a10cm = 12;
+        PositionConfidence_a5cm = 13;
+        PositionConfidence_a2cm = 14;
+        PositionConfidence_a1cm = 15;
+    };
+    required PositionConfidence position_confidence = 1;
+}

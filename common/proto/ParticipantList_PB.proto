@@ -1,0 +1,8 @@
+syntax = "proto2";
+package common;
+import "ParticipantData_PB.proto";
+message ParticipantList_PB{
+    // 定义交通参与者列表。应用于RSM消息中，表示RSU当前探测到的所有或者部分交通参与者信息
+    // size 为1-16个
+    repeated ParticipantData_PB participantData=1;
+}
