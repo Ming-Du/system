@@ -1,0 +1,13 @@
+syntax = "proto2";
+package common;
+
+message ParticipantType_PB{
+    enum ParticipantType{
+        ParticipantType_unknown = 1;
+        ParticipantType_motor = 2;
+        ParticipantType_non_motor = 3;
+        ParticipantType_pedestrian = 4;
+        ParticipantType_rsu = 5;
+    };
+    required ParticipantType participant_type = 1;
+}

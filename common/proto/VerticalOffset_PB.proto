@@ -1,0 +1,14 @@
+syntax = "proto2";
+package common;
+
+message VerticalOffset_PB{
+    oneof VerticalOffset{
+        int32 offset1 = 1;
+        int32 offset2 = 2;
+        int32 offset3 = 3;
+        int32 offset4 = 4;
+        int32 offset5 = 5;
+        int32 offset6 = 6;
+        int32 elevation = 7;
+    }
+}

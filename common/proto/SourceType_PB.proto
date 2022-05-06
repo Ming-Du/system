@@ -1,0 +1,24 @@
+syntax = "proto2";
+package common;
+message SourceType_PB{
+    //定义交通参与者数据的来源。包括以下类型：
+    //——unknown：未知数据源类型；
+    //——selfinfo：RSU 自身信息；
+    //——v2x：来源于参与者自身的 v2x 广播消息；
+    //——video：来源于视频传感器；
+    //——microwaveRadar：来源于微波雷达传感器；
+    //——loop：来源于地磁线圈传感器；
+    //——lidar：来源于激光雷达传感器；
+    //——integrated：2 类或以上感知数据的融合结果。
+    enum SourceType{
+        SourceType_unknown = 1;
+        SourceType_selfinfo = 2;
+        SourceType_v2x = 3;
+        SourceType_video = 4;
+        SourceType_microwaveRadar = 5;
+        SourceType_loop = 6;
+        SourceType_lidar = 7;
+        SourceType_integrated = 8;
+    };
+    required SourceType source_type = 1;
+}

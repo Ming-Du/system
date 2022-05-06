@@ -1,0 +1,53 @@
+syntax = "proto2";
+package common;
+
+//经纬度偏差，来描述一个坐标点的相对位置。约定偏差值等于真实值减去参考值。
+//提供了 7 种尺度的描述方式
+message PositionOffsetLL_PB{
+    oneof PositionOffsetLL{
+        Position_LL_24B position_LL1 = 1;
+        Position_LL_28B position_LL2 = 2;
+        Position_LL_32B position_LL3 = 3;
+        Position_LL_36B position_LL4 = 4;
+        Position_LL_44B position_LL5 = 5;
+        Position_LL_48B position_LL6 = 6;
+        Position_LLmD_64b position_LatLon = 7;
+    }
+}
+message  Position_LL_24B{
+    //  (-2048..2047)
+    required int64 lon = 1;
+    required int64 lat = 2;
+}
+message  Position_LL_28B{
+    //  (-8192..8191)
+    required int64 lon = 1;
+    required int64 lat = 2;
+}
+message  Position_LL_32B{
+    // (-32768..32767)
+    required int64 lon = 1;
+    required int64 lat = 2;
+}
+message  Position_LL_36B{
+    // (-131072..131071)
+    required int64 lon = 1;
+    required int64 lat = 2;
+}
+message  Position_LL_44B{
+    // (-2097152..2097151)
+    required int64 lon = 1;
+    required int64 lat = 2;
+}
+message  Position_LL_48B{
+    //  (-8388608..8388607)
+    required int64 lon = 1;
+    required int64 lat = 2;
+}
+message  Position_LLmD_64b{
+    // 定义经度数值。东经为正，西经为负。
+    //分辨率为1e-7°。
+    required int64 lon = 1;
+    required int64 lat = 2;
+}
+

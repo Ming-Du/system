@@ -1,6 +1,7 @@
 use_camera: true
 use_lidar: true
 use_radar: true
+use_obu: true
 
 input_sensor {
   sensor_name: "H60-D06170617"
@@ -14,6 +15,11 @@ input_sensor {
 input_sensor {
   sensor_name: "radar_front"
   topic: "/perception/radar/front/radar_obstacle"
+}
+
+input_sensor {
+  sensor_name: "obu"
+  topic: "/perception/v2x/v2x_obstacle"
 }
 
 fusion_method: "ProbabilisticFusion"

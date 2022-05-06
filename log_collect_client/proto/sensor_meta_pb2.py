@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='sensor_meta.proto',
   package='perception.base',
   syntax='proto2',
-  serialized_pb=_b('\n\x11sensor_meta.proto\x12\x0fperception.base\x1a\x0egeometry.proto\"[\n\tExtrinsic\x12&\n\x0btranslation\x18\x01 \x01(\x0b\x32\x11.geometry.Point3D\x12&\n\x08rotation\x18\x02 \x01(\x0b\x32\x14.geometry.Quaternion\":\n\tIntrinsic\x12\r\n\x05width\x18\x01 \x01(\x05\x12\x0e\n\x06height\x18\x02 \x01(\x05\x12\x0e\n\x06matrix\x18\x03 \x03(\x01\"R\n\x10RegisteredSensor\x12\x30\n\x0bsensor_info\x18\x01 \x03(\x0b\x32\x1b.perception.base.SensorInfo\x12\x0c\n\x04\x62\x61se\x18\x02 \x01(\t\"#\n\tDistcoeff\x12\x16\n\x0e\x64istort_matrix\x18\x01 \x03(\x01\"\xb6\x02\n\nSensorInfo\x12\x0c\n\x04name\x18\x01 \x01(\t\x12>\n\x04type\x18\x02 \x01(\x0e\x32\x1b.perception.base.SensorType:\x13UNKNOWN_SENSOR_TYPE\x12>\n\x0borientation\x18\x03 \x01(\x0e\x32\".perception.base.SensorOrientation:\x05\x46RONT\x12\r\n\x05topic\x18\x04 \x01(\t\x12-\n\textrinsic\x18\x06 \x01(\x0b\x32\x1a.perception.base.Extrinsic\x12-\n\tintrinsic\x18\x07 \x01(\x0b\x32\x1a.perception.base.Intrinsic\x12-\n\tdistcoeff\x18\x08 \x01(\x0b\x32\x1a.perception.base.Distcoeff*\xcd\x02\n\nSensorType\x12 \n\x13UNKNOWN_SENSOR_TYPE\x10\xff\xff\xff\xff\xff\xff\xff\xff\xff\x01\x12\x08\n\x04GNSS\x10\x00\x12\x0e\n\nCAMERA_6MM\x10\x01\x12\x0f\n\x0b\x43\x41MERA_12MM\x10\x02\x12\x0c\n\x08\x43T_RADAR\x10\x03\x12\x0f\n\x0bLSLIDAR_C16\x10\x04\x12\x0f\n\x0bLSLIDAR_C32\x10\x05\x12\x0e\n\nLSLIDAR_CH\x10\x06\x12\x11\n\rLIVOX_HORIZON\x10\x07\x12\x0e\n\nHESAI_XT32\x10\x08\x12\x0f\n\x0bVELODYNE_64\x10\t\x12\x0e\n\nSENSING_30\x10\n\x12\x0e\n\nSENSING_60\x10\x0b\x12\x0f\n\x0bSENSING_120\x10\x0c\x12\r\n\tHESAI_128\x10\r\x12\x0e\n\nRSLIDAR_80\x10\x0e\x12\x16\n\x12\x43ONTI_RADAR_ARS408\x10\x0f\x12\x16\n\x12\x43ONTI_RADAR_SRR308\x10\x10*\xa4\x01\n\x11SensorOrientation\x12\t\n\x05\x46RONT\x10\x00\x12\x10\n\x0cLEFT_FORWARD\x10\x01\x12\x08\n\x04LEFT\x10\x02\x12\x11\n\rLEFT_BACKWARD\x10\x03\x12\x08\n\x04REAR\x10\x04\x12\x12\n\x0eRIGHT_BACKWARD\x10\x05\x12\t\n\x05RIGHT\x10\x06\x12\x11\n\rRIGHT_FORWARD\x10\x07\x12\r\n\tPANORAMIC\x10\x08\x12\n\n\x06MIDDLE\x10\t')
+  serialized_pb=_b('\n\x11sensor_meta.proto\x12\x0fperception.base\x1a\x0egeometry.proto\"[\n\tExtrinsic\x12&\n\x0btranslation\x18\x01 \x01(\x0b\x32\x11.geometry.Point3D\x12&\n\x08rotation\x18\x02 \x01(\x0b\x32\x14.geometry.Quaternion\":\n\tIntrinsic\x12\r\n\x05width\x18\x01 \x01(\x05\x12\x0e\n\x06height\x18\x02 \x01(\x05\x12\x0e\n\x06matrix\x18\x03 \x03(\x01\"R\n\x10RegisteredSensor\x12\x30\n\x0bsensor_info\x18\x01 \x03(\x0b\x32\x1b.perception.base.SensorInfo\x12\x0c\n\x04\x62\x61se\x18\x02 \x01(\t\"#\n\tDistcoeff\x12\x16\n\x0e\x64istort_matrix\x18\x01 \x03(\x01\"\xb6\x02\n\nSensorInfo\x12\x0c\n\x04name\x18\x01 \x01(\t\x12>\n\x04type\x18\x02 \x01(\x0e\x32\x1b.perception.base.SensorType:\x13UNKNOWN_SENSOR_TYPE\x12>\n\x0borientation\x18\x03 \x01(\x0e\x32\".perception.base.SensorOrientation:\x05\x46RONT\x12\r\n\x05topic\x18\x04 \x01(\t\x12-\n\textrinsic\x18\x06 \x01(\x0b\x32\x1a.perception.base.Extrinsic\x12-\n\tintrinsic\x18\x07 \x01(\x0b\x32\x1a.perception.base.Intrinsic\x12-\n\tdistcoeff\x18\x08 \x01(\x0b\x32\x1a.perception.base.Distcoeff*\xf3\x02\n\nSensorType\x12 \n\x13UNKNOWN_SENSOR_TYPE\x10\xff\xff\xff\xff\xff\xff\xff\xff\xff\x01\x12\x08\n\x04GNSS\x10\x00\x12\x0e\n\nCAMERA_6MM\x10\x01\x12\x0f\n\x0b\x43\x41MERA_12MM\x10\x02\x12\x0c\n\x08\x43T_RADAR\x10\x03\x12\x0f\n\x0bLSLIDAR_C16\x10\x04\x12\x0f\n\x0bLSLIDAR_C32\x10\x05\x12\x0e\n\nLSLIDAR_CH\x10\x06\x12\x11\n\rLIVOX_HORIZON\x10\x07\x12\x0e\n\nHESAI_XT32\x10\x08\x12\x0f\n\x0bVELODYNE_64\x10\t\x12\x0e\n\nSENSING_30\x10\n\x12\x0e\n\nSENSING_60\x10\x0b\x12\x0f\n\x0bSENSING_120\x10\x0c\x12\r\n\tHESAI_128\x10\r\x12\x0e\n\nRSLIDAR_80\x10\x0e\x12\x0e\n\nINNO_LIDAR\x10\x0f\x12\x16\n\x12\x43ONTI_RADAR_ARS408\x10\x10\x12\x16\n\x12\x43ONTI_RADAR_SRR308\x10\x11\x12\x07\n\x03V2X\x10\x12\x12\x0b\n\x07OBU_RSM\x10\x13*\xa4\x01\n\x11SensorOrientation\x12\t\n\x05\x46RONT\x10\x00\x12\x10\n\x0cLEFT_FORWARD\x10\x01\x12\x08\n\x04LEFT\x10\x02\x12\x11\n\rLEFT_BACKWARD\x10\x03\x12\x08\n\x04REAR\x10\x04\x12\x12\n\x0eRIGHT_BACKWARD\x10\x05\x12\t\n\x05RIGHT\x10\x06\x12\x11\n\rRIGHT_FORWARD\x10\x07\x12\r\n\tPANORAMIC\x10\x08\x12\n\n\x06MIDDLE\x10\t')
   ,
   dependencies=[geometry__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -97,18 +97,30 @@ _SENSORTYPE = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CONTI_RADAR_ARS408', index=16, number=15,
+      name='INNO_LIDAR', index=16, number=15,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CONTI_RADAR_SRR308', index=17, number=16,
+      name='CONTI_RADAR_ARS408', index=17, number=16,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CONTI_RADAR_SRR308', index=18, number=17,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='V2X', index=19, number=18,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='OBU_RSM', index=20, number=19,
       options=None,
       type=None),
   ],
   containing_type=None,
   options=None,
   serialized_start=642,
-  serialized_end=975,
+  serialized_end=1013,
 )
 _sym_db.RegisterEnumDescriptor(_SENSORTYPE)
 
@@ -162,8 +174,8 @@ _SENSORORIENTATION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=978,
-  serialized_end=1142,
+  serialized_start=1016,
+  serialized_end=1180,
 )
 _sym_db.RegisterEnumDescriptor(_SENSORORIENTATION)
 
@@ -184,8 +196,11 @@ SENSING_60 = 11
 SENSING_120 = 12
 HESAI_128 = 13
 RSLIDAR_80 = 14
-CONTI_RADAR_ARS408 = 15
-CONTI_RADAR_SRR308 = 16
+INNO_LIDAR = 15
+CONTI_RADAR_ARS408 = 16
+CONTI_RADAR_SRR308 = 17
+V2X = 18
+OBU_RSM = 19
 FRONT = 0
 LEFT_FORWARD = 1
 LEFT = 2

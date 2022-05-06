@@ -1,0 +1,9 @@
+syntax = "proto2";
+package common;
+import "PositionOffsetLL_PB.proto";
+import "VerticalOffset_PB.proto";
+message PositionOffsetLLV_PB{
+    required PositionOffsetLL_PB offsetLL = 1;
+
+    optional VerticalOffset_PB offsetV = 2;
+}
