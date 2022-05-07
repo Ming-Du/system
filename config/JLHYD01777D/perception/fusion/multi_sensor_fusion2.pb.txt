@@ -14,7 +14,7 @@ input_sensor {
 
 input_sensor {
   sensor_name: "radar_front"
-  topic: "/perception/radar/front/radar_obstacle"
+  topic: "/perception/radar/radar_obstacle"
 }
 
 input_sensor {
