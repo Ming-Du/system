@@ -15,7 +15,6 @@ _sym_db = _symbol_database.Default()
 
 
 import header_pb2 as header__pb2
-import chassis_pb2 as chassis__pb2
 import trajectory_pb2 as trajectory__pb2
 
 
@@ -23,9 +22,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='behaviors_decision.proto',
   package='planning',
   syntax='proto2',
-  serialized_pb=_b('\n\x18\x62\x65haviors_decision.proto\x12\x08planning\x1a\x0cheader.proto\x1a\rchassis.proto\x1a\x10trajectory.proto\"\x9f\x01\n\x12\x42\x65haviors_Decision\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12 \n\x06\x66ollow\x18\x03 \x03(\x0e\x32\x10.planning.Follow\x12\x1c\n\x04stop\x18\x04 \x01(\x0e\x32\x0e.planning.Stop\x12)\n\x0blane_change\x18\x05 \x01(\x0e\x32\x14.planning.LaneChange*#\n\x06\x46ollow\x12\r\n\tNO_FOLLOW\x10\x00\x12\n\n\x06\x46OLLOW\x10\x01*+\n\x04Stop\x12\x08\n\x04STOP\x10\x00\x12\x0b\n\x07NO_STOP\x10\x01\x12\x0c\n\x08\x41\x45\x42_STOP\x10\x02')
+  serialized_pb=_b('\n\x18\x62\x65haviors_decision.proto\x12\x08planning\x1a\x0cheader.proto\x1a\x10trajectory.proto\"\x9f\x01\n\x12\x42\x65haviors_Decision\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12 \n\x06\x66ollow\x18\x03 \x03(\x0e\x32\x10.planning.Follow\x12\x1c\n\x04stop\x18\x04 \x01(\x0e\x32\x0e.planning.Stop\x12)\n\x0blane_change\x18\x05 \x01(\x0e\x32\x14.planning.LaneChange*#\n\x06\x46ollow\x12\r\n\tNO_FOLLOW\x10\x00\x12\n\n\x06\x46OLLOW\x10\x01*+\n\x04Stop\x12\x08\n\x04STOP\x10\x00\x12\x0b\n\x07NO_STOP\x10\x01\x12\x0c\n\x08\x41\x45\x42_STOP\x10\x02')
   ,
-  dependencies=[header__pb2.DESCRIPTOR,chassis__pb2.DESCRIPTOR,trajectory__pb2.DESCRIPTOR,])
+  dependencies=[header__pb2.DESCRIPTOR,trajectory__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _FOLLOW = _descriptor.EnumDescriptor(
@@ -45,8 +44,8 @@ _FOLLOW = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=247,
-  serialized_end=282,
+  serialized_start=232,
+  serialized_end=267,
 )
 _sym_db.RegisterEnumDescriptor(_FOLLOW)
 
@@ -72,8 +71,8 @@ _STOP = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=284,
-  serialized_end=327,
+  serialized_start=269,
+  serialized_end=312,
 )
 _sym_db.RegisterEnumDescriptor(_STOP)
 
@@ -133,8 +132,8 @@ _BEHAVIORS_DECISION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=86,
-  serialized_end=245,
+  serialized_start=71,
+  serialized_end=230,
 )
 
 _BEHAVIORS_DECISION.fields_by_name['header'].message_type = header__pb2._HEADER

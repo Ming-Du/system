@@ -22,7 +22,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='object.proto',
   package='perception',
   syntax='proto2',
-  serialized_pb=_b('\n\x0cobject.proto\x12\nperception\x1a\x0cheader.proto\x1a\x0egeometry.proto\"T\n\x06\x42\x42ox2D\x12\x11\n\x04xmin\x18\x01 \x01(\x01:\x03nan\x12\x11\n\x04ymin\x18\x02 \x01(\x01:\x03nan\x12\x11\n\x04xmax\x18\x03 \x01(\x01:\x03nan\x12\x11\n\x04ymax\x18\x04 \x01(\x01:\x03nan\"l\n\x16\x43\x61meraObjectSupplement\x12\x15\n\x06on_use\x18\x01 \x01(\x08:\x05\x66\x61lse\x12\x1f\n\x03\x62ox\x18\x02 \x01(\x0b\x32\x12.perception.BBox2D\x12\x0c\n\x04\x63ols\x18\x03 \x01(\x05\x12\x0c\n\x04rows\x18\x04 \x01(\x05\"A\n\x15LidarObjectSupplement\x12\x15\n\x06on_use\x18\x01 \x01(\x08:\x05\x66\x61lse\x12\x11\n\x05\x63loud\x18\x02 \x03(\x01\x42\x02\x10\x01\"\xa4\x01\n\x15RadarObjectSupplement\x12\x15\n\x06on_use\x18\x01 \x01(\x08:\x05\x66\x61lse\x12\t\n\x01x\x18\x02 \x01(\x02\x12\t\n\x01y\x18\x03 \x01(\x02\x12\x16\n\x0erelative_vel_x\x18\x04 \x01(\x02\x12\x16\n\x0erelative_vel_y\x18\x05 \x01(\x02\x12\x16\n\x0e\x61\x62solute_vel_x\x18\x06 \x01(\x02\x12\x16\n\x0e\x61\x62solute_vel_y\x18\x07 \x01(\x02\"\x85\x05\n\x06Object\x12\n\n\x02id\x18\x01 \x01(\r\x12\x13\n\x0bsensor_name\x18\x02 \x01(\t\x12$\n\x04type\x18\x03 \x01(\x0e\x32\x16.perception.ObjectType\x12\x12\n\ntime_stamp\x18\x04 \x01(\x01\x12\x12\n\nconfidence\x18\x05 \x01(\x02\x12\x0e\n\x06status\x18\x06 \x01(\x05\x12\x12\n\nx_distance\x18\x07 \x01(\x02\x12\x12\n\ny_distance\x18\x08 \x01(\x02\x12\r\n\x05\x61ngle\x18\t \x01(\x02\x12\x1f\n\x06\x63\x65nter\x18\n \x01(\x0b\x32\x0f.geometry.Point\x12!\n\x08\x63\x65ntroid\x18\x0b \x01(\x0b\x32\x0f.geometry.Point\x12\x1f\n\x04size\x18\x0c \x01(\x0b\x32\x11.geometry.Vector3\x12 \n\x07\x63ontour\x18\r \x03(\x0b\x32\x0f.geometry.Point\x12#\n\x08velocity\x18\x0e \x01(\x0b\x32\x11.geometry.Vector3\x12\'\n\x0c\x61\x63\x63\x65leration\x18\x0f \x01(\x0b\x32\x11.geometry.Vector3\x12\x15\n\rtracking_time\x18\x10 \x01(\x01\x12=\n\x11\x63\x61mera_supplement\x18\x11 \x01(\x0b\x32\".perception.CameraObjectSupplement\x12;\n\x10lidar_supplement\x18\x12 \x01(\x0b\x32!.perception.LidarObjectSupplement\x12;\n\x10radar_supplement\x18\x13 \x01(\x0b\x32!.perception.RadarObjectSupplement\x12 \n\x07polygon\x18\x14 \x03(\x0b\x32\x0f.geometry.Point\"d\n\x0cVisualObject\x12\x1f\n\x03obj\x18\x01 \x01(\x0b\x32\x12.perception.Object\x12\t\n\x01x\x18\x02 \x01(\x05\x12\t\n\x01y\x18\x03 \x01(\x05\x12\r\n\x05width\x18\x04 \x01(\x05\x12\x0e\n\x06height\x18\x05 \x01(\x05\"\x8b\x01\n\rVisualObjects\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x13\n\x0bsensor_name\x18\x02 \x01(\t\x12&\n\x04objs\x18\x03 \x03(\x0b\x32\x18.perception.VisualObject\x12\r\n\x05width\x18\x04 \x01(\x05\x12\x0e\n\x06height\x18\x05 \x01(\x05\"\xec\x02\n\rTrackedObject\x12\x1f\n\x03obj\x18\x01 \x01(\x0b\x32\x12.perception.Object\x12\x0b\n\x03yaw\x18\x02 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x03 \x01(\x02\x12#\n\x08velocity\x18\x04 \x01(\x0b\x32\x11.geometry.Vector3\x12\x1e\n\x05trace\x18\x05 \x03(\x0b\x32\x0f.geometry.Trace\x12#\n\nprediction\x18\x06 \x03(\x0b\x32\x0f.geometry.Trace\x12\x1c\n\x14\x61\x62solute_longitude_v\x18\x07 \x01(\x02\x12\x1c\n\x14\x61\x62solute_longitude_a\x18\x08 \x01(\x02\x12\x1a\n\x12\x61\x62solute_lateral_v\x18\t \x01(\x02\x12\x11\n\tlongitude\x18\n \x01(\x01\x12\x10\n\x08latitude\x18\x0b \x01(\x01\x12\x0b\n\x03\x61lt\x18\x0c \x01(\x01\x12\x13\n\x0blongitude_p\x18\r \x01(\x01\x12\x12\n\nlatitude_p\x18\x0e \x01(\x01\"n\n\x0eTrackedObjects\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x13\n\x0bsensor_name\x18\x02 \x01(\t\x12\'\n\x04objs\x18\x03 \x03(\x0b\x32\x19.perception.TrackedObject\"\x93\x04\n\x0bRadarObject\x12\x1f\n\x03obj\x18\x01 \x01(\x0b\x32\x12.perception.Object\x12\x0b\n\x03yaw\x18\x02 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x03 \x01(\x02\x12#\n\x08velocity\x18\x04 \x01(\x0b\x32\x11.geometry.Vector3\x12\x1e\n\x05trace\x18\x05 \x03(\x0b\x32\x0f.geometry.Trace\x12#\n\nprediction\x18\x06 \x03(\x0b\x32\x0f.geometry.Trace\x12\x1c\n\x14\x61\x62solute_longitude_v\x18\x07 \x01(\x02\x12\x1c\n\x14\x61\x62solute_longitude_a\x18\x08 \x01(\x02\x12\x1a\n\x12\x61\x62solute_lateral_v\x18\t \x01(\x02\x12\x0b\n\x03rcs\x18\n \x01(\x01\x12\x0f\n\x07\x64ynprop\x18\x0b \x01(\x05\x12\x1a\n\x12longitude_dist_rms\x18\x0c \x01(\x01\x12\x18\n\x10lateral_dist_rms\x18\r \x01(\x01\x12\x19\n\x11longitude_vel_rms\x18\x0e \x01(\x01\x12\x17\n\x0flateral_vel_rms\x18\x0f \x01(\x01\x12\x11\n\tprobexist\x18\x10 \x01(\x01\x12\x12\n\nmeas_state\x18\x11 \x01(\x05\x12\x1b\n\x13longitude_accel_rms\x18\x12 \x01(\x01\x12\x19\n\x11lateral_accel_rms\x18\x13 \x01(\x01\x12\x1b\n\x13oritation_angle_rms\x18\x14 \x01(\x01\"j\n\x0cRadarObjects\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x13\n\x0bsensor_name\x18\x02 \x01(\t\x12%\n\x04objs\x18\x03 \x03(\x0b\x32\x17.perception.RadarObject*\x96\x03\n\nObjectType\x12\x10\n\x0cTYPE_UNKNOWN\x10\x00\x12\x13\n\x0fTYPE_PEDESTRIAN\x10\x03\x12\x10\n\x0cTYPE_BICYCLE\x10\x04\x12\x0e\n\nTYPE_MOTOR\x10\x05\x12\x0e\n\nTYPE_RIDER\x10\x06\x12\x0c\n\x08TYPE_CAR\x10\x07\x12\x0e\n\nTYPE_TRUCK\x10\x08\x12\x0c\n\x08TYPE_BUS\x10\t\x12\x0e\n\nTYPE_TRAIN\x10\n\x12\r\n\tTYPE_SIGN\x10\x14\x12\x0e\n\nTYPE_LIGHT\x10\x1e\x12\x0c\n\x08TYPE_RED\x10\x1f\x12\x0e\n\nTYPE_GREEN\x10 \x12\x0f\n\x0bTYPE_YELLOW\x10!\x12\x0e\n\nTYPE_BLACK\x10\"\x12\x1a\n\x16TYPE_TRIANGLEROADBLOCK\x10#\x12\x18\n\x14TYPE_WARNINGTRIANGLE\x10$\x12\x16\n\x12TYPE_UNKNOWN_SMALL\x10[\x12\x14\n\x10TYPE_UNKNOWN_BIG\x10\\\x12\x17\n\x13TYPE_UNKNOWN_STATIC\x10]\x12\x18\n\x14TYPE_UNKNOWN_DYNAMIC\x10^')
+  serialized_pb=_b('\n\x0cobject.proto\x12\nperception\x1a\x0cheader.proto\x1a\x0egeometry.proto\"T\n\x06\x42\x42ox2D\x12\x11\n\x04xmin\x18\x01 \x01(\x01:\x03nan\x12\x11\n\x04ymin\x18\x02 \x01(\x01:\x03nan\x12\x11\n\x04xmax\x18\x03 \x01(\x01:\x03nan\x12\x11\n\x04ymax\x18\x04 \x01(\x01:\x03nan\"l\n\x16\x43\x61meraObjectSupplement\x12\x15\n\x06on_use\x18\x01 \x01(\x08:\x05\x66\x61lse\x12\x1f\n\x03\x62ox\x18\x02 \x01(\x0b\x32\x12.perception.BBox2D\x12\x0c\n\x04\x63ols\x18\x03 \x01(\x05\x12\x0c\n\x04rows\x18\x04 \x01(\x05\"A\n\x15LidarObjectSupplement\x12\x15\n\x06on_use\x18\x01 \x01(\x08:\x05\x66\x61lse\x12\x11\n\x05\x63loud\x18\x02 \x03(\x01\x42\x02\x10\x01\"\xbc\x01\n\x15RadarObjectSupplement\x12\x15\n\x06on_use\x18\x01 \x01(\x08:\x05\x66\x61lse\x12\t\n\x01x\x18\x02 \x01(\x02\x12\t\n\x01y\x18\x03 \x01(\x02\x12\x16\n\x0erelative_vel_x\x18\x04 \x01(\x02\x12\x16\n\x0erelative_vel_y\x18\x05 \x01(\x02\x12\x16\n\x0e\x61\x62solute_vel_x\x18\x06 \x01(\x02\x12\x16\n\x0e\x61\x62solute_vel_y\x18\x07 \x01(\x02\x12\x16\n\x07is_rear\x18\x08 \x01(\x08:\x05\x66\x61lse\"\xa3\x01\n\x14ObuObjectsSupplement\x12\x15\n\x06on_use\x18\x01 \x01(\x08:\x05\x66\x61lse\x12\t\n\x01x\x18\x02 \x01(\x02\x12\t\n\x01y\x18\x03 \x01(\x02\x12\x16\n\x0erelative_vel_x\x18\x04 \x01(\x02\x12\x16\n\x0erelative_vel_y\x18\x05 \x01(\x02\x12\x16\n\x0e\x61\x62solute_vel_x\x18\x06 \x01(\x02\x12\x16\n\x0e\x61\x62solute_vel_y\x18\x07 \x01(\x02\"\xbf\x05\n\x06Object\x12\n\n\x02id\x18\x01 \x01(\r\x12\x13\n\x0bsensor_name\x18\x02 \x01(\t\x12$\n\x04type\x18\x03 \x01(\x0e\x32\x16.perception.ObjectType\x12\x12\n\ntime_stamp\x18\x04 \x01(\x01\x12\x12\n\nconfidence\x18\x05 \x01(\x02\x12\x0e\n\x06status\x18\x06 \x01(\x05\x12\x12\n\nx_distance\x18\x07 \x01(\x02\x12\x12\n\ny_distance\x18\x08 \x01(\x02\x12\r\n\x05\x61ngle\x18\t \x01(\x02\x12\x1f\n\x06\x63\x65nter\x18\n \x01(\x0b\x32\x0f.geometry.Point\x12!\n\x08\x63\x65ntroid\x18\x0b \x01(\x0b\x32\x0f.geometry.Point\x12\x1f\n\x04size\x18\x0c \x01(\x0b\x32\x11.geometry.Vector3\x12 \n\x07\x63ontour\x18\r \x03(\x0b\x32\x0f.geometry.Point\x12#\n\x08velocity\x18\x0e \x01(\x0b\x32\x11.geometry.Vector3\x12\'\n\x0c\x61\x63\x63\x65leration\x18\x0f \x01(\x0b\x32\x11.geometry.Vector3\x12\x15\n\rtracking_time\x18\x10 \x01(\x01\x12=\n\x11\x63\x61mera_supplement\x18\x11 \x01(\x0b\x32\".perception.CameraObjectSupplement\x12;\n\x10lidar_supplement\x18\x12 \x01(\x0b\x32!.perception.LidarObjectSupplement\x12;\n\x10radar_supplement\x18\x13 \x01(\x0b\x32!.perception.RadarObjectSupplement\x12 \n\x07polygon\x18\x14 \x03(\x0b\x32\x0f.geometry.Point\x12\x38\n\x0eobu_supplement\x18\x15 \x01(\x0b\x32 .perception.ObuObjectsSupplement\"d\n\x0cVisualObject\x12\x1f\n\x03obj\x18\x01 \x01(\x0b\x32\x12.perception.Object\x12\t\n\x01x\x18\x02 \x01(\x05\x12\t\n\x01y\x18\x03 \x01(\x05\x12\r\n\x05width\x18\x04 \x01(\x05\x12\x0e\n\x06height\x18\x05 \x01(\x05\"\x8b\x01\n\rVisualObjects\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x13\n\x0bsensor_name\x18\x02 \x01(\t\x12&\n\x04objs\x18\x03 \x03(\x0b\x32\x18.perception.VisualObject\x12\r\n\x05width\x18\x04 \x01(\x05\x12\x0e\n\x06height\x18\x05 \x01(\x05\"\x8c\x03\n\rTrackedObject\x12\x1f\n\x03obj\x18\x01 \x01(\x0b\x32\x12.perception.Object\x12\x0b\n\x03yaw\x18\x02 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x03 \x01(\x02\x12#\n\x08velocity\x18\x04 \x01(\x0b\x32\x11.geometry.Vector3\x12\x1e\n\x05trace\x18\x05 \x03(\x0b\x32\x0f.geometry.Trace\x12#\n\nprediction\x18\x06 \x03(\x0b\x32\x0f.geometry.Trace\x12\x1c\n\x14\x61\x62solute_longitude_v\x18\x07 \x01(\x02\x12\x1c\n\x14\x61\x62solute_longitude_a\x18\x08 \x01(\x02\x12\x1a\n\x12\x61\x62solute_lateral_v\x18\t \x01(\x02\x12\x11\n\tlongitude\x18\n \x01(\x01\x12\x10\n\x08latitude\x18\x0b \x01(\x01\x12\x0b\n\x03\x61lt\x18\x0c \x01(\x01\x12\x13\n\x0blongitude_p\x18\r \x01(\x01\x12\x12\n\nlatitude_p\x18\x0e \x01(\x01\x12\r\n\x05speed\x18\x0f \x01(\x01\x12\x0f\n\x07heading\x18\x10 \x01(\x01\"n\n\x0eTrackedObjects\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x13\n\x0bsensor_name\x18\x02 \x01(\t\x12\'\n\x04objs\x18\x03 \x03(\x0b\x32\x19.perception.TrackedObject\"\x93\x04\n\x0bRadarObject\x12\x1f\n\x03obj\x18\x01 \x01(\x0b\x32\x12.perception.Object\x12\x0b\n\x03yaw\x18\x02 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x03 \x01(\x02\x12#\n\x08velocity\x18\x04 \x01(\x0b\x32\x11.geometry.Vector3\x12\x1e\n\x05trace\x18\x05 \x03(\x0b\x32\x0f.geometry.Trace\x12#\n\nprediction\x18\x06 \x03(\x0b\x32\x0f.geometry.Trace\x12\x1c\n\x14\x61\x62solute_longitude_v\x18\x07 \x01(\x02\x12\x1c\n\x14\x61\x62solute_longitude_a\x18\x08 \x01(\x02\x12\x1a\n\x12\x61\x62solute_lateral_v\x18\t \x01(\x02\x12\x0b\n\x03rcs\x18\n \x01(\x01\x12\x0f\n\x07\x64ynprop\x18\x0b \x01(\x05\x12\x1a\n\x12longitude_dist_rms\x18\x0c \x01(\x01\x12\x18\n\x10lateral_dist_rms\x18\r \x01(\x01\x12\x19\n\x11longitude_vel_rms\x18\x0e \x01(\x01\x12\x17\n\x0flateral_vel_rms\x18\x0f \x01(\x01\x12\x11\n\tprobexist\x18\x10 \x01(\x01\x12\x12\n\nmeas_state\x18\x11 \x01(\x05\x12\x1b\n\x13longitude_accel_rms\x18\x12 \x01(\x01\x12\x19\n\x11lateral_accel_rms\x18\x13 \x01(\x01\x12\x1b\n\x13oritation_angle_rms\x18\x14 \x01(\x01\"j\n\x0cRadarObjects\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x13\n\x0bsensor_name\x18\x02 \x01(\t\x12%\n\x04objs\x18\x03 \x03(\x0b\x32\x17.perception.RadarObject\"\xf2\x01\n\tObuObject\x12\x1f\n\x03obj\x18\x01 \x01(\x0b\x32\x12.perception.Object\x12\x11\n\tlongitude\x18\x02 \x01(\x01\x12\x10\n\x08latitude\x18\x03 \x01(\x01\x12\x0b\n\x03\x61lt\x18\x04 \x01(\x01\x12#\n\x08velocity\x18\x05 \x01(\x0b\x32\x11.geometry.Vector3\x12\x0b\n\x03yaw\x18\x06 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x07 \x01(\x02\x12\x0f\n\x07heading\x18\x08 \x01(\x02\x12\r\n\x05speed\x18\t \x01(\x02\x12\x1e\n\x05trace\x18\n \x03(\x0b\x32\x0f.geometry.Trace\x12\x0e\n\x06source\x18\x0b \x01(\t\"f\n\nObuObjects\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x13\n\x0bsensor_name\x18\x02 \x01(\t\x12#\n\x04objs\x18\x03 \x03(\x0b\x32\x15.perception.ObuObject*\x96\x03\n\nObjectType\x12\x10\n\x0cTYPE_UNKNOWN\x10\x00\x12\x13\n\x0fTYPE_PEDESTRIAN\x10\x03\x12\x10\n\x0cTYPE_BICYCLE\x10\x04\x12\x0e\n\nTYPE_MOTOR\x10\x05\x12\x0e\n\nTYPE_RIDER\x10\x06\x12\x0c\n\x08TYPE_CAR\x10\x07\x12\x0e\n\nTYPE_TRUCK\x10\x08\x12\x0c\n\x08TYPE_BUS\x10\t\x12\x0e\n\nTYPE_TRAIN\x10\n\x12\r\n\tTYPE_SIGN\x10\x14\x12\x0e\n\nTYPE_LIGHT\x10\x1e\x12\x0c\n\x08TYPE_RED\x10\x1f\x12\x0e\n\nTYPE_GREEN\x10 \x12\x0f\n\x0bTYPE_YELLOW\x10!\x12\x0e\n\nTYPE_BLACK\x10\"\x12\x1a\n\x16TYPE_TRIANGLEROADBLOCK\x10#\x12\x18\n\x14TYPE_WARNINGTRIANGLE\x10$\x12\x16\n\x12TYPE_UNKNOWN_SMALL\x10[\x12\x14\n\x10TYPE_UNKNOWN_BIG\x10\\\x12\x17\n\x13TYPE_UNKNOWN_STATIC\x10]\x12\x18\n\x14TYPE_UNKNOWN_DYNAMIC\x10^')
   ,
   dependencies=[header__pb2.DESCRIPTOR,geometry__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -120,8 +120,8 @@ _OBJECTTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=2502,
-  serialized_end=2908,
+  serialized_start=3131,
+  serialized_end=3537,
 )
 _sym_db.RegisterEnumDescriptor(_OBJECTTYPE)
 
@@ -348,6 +348,13 @@ _RADAROBJECTSUPPLEMENT = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='is_rear', full_name='perception.RadarObjectSupplement.is_rear', index=7,
+      number=8, type=8, cpp_type=7, label=1,
+      has_default_value=True, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -361,7 +368,80 @@ _RADAROBJECTSUPPLEMENT = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=322,
-  serialized_end=486,
+  serialized_end=510,
+)
+
+
+_OBUOBJECTSSUPPLEMENT = _descriptor.Descriptor(
+  name='ObuObjectsSupplement',
+  full_name='perception.ObuObjectsSupplement',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='on_use', full_name='perception.ObuObjectsSupplement.on_use', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=True, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='x', full_name='perception.ObuObjectsSupplement.x', index=1,
+      number=2, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='y', full_name='perception.ObuObjectsSupplement.y', index=2,
+      number=3, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='relative_vel_x', full_name='perception.ObuObjectsSupplement.relative_vel_x', index=3,
+      number=4, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='relative_vel_y', full_name='perception.ObuObjectsSupplement.relative_vel_y', index=4,
+      number=5, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='absolute_vel_x', full_name='perception.ObuObjectsSupplement.absolute_vel_x', index=5,
+      number=6, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='absolute_vel_y', full_name='perception.ObuObjectsSupplement.absolute_vel_y', index=6,
+      number=7, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=513,
+  serialized_end=676,
 )
 
 
@@ -512,6 +592,13 @@ _OBJECT = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='obu_supplement', full_name='perception.Object.obu_supplement', index=20,
+      number=21, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -524,8 +611,8 @@ _OBJECT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=489,
-  serialized_end=1134,
+  serialized_start=679,
+  serialized_end=1382,
 )
 
 
@@ -583,8 +670,8 @@ _VISUALOBJECT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1136,
-  serialized_end=1236,
+  serialized_start=1384,
+  serialized_end=1484,
 )
 
 
@@ -642,8 +729,8 @@ _VISUALOBJECTS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1239,
-  serialized_end=1378,
+  serialized_start=1487,
+  serialized_end=1626,
 )
 
 
@@ -752,6 +839,20 @@ _TRACKEDOBJECT = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='speed', full_name='perception.TrackedObject.speed', index=14,
+      number=15, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='heading', full_name='perception.TrackedObject.heading', index=15,
+      number=16, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -764,8 +865,8 @@ _TRACKEDOBJECT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1381,
-  serialized_end=1745,
+  serialized_start=1629,
+  serialized_end=2025,
 )
 
 
@@ -809,8 +910,8 @@ _TRACKEDOBJECTS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1747,
-  serialized_end=1857,
+  serialized_start=2027,
+  serialized_end=2137,
 )
 
 
@@ -973,8 +1074,8 @@ _RADAROBJECT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1860,
-  serialized_end=2391,
+  serialized_start=2140,
+  serialized_end=2671,
 )
 
 
@@ -1018,8 +1119,154 @@ _RADAROBJECTS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2393,
-  serialized_end=2499,
+  serialized_start=2673,
+  serialized_end=2779,
+)
+
+
+_OBUOBJECT = _descriptor.Descriptor(
+  name='ObuObject',
+  full_name='perception.ObuObject',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='obj', full_name='perception.ObuObject.obj', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='longitude', full_name='perception.ObuObject.longitude', index=1,
+      number=2, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='latitude', full_name='perception.ObuObject.latitude', index=2,
+      number=3, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='alt', full_name='perception.ObuObject.alt', index=3,
+      number=4, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='velocity', full_name='perception.ObuObject.velocity', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='yaw', full_name='perception.ObuObject.yaw', index=5,
+      number=6, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='yaw_rate', full_name='perception.ObuObject.yaw_rate', index=6,
+      number=7, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='heading', full_name='perception.ObuObject.heading', index=7,
+      number=8, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='speed', full_name='perception.ObuObject.speed', index=8,
+      number=9, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='trace', full_name='perception.ObuObject.trace', index=9,
+      number=10, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='source', full_name='perception.ObuObject.source', index=10,
+      number=11, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2782,
+  serialized_end=3024,
+)
+
+
+_OBUOBJECTS = _descriptor.Descriptor(
+  name='ObuObjects',
+  full_name='perception.ObuObjects',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='header', full_name='perception.ObuObjects.header', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='sensor_name', full_name='perception.ObuObjects.sensor_name', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='objs', full_name='perception.ObuObjects.objs', index=2,
+      number=3, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=3026,
+  serialized_end=3128,
 )
 
 _CAMERAOBJECTSUPPLEMENT.fields_by_name['box'].message_type = _BBOX2D
@@ -1034,6 +1281,7 @@ _OBJECT.fields_by_name['camera_supplement'].message_type = _CAMERAOBJECTSUPPLEME
 _OBJECT.fields_by_name['lidar_supplement'].message_type = _LIDAROBJECTSUPPLEMENT
 _OBJECT.fields_by_name['radar_supplement'].message_type = _RADAROBJECTSUPPLEMENT
 _OBJECT.fields_by_name['polygon'].message_type = geometry__pb2._POINT
+_OBJECT.fields_by_name['obu_supplement'].message_type = _OBUOBJECTSSUPPLEMENT
 _VISUALOBJECT.fields_by_name['obj'].message_type = _OBJECT
 _VISUALOBJECTS.fields_by_name['header'].message_type = header__pb2._HEADER
 _VISUALOBJECTS.fields_by_name['objs'].message_type = _VISUALOBJECT
@@ -1049,10 +1297,16 @@ _RADAROBJECT.fields_by_name['trace'].message_type = geometry__pb2._TRACE
 _RADAROBJECT.fields_by_name['prediction'].message_type = geometry__pb2._TRACE
 _RADAROBJECTS.fields_by_name['header'].message_type = header__pb2._HEADER
 _RADAROBJECTS.fields_by_name['objs'].message_type = _RADAROBJECT
+_OBUOBJECT.fields_by_name['obj'].message_type = _OBJECT
+_OBUOBJECT.fields_by_name['velocity'].message_type = geometry__pb2._VECTOR3
+_OBUOBJECT.fields_by_name['trace'].message_type = geometry__pb2._TRACE
+_OBUOBJECTS.fields_by_name['header'].message_type = header__pb2._HEADER
+_OBUOBJECTS.fields_by_name['objs'].message_type = _OBUOBJECT
 DESCRIPTOR.message_types_by_name['BBox2D'] = _BBOX2D
 DESCRIPTOR.message_types_by_name['CameraObjectSupplement'] = _CAMERAOBJECTSUPPLEMENT
 DESCRIPTOR.message_types_by_name['LidarObjectSupplement'] = _LIDAROBJECTSUPPLEMENT
 DESCRIPTOR.message_types_by_name['RadarObjectSupplement'] = _RADAROBJECTSUPPLEMENT
+DESCRIPTOR.message_types_by_name['ObuObjectsSupplement'] = _OBUOBJECTSSUPPLEMENT
 DESCRIPTOR.message_types_by_name['Object'] = _OBJECT
 DESCRIPTOR.message_types_by_name['VisualObject'] = _VISUALOBJECT
 DESCRIPTOR.message_types_by_name['VisualObjects'] = _VISUALOBJECTS
@@ -1060,6 +1314,8 @@ DESCRIPTOR.message_types_by_name['TrackedObject'] = _TRACKEDOBJECT
 DESCRIPTOR.message_types_by_name['TrackedObjects'] = _TRACKEDOBJECTS
 DESCRIPTOR.message_types_by_name['RadarObject'] = _RADAROBJECT
 DESCRIPTOR.message_types_by_name['RadarObjects'] = _RADAROBJECTS
+DESCRIPTOR.message_types_by_name['ObuObject'] = _OBUOBJECT
+DESCRIPTOR.message_types_by_name['ObuObjects'] = _OBUOBJECTS
 DESCRIPTOR.enum_types_by_name['ObjectType'] = _OBJECTTYPE
 
 BBox2D = _reflection.GeneratedProtocolMessageType('BBox2D', (_message.Message,), dict(
@@ -1089,6 +1345,13 @@ RadarObjectSupplement = _reflection.GeneratedProtocolMessageType('RadarObjectSup
   # @@protoc_insertion_point(class_scope:perception.RadarObjectSupplement)
   ))
 _sym_db.RegisterMessage(RadarObjectSupplement)
+
+ObuObjectsSupplement = _reflection.GeneratedProtocolMessageType('ObuObjectsSupplement', (_message.Message,), dict(
+  DESCRIPTOR = _OBUOBJECTSSUPPLEMENT,
+  __module__ = 'object_pb2'
+  # @@protoc_insertion_point(class_scope:perception.ObuObjectsSupplement)
+  ))
+_sym_db.RegisterMessage(ObuObjectsSupplement)
 
 Object = _reflection.GeneratedProtocolMessageType('Object', (_message.Message,), dict(
   DESCRIPTOR = _OBJECT,
@@ -1138,6 +1401,20 @@ RadarObjects = _reflection.GeneratedProtocolMessageType('RadarObjects', (_messag
   # @@protoc_insertion_point(class_scope:perception.RadarObjects)
   ))
 _sym_db.RegisterMessage(RadarObjects)
+
+ObuObject = _reflection.GeneratedProtocolMessageType('ObuObject', (_message.Message,), dict(
+  DESCRIPTOR = _OBUOBJECT,
+  __module__ = 'object_pb2'
+  # @@protoc_insertion_point(class_scope:perception.ObuObject)
+  ))
+_sym_db.RegisterMessage(ObuObject)
+
+ObuObjects = _reflection.GeneratedProtocolMessageType('ObuObjects', (_message.Message,), dict(
+  DESCRIPTOR = _OBUOBJECTS,
+  __module__ = 'object_pb2'
+  # @@protoc_insertion_point(class_scope:perception.ObuObjects)
+  ))
+_sym_db.RegisterMessage(ObuObjects)
 
 
 _LIDAROBJECTSUPPLEMENT.fields_by_name['cloud'].has_options = True

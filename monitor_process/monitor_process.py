@@ -119,6 +119,7 @@ def getPkgByFileName(strLaunchFileName):
 
 def getNodeNameByFileName(strLaunchFileName):
     strFullNodeName = ""
+    listCollectTempNode = []
     try:
         DOMTree = xml.dom.minidom.parse(strLaunchFileName)
         collection = DOMTree.documentElement
@@ -137,12 +138,22 @@ def getNodeNameByFileName(strLaunchFileName):
                             strNodeName = elem_node.getAttribute("name")
                             print "node name:{0}".format(strNodeName)
                             strFullNodeName = "/{0}/{1}".format(strNs, strNodeName)
+                            print "strFullNodeName:{0}".format(strFullNodeName)
+                            listCollectTempNode.append(strFullNodeName.strip().replace('//', '/'))
+                            print "now listCollectTempNode:{0}".format(listCollectTempNode)
         else:
             if len(nodes) > 0:
                 for elem_node in nodes:
                     if elem_node.hasAttribute("name"):
                         strNodeName = elem_node.getAttribute("name")
-                        strFullNodeName = "/{0}".format(strNodeName)
+                        if elem_node.hasAttribute('ns'):
+                            strNs = elem_node.getAttribute('ns')
+                            strFullNodeName = "/{0}/{1}".format(strNs, strNodeName)
+                            listCollectTempNode.append(strFullNodeName.strip().replace('//', '/'))
+                        else:
+                            strFullNodeName = "/{0}".format(strNodeName)
+                            listCollectTempNode.append(strFullNodeName.strip().replace('//', '/'))
+
 
     except Exception as e:
         print "exception happend"
@@ -155,7 +166,7 @@ def getNodeNameByFileName(strLaunchFileName):
         print 'traceback.print_exc():';
         traceback.print_exc()
         print 'traceback.format_exc():\n%s' % (traceback.format_exc())
-    return strFullNodeName
+    return listCollectTempNode
 
 
 def readNodeList():
@@ -164,7 +175,7 @@ def readNodeList():
     try:
         strHostName = getHostName()
         strFileListName = "/autocar-code/install/share/launch/%s.list" % (strHostName)
-        print "strFileListName:%s" % (strFileListName)
+        # print "strFileListName:%s" % (strFileListName)
 
         if os.path.exists(strFileListName):
             pass
@@ -176,9 +187,9 @@ def readNodeList():
             listResult = (f.readlines())
             for idx in range(len(listResult)):
                 linesLaunchFile_1.append(listResult[idx].strip('\n'))
-        print "start---------------------listResult"
-        print  linesLaunchFile_1
-        print "end---------------------listResult"
+        print "linesLaunchFile_1:{0}".format(linesLaunchFile_1)
+        # print  linesLaunchFile_1
+        # print "end---------------------listResult"
 
         ## search launch file
 
@@ -186,14 +197,14 @@ def readNodeList():
             print "start process : %s " % (linesLaunchFile_1[idx])
             strCmdRoslanchSearch = "roslaunch --files  %s   2>/dev/null" % (linesLaunchFile_1[idx])
             (status, include_files) = commands.getstatusoutput(strCmdRoslanchSearch)
-            print "start ---------------------include_files"
-            print include_files
-            print "end -----------------------include_files"
+            print "include_files:{0}".format(include_files)
+            # print include_files
+            # print "end -----------------------include_files"
             if status != 0:
-                print "status !=  0  ignore current , continue"
+                # print "status !=  0  ignore current , continue"
                 continue
             else:
-                print "status == 0  normal process "
+                # print "status == 0  normal process "
                 listIncludeFiles = include_files.split('\n', -1)
                 print listIncludeFiles
                 pass
@@ -201,19 +212,20 @@ def readNodeList():
             for idx_child_file in range(len(listIncludeFiles)):
                 if len(listIncludeFiles[idx_child_file]) == 0:
                     continue
-                print "process include_files[idx_child_file]:%s" % listIncludeFiles[idx_child_file]
+                # print "process include_files[idx_child_file]:%s" % listIncludeFiles[idx_child_file]
                 pkgName = getPkgByFileName(listIncludeFiles[idx_child_file])
                 if len(pkgName) == 0:
-                    print "get file %s len(pkgName) == 0  now continue" % (listIncludeFiles[idx_child_file])
+                    # print "get file %s len(pkgName) == 0  now continue" % (listIncludeFiles[idx_child_file])
                     continue
-                strNodeName = getNodeNameByFileName(listIncludeFiles[idx_child_file])
-                if len(strNodeName) == 0:
-                    print "len(strNodeName) == 0 %s" % strNodeName
-                if len(strNodeName.strip()) > 0:
+                listCollectNode = getNodeNameByFileName(listIncludeFiles[idx_child_file])
+                if len(listCollectNode) == 0:
+                    print "len(listCollectTempNode) == 0 {0}".format(listCollectNode)
+                if len(listCollectNode) > 0:
                     linesLaunchFile_2.append(listIncludeFiles[idx_child_file])
-                    print "##############################################now update  list  strNodeName:%s ,len1:%d,len2:%d " % (
-                        strNodeName.strip(), len(strNodeName.strip()), len(strNodeName))
-                    linesNodeName.append(strNodeName)
+                    print "##############################################now update  list  strNodeName"
+                    for elem_node in listCollectNode:
+                        print "add node name: {0} to linesNodeName".format(elem_node)
+                        linesNodeName.append(elem_node)
     except Exception as e:
         print "exception happend"
         print e.message

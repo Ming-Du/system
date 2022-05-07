@@ -324,3 +324,23 @@ sensor_info {
     }
   }
 }
+
+sensor_info {
+  name: "obu"
+  type: V2X
+  orientation: FRONT
+  topic: "/perception/v2x/v2x_obstacle"
+  extrinsic {
+    translation {
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    }
+    rotation {
+      w: 1.00000
+      x: 0.00000
+      y: 0.00000
+      z: 0.00000
+    }
+  }
+}

@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package common;
+import "String_PB.proto";
+import "Position3D_PB.proto";
+import "ParticipantList_PB.proto";
+
+message RoadsideSafetyMessage_PB {
+    /* MsgCount */
+    //发送方为自己发送的同类消息,依次进行编号。编号数值为 0 ~ 127。
+    //当发送方开始发起某一类数据时,它可以随机选择起始编号,随后依次递增。发送方也可以在
+    //连续发送相同的数据帧时,选择使用相同的 MsgCount 消息编号。编号到达 127 后,则下一个回到 0。
+    required 	int64  msgCnt=1;
+    required  String_PB	 id=2; //RSU_ID
+    required  Position3D_PB	 refPos=3; // 三维坐标
+    required  ParticipantList_PB participants=4; //交通参与者信息
+} 
+

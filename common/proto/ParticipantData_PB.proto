@@ -1,0 +1,35 @@
+syntax = "proto2";
+package common;
+
+import "ParticipantType_PB.proto";
+import "SourceType_PB.proto";
+import "String_PB.proto";
+import "PositionOffsetLLV_PB.proto";
+import "PositionConfidenceSet_PB.proto";
+import "TransmissionState_PB.proto";
+import "AccelerationSet4Way_PB.proto";
+import "MotionConfidenceSet_PB.proto";
+import "VehicleSize_PB.proto";
+import "VehicleClassification_PB.proto";
+message ParticipantData_PB{
+
+    required ParticipantType_PB ptcType = 1;
+    required int32 ptcId = 2;//不同参与者的ptcId在RSU中需要是唯一的,
+    required SourceType_PB source = 3;
+    optional String_PB id = 4; // 车的临时id,跟BSM消息一致
+    /* DSecond */ //1分钟内的毫秒级时刻分辨率为1毫秒，有效范围时0~59999.60000及以上表示未知或无效数值
+    required    int64	 secMark = 5;
+    required PositionOffsetLLV_PB pos = 6; // 中心位置
+    required PositionConfidenceSet_PB posConfidence = 7;
+    optional TransmissionState_PB transmission = 8; // 车辆挡位
+    //速度 0.02m/s
+    required    int32    speed=9;
+    //航向角
+    required    int32    heading=10;
+    //SteeringWheelAngle_t  方向盘转角(-126..127)
+    optional    int32   angle=11;
+    optional MotionConfidenceSet_PB motionCfd = 12;
+    optional AccelerationSet4Way_PB accelSet = 13;
+    required VehicleSize_PB size = 14;
+    optional VehicleClassification_PB vehicleClass= 15;
+}

@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='routing.proto',
   package='hadmap',
   syntax='proto2',
-  serialized_pb=_b('\n\rrouting.proto\x12\x06hadmap\x1a\x0egeometry.proto\x1a\x0cheader.proto\"@\n\x08Waypoint\x12\n\n\x02id\x18\x01 \x01(\t\x12\t\n\x01s\x18\x02 \x01(\x01\x12\x1d\n\x04pose\x18\x03 \x01(\x0b\x32\x0f.geometry.Point\"\xff\x01\n\x0eRoutingRequest\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x0b\n\x03map\x18\x02 \x01(\t\x12\x0f\n\x07\x66\x65\x61ture\x18\x03 \x01(\t\x12\x1f\n\x05start\x18\x04 \x01(\x0b\x32\x10.hadmap.Waypoint\x12\x1d\n\x03\x65nd\x18\x05 \x01(\x0b\x32\x10.hadmap.Waypoint\x12\"\n\x08waypoint\x18\x06 \x03(\x0b\x32\x10.hadmap.Waypoint\x12\x12\n\nspeedlimit\x18\x07 \x01(\x01\x12\x11\n\tstartName\x18\x08 \x01(\t\x12\x0f\n\x07\x65ndName\x18\t \x01(\t\x12\x13\n\x0bvehicleType\x18\n \x01(\x05')
+  serialized_pb=_b('\n\rrouting.proto\x12\x06hadmap\x1a\x0egeometry.proto\x1a\x0cheader.proto\"O\n\x08Waypoint\x12\n\n\x02id\x18\x01 \x01(\t\x12\t\n\x01s\x18\x02 \x01(\x01\x12\x1d\n\x04pose\x18\x03 \x01(\x0b\x32\x0f.geometry.Point\x12\r\n\x05theta\x18\x04 \x01(\x01\"\xab\x02\n\x0eRoutingRequest\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x0b\n\x03map\x18\x02 \x01(\t\x12\x0f\n\x07\x66\x65\x61ture\x18\x03 \x01(\t\x12\x1f\n\x05start\x18\x04 \x01(\x0b\x32\x10.hadmap.Waypoint\x12\x1d\n\x03\x65nd\x18\x05 \x01(\x0b\x32\x10.hadmap.Waypoint\x12\"\n\x08waypoint\x18\x06 \x03(\x0b\x32\x10.hadmap.Waypoint\x12\x12\n\nspeedlimit\x18\x07 \x01(\x01\x12\x11\n\tstartName\x18\x08 \x01(\t\x12\x0f\n\x07\x65ndName\x18\t \x01(\t\x12\x13\n\x0bvehicleType\x18\n \x01(\x05\x12\x13\n\x0b\x62us_routeid\x18\x0b \x01(\r\x12\x15\n\rbus_routename\x18\x0c \x01(\t')
   ,
   dependencies=[geometry__pb2.DESCRIPTOR,header__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -57,6 +57,13 @@ _WAYPOINT = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='theta', full_name='hadmap.Waypoint.theta', index=3,
+      number=4, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -70,7 +77,7 @@ _WAYPOINT = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=55,
-  serialized_end=119,
+  serialized_end=134,
 )
 
 
@@ -151,6 +158,20 @@ _ROUTINGREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='bus_routeid', full_name='hadmap.RoutingRequest.bus_routeid', index=10,
+      number=11, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='bus_routename', full_name='hadmap.RoutingRequest.bus_routename', index=11,
+      number=12, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -163,8 +184,8 @@ _ROUTINGREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=122,
-  serialized_end=377,
+  serialized_start=137,
+  serialized_end=436,
 )
 
 _WAYPOINT.fields_by_name['pose'].message_type = geometry__pb2._POINT

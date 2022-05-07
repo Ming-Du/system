@@ -56,6 +56,17 @@ message RadarObjectSupplement {
   optional float relative_vel_y = 5;
   optional float absolute_vel_x = 6;
   optional float absolute_vel_y = 7;
+  optional bool  is_rear = 8 [default = false];  // the object from which sensor
+}
+// Modify(@liuxinyu): obu_test
+message ObuObjectsSupplement {
+  optional bool on_use = 1 [default = false];  
+  optional float x = 2;
+  optional float y = 3;
+  optional float relative_vel_x = 4;
+  optional float relative_vel_y = 5;
+  optional float absolute_vel_x = 6;
+  optional float absolute_vel_y = 7;
 }
 
 message Object {
@@ -90,6 +101,9 @@ message Object {
   optional RadarObjectSupplement radar_supplement = 19;
     //lidar polygon
   repeated geometry.Point polygon = 20;  // polygon points
+  // Modify(@liuxinyu): obu_test
+  // obu supplement
+  optional ObuObjectsSupplement obu_supplement = 21;
 }
 
 message VisualObject {
@@ -129,6 +143,9 @@ message TrackedObject {
 
   optional double longitude_p = 13;   // position in East , in meters
   optional double latitude_p = 14;   // position in North , in meters
+ 
+ optional double speed  = 15;// m/s
+ optional double heading =16;// degrees
 
 //float x_speed             // longitudinal speed relative to host vehicle, m/s
 //float y_speed             // lateral speed relative to host vehicle, m/s
@@ -186,4 +203,24 @@ message RadarObjects {
   optional common.Header header = 1;
   optional string sensor_name = 2;
   repeated RadarObject objs = 3;
+}
+
+message ObuObject {
+  optional Object obj = 1;
+  optional double longitude = 2;          // longitude , in degrees
+  optional double latitude = 3;           // latitude , in degrees
+  optional double alt = 4;                // height above mean sea level in meters
+  optional geometry.Vector3 velocity = 5; // absolute velocity, in m/s, vx, vy, vz
+  optional float yaw = 6;                 // box orientation angle from x axis, counter clockwise(in rad),range -pi to pi
+  optional float yaw_rate = 7;            // in rad/s
+  optional float heading = 8;             // gps head 
+  optional float speed = 9;               // gps speed
+  repeated geometry.Trace trace = 10;      // historical positions
+  optional string source = 11;
+}
+
+message ObuObjects {
+  optional common.Header header = 1;
+  optional string sensor_name = 2;
+  repeated ObuObject objs =3;
 }

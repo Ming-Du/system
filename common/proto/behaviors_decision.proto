@@ -2,7 +2,6 @@ syntax = "proto2";
 package planning;
 
 import "header.proto";
-import "chassis.proto";
 import "trajectory.proto";
 //enum LaneChange {
   //LANE_KEEPING = 0;

@@ -3,7 +3,6 @@ syntax = "proto2";
 package prediction;
 
 // common
-import "error_code.proto";
 import "header.proto";
 import "geometry.proto";
 

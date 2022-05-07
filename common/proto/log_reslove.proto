@@ -2,7 +2,6 @@ syntax = "proto2";
 
 package log_reslove;
 
-import "geometry.proto";
 import "header.proto";
 
 message TopicHz
