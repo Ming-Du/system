@@ -1,0 +1,106 @@
+syntax = "proto2";
+package perception;
+
+import "header.proto";
+
+enum WeightLimitSign {
+  WT_LIM_1d5 = 0;  //weight limit 1.5t
+  WT_LIM_2 = 1;
+  WT_LIM_2d5 = 2;  //weight limit 2.5t
+  WT_LIM_3 = 3;
+  WT_LIM_5 = 4;
+  WT_LIM_8 = 5;
+  WT_LIM_10 = 6;
+  WT_LIM_13 = 7;
+  WT_LIM_15 = 8;
+  WT_LIM_20 = 9;
+  WT_LIM_25 = 10;
+  WT_LIM_30 = 11;
+  WT_LIM_35 = 12;
+  WT_LIM_40 = 13;
+  WT_LIM_46 = 14;
+  WT_LIM_49 = 15;
+  WT_LIM_50 = 16;
+  WT_LIM_55 = 17;
+  WT_LIM_OTHER = 18; 
+}
+
+enum SpeedLimitSign {
+  SP_LIM_5 = 0;  //speed limit 5km/h
+  SP_LIM_10 = 1;
+  SP_LIM_15 = 2;
+  SP_LIM_20 = 3;
+  SP_LIM_25 = 4;
+  SP_LIM_30 = 5;
+  SP_LIM_35 = 6;
+  SP_LIM_40 = 7;
+  SP_LIM_45 = 8;
+  SP_LIM_50 = 9;
+  SP_LIM_55 = 10;
+  SP_LIM_60 = 11;
+  SP_LIM_65 = 12;
+  SP_LIM_70 = 13;
+  SP_LIM_75 = 14;
+  SP_LIM_80 = 15;
+  SP_LIM_85 = 16;
+  SP_LIM_90 = 17;
+  SP_LIM_95 = 18;
+  SP_LIM_100 = 19;
+  SP_LIM_105 = 20;
+  SP_LIM_110 = 21;
+  SP_LIM_115 = 22;
+  SP_LIM_120 = 23;
+  SP_LIM_OTHER = 24;
+}
+
+enum ForbidSign {
+  NO_OTHER = 0;
+  NO_ENTRY = 1;
+  STOP_YIELD = 2;
+  NO_VEHICLE_ALLOWED = 3;
+  NO_TURN_LEFT = 4;
+  NO_U_TURN = 5;     
+}
+
+enum WarnSign {
+  WN_DEFAULT = 0;
+}
+
+enum InstructSign {
+  IN_DEFAULT = 0;
+}
+
+message Sign2DLoc {
+  optional float x = 1;//center point (x,y) 
+  optional float y = 2;
+  optional float width = 3;
+  optional float height = 4;
+}
+
+message Sign3DLoc {
+  optional float x = 1;//center point (x,y,z)
+  optional float y = 2;
+  optional float z = 3;
+  optional float width = 4;
+  optional float height = 5;
+  optional float long = 6;
+}
+
+message TrafficSign {
+  optional Sign2DLoc loc_2d = 1;//2D center point and size
+  optional Sign3DLoc loc_3d = 2;//3D center point and size,mybe empty in practice
+  /*five types of sign below,only one is enable,others will be empty*/ 
+  optional WeightLimitSign wt_lim_sign = 3;
+  optional SpeedLimitSign sp_lim_sign = 4;
+  optional ForbidSign no_sign = 5;
+  optional WarnSign wn_sign = 6;
+  optional InstructSign in_sign = 7;
+  /****************************************/
+  optional float type_prob = 8;//sign type probability
+}
+
+message TrafficSigns {
+  optional common.Header header = 1;
+  optional int64 id = 2;
+  repeated TrafficSign sign = 3;
+}
