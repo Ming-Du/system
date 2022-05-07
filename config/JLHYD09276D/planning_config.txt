@@ -1,14 +1,42 @@
 frequency : 10
-speed_max : 4.77
+speed_max : 10
 acc_min : -4.0
-acc_max : 1.0
+acc_max : 2
 jerk_min : -6.0
 jerk_max : 4.0
 time_sample : 0.1
 path_sample : 0.2
 safe_distance_buffer : 4.0
 safe_distance_by_time : 0.4
-safe_lateral_buffer : 0.2
+safe_lateral_buffer : -0.2
 flag_lane_change : 0
 dis_stop : 22
-flag_global_lane_change: 0
+flag_global_lane_change: 1
+vc_kp : 0.2
+vc_ki : 0
+dc_d_kp : 0.2
+dc_d_ki : 0
+dc_v_kp : 0.2
+dc_v_ki : 0
+dc_d_input_low : -10;
+dc_d_input_high : 5;
+dc_v_input_low : -10;
+dc_v_input_high : 5;
+dc_d_out_low : -2
+dc_d_out_high : 2
+dc_v_out_low : -2
+dc_v_out_high : 2
+dc_ttc : 3
+dc_min_dis : 5
+dc_safe_dis : 5
+dc_ctrl_opt : 0
+dc_flg_use_safe : 1
+afcn_work : -0.5
+afcn_low : -1.2
+sw_use_stitch : 0
+sw_stop_design : 0
+utm_x : 477506.90938
+utm_y : 4449854.790312
+pre_coef : 0.5
+trj_num : 20
+filter_coef: 1

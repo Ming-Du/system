@@ -21,7 +21,7 @@ sensor_info {
 }
 
 sensor_info {
-  name: "H60-D06170617"
+  name: "H60L-D12310660"
   type: SENSING_60
   orientation: FRONT
   topic: "/sensor/camera/sensing/image_raw_60"
@@ -61,7 +61,7 @@ sensor_info {
 }
 
 sensor_info {
-  name: "H30-D06170567"
+  name: "H30S-E01120557"
   type: SENSING_30
   orientation: FRONT
   topic: "/sensor/camera/sensing/image_raw_30"
@@ -101,7 +101,7 @@ sensor_info {
 }
 
 sensor_info {
-  name: "H120-D06170552"
+  name: "H120L-E01100627"
   type: SENSING_120
   orientation: FRONT
   topic: "/sensor/camera/sensing/image_raw_120"
@@ -192,10 +192,10 @@ sensor_info {
       z: 0.75
     }
     rotation {# 2.0,-2.2,119.5
-      w: 0.50327
-      x: 0.0262498
-      y: 0.00691099
-      z: 0.863703
+      w: 0.503315
+      x: 0.0253714
+      y: 0.0054035
+      z: 0.8637136
     }
   }
 }
@@ -230,10 +230,10 @@ sensor_info {
       z: 0.75
     }
     rotation {# 2.2,-1.5,268.75
-      w: -0.699349
-      x: -0.00282268
-      y: 0.0240932
-      z: 0.714368
+      w: -0.6993424
+      x: -0.0040702
+      y: 0.0228733
+      z: 0.7144092
     }
   }
 }

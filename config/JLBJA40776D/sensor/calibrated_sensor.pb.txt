@@ -188,7 +188,7 @@ sensor_info {
   extrinsic {
     translation {
       x: 5.04
-      y: 0.8
+      y: 0.80
       z: 0.72
     }
     rotation { #1.10,-1.75,124
@@ -208,7 +208,7 @@ sensor_info {
   extrinsic {
     translation {
       x: 5.09
-      y: -1.2
+      y: -1.20
       z: 0.75
     }
     rotation {#x,-0.85,y,0.45,z,53.85 
