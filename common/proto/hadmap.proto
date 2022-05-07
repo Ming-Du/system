@@ -307,6 +307,12 @@ message LaneLink {
 
     // to road lane id
     optional int32 to_lane_id = 7;
+
+    // 驶出路口的lanlink，次字段true，非路口fasle
+    optional bool from_junction = 8;
+
+    // 进出路口的lanlink，次字段true，非路口false
+    optional bool to_junction = 9;
 }
 
 
