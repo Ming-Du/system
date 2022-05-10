@@ -1,5 +1,5 @@
 frequency : 10
-speed_max : 10
+speed_max : 4.166
 acc_min : -4.0
 acc_max : 2
 jerk_min : -6.0
@@ -19,7 +19,7 @@ dc_d_ki : 0
 dc_v_kp : 0.2
 dc_v_ki : 0
 dc_d_input_low : -10;
-dc_d_input_high : 5;
+dc_d_input_high : 10;
 dc_v_input_low : -10;
 dc_v_input_high : 5;
 dc_d_out_low : -2
@@ -40,3 +40,7 @@ utm_y : 4449854.790312
 pre_coef : 0.5
 trj_num : 20
 filter_coef: 1
+vc_input_low : -5
+vc_input_high : 5
+vc_out_low : -1.5
+vc_out_high : 1.5
