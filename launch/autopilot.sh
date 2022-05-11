@@ -552,10 +552,6 @@ export OMP_NUM_THREADS=1
 export BASHRC="source ${SETUP_ROS} && source ${SETUP_AUTOPILOT}"
 export ROS_ENV="export ROS_LOG_DIR=${ROS_LOG_DIR}; export ROS_MASTER_URI=http://${ros_master}:11311; export ROS_HOSTNAME=${ros_machine}"
 
-rm -rf /home/mogo/autopilot/share/config/vehicle
-plate_number=`cat /home/mogo/data/vehicle_monitor/vehicle_config.txt |  grep "plate" | awk -F [\"] '{print $2}'`
-ln -s /home/mogo/data/vehicle_monitor/${plate_number}  /home/mogo/autopilot/share/config/vehicle
-
 
 # start to launch
 get_all_launch_files $list_file #获取所有需要启动的launch文件
@@ -563,6 +559,9 @@ wait_core
 # 配置更新
 timeout 300 roslaunch --wait update_config update_config.launch >$ROS_LOG_DIR/update_config.launch.log 2>$ROS_LOG_DIR/update_config.launch.err
 
+rm -rf /home/mogo/autopilot/share/config/vehicle
+plate_number=`cat /home/mogo/data/vehicle_monitor/vehicle_config.txt |  grep "plate" | awk -F [\"] '{print $2}'`
+ln -s /home/mogo/data/vehicle_monitor/${plate_number}  /home/mogo/autopilot/share/config/vehicle
 # launch gnss
 
 # launch telematics
