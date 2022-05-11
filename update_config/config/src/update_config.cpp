@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 
 
 	MoveTempMapFile();
-	UpdatePbFile();
+	//UpdatePbFile();
 	UpdateOtherFile();
 	int sec = 0;
         while(ros::ok() && sec++ < 1)
