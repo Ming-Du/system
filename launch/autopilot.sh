@@ -554,7 +554,7 @@ export ROS_ENV="export ROS_LOG_DIR=${ROS_LOG_DIR}; export ROS_MASTER_URI=http://
 
 rm -rf /home/mogo/autopilot/share/config/vehicle
 plate_number=`cat /home/mogo/data/vehicle_monitor/vehicle_config.txt |  grep "plate" | awk -F [\"] '{print $2}'`
-ln -s /home/mogo/data/vehicle_monitor/vehicle/${plate_number}  /home/mogo/autopilot/share/config/vehicle
+ln -s /home/mogo/data/vehicle_monitor/${plate_number}  /home/mogo/autopilot/share/config/vehicle
 
 
 # start to launch
