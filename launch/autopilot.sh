@@ -577,7 +577,7 @@ ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet_b2_1.2.0.engi
 ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet_b3_1.1.0.engine /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet_b3_side.engine
 ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/obj_1.2.0.names /home/mogo/data/vehicle_monitor/AI_models/obj.names 
 ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/obj_1.1.0.names /home/mogo/data/vehicle_monitor/AI_models/obj_side.names
-ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/trfcLts_cls.engine /home/mogo/data/vehicle_monitor/AI_models/trfcLts_cls_b8_1.0.0.engine
+ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/trfcLts_cls_b8_1.0.0.engine /home/mogo/data/vehicle_monitor/AI_models/trfcLts_cls.engine
 ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/trfcSign_cls_b8_1.0.0.engine /home/mogo/data/vehicle_monitor/AI_models/trfcSign_cls.engine
 
 
