@@ -562,6 +562,35 @@ timeout 300 roslaunch --wait update_config update_config.launch >$ROS_LOG_DIR/up
 rm -rf /home/mogo/autopilot/share/config/vehicle
 plate_number=`cat /home/mogo/data/vehicle_monitor/vehicle_config.txt |  grep "plate" | awk -F [\"] '{print $2}'`
 ln -s /home/mogo/data/vehicle_monitor/${plate_number}  /home/mogo/autopilot/share/config/vehicle
+
+ln -s /home/mogo/data/vehicle_monitor/AI_models/vidar/smoke_mogo_fp16_batch2_1.0.0.trt /home/mogo/data/vehicle_monitor/AI_models/vidar/smoke_mogo_fp16_batch2.trt
+ln -s /home/mogo/data/vehicle_monitor/AI_models/vidar/vidar_mogo_fp16_1.0.0.trt /home/mogo/data/vehicle_monitor/AI_models/vidar/vidar_mogo_fp16.trt
+
+ln -s /home/mogo/data/vehicle_monitor/AI_models/laneaf/cv_segment_1.0.0.trt /home/mogo/data/vehicle_monitor/AI_models/laneaf/cv_segment_downsample2.trt
+
+ln -s /home/mogo/data/vehicle_monitor/AI_models/laneaf/cv_segment_1.3.0.trt /home/mogo/data/vehicle_monitor/AI_models/laneaf/cv_segment_downsample4.trt
+
+ln -s /home/mogo/data/vehicle_monitor/AI_models/arrow_classification/cv_arrow_classification_1.0.0.trt /home/mogo/data/vehicle_monitor/AI_models/arrow_classification/cv_arrow_classification.trt 
+
+ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet_1.2.0.engine /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet.engine
+ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet_b2_1.2.0.engine /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet_b2.engine
+ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet_b3_1.1.0.engine /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet_b3_side.engine
+ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/obj_1.2.0.names /home/mogo/data/vehicle_monitor/AI_models/obj.names 
+ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/obj_1.1.0.names /home/mogo/data/vehicle_monitor/AI_models/obj_side.names
+ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/trfcLts_cls.engine /home/mogo/data/vehicle_monitor/AI_models/trfcLts_cls_b8_1.0.0.engine
+ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/trfcSign_cls_b8_1.0.0.engine /home/mogo/data/vehicle_monitor/AI_models/trfcSign_cls.engine
+
+
+
+
+
+
+
+
+
+
+
+
 # launch gnss
 
 # launch telematics
