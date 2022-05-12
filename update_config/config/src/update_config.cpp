@@ -30,10 +30,9 @@ bool MoveTempMapFile()
 }
 
 
-void LinkFile(std::string file_path)
+void LinkFile(std::string file_path, std::string SN)
 {
         std::map<std::string, std::string> file_link_map;
-        std::string SN = pCurl->GetPlate();
         std::string rm_cmd = "rm -rf /home/mogo/autopilot/share/config/vehicle";
         system(rm_cmd.c_str());
         std::string link_cmd = "ln -s /home/mogo/data/vehicle_monitor/" + SN + " /home/mogo/autopilot/share/config/vehicle";
@@ -101,8 +100,8 @@ bool UpdateOtherFile()
 		}
 	}
 	delete pCurl;
-	LinkFile("/home/mogo/autopilot/share/config/vehicle/slinks.cfg");
-        LinkFile("/home/mogo/data/vehicle_monitor/slinks.cfg");
+	LinkFile("/home/mogo/autopilot/share/config/vehicle/slinks.cfg", SN);
+        LinkFile("/home/mogo/data/vehicle_monitor/slinks.cfg", SN);
 
 	return flag;
 }
