@@ -11,6 +11,6 @@
           --publish_lidar_cluster=true
           --lidar_input=c32_front_left;c32_front_right;c32_rear" >
 	  <param name="perception_config_path" type="string" value="$(arg perception_path)" />
+    <param name="vehicle_type" type="string" value="bus" />
   </node>
 </launch>
-

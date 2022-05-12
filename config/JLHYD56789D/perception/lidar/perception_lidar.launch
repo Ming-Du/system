@@ -14,4 +14,3 @@
     <param name="vehicle_type" type="string" value="bus" />
   </node>
 </launch>
-
