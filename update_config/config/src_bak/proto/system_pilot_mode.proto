@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+import "header.proto";
+
+enum PilotMode {
+  MODE_MANUAL = 0;
+  MODE_AUTO_DRIVE = 1;
+  MODE_REMOTE_DRIVE = 2;
+}
+
+message SYSVehicleState {
+  optional common.Header header = 1;
+  required PilotMode pilot_mode = 2;
+  optional bool steer_inference = 3 [default = false]; //方向盘干预
+  optional bool brake_inference = 4 [default = false]; //制动踏板干预
+  optional bool accel_inference = 5 [default = false]; //加速踏板干预
+  optional bool gear_switch_inference = 6 [default = false]; //档位切换干预 
+  optional bool location_missing = 7 [default = false]; //未收到定位
+  optional bool trajectory_missing = 8 [default = false]; //未收到轨迹
+  optional bool chassis_status_missing = 9 [default = false]; //未收到车辆底盘反馈信息
+  optional bool brake_light_status = 10 [default = false]; //自驾模式下制动灯状态
+  optional bool pilot_mode_condition_met = 11 [default = false];
+}
