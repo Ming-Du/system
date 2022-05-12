@@ -1,12 +1,12 @@
 #include <ros/ros.h>
-#include <sys/types.h>  /*提供类型pid_t,size_t的定义*/
+#include<sys/types.h>  /*提供类型pid_t,size_t的定义*/
 
-#include <sys/stat.h>
+#include<sys/stat.h>
 
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include<fcntl.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
 
 #include "mogo_curl.h"
 #include "mogo_json.h"
@@ -18,7 +18,7 @@ MogoCurl::MogoCurl()
 
 MogoCurl::~MogoCurl()
 {
-	//curl_easy_cleanup(m_curl_handle);
+	curl_easy_cleanup(m_curl_handle);
 	curl_global_cleanup();
 }
 
@@ -27,6 +27,7 @@ CURLcode MogoCurl::Init()
 	CURLcode error;
 	curl_global_init(CURL_GLOBAL_ALL);
 	m_curl_handle = curl_easy_init();
+	curl_easy_setopt(m_curl_handle, CURLOPT_WRITEFUNCTION, write_data);
 }
 
 CURLcode MogoCurl::Get(const std::string &url, std::string &rstr)
@@ -44,11 +45,20 @@ CURLcode MogoCurl::Get(const std::string &url, std::string &rstr)
 
 CURLcode MogoCurl::Post(const std::string &url, const std::string &pstr, std::string &rstr)
 {
-	m_curl_handle = curl_easy_init();
 	curl_easy_setopt(m_curl_handle, CURLOPT_DNS_SERVERS, "8.8.8.8");
 	curl_easy_setopt(m_curl_handle, CURLOPT_URL, url.c_str());
 	curl_easy_setopt(m_curl_handle, CURLOPT_POST, 1);
 	curl_easy_setopt(m_curl_handle, CURLOPT_POSTFIELDS, pstr.c_str());
+	//curl_easy_setopt(m_curl_handle, CURLOPT_READFUNCTION, NULL);
+	//curl_easy_setopt(m_curl_handle, CURLOPT_NOSIGNAL, 1);
+	//curl_easy_setopt(m_curl_handle, CURLOPT_CONNECTTIMEOUT_MS, 200);
+	//curl_easy_setopt(m_curl_handle, CURLOPT_TIMEOUT, 200);
+
+	//curl_easy_setopt(m_curl_handle, CURLOPT_FOLLOWLOCATION, 1);
+	//curl_easy_setopt(m_curl_handle, CURLOPT_TCP_KEEPALIVE, 1L);  // enable TCP keep-alive for this transfer 
+	//curl_easy_setopt(m_curl_handle, CURLOPT_TCP_KEEPIDLE, 120L);	// keep-alive idle time to 120 seconds 
+	//curl_easy_setopt(m_curl_handle, CURLOPT_TCP_KEEPINTVL, 60L);
+
 	struct curl_slist* headers = NULL;
 	headers = curl_slist_append(headers, "Content-Type:application/json;charset=UTF-8");
 	curl_easy_setopt(m_curl_handle, CURLOPT_HTTPHEADER, headers);
@@ -59,145 +69,135 @@ CURLcode MogoCurl::Post(const std::string &url, const std::string &pstr, std::st
 	curl_easy_setopt(m_curl_handle, CURLOPT_WRITEFUNCTION, write_data);
 	CURLcode res = curl_easy_perform(m_curl_handle);
 	rstr = oDataChunk.memory;
-	curl_easy_cleanup(m_curl_handle);
 	return res;
 }
 
 
-//单个文件按120M最大来算
-//下载速度1MB，超时时间120S
-CURLcode MogoCurl::Download(const std::string &url, std::string &file_path, int rate)
+CURLcode MogoCurl::Download(const std::string &url, std::string &file_path)
 {
-	m_curl_handle = curl_easy_init();
-	int outfile;
-	CURLcode res;
-	const char *progress_data = "* ";
-	curl_off_t length = getLocalFileLength(file_path);
-	outfile = open(file_path.c_str(), O_RDWR|O_CREAT|O_APPEND, 0777);
-
-	if(m_curl_handle)
-	{
-		curl_easy_setopt(m_curl_handle, CURLOPT_DNS_SERVERS, "8.8.8.8");
-		curl_easy_setopt(m_curl_handle, CURLOPT_URL, url.data());
-		if(length != -1)
-		{
-			curl_easy_setopt(m_curl_handle,  CURLOPT_RESUME_FROM_LARGE, length);
-		}
-		curl_easy_setopt(m_curl_handle, CURLOPT_WRITEDATA, (void *)&outfile);
-		curl_easy_setopt(m_curl_handle, CURLOPT_WRITEFUNCTION, my_write_func);
-		curl_easy_setopt(m_curl_handle, CURLOPT_NOPROGRESS, 0);
-		curl_easy_setopt(m_curl_handle, CURLOPT_PROGRESSFUNCTION, my_progress_func);
-		curl_easy_setopt(m_curl_handle, CURLOPT_PROGRESSDATA, progress_data);
-		curl_easy_setopt(m_curl_handle, CURLOPT_MAX_RECV_SPEED_LARGE, rate);
-		res = curl_easy_perform(m_curl_handle);
-		curl_easy_cleanup(m_curl_handle);
-	}
-	close(outfile);
-	return res;
+	string download_cmd = "curl -o " + file_path + " " + url;
+        system(download_cmd.c_str());
+        return CURLE_OK;
 	/*
-	string download_cmd = "curl -m 120 -C - -o " + file_path + " --limit-rate " + std::to_string(rate) + " " + url;
-	system(download_cmd.c_str());
-	return CURLE_OK;
+	m_curl_handle = curl_easy_init();
+        int outfile;
+        CURLcode res;
+        const char *progress_data = "* ";
+        outfile = open(file_path.c_str(), O_RDWR|O_CREAT, 0777);
+
+        if(m_curl_handle)
+        {
+		curl_easy_setopt(m_curl_handle, CURLOPT_DNS_SERVERS, "8.8.8.8");
+                curl_easy_setopt(m_curl_handle, CURLOPT_URL, url.data());
+                curl_easy_setopt(m_curl_handle, CURLOPT_WRITEDATA, (void *)&outfile);
+                curl_easy_setopt(m_curl_handle, CURLOPT_WRITEFUNCTION, my_write_func);
+                curl_easy_setopt(m_curl_handle, CURLOPT_NOPROGRESS, 0);
+                curl_easy_setopt(m_curl_handle, CURLOPT_PROGRESSFUNCTION, my_progress_func);
+                curl_easy_setopt(m_curl_handle, CURLOPT_PROGRESSDATA, progress_data);
+
+                res = curl_easy_perform(m_curl_handle);
+
+        }
+        close(outfile);
+        return res;
 	*/
 }
 
-
-bool MogoCurl::GetUpdateBinaryFileList(const std::string &update_url, const std::string &mac_addr, const std::string &SN, std::list<DownloadFile> &file_list)
+bool MogoCurl::GetUpdateBinaryFileList(const std::string &update_url, const std::string &mac_addr, 
+		const std::string &SN, std::list<DownloadFile> &file_list)
 {
-	try
+	Json::Value root;
+	Json::FastWriter fast_writer;
+	root["sn"]=SN;
+	root["mac"] = mac_addr;
+	std::string pstr = fast_writer.write(root);
+	ROS_INFO("update config GetUpdateBinaryFileList post str [%s]", pstr.data());
+	std::string rstr;
+	if(Post(update_url, pstr, rstr) != CURLE_OK) 
 	{
-		Json::Value root;
-		Json::FastWriter fast_writer;
-		root["sn"]=SN;
-		root["mac"] = mac_addr;
-		std::string pstr = fast_writer.write(root);
-		ROS_INFO("update config GetUpdateBinaryFileList post str [%s]", pstr.data());
-		std::string rstr;
-		if(Post(update_url, pstr, rstr) != CURLE_OK) 
+		ROS_ERROR("update config GetBinaryUpdateFileList post str [%s] error", pstr.data());
+		return false;
+	}
+	ROS_INFO("update config GetUpdateBinaryFileList response str [%s]", rstr.data());
+	MyJson pJson;
+	if(!pJson.parse(rstr)) 
+	{
+		ROS_ERROR("update config GetUpdateBinaryFileList parse json rstr [%s] error", rstr.data());
+		return false;
+	}
+
+	int errcode = -1;
+	if(!pJson.getInt("errcode", errcode) || errcode!=0) 
+	{
+		ROS_ERROR("update config GetUpdateBinaryFileList parse json get errcode rstr [%s] error", rstr.data());
+		return false;
+	}
+	Json::Value arrayObj;
+	if(!pJson.getArray("data", arrayObj)) 
+	{
+		ROS_ERROR("update config GetUpdateBinaryFileList parse json get data rstr [%s] error", rstr.data());
+		return false;
+	}
+	MyJson pArrayJson(arrayObj);
+	int list_size = pArrayJson.getSize();
+	for(size_t i=0; i<list_size; i++)
+	{
+		Json::Value obj = pJson.getObjectIndex("data", i);
+		MyJson pObjJson(obj);
+		std::string file_path;
+		if(!pObjJson.getString("filepath", file_path)) 
 		{
-			ROS_ERROR("update config GetBinaryUpdateFileList post str [%s] error", pstr.data());
+			ROS_ERROR("update config GetUpdateBinaryFileList parse json get filepath rstr [%s] error", rstr.data());
 			return false;
 		}
-		ROS_INFO("update config GetUpdateBinaryFileList response str [%s]", rstr.data());
-		
-		MyJson pJson;
-		if(!pJson.parse(rstr)) 
+		std::string md5_str;
+		if(!pObjJson.getString("md5", md5_str)) 
 		{
-			ROS_ERROR("update config GetUpdateBinaryFileList parse json rstr [%s] error", rstr.data());
+			ROS_ERROR("update config GetUpdateBinaryFileList parse json get md5 rstr [%s] error", rstr.data());
+			return false;
+		}
+		int update;
+		if(!pObjJson.getInt("update", update)) 
+		{
+			ROS_ERROR("update config GetUpdateBinaryFileList parse json get update rstr [%s] error", rstr.data());
 			return false;
 		}
 
-		int errcode = -1;
-		if(!pJson.getInt("errcode", errcode) || errcode!=0) 
+		std::string map_url;
+		if(!pObjJson.getString("content", map_url))
 		{
-			ROS_ERROR("update config GetUpdateBinaryFileList parse json get errcode rstr [%s] error", rstr.data());
+			ROS_ERROR("update config GetUpdateBinaryFileList parse json get content rstr [%s] error", rstr.data());
 			return false;
 		}
-		Json::Value arrayObj;
-		if(!pJson.getArray("data", arrayObj)) 
+
+		std::string version;
+		if(!pObjJson.getString("version", version))
+                {
+                        ROS_ERROR("update config GetUpdateBinaryFileList parse json get version rstr [%s] error", rstr.data());
+                        return false;
+                }
+
+		DownloadFile pFile = {file_path, map_url, version};
+		if(access(file_path.data(), NULL)!=0)
 		{
-			ROS_ERROR("update config GetUpdateBinaryFileList parse json get data rstr [%s] error", rstr.data());
-			return false;
-		}
-		MyJson pArrayJson(arrayObj);
-		int list_size = pArrayJson.getSize();
-		for(size_t i=0; i<list_size; i++)
-		{
-			Json::Value obj = pJson.getObjectIndex("data", i);
-			MyJson pObjJson(obj);
-			std::string file_path;
-			if(!pObjJson.getString("filepath", file_path)) 
-			{
-				ROS_ERROR("update config GetUpdateBinaryFileList parse json get filepath rstr [%s] error", rstr.data());
-				return false;
-			}
-
-			std::string md5_str;
-			if(!pObjJson.getString("md5", md5_str)) 
-			{
-				ROS_ERROR("update config GetUpdateBinaryFileList parse json get md5 rstr [%s] error", rstr.data());
-				return false;
-			}
-
-			int update;
-			if(!pObjJson.getInt("update", update)) 
-			{
-				ROS_ERROR("update config GetUpdateBinaryFileList parse json get update rstr [%s] error", rstr.data());
-				return false;
-			}
-
-			std::string file_url;
-			if(!pObjJson.getString("content", file_url))
-			{
-				ROS_ERROR("update config GetUpdateBinaryFileList parse json get content rstr [%s] error", rstr.data());
-				return false;
-			}
-
-			std::string version;
-			if(!pObjJson.getString("version", version))
-			{
-				ROS_ERROR("update config GetUpdateBinaryFileList parse json get version rstr [%s] error", rstr.data());
-				return false;
-			}
-
-			std::string file_id;
-			if(!pObjJson.getString("id", file_id))
-			{
-				ROS_ERROR("update config GetUpdateBinaryFileList parse json get file_id rstr [%s] error", rstr.data());
-				return false;
-			}
-			DownloadFile pFile = {file_path, file_url, version, md5_str, file_id};
 			file_list.emplace_back(pFile);
 		}
-	}catch(...)
-	{
-		ROS_ERROR("update config GetUpdateBinaryFileList catch execption");
-		return false;
+		else
+		{
+			m_md5.reset();
+			ifstream in(file_path.data(), std::ios::binary);
+			m_md5.update(in);
+			if(m_md5.toString()!=md5_str)
+			{
+				file_list.emplace_back(pFile);
+			}
+		}
 	}
 	return true;
 }
 
-bool MogoCurl::DownloadBinaryFile(const std::string check_url, const std::string &SN, const std::string &mac_addr, const DownloadFile &pFile, int rate)
+
+bool MogoCurl::DownloadBinaryFile(const std::string check_url, const std::string &SN, const std::string &mac_addr, const DownloadFile &pFile)
 {
 	Json::Value root;
 	root["sn"]=SN;
@@ -206,56 +206,69 @@ bool MogoCurl::DownloadBinaryFile(const std::string check_url, const std::string
 	std::string file_path = pFile.file_path;
 	int pos = file_path.find_last_of("/");
 	std::string path_str = file_path.substr(0, pos);
-	if(access(path_str.data(), F_OK) != 0)
+	if(access(path_str.data(), NULL) != 0)
 	{
 		ROS_WARN("update config DownloadBinaryFile create dir [%s] error", path_str.data());
 		CreateDir(path_str.data());
 	}
-	if(access("/home/mogo/data/temp/", F_OK) != 0)
-	{
-		ROS_WARN("update config DownloadBinaryFile create dir [%s] error", path_str.data());
-		CreateDir("/home/mogo/data/temp/");
-	}
 
 	std::string file_url = pFile.map_url;
 	std::string version = pFile.version;
-	std::string md5_str = pFile.md5_str;
+
+	std::string mv_cmd = "mv " + file_path + " " + file_path + "_bak";
+        system(mv_cmd.data());
 
 	std::string pstr;
 	std::string rstr;
-
-	pos = file_path.find_last_of("/");
-	std::string file_name = file_path.substr(pos, file_path.size());
-	std::string temp_file_path = "/home/mogo/data/temp/" + file_name + ".temp." + md5_str;
-	if(Download(file_url, temp_file_path, rate) != CURLE_OK)
-	{
+	if(Download(file_url, file_path) != CURLE_OK)
+        {
 		ROS_ERROR("update config DownloadBinaryFile download map [%s] error", file_path.data());
-		return false;
-	}
+                return false;
+        }
+
 	m_md5.reset();
-	ifstream in(temp_file_path.data(), std::ios::binary);
+	ifstream in(file_path.data(), std::ios::binary);
 	m_md5.update(in);
-	//std::cout << "download file " << temp_file_path << "md5 is " << m_md5.toString() << std::endl;
 	//get file md5
 	root["md5"] = Json::Value(m_md5.toString());
 	root["version"] = Json::Value(version);
 	root["filepath"] = file_path;
-	root["id"] = pFile.file_id;
 	Json::FastWriter fast_writer;
 	pstr = fast_writer.write(root);
 	if(Post(check_url, pstr, rstr) != CURLE_OK) 
 	{
-		ROS_ERROR("post %s rstr %s error", pstr.c_str(), rstr.c_str());
+		mv_cmd = "mv " + file_path + "_bak " + file_path;
+                system(mv_cmd.data());
 		return false;
 	}
+
 	MyJson pJson;
 	if(!pJson.parse(rstr)) return false;
 	int res_code = -1;
 	if(!pJson.getInt("errcode", res_code) || res_code!=0)
 	{
+		mv_cmd = "mv " + file_path + "_bak " + file_path;
+		system(mv_cmd.data());
 		return false;
 	}
 	return true;
+}
+
+
+bool MogoCurl::DownloadBinaryFileImpl(const std::string &update_url, const std::string &check_url, const std::string &mac_addr, const std::string &SN)
+{
+	bool flag = true;
+	std::list<DownloadFile> file_list;
+	if(!GetUpdateBinaryFileList(update_url, mac_addr, SN, file_list)) return false;
+	
+	for(auto it=file_list.begin(); it!=file_list.end(); it++)
+	{
+		if(!DownloadBinaryFile(check_url, SN, mac_addr, *it))
+		{
+			flag = false;
+		}
+	}
+	return flag;
 }
 
 
@@ -330,6 +343,8 @@ bool MogoCurl::GetUpdateFileList(const std::string &update_url, const std::strin
 			if(m_md5.toString()!=md5_str)
 			{
 				file_list.emplace_back(file_path);
+				//size_t pos = file_path.find_last_of("/");
+				//file_list.emplace_back(file_path.substr(pos, file_path.size()));
 			}
 		}
 	}
@@ -361,7 +376,7 @@ bool MogoCurl::DownloadFileContent(const std::string &download_url, const std::s
 	}
 
 	int errcode = -1;
-	if(!pJson.getInt("errcode", errcode) || errcode!=0) 
+        if(!pJson.getInt("errcode", errcode) || errcode!=0) 
 	{
 		ROS_ERROR("update config DownloadFileContent parse json get errcode rstr [%s] error", rstr.data());
 		return false;
@@ -370,7 +385,7 @@ bool MogoCurl::DownloadFileContent(const std::string &download_url, const std::s
 	Json::Value dataObj;
 	if(!pJson.getObject("data", dataObj));
 	MyJson pDataObjJson(dataObj);
-
+	
 	std::string file_path;
 	if(!pDataObjJson.getString("filepath", file_path))
 	{
@@ -394,10 +409,10 @@ bool MogoCurl::DownloadFileContent(const std::string &download_url, const std::s
 	}
 
 	std::string version;
-	if(!pDataObjJson.getString("version", version))
-	{
+        if(!pDataObjJson.getString("version", version))
+        {
 		ROS_ERROR("update config DownloadFileContent parse json get version rstr [%s] error", rstr.data());
-		return false;
+                return false;
 	}
 
 	if(access(file_path.data(), NULL)==0)
@@ -409,7 +424,7 @@ bool MogoCurl::DownloadFileContent(const std::string &download_url, const std::s
 	if(!fp) return false;
 	fwrite(file_buf.data(), 1, file_buf.size(), fp);
 	fclose(fp);
-
+	
 	m_md5.reset();
 	ifstream in(file_path.data(), std::ios::binary);
 	m_md5.update(in);
@@ -420,7 +435,7 @@ bool MogoCurl::DownloadFileContent(const std::string &download_url, const std::s
 	if(Post(check_url, pstr, rstr) != CURLE_OK) 
 	{
 		std::string mv_cmd = "mv " + file_path + "_bak " + file_path;
-		system(mv_cmd.data());
+                system(mv_cmd.data());
 		return false;
 	}
 	if(!pJson.parse(rstr)) return false;
@@ -440,7 +455,7 @@ bool MogoCurl::DownloadFileContentImpl(const std::string &update_url, const std:
 	bool flag = true;
 	std::list<std::string> file_list;
 	if(!GetUpdateFileList(update_url, mac_addr, SN, file_list)) return false;
-
+	
 	for(auto it=file_list.begin(); it!=file_list.end(); it++)
 	{
 		if(!DownloadFileContent(download_url, check_url, SN, mac_addr, *it))

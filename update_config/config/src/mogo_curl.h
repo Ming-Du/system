@@ -5,11 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <curl/curl.h>
-#include <sys/stat.h>
 #include <sstream>
 #include <iostream>
 #include <list>
-#include <map>
 #include <string>
 #include <functional>
 #include <sys/types.h>
@@ -19,92 +17,72 @@
 
 #include "md5.h"
 
-extern std::atomic<int> pilotmode;
-
-
 struct DownloadFile
 {
 	std::string file_path;
 	std::string map_url;
 	std::string version;
-	std::string md5_str;
-	std::string file_id;
 };
+
+
+
+
+struct FileInfo 
+{
+ const char *filename;
+ FILE *stream;
+};
+
 
 struct MemoryStruct 
 {
-	char *memory;
-	size_t size;
-	MemoryStruct()
-	{
-		memory = (char *)malloc(1);  
-		size = 0;
-	}
-	~MemoryStruct()
-	{
-		free(memory);
-		memory = NULL;
-		size = 0;
-	}
+    char *memory;
+    size_t size;
+    MemoryStruct()
+    {
+        memory = (char *)malloc(1);  
+        size = 0;
+    }
+    ~MemoryStruct()
+    {
+        free(memory);
+        memory = NULL;
+        size = 0;
+    }
 };
 
 
 static size_t my_write_func(void *ptr, size_t size, size_t nmemb, int *stream)
 {
-	int ret = 0;	
-	do
-	{
-		if(pilotmode == 1) break;
-		ret = write(*stream, ptr, size*nmemb);
-	}while(0);
-	return ret;
+	return write(*stream, ptr, size*nmemb);
 }
 
 static int my_progress_func(char *progress_data,
-		double t, /* dltotal */
-		double d, /* dlnow */
-		double ultotal,
-		double ulnow)
+                     double t, /* dltotal */
+                     double d, /* dlnow */
+                     double ultotal,
+                     double ulnow)
 {
-	printf("%s %g / %g (%g %%)\n", progress_data, d, t, d*100.0/t);
-	return 0;
-}
-
-static size_t getcontentlength_func(void *ptr, size_t size, size_t nmemb, void *stream) 
-{
-	int r;
-	long len = 0;
-	r = sscanf((char *)ptr, "Content-Length: %ld/n", &len);
-	if (r) *((long *) stream) = len;
-	return size * nmemb;
+  printf("%s %g / %g (%g %%)\n", progress_data, d, t, d*100.0/t);
+  return 0;
 }
 
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *data)
 {
-	size_t realsize = size * nmemb;
-	struct MemoryStruct *mem = (struct MemoryStruct *)data;
+    size_t realsize = size * nmemb;
+    struct MemoryStruct *mem = (struct MemoryStruct *)data;
 
-	mem->memory = (char *)realloc(mem->memory, mem->size + realsize + 1);
-	if (mem->memory) 
-	{
-		memcpy(&(mem->memory[mem->size]), ptr, realsize);
-		mem->size += realsize;
-		mem->memory[mem->size] = 0;
-	}
-	return realsize;
+    mem->memory = (char *)realloc(mem->memory, mem->size + realsize + 1);
+    if (mem->memory) 
+    {
+        memcpy(&(mem->memory[mem->size]), ptr, realsize);
+        mem->size += realsize;
+        mem->memory[mem->size] = 0;
+    }
+    return realsize;
 }
 
-static off_t getLocalFileLength(std::string path)
-{
-	off_t ret = -1;
-	struct stat fileStat;
-	ret = stat(path.c_str(), &fileStat);
-	if (ret == 0)
-	{
-		return fileStat.st_size;
-	}
-	return ret;
-}
+
 
 
 static int get_mac(char * mac, int len_limit)
@@ -129,6 +107,15 @@ static int get_mac(char * mac, int len_limit)
 }
 
 
+/*
+static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) 
+{
+	std::string data((const char*) ptr, (size_t) size * nmemb);
+	*((std::stringstream*) stream) << data << std::endl;
+	return size * nmemb;
+}
+*/
+
 class MogoCurl
 {
 	public:
@@ -136,22 +123,23 @@ class MogoCurl
 		~MogoCurl();
 		CURLcode Init();
 		std::string GetPlate();
-		bool GetUpdateBinaryFileList(const std::string &update_url, const std::string &mac_addr, const std::string &SN, 
-				std::list<DownloadFile> &file_list);
-
-		bool DownloadBinaryFile(const std::string check_url, const std::string &SN, const std::string &mac_addr, const DownloadFile &pFile, int rate);
+		bool DownloadBinaryFileImpl(const std::string &update_url, const std::string &check_url, 
+				const std::string &mac_addr, const std::string &SN);
 
 		bool DownloadFileContentImpl(const std::string &update_url, const std::string &download_url, const std::string &check_url, const std::string &mac_addr, const std::string &SN);
 	private:
+		bool GetUpdateBinaryFileList(const std::string &update_url, const std::string &mac_addr, const std::string &SN, 
+			std::list<DownloadFile> &file_list);
 
 
 		bool GetUpdateFileList(const std::string &update_url, const std::string &mac_addr, 
 				const std::string &SN, std::list<std::string> &file_list);
 
+		bool DownloadBinaryFile(const std::string check_url, const std::string &SN, const std::string &mac_addr, const DownloadFile &pFile);
 
 		bool DownloadFileContent(const std::string &download_url, const std::string check_url, const std::string &SN, const std::string &mac_addr, const std::string &fileName);
 	private:
-		CURLcode Download(const std::string &url, std::string &file_path, int rate);
+		CURLcode Download(const std::string &url, std::string &file_path);
 		CURLcode Get(const std::string &url, std::string &rstr);
 		CURLcode Post(const std::string &url, const std::string &pstr, std::string &rstr);
 	private:

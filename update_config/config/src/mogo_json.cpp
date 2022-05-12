@@ -123,6 +123,19 @@ bool MyJson::getInt( const char* name, int& ret)
 	}
 }
 
+
+/*
+   bool MyJson::getInt(int &ret)
+   {
+   if ( !m_jRoot.empty() && !m_jRoot.isNull() && m_jRoot.isInt() )
+   {
+   ret = m_jRoot.asInt();
+   return true;
+   }
+   return false;
+   }
+   */
+
 bool MyJson::getLong(const char* name, long long int& ret)//asInt64
 {
 	if ( !m_jRoot.empty() && !m_jRoot[name].empty() && !m_jRoot[name].isNull() && m_jRoot[name].isInt64() )
@@ -182,6 +195,9 @@ size_t MyJson::getSize()
 	return 0;
 }
 
+//void MyJson::getArrayStr(int index, std::string& ret)
+//{
+//}
 
 void MyJson::getArrayStr(const char* name, int index, std::string& ret)
 {
