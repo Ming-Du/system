@@ -1,0 +1,69 @@
+syntax = "proto2";
+package perception.base;
+import "geometry.proto";
+
+enum SensorType {
+  UNKNOWN_SENSOR_TYPE = -1;
+  GNSS = 0;
+  CAMERA_6MM = 1;
+  CAMERA_12MM = 2;
+  CT_RADAR = 3;
+  LSLIDAR_C16 = 4;
+  LSLIDAR_C32 = 5;
+  LSLIDAR_CH = 6;
+  LIVOX_HORIZON = 7;
+  HESAI_XT32 = 8;
+  VELODYNE_64 = 9;
+  SENSING_30 = 10;
+  SENSING_60 = 11;
+  SENSING_120 = 12;
+  HESAI_128 = 13;
+  RSLIDAR_80 = 14;
+  CONTI_RADAR_ARS408 = 15;
+  CONTI_RADAR_SRR308 = 16;
+}
+
+enum SensorOrientation {
+  FRONT = 0;
+  LEFT_FORWARD = 1;
+  LEFT = 2;
+  LEFT_BACKWARD = 3;
+  REAR = 4;
+  RIGHT_BACKWARD = 5;
+  RIGHT = 6;
+  RIGHT_FORWARD = 7;
+  PANORAMIC = 8;
+  MIDDLE = 9;
+}
+
+message Extrinsic {
+  optional geometry.Point3D translation = 1;
+  optional geometry.Quaternion rotation = 2;
+}
+
+message Intrinsic {
+  optional int32 width = 1;
+  optional int32 height = 2;
+  repeated double matrix = 3; // 3x3 matrix
+}
+
+message RegisteredSensor {
+  repeated SensorInfo sensor_info = 1;
+  optional string base = 2; // 车体坐标�?
+}
+
+message Distcoeff {
+  repeated double distort_matrix = 1;  // 5x1 matrix
+}
+
+message SensorInfo {
+  optional string name = 1;
+  optional SensorType type = 2 [default = UNKNOWN_SENSOR_TYPE];
+  optional SensorOrientation orientation = 3 [default = FRONT];
+  optional string topic = 4;
+  
+  optional Extrinsic extrinsic = 6;
+  optional Intrinsic intrinsic = 7;
+  optional Distcoeff distcoeff = 8;
+}
+

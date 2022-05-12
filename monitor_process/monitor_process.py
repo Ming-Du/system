@@ -13,7 +13,7 @@ from threading import Thread
 
 import std_msgs
 from std_msgs.msg import String
-from rospy import init_node, Subscriber
+from rospy import init_node, Subscriber, Publisher
 import json
 # import psutil
 import collections
@@ -64,9 +64,32 @@ globalListNode = []
 globalNetCardName = ""
 
 
+# set_msg_log_pub_info = None
+# set_msg_log_pub_error = None
+
+
 def getHostName():
+    XiverType = 0
     strHostName = ""
     try:
+        strCmdCheckMultiXiver = "cat  /etc/hosts | grep slave | wc -l"
+        (status, output) = commands.getstatusoutput(strCmdCheckMultiXiver)
+        if status == 0:
+            print "output:{0}".format(output)
+            while True:
+                if int(output) == 1:
+                    XiverType = 2
+                    break
+
+                if int(output) == 0:
+                    XiverType = 1
+                    break
+
+                if int(output) > 1:
+                    XiverType = 6
+                    break
+                break
+
         strCmd = "ifconfig  %s   | grep inet |  grep netmask | awk '{print $2}'" % globalNetCardName
         (status, output) = commands.getstatusoutput(strCmd)
         print "status:%d,output:%s" % (status, output)
@@ -74,7 +97,22 @@ def getHostName():
 
         strCmd2 = "cat /etc/hosts |  grep '%s' | awk '{print $2}'" % (strIp)
         (status, output) = commands.getstatusoutput(strCmd2)
-        strHostName = output
+        if output == "rosmaster":
+            while True:
+                if XiverType == 2:
+                    strHostName = "rosmaster"
+                    break
+
+                if XiverType == 1:
+                    strHostName = "all"
+                    break
+
+                if XiverType == 6:
+                    strHostName = "rosmaster-102"
+                    break
+                break
+        else:
+            strHostName = output
         print "status:%d,output:%s" % (status, strHostName)
     except Exception as e:
         print "exception happend"
@@ -244,43 +282,52 @@ def readNodeList():
 
 
 def node_status_check(listNodeList, strUuid):
-    ps_num = 0
-    tree = lambda: collections.defaultdict(tree)
-    node_state_dict = tree()
-    ping_flag = False
-    node_alive_li = []
-    prog = Popen("rosnode ping -a", shell=True, stdout=PIPE)
-    node_li = prog.stdout.read()
-    # output = prog.communicate()
-    # output_li = list(output)
-    node_li = node_li.split("\n")
-    for ping_line in node_li:
-        ping_li = ping_line.split(" ")
-        if ping_li[0] == "pinging":
-            if ping_flag and len(node_alive_li) > 0:
-                node_alive_li.pop()
-            ping_flag = True
-            node_alive_li.append(ping_li[1])
-        else:
-            ping_flag = False
-    print(node_alive_li)
+    try:
+        print "==========enter node_status_check"
+        tree = lambda: collections.defaultdict(tree)
+        print "22"
+        node_state_dict = tree()
+        print "44"
+        pinged = []
+        unpinged = []
+        verbose = False
+        skip_cache = False
+        print "33"
+        print "11"
+        print "listNodeList:{0}".format(listNodeList)
+        for node in listNodeList:
+            if rosnode.rosnode_ping(node, max_count=1, verbose=verbose, skip_cache=skip_cache):
+                pinged.append(node)
+            else:
+                unpinged.append(node)
+        print "=========================pinged:{0}".format(pinged)
+        print "==========================unpinged:{0}".format(unpinged)
 
-    for node_name in listNodeList:
-        if node_name in node_alive_li:
-            rospy.loginfo(node_name + " on")
-            node_state_dict['data'][node_name] = "on"
-            ps_num += 1
-        else:
-            # rospy.logerr(node_name + " is off, trying to restart...")
-            rospy.logerr(node_name + " is off")
-            node_state_dict['data'][node_name] = "off"
-            node_state_dict['header']['timestamp']['sec'] = rospy.Time.now().secs
-            node_state_dict['header']['timestamp']['nsec'] = rospy.Time.now().nsecs
-            # node_state_dict['header']['uuid'] = strUuid
-            node_state_dict['header']['ip'] = globalDictIpInfo['ip']
-            node_state_dict['header']['mac'] = globalDictIpInfo['mac']
-    nodemsg = json.dumps(node_state_dict)
-    print "node_health_status:%s" % nodemsg
+        for elem_name in pinged:
+            rospy.loginfo(elem_name + " on")
+            node_state_dict['data'][elem_name] = "on"
+
+        for elem_name in unpinged:
+            rospy.logerr(elem_name + " is off")
+            node_state_dict['data'][elem_name] = "off"
+        node_state_dict['header']['timestamp']['sec'] = rospy.Time.now().secs
+        node_state_dict['header']['timestamp']['nsec'] = rospy.Time.now().nsecs
+        # node_state_dict['header']['uuid'] = strUuid
+        node_state_dict['header']['ip'] = globalDictIpInfo['ip']
+        node_state_dict['header']['mac'] = globalDictIpInfo['mac']
+        nodemsg = json.dumps(node_state_dict)
+    except Exception as e:
+        print "exception happend"
+        print e.message
+        print str(e)
+        print 'str(Exception):\t', str(Exception)
+        print 'str(e):\t\t', str(e)
+        print 'repr(e):\t', repr(e)
+        print 'e.message:\t', e.message
+        print 'traceback.print_exc():'
+        traceback.print_exc()
+        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+    print "=================================current node_health_status:%s" % nodemsg
     if len(nodemsg) > 0:
         rosSendMsg = BinaryData()
         rosSendMsg.size = len(nodemsg)
@@ -386,6 +433,22 @@ def addLocalizationListener():
     rospy.Subscriber("/monitor_collect/control/status_report/cmd", BinaryData, controlStatusCmdRecvCallBack)
 
 
+# def UpdateMsgTopic():
+#
+#     pass
+
+# class MsgLogThread(threading.Thread):
+#     def __init__(self):
+#         global set_msg_log_pub_info
+#         global set_msg_log_pub_error
+#         threading.Thread.__init__(self)
+#         set_msg_log_pub_info = Publisher('/autopilot_info/report_msg_info', BinaryData, queue_size=1000)
+#         set_msg_log_pub_error = Publisher('/autopilot_info/report_msg_error', BinaryData, queue_size=1000)
+#
+#     def run(self):
+#         UpdateMsgTopic()
+
+
 def main():
     # initial node
     globalCommonPara.initPara()
@@ -408,6 +471,10 @@ def main():
     globalListNode = readNodeList()
     print "=============================set globalCollectInterval:%d" % (globalCollectInterval)
     print globalListNode
+
+    # msg_log_thread = MsgLogThread()
+    # msg_log_thread.start()
+
     # node_watch("")
     rospy.spin()
 

@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package monitor_topic_hz;
+
+import "geometry.proto";
+import "header.proto";
+import "log_reslove.proto";
+import "carinfo.proto";
+
+message MonitorTopicHz{
+   optional  carinfo.CarInfo carinfo = 1;
+   optional  log_reslove.PubLogInfo  pLogInfo = 2; 
+}
