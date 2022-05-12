@@ -62,8 +62,8 @@ class Process(Thread):
       #node_li = d.read()
       #self.NodeAlive = node_li.split("\n")
       #self.NodeAlive = self.node_ping_alive()
-      print self.NodeAlive
-      print "self.NodeList==="
+      #print self.NodeAlive
+      #print "self.NodeList==="
       print self.NodeList
       for node_name in self.NodeList:
         if 1:
