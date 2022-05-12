@@ -1,9 +1,0 @@
-module_name: "radar_fusion"
-frame_id: "base_link"
-
-main_input_topic : "/perception/radar/front/radar_obstacle"
-input_topic : "/perception/radar/front_left/radar_obstacle"
-input_topic : "/perception/radar/front_right/radar_obstacle"
-input_topic : "/perception/radar/rear_left/radar_obstacle"
-input_topic : "/perception/radar/rear_right/radar_obstacle"
-output_topic: "/perception/radar/radar_obstacle"

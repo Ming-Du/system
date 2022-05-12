@@ -1,2 +1,0 @@
-vehicle_num:CCBJA7HL79
-vehicle_color:000000000
