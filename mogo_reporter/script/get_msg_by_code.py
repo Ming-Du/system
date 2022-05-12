@@ -3,8 +3,8 @@ import json
 from google.protobuf import text_format
 from mogo_report_codes_pb2 import ReportMsgList, ReportMsgCode
 
-path = sys.argv[1] # "/home/kls/workspace/catkin_ws/src/system/mogo_reporter/config/telematics.pb"
-code = sys.argv[2] # ITELEMATICS_AUTOPILOT_CMD_RECEIVED
+path = sys.argv[1]
+code = sys.argv[2]
 
 msg_list = ReportMsgList()
 with open(path, "r") as fp:
