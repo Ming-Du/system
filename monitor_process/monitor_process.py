@@ -128,142 +128,42 @@ def getHostName():
     return strHostName
 
 
-def getPkgByFileName(strLaunchFileName):
-    strPkgName = ""
-    try:
-        strCmd = "xmllint --xpath \"//@pkg\" %s   | awk -F \"=\" '{print $2}'   2>/dev/null | sed 's/\"//g'" % (
-            strLaunchFileName)
-        (status, strCmdOutput) = commands.getstatusoutput(strCmd)
-        while True:
-            if status != 0:
-                break
-            if status == 0:
-                strPkgName = strCmdOutput
-                break
-            break
-    except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():';
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
-    return strPkgName
 
 
-def getNodeNameByFileName(strLaunchFileName):
-    strFullNodeName = ""
-    listCollectTempNode = []
-    try:
-        DOMTree = xml.dom.minidom.parse(strLaunchFileName)
-        collection = DOMTree.documentElement
-        groups = collection.getElementsByTagName('group')
-        nodes = collection.getElementsByTagName("node")
-        print "groups: {0}".format(groups)
-        if len(groups) > 0:
-            for elem_group in groups:
-                if elem_group.hasAttribute("ns"):
-                    print "true"
-                    strNs = elem_group.getAttribute("ns")
-                    print "ns: {0}".format(strNs)
-                    nodes = collection.getElementsByTagName('node')
-                    for elem_node in nodes:
-                        if elem_node.hasAttribute("name"):
-                            strNodeName = elem_node.getAttribute("name")
-                            print "node name:{0}".format(strNodeName)
-                            strFullNodeName = "/{0}/{1}".format(strNs, strNodeName)
-                            print "strFullNodeName:{0}".format(strFullNodeName)
-                            listCollectTempNode.append(strFullNodeName.strip().replace('//', '/'))
-                            print "now listCollectTempNode:{0}".format(listCollectTempNode)
-        else:
-            if len(nodes) > 0:
-                for elem_node in nodes:
-                    if elem_node.hasAttribute("name"):
-                        strNodeName = elem_node.getAttribute("name")
-                        if elem_node.hasAttribute('ns'):
-                            strNs = elem_node.getAttribute('ns')
-                            strFullNodeName = "/{0}/{1}".format(strNs, strNodeName)
-                            listCollectTempNode.append(strFullNodeName.strip().replace('//', '/'))
-                        else:
-                            strFullNodeName = "/{0}".format(strNodeName)
-                            listCollectTempNode.append(strFullNodeName.strip().replace('//', '/'))
-
-
-    except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():';
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
-    return listCollectTempNode
 
 
 def readNodeList():
-    linesLaunchFile_2 = []
-    linesNodeName = []
+    listAllNode = []
+    linesLaunchFile = []
     try:
         strHostName = getHostName()
         strFileListName = "/autocar-code/install/share/launch/%s.list" % (strHostName)
         # print "strFileListName:%s" % (strFileListName)
+        #strFileListName = "/home/mogo/data/jhf/system/launch/all.list"
 
         if os.path.exists(strFileListName):
             pass
         else:
             print "file :%s not exists ,checkt host name and net_card_name" % (strFileListName)
             sys.exit(-1)
-        linesLaunchFile_1 = []
+
         with open(strFileListName, 'r') as f:
-            listResult = (f.readlines())
-            for idx in range(len(listResult)):
-                linesLaunchFile_1.append(listResult[idx].strip('\n'))
-        print "linesLaunchFile_1:{0}".format(linesLaunchFile_1)
-        # print  linesLaunchFile_1
-        # print "end---------------------listResult"
-
-        ## search launch file
-
-        for idx in range(len(linesLaunchFile_1)):
-            print "start process : %s " % (linesLaunchFile_1[idx])
-            strCmdRoslanchSearch = "roslaunch --files  %s   2>/dev/null" % (linesLaunchFile_1[idx])
-            (status, include_files) = commands.getstatusoutput(strCmdRoslanchSearch)
-            print "include_files:{0}".format(include_files)
-            # print include_files
-            # print "end -----------------------include_files"
-            if status != 0:
-                # print "status !=  0  ignore current , continue"
-                continue
-            else:
-                # print "status == 0  normal process "
-                listIncludeFiles = include_files.split('\n', -1)
-                print listIncludeFiles
-                pass
-
-            for idx_child_file in range(len(listIncludeFiles)):
-                if len(listIncludeFiles[idx_child_file]) == 0:
-                    continue
-                # print "process include_files[idx_child_file]:%s" % listIncludeFiles[idx_child_file]
-                pkgName = getPkgByFileName(listIncludeFiles[idx_child_file])
-                if len(pkgName) == 0:
-                    # print "get file %s len(pkgName) == 0  now continue" % (listIncludeFiles[idx_child_file])
-                    continue
-                listCollectNode = getNodeNameByFileName(listIncludeFiles[idx_child_file])
-                if len(listCollectNode) == 0:
-                    print "len(listCollectTempNode) == 0 {0}".format(listCollectNode)
-                if len(listCollectNode) > 0:
-                    linesLaunchFile_2.append(listIncludeFiles[idx_child_file])
-                    print "##############################################now update  list  strNodeName"
-                    for elem_node in listCollectNode:
-                        print "add node name: {0} to linesNodeName".format(elem_node)
-                        linesNodeName.append(elem_node)
+            contents = f.read()
+            lines = contents.split('\n')
+            print "lines:{0}".format(lines)
+            for idx in range(len(lines)):
+                if len(lines[idx]) > 0:
+                    linesLaunchFile.append(lines[idx])
+        # linesLaunchFile.append("/home/mogo/data/radar_408_front_308_rear.launch")
+        for idx in range(len(linesLaunchFile)):
+            strCmd = "roslaunch --nodes {0}".format(linesLaunchFile[idx])
+            print  "strCmd :{0}".format(strCmd)
+            (status, output) = commands.getstatusoutput(strCmd)
+            if status == 0:
+                multy_list = output.split('\n')
+                print "multy_list: {0}".format(multy_list)
+                for input_idx in range(len(multy_list)):
+                    listAllNode.append(multy_list[input_idx])
     except Exception as e:
         print "exception happend"
         print e.message
@@ -276,9 +176,9 @@ def readNodeList():
         traceback.print_exc()
         print 'traceback.format_exc():\n%s' % (traceback.format_exc())
     print "start______________linesNodeName"
-    print linesNodeName
+    print listAllNode
     print "end----------------linesNodeName"
-    return linesNodeName
+    return listAllNode
 
 
 def node_status_check(listNodeList, strUuid):
