@@ -1,6 +1,6 @@
 /home/mogo/autopilot/share/config/vehicle/drivers/camera/sensing120_right.launch
 /home/mogo/autopilot/share/config/vehicle/drivers/camera/sensing120_left.launch
-perception_camera_2D_side perception_2D_side_2camera_bus.launch
+perception_camera_2D_side perception_2D_side_2camera.launch
 launch hadmap.launch
 hadmap_engine hadmap_engine.launch
 guardian system_guardian_slave5.launch

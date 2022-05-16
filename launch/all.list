@@ -5,7 +5,7 @@ launch can_adapter.launch
 localization localization.launch
 launch hadmap.launch
 hadmap_engine hadmap_engine.launch
-perception_camera_2D_front perception_2D_front_1camera_bus.launch
+perception_camera_2D_front perception_2D_front_1camera.launch
 launch perception_lidar.launch
 launch perception_fusion.launch
 launch controller.launch

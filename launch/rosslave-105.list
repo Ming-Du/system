@@ -1,6 +1,6 @@
 launch drivers_perception_radar.launch
 /home/mogo/autopilot/share/config/vehicle/drivers/camera/sensing120_back.launch
-perception_camera_3D vidar_2camera_bus.launch
+perception_camera_3D vidar_2camera.launch
 log_collect_client log_collect_client.launch
 log_msg_collect_client log_msg_collect_client.launch
 guardian system_guardian_slave3.launch

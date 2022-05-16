@@ -1,6 +1,6 @@
 launch drivers_gnss.launch
 launch drivers_camera60.launch
-perception_camera_SEG lane_detection_bus.launch
+perception_camera_SEG lane_detection.launch
 launch can_adapter.launch
 localization localization.launch
 launch local_planning.launch
