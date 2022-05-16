@@ -73,7 +73,7 @@ class Process(Thread):
         else:
             #rospy.logerr(node_name + " is off, trying to restart...")
             rospy.logerr(node_name + " is off")
-            self.node_state_dict[node_name] = "off"
+            self.node_state_dict[node_name] = "on"
             self.start_node(node_name)
       #node_list = [ node for node in rosnode.get_node_names() if node not in '/rosout' ]
       
