@@ -1,2 +1,0 @@
-.
--DCATKIN_DEVEL_PREFIX=/home/mogo/data/catkin_ws/src/drivers/devel -DCMAKE_INSTALL_PREFIX=/home/mogo/data/catkin_ws/src/drivers/install -G Unix Makefiles

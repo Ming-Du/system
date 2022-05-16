@@ -1,8 +1,0 @@
-prefix=/home/mogo/data/catkin_ws/src/drivers/devel
-
-Name: drivers_camera
-Description: Description of drivers_camera
-Version: 0.3.6
-Cflags: -I/home/mogo/data/catkin_ws/src/drivers/camera/include
-Libs: -L${prefix}/lib -ldrivers_camera
-Requires: 
