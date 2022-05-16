@@ -67,10 +67,16 @@ void LinkFile(std::string file_path, std::string SN)
         {
                 std::string src_file = it->first;
                 std::string link_file = it->second;
-                std::string rm_cmd = "rm -rf " + link_file;
-                std::string link_cmd = "ln -s " + src_file + " " + link_file;
-                system(rm_cmd.c_str());
-                system(link_cmd.c_str());
+		if(access(link_file.c_str(), F_OK)==0)
+                {
+                        std::string rm_cmd = "rm -rf " + link_file;
+                        system(rm_cmd.c_str());
+                }
+                if(access(src_file.c_str(), F_OK)==0)
+                {
+                        std::string link_cmd = "ln -s " + src_file + " " + link_file;
+                        system(link_cmd.c_str());
+                }
         }
 }
 
