@@ -336,6 +336,9 @@ install_ros_log() {
     mkdir -p /home/mogo/data/log/ROS_STAT/
     mkdir -p /home/mogo/data/log/ROS_STAT/EXPORT/
     chmod 777 -R /home/mogo/data/log/
+   #roscore_xml_path=$(find /autocar-code/install/ -name 'roscore.xml' | head -n 1)
+   #\cp -rf $roscore_xml_path  /opt/ros/melodic/etc/ros/roscore.xml
+   #\mv /usr/bin/rosversion  /usr/bin/rosversion_backup
 }
 
 add_privilege_monitor_gnss() {
@@ -451,6 +454,8 @@ export VEHICLE_PLATE
 
 if [ -f /home/mogo/data/vehicle_monitor/vehicle_config.txt ]; then
     VEHICLE_PLATE=$(grep plate /home/mogo/data/vehicle_monitor/vehicle_config.txt | awk -F: '{print $2}' | sed -e 's/ //g' -e 's/\"//g')
+    [[ -z "$VEHICLE_PLATE" ]] && LoggingERR "cannot read /home/mogo/data/vehicle_monitor/vehicle_config.txt" "EINIT_LOST_FILE"
+    [[ ! -z "$VEHICLE_PLATE" ]] && ln -snf /home/mogo/data/vehicle_monitor/${VEHICLE_PLATE} /home/mogo/autopilot/share/config/vehicle
 fi
 SETUP_ROS="/opt/ros/melodic/setup.bash"
 if [ $(echo $ABS_PATH | grep -w "/home/mogo/autopilot" | wc -l) -eq 0 ]; then
@@ -552,10 +557,6 @@ export OMP_NUM_THREADS=1
 export BASHRC="source ${SETUP_ROS} && source ${SETUP_AUTOPILOT}"
 export ROS_ENV="export ROS_LOG_DIR=${ROS_LOG_DIR}; export ROS_MASTER_URI=http://${ros_master}:11311; export ROS_HOSTNAME=${ros_machine}"
 
-rm -rf /home/mogo/autopilot/share/config/vehicle
-plate_number=`cat /home/mogo/data/vehicle_monitor/vehicle_config.txt |  grep "plate" | awk -F [\"] '{print $2}'`
-ln -s /home/mogo/data/vehicle_monitor/vehicle/${plate_number} /home/mogo/autopilot/share/config/vehicle
-
 
 # start to launch
 get_all_launch_files $list_file #获取所有需要启动的launch文件
@@ -563,7 +564,48 @@ wait_core
 # 配置更新
 timeout 300 roslaunch --wait update_config update_config.launch >$ROS_LOG_DIR/update_config.launch.log 2>$ROS_LOG_DIR/update_config.launch.err
 
-# launch gnss
+rm -rf /home/mogo/autopilot/share/config/vehicle
+plate_number=`cat /home/mogo/data/vehicle_monitor/vehicle_config.txt |  grep "plate" | awk -F [\"] '{print $2}'`
+ln -s /home/mogo/data/vehicle_monitor/${plate_number}  /home/mogo/autopilot/share/config/vehicle
+
+rm -rf /home/mogo/data/vehicle_monitor/AI_models/vidar/smoke_mogo_fp16_batch2.trt
+ln -s /home/mogo/data/vehicle_monitor/AI_models/vidar/smoke_mogo_fp16_batch2_1.0.0.trt /home/mogo/data/vehicle_monitor/AI_models/vidar/smoke_mogo_fp16_batch2.trt
+
+rm -rf /home/mogo/data/vehicle_monitor/AI_models/vidar/vidar_mogo_fp16.trt
+ln -s /home/mogo/data/vehicle_monitor/AI_models/vidar/vidar_mogo_fp16_1.0.0.trt /home/mogo/data/vehicle_monitor/AI_models/vidar/vidar_mogo_fp16.trt
+
+rm -rf /home/mogo/data/vehicle_monitor/AI_models/laneaf/cv_segment_downsample2.trt
+ln -s /home/mogo/data/vehicle_monitor/AI_models/laneaf/cv_segment_1.0.0.trt /home/mogo/data/vehicle_monitor/AI_models/laneaf/cv_segment_downsample2.trt
+
+rm -rf /home/mogo/data/vehicle_monitor/AI_models/laneaf/cv_segment_downsample4.trt
+ln -s /home/mogo/data/vehicle_monitor/AI_models/laneaf/cv_segment_1.3.0.trt /home/mogo/data/vehicle_monitor/AI_models/laneaf/cv_segment_downsample4.trt
+
+rm -rf /home/mogo/data/vehicle_monitor/AI_models/arrow_classification/cv_arrow_classification.trt
+ln -s /home/mogo/data/vehicle_monitor/AI_models/arrow_classification/cv_arrow_classification_1.0.0.trt /home/mogo/data/vehicle_monitor/AI_models/arrow_classification/cv_arrow_classification.trt 
+
+rm -rf /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet.engine
+ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet_1.2.0.engine /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet.engine
+
+rm -rf  /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet_b2.engine
+ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet_b2_1.2.0.engine /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet_b2.engine
+
+rm -rf /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet_b3_side.engine
+ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet_b3_1.1.0.engine /home/mogo/data/vehicle_monitor/AI_models/yolov5/cv2d_objdet_b3_side.engine
+
+rm -rf /home/mogo/data/vehicle_monitor/AI_models/yolov5/obj.names
+ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/obj_1.2.0.names /home/mogo/data/vehicle_monitor/AI_models/yolov5/obj.names 
+
+rm -rf /home/mogo/data/vehicle_monitor/AI_models/yolov5/obj_side.names
+ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/obj_1.1.0.names /home/mogo/data/vehicle_monitor/AI_models/yolov5/obj_side.names
+
+rm -rf /home/mogo/data/vehicle_monitor/AI_models/yolov5/trfcLts_cls.engine
+ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/trfcLts_cls_b8_1.0.0.engine /home/mogo/data/vehicle_monitor/AI_models/yolov5/trfcLts_cls.engine
+
+rm -rf /home/mogo/data/vehicle_monitor/AI_models/yolov5/trfcSign_cls.engine
+ln -s /home/mogo/data/vehicle_monitor/AI_models/yolov5/trfcSign_cls_b8_1.0.0.engine /home/mogo/data/vehicle_monitor/AI_models/yolov5/trfcSign_cls.engine
+
+
+
 
 # launch telematics
 ret=$?

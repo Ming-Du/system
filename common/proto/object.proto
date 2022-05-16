@@ -77,6 +77,7 @@ message Object {
   
   optional double time_stamp = 4;        // sensing time
   optional float confidence = 5;         // probability
+  optional float state = 22;         // predict--2, detect--1
   optional int32 status = 6;             // reserved
 
   optional float x_distance = 7;         // longitudinal distance

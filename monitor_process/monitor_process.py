@@ -13,7 +13,7 @@ from threading import Thread
 
 import std_msgs
 from std_msgs.msg import String
-from rospy import init_node, Subscriber
+from rospy import init_node, Subscriber, Publisher
 import json
 # import psutil
 import collections
@@ -64,9 +64,32 @@ globalListNode = []
 globalNetCardName = ""
 
 
+# set_msg_log_pub_info = None
+# set_msg_log_pub_error = None
+
+
 def getHostName():
+    XiverType = 0
     strHostName = ""
     try:
+        strCmdCheckMultiXiver = "cat  /etc/hosts | grep slave | wc -l"
+        (status, output) = commands.getstatusoutput(strCmdCheckMultiXiver)
+        if status == 0:
+            print "output:{0}".format(output)
+            while True:
+                if int(output) == 1:
+                    XiverType = 2
+                    break
+
+                if int(output) == 0:
+                    XiverType = 1
+                    break
+
+                if int(output) > 1:
+                    XiverType = 6
+                    break
+                break
+
         strCmd = "ifconfig  %s   | grep inet |  grep netmask | awk '{print $2}'" % globalNetCardName
         (status, output) = commands.getstatusoutput(strCmd)
         print "status:%d,output:%s" % (status, output)
@@ -74,7 +97,22 @@ def getHostName():
 
         strCmd2 = "cat /etc/hosts |  grep '%s' | awk '{print $2}'" % (strIp)
         (status, output) = commands.getstatusoutput(strCmd2)
-        strHostName = output
+        if output == "rosmaster":
+            while True:
+                if XiverType == 2:
+                    strHostName = "rosmaster"
+                    break
+
+                if XiverType == 1:
+                    strHostName = "all"
+                    break
+
+                if XiverType == 6:
+                    strHostName = "rosmaster-102"
+                    break
+                break
+        else:
+            strHostName = output
         print "status:%d,output:%s" % (status, strHostName)
     except Exception as e:
         print "exception happend"
@@ -90,142 +128,42 @@ def getHostName():
     return strHostName
 
 
-def getPkgByFileName(strLaunchFileName):
-    strPkgName = ""
-    try:
-        strCmd = "xmllint --xpath \"//@pkg\" %s   | awk -F \"=\" '{print $2}'   2>/dev/null | sed 's/\"//g'" % (
-            strLaunchFileName)
-        (status, strCmdOutput) = commands.getstatusoutput(strCmd)
-        while True:
-            if status != 0:
-                break
-            if status == 0:
-                strPkgName = strCmdOutput
-                break
-            break
-    except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():';
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
-    return strPkgName
 
 
-def getNodeNameByFileName(strLaunchFileName):
-    strFullNodeName = ""
-    listCollectTempNode = []
-    try:
-        DOMTree = xml.dom.minidom.parse(strLaunchFileName)
-        collection = DOMTree.documentElement
-        groups = collection.getElementsByTagName('group')
-        nodes = collection.getElementsByTagName("node")
-        print "groups: {0}".format(groups)
-        if len(groups) > 0:
-            for elem_group in groups:
-                if elem_group.hasAttribute("ns"):
-                    print "true"
-                    strNs = elem_group.getAttribute("ns")
-                    print "ns: {0}".format(strNs)
-                    nodes = collection.getElementsByTagName('node')
-                    for elem_node in nodes:
-                        if elem_node.hasAttribute("name"):
-                            strNodeName = elem_node.getAttribute("name")
-                            print "node name:{0}".format(strNodeName)
-                            strFullNodeName = "/{0}/{1}".format(strNs, strNodeName)
-                            print "strFullNodeName:{0}".format(strFullNodeName)
-                            listCollectTempNode.append(strFullNodeName.strip().replace('//', '/'))
-                            print "now listCollectTempNode:{0}".format(listCollectTempNode)
-        else:
-            if len(nodes) > 0:
-                for elem_node in nodes:
-                    if elem_node.hasAttribute("name"):
-                        strNodeName = elem_node.getAttribute("name")
-                        if elem_node.hasAttribute('ns'):
-                            strNs = elem_node.getAttribute('ns')
-                            strFullNodeName = "/{0}/{1}".format(strNs, strNodeName)
-                            listCollectTempNode.append(strFullNodeName.strip().replace('//', '/'))
-                        else:
-                            strFullNodeName = "/{0}".format(strNodeName)
-                            listCollectTempNode.append(strFullNodeName.strip().replace('//', '/'))
-
-
-    except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():';
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
-    return listCollectTempNode
 
 
 def readNodeList():
-    linesLaunchFile_2 = []
-    linesNodeName = []
+    listAllNode = []
+    linesLaunchFile = []
     try:
         strHostName = getHostName()
         strFileListName = "/autocar-code/install/share/launch/%s.list" % (strHostName)
         # print "strFileListName:%s" % (strFileListName)
+        #strFileListName = "/home/mogo/data/jhf/system/launch/all.list"
 
         if os.path.exists(strFileListName):
             pass
         else:
             print "file :%s not exists ,checkt host name and net_card_name" % (strFileListName)
             sys.exit(-1)
-        linesLaunchFile_1 = []
+
         with open(strFileListName, 'r') as f:
-            listResult = (f.readlines())
-            for idx in range(len(listResult)):
-                linesLaunchFile_1.append(listResult[idx].strip('\n'))
-        print "linesLaunchFile_1:{0}".format(linesLaunchFile_1)
-        # print  linesLaunchFile_1
-        # print "end---------------------listResult"
-
-        ## search launch file
-
-        for idx in range(len(linesLaunchFile_1)):
-            print "start process : %s " % (linesLaunchFile_1[idx])
-            strCmdRoslanchSearch = "roslaunch --files  %s   2>/dev/null" % (linesLaunchFile_1[idx])
-            (status, include_files) = commands.getstatusoutput(strCmdRoslanchSearch)
-            print "include_files:{0}".format(include_files)
-            # print include_files
-            # print "end -----------------------include_files"
-            if status != 0:
-                # print "status !=  0  ignore current , continue"
-                continue
-            else:
-                # print "status == 0  normal process "
-                listIncludeFiles = include_files.split('\n', -1)
-                print listIncludeFiles
-                pass
-
-            for idx_child_file in range(len(listIncludeFiles)):
-                if len(listIncludeFiles[idx_child_file]) == 0:
-                    continue
-                # print "process include_files[idx_child_file]:%s" % listIncludeFiles[idx_child_file]
-                pkgName = getPkgByFileName(listIncludeFiles[idx_child_file])
-                if len(pkgName) == 0:
-                    # print "get file %s len(pkgName) == 0  now continue" % (listIncludeFiles[idx_child_file])
-                    continue
-                listCollectNode = getNodeNameByFileName(listIncludeFiles[idx_child_file])
-                if len(listCollectNode) == 0:
-                    print "len(listCollectTempNode) == 0 {0}".format(listCollectNode)
-                if len(listCollectNode) > 0:
-                    linesLaunchFile_2.append(listIncludeFiles[idx_child_file])
-                    print "##############################################now update  list  strNodeName"
-                    for elem_node in listCollectNode:
-                        print "add node name: {0} to linesNodeName".format(elem_node)
-                        linesNodeName.append(elem_node)
+            contents = f.read()
+            lines = contents.split('\n')
+            print "lines:{0}".format(lines)
+            for idx in range(len(lines)):
+                if len(lines[idx]) > 0:
+                    linesLaunchFile.append(lines[idx])
+        # linesLaunchFile.append("/home/mogo/data/radar_408_front_308_rear.launch")
+        for idx in range(len(linesLaunchFile)):
+            strCmd = "roslaunch --nodes {0}".format(linesLaunchFile[idx])
+            print  "strCmd :{0}".format(strCmd)
+            (status, output) = commands.getstatusoutput(strCmd)
+            if status == 0:
+                multy_list = output.split('\n')
+                print "multy_list: {0}".format(multy_list)
+                for input_idx in range(len(multy_list)):
+                    listAllNode.append(multy_list[input_idx])
     except Exception as e:
         print "exception happend"
         print e.message
@@ -238,49 +176,58 @@ def readNodeList():
         traceback.print_exc()
         print 'traceback.format_exc():\n%s' % (traceback.format_exc())
     print "start______________linesNodeName"
-    print linesNodeName
+    print listAllNode
     print "end----------------linesNodeName"
-    return linesNodeName
+    return listAllNode
 
 
 def node_status_check(listNodeList, strUuid):
-    ps_num = 0
-    tree = lambda: collections.defaultdict(tree)
-    node_state_dict = tree()
-    ping_flag = False
-    node_alive_li = []
-    prog = Popen("rosnode ping -a", shell=True, stdout=PIPE)
-    node_li = prog.stdout.read()
-    # output = prog.communicate()
-    # output_li = list(output)
-    node_li = node_li.split("\n")
-    for ping_line in node_li:
-        ping_li = ping_line.split(" ")
-        if ping_li[0] == "pinging":
-            if ping_flag and len(node_alive_li) > 0:
-                node_alive_li.pop()
-            ping_flag = True
-            node_alive_li.append(ping_li[1])
-        else:
-            ping_flag = False
-    print(node_alive_li)
+    try:
+        print "==========enter node_status_check"
+        tree = lambda: collections.defaultdict(tree)
+        print "22"
+        node_state_dict = tree()
+        print "44"
+        pinged = []
+        unpinged = []
+        verbose = False
+        skip_cache = False
+        print "33"
+        print "11"
+        print "listNodeList:{0}".format(listNodeList)
+        for node in listNodeList:
+            if rosnode.rosnode_ping(node, max_count=1, verbose=verbose, skip_cache=skip_cache):
+                pinged.append(node)
+            else:
+                unpinged.append(node)
+        print "=========================pinged:{0}".format(pinged)
+        print "==========================unpinged:{0}".format(unpinged)
 
-    for node_name in listNodeList:
-        if node_name in node_alive_li:
-            rospy.loginfo(node_name + " on")
-            node_state_dict['data'][node_name] = "on"
-            ps_num += 1
-        else:
-            # rospy.logerr(node_name + " is off, trying to restart...")
-            rospy.logerr(node_name + " is off")
-            node_state_dict['data'][node_name] = "off"
-            node_state_dict['header']['timestamp']['sec'] = rospy.Time.now().secs
-            node_state_dict['header']['timestamp']['nsec'] = rospy.Time.now().nsecs
-            # node_state_dict['header']['uuid'] = strUuid
-            node_state_dict['header']['ip'] = globalDictIpInfo['ip']
-            node_state_dict['header']['mac'] = globalDictIpInfo['mac']
-    nodemsg = json.dumps(node_state_dict)
-    print "node_health_status:%s" % nodemsg
+        for elem_name in pinged:
+            rospy.loginfo(elem_name + " on")
+            node_state_dict['data'][elem_name] = "on"
+
+        for elem_name in unpinged:
+            rospy.logerr(elem_name + " is off")
+            node_state_dict['data'][elem_name] = "off"
+        node_state_dict['header']['timestamp']['sec'] = rospy.Time.now().secs
+        node_state_dict['header']['timestamp']['nsec'] = rospy.Time.now().nsecs
+        # node_state_dict['header']['uuid'] = strUuid
+        node_state_dict['header']['ip'] = globalDictIpInfo['ip']
+        node_state_dict['header']['mac'] = globalDictIpInfo['mac']
+        nodemsg = json.dumps(node_state_dict)
+    except Exception as e:
+        print "exception happend"
+        print e.message
+        print str(e)
+        print 'str(Exception):\t', str(Exception)
+        print 'str(e):\t\t', str(e)
+        print 'repr(e):\t', repr(e)
+        print 'e.message:\t', e.message
+        print 'traceback.print_exc():'
+        traceback.print_exc()
+        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+    print "=================================current node_health_status:%s" % nodemsg
     if len(nodemsg) > 0:
         rosSendMsg = BinaryData()
         rosSendMsg.size = len(nodemsg)
@@ -386,6 +333,22 @@ def addLocalizationListener():
     rospy.Subscriber("/monitor_collect/control/status_report/cmd", BinaryData, controlStatusCmdRecvCallBack)
 
 
+# def UpdateMsgTopic():
+#
+#     pass
+
+# class MsgLogThread(threading.Thread):
+#     def __init__(self):
+#         global set_msg_log_pub_info
+#         global set_msg_log_pub_error
+#         threading.Thread.__init__(self)
+#         set_msg_log_pub_info = Publisher('/autopilot_info/report_msg_info', BinaryData, queue_size=1000)
+#         set_msg_log_pub_error = Publisher('/autopilot_info/report_msg_error', BinaryData, queue_size=1000)
+#
+#     def run(self):
+#         UpdateMsgTopic()
+
+
 def main():
     # initial node
     globalCommonPara.initPara()
@@ -408,6 +371,10 @@ def main():
     globalListNode = readNodeList()
     print "=============================set globalCollectInterval:%d" % (globalCollectInterval)
     print globalListNode
+
+    # msg_log_thread = MsgLogThread()
+    # msg_log_thread.start()
+
     # node_watch("")
     rospy.spin()
 

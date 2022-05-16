@@ -1,0 +1,165 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+AV_CODEC_ID_MJPEG	include/usb_cam/usb_cam.h	52;"	d
+CLEAR	src/usb_cam.cpp	57;"	d	file:
+CLIPVALUE	src/usb_cam.cpp	/^inline unsigned char CLIPVALUE(int val)$/;"	f	namespace:usb_cam
+GmslCamNode	sensing/sensing_camera_node.cpp	/^        GmslCamNode() : node_("~"),$/;"	f	class:gmsl_cam::GmslCamNode
+GmslCamNode	sensing/sensing_camera_node.cpp	/^    class GmslCamNode$/;"	c	namespace:gmsl_cam	file:
+GpsTimeCallback	sensing/sensing_camera_node.cpp	/^        void GpsTimeCallback(const sensor_msgs::TimeReferenceConstPtr &msg)$/;"	f	class:gmsl_cam::GmslCamNode
+IO_METHOD_MMAP	include/usb_cam/usb_cam.h	/^    IO_METHOD_READ, IO_METHOD_MMAP, IO_METHOD_USERPTR, IO_METHOD_UNKNOWN,$/;"	e	enum:usb_cam::UsbCam::__anon1
+IO_METHOD_READ	include/usb_cam/usb_cam.h	/^    IO_METHOD_READ, IO_METHOD_MMAP, IO_METHOD_USERPTR, IO_METHOD_UNKNOWN,$/;"	e	enum:usb_cam::UsbCam::__anon1
+IO_METHOD_UNKNOWN	include/usb_cam/usb_cam.h	/^    IO_METHOD_READ, IO_METHOD_MMAP, IO_METHOD_USERPTR, IO_METHOD_UNKNOWN,$/;"	e	enum:usb_cam::UsbCam::__anon1
+IO_METHOD_USERPTR	include/usb_cam/usb_cam.h	/^    IO_METHOD_READ, IO_METHOD_MMAP, IO_METHOD_USERPTR, IO_METHOD_UNKNOWN,$/;"	e	enum:usb_cam::UsbCam::__anon1
+PIXEL_FORMAT_GREY	include/usb_cam/usb_cam.h	/^    PIXEL_FORMAT_YUYV, PIXEL_FORMAT_UYVY, PIXEL_FORMAT_MJPEG, PIXEL_FORMAT_YUVMONO10, PIXEL_FORMAT_RGB24, PIXEL_FORMAT_GREY, PIXEL_FORMAT_UNKNOWN$/;"	e	enum:usb_cam::UsbCam::__anon2
+PIXEL_FORMAT_MJPEG	include/usb_cam/usb_cam.h	/^    PIXEL_FORMAT_YUYV, PIXEL_FORMAT_UYVY, PIXEL_FORMAT_MJPEG, PIXEL_FORMAT_YUVMONO10, PIXEL_FORMAT_RGB24, PIXEL_FORMAT_GREY, PIXEL_FORMAT_UNKNOWN$/;"	e	enum:usb_cam::UsbCam::__anon2
+PIXEL_FORMAT_RGB24	include/usb_cam/usb_cam.h	/^    PIXEL_FORMAT_YUYV, PIXEL_FORMAT_UYVY, PIXEL_FORMAT_MJPEG, PIXEL_FORMAT_YUVMONO10, PIXEL_FORMAT_RGB24, PIXEL_FORMAT_GREY, PIXEL_FORMAT_UNKNOWN$/;"	e	enum:usb_cam::UsbCam::__anon2
+PIXEL_FORMAT_UNKNOWN	include/usb_cam/usb_cam.h	/^    PIXEL_FORMAT_YUYV, PIXEL_FORMAT_UYVY, PIXEL_FORMAT_MJPEG, PIXEL_FORMAT_YUVMONO10, PIXEL_FORMAT_RGB24, PIXEL_FORMAT_GREY, PIXEL_FORMAT_UNKNOWN$/;"	e	enum:usb_cam::UsbCam::__anon2
+PIXEL_FORMAT_UYVY	include/usb_cam/usb_cam.h	/^    PIXEL_FORMAT_YUYV, PIXEL_FORMAT_UYVY, PIXEL_FORMAT_MJPEG, PIXEL_FORMAT_YUVMONO10, PIXEL_FORMAT_RGB24, PIXEL_FORMAT_GREY, PIXEL_FORMAT_UNKNOWN$/;"	e	enum:usb_cam::UsbCam::__anon2
+PIXEL_FORMAT_YUVMONO10	include/usb_cam/usb_cam.h	/^    PIXEL_FORMAT_YUYV, PIXEL_FORMAT_UYVY, PIXEL_FORMAT_MJPEG, PIXEL_FORMAT_YUVMONO10, PIXEL_FORMAT_RGB24, PIXEL_FORMAT_GREY, PIXEL_FORMAT_UNKNOWN$/;"	e	enum:usb_cam::UsbCam::__anon2
+PIXEL_FORMAT_YUYV	include/usb_cam/usb_cam.h	/^    PIXEL_FORMAT_YUYV, PIXEL_FORMAT_UYVY, PIXEL_FORMAT_MJPEG, PIXEL_FORMAT_YUVMONO10, PIXEL_FORMAT_RGB24, PIXEL_FORMAT_GREY, PIXEL_FORMAT_UNKNOWN$/;"	e	enum:usb_cam::UsbCam::__anon2
+USB_CAM_USB_CAM_H	include/usb_cam/usb_cam.h	37;"	d
+UsbCam	include/usb_cam/usb_cam.h	/^class UsbCam {$/;"	c	namespace:usb_cam
+UsbCam	src/usb_cam.cpp	/^UsbCam::UsbCam()$/;"	f	class:usb_cam::UsbCam
+UsbCamNode	nodes/usb_cam_node.cpp	/^  UsbCamNode() :$/;"	f	class:usb_cam::UsbCamNode
+UsbCamNode	nodes/usb_cam_node.cpp	/^class UsbCamNode$/;"	c	namespace:usb_cam	file:
+YUV2RGB	src/usb_cam.cpp	/^static void YUV2RGB(const unsigned char y, const unsigned char u, const unsigned char v, unsigned char* r,$/;"	f	namespace:usb_cam
+__STDC_CONSTANT_MACROS	src/usb_cam.cpp	36;"	d	file:
+auto_white_balance_	nodes/usb_cam_node.cpp	/^  bool autofocus_, autoexposure_, auto_white_balance_;$/;"	m	class:usb_cam::UsbCamNode	file:
+autoexposure_	nodes/usb_cam_node.cpp	/^  bool autofocus_, autoexposure_, auto_white_balance_;$/;"	m	class:usb_cam::UsbCamNode	file:
+autofocus_	nodes/usb_cam_node.cpp	/^  bool autofocus_, autoexposure_, auto_white_balance_;$/;"	m	class:usb_cam::UsbCamNode	file:
+avcodec_	include/usb_cam/usb_cam.h	/^  AVCodec *avcodec_;$/;"	m	class:usb_cam::UsbCam
+avcodec_context_	include/usb_cam/usb_cam.h	/^  AVCodecContext *avcodec_context_;$/;"	m	class:usb_cam::UsbCam
+avframe_camera_	include/usb_cam/usb_cam.h	/^  AVFrame *avframe_camera_;$/;"	m	class:usb_cam::UsbCam
+avframe_camera_size_	include/usb_cam/usb_cam.h	/^  int avframe_camera_size_;$/;"	m	class:usb_cam::UsbCam
+avframe_rgb_	include/usb_cam/usb_cam.h	/^  AVFrame *avframe_rgb_;$/;"	m	class:usb_cam::UsbCam
+avframe_rgb_size_	include/usb_cam/usb_cam.h	/^  int avframe_rgb_size_;$/;"	m	class:usb_cam::UsbCam
+avoptions_	include/usb_cam/usb_cam.h	/^  AVDictionary *avoptions_;$/;"	m	class:usb_cam::UsbCam
+brightness_	nodes/usb_cam_node.cpp	/^  int image_width_, image_height_, framerate_, exposure_, brightness_, contrast_, saturation_, sharpness_, focus_,$/;"	m	class:usb_cam::UsbCamNode	file:
+buffer	include/usb_cam/usb_cam.h	/^  struct buffer$/;"	s	class:usb_cam::UsbCam
+buffers_	include/usb_cam/usb_cam.h	/^  buffer * buffers_;$/;"	m	class:usb_cam::UsbCam
+bytes_per_pixel	include/usb_cam/usb_cam.h	/^    int bytes_per_pixel;$/;"	m	struct:usb_cam::UsbCam::__anon3
+calibed_	sensing/sensing_camera_node.cpp	/^        int calibed_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+cam_	nodes/usb_cam_node.cpp	/^  UsbCam cam_;$/;"	m	class:usb_cam::UsbCamNode	file:
+cam_	sensing/sensing_camera_node.cpp	/^        cv::VideoCapture cam_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+camera_dev_	include/usb_cam/usb_cam.h	/^  std::string camera_dev_;$/;"	m	class:usb_cam::UsbCam
+camera_image_t	include/usb_cam/usb_cam.h	/^  } camera_image_t;$/;"	t	class:usb_cam::UsbCam	typeref:struct:usb_cam::UsbCam::__anon3
+camera_info_url_	nodes/usb_cam_node.cpp	/^  std::string video_device_name_, io_method_name_, pixel_format_name_, camera_name_, camera_info_url_;$/;"	m	class:usb_cam::UsbCamNode	file:
+camera_name_	nodes/usb_cam_node.cpp	/^  std::string video_device_name_, io_method_name_, pixel_format_name_, camera_name_, camera_info_url_;$/;"	m	class:usb_cam::UsbCamNode	file:
+camera_name_	sensing/sensing_camera_node.cpp	/^        std::string video_device_, camera_name_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+cinfo_	nodes/usb_cam_node.cpp	/^  boost::shared_ptr<camera_info_manager::CameraInfoManager> cinfo_;$/;"	m	class:usb_cam::UsbCamNode	file:
+cinfo_	sensing/sensing_camera_node.cpp	/^        boost::shared_ptr<camera_info_manager::CameraInfoManager> cinfo_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+clipping_table_offset	src/usb_cam.cpp	/^const int clipping_table_offset = 128;$/;"	m	namespace:usb_cam	file:
+close_device	src/usb_cam.cpp	/^void UsbCam::close_device(void)$/;"	f	class:usb_cam::UsbCam
+contrast_	nodes/usb_cam_node.cpp	/^  int image_width_, image_height_, framerate_, exposure_, brightness_, contrast_, saturation_, sharpness_, focus_,$/;"	m	class:usb_cam::UsbCamNode	file:
+distort_coeff	sensing/sensing_camera_node.cpp	/^        cv::Mat distort_coeff;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+dst_image	sensing/sensing_camera_node.cpp	/^        cv::Mat dst_image;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+errno_exit	src/usb_cam.cpp	/^static void errno_exit(const char * s)$/;"	f	namespace:usb_cam
+exposure_	nodes/usb_cam_node.cpp	/^  int image_width_, image_height_, framerate_, exposure_, brightness_, contrast_, saturation_, sharpness_, focus_,$/;"	m	class:usb_cam::UsbCamNode	file:
+fd_	include/usb_cam/usb_cam.h	/^  int fd_;$/;"	m	class:usb_cam::UsbCam
+focus_	nodes/usb_cam_node.cpp	/^  int image_width_, image_height_, framerate_, exposure_, brightness_, contrast_, saturation_, sharpness_, focus_,$/;"	m	class:usb_cam::UsbCamNode	file:
+framerate_	nodes/usb_cam_node.cpp	/^  int image_width_, image_height_, framerate_, exposure_, brightness_, contrast_, saturation_, sharpness_, focus_,$/;"	m	class:usb_cam::UsbCamNode	file:
+framerate_	sensing/sensing_camera_node.cpp	/^        int image_width_, image_height_, framerate_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+gain_	nodes/usb_cam_node.cpp	/^      white_balance_, gain_;$/;"	m	class:usb_cam::UsbCamNode	file:
+gmsl_cam	sensing/sensing_camera_node.cpp	/^namespace gmsl_cam$/;"	n	file:
+gps_time_	sensing/sensing_camera_node.cpp	/^        sensor_msgs::TimeReference gps_time_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+grab_image	src/usb_cam.cpp	/^void UsbCam::grab_image()$/;"	f	class:usb_cam::UsbCam
+grab_image	src/usb_cam.cpp	/^void UsbCam::grab_image(sensor_msgs::Image* msg)$/;"	f	class:usb_cam::UsbCam
+gst_str_	sensing/sensing_camera_node.cpp	/^        std::string gst_str_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+height	include/usb_cam/usb_cam.h	/^    int height;$/;"	m	struct:usb_cam::UsbCam::__anon3
+image	include/usb_cam/usb_cam.h	/^    char *image;$/;"	m	struct:usb_cam::UsbCam::__anon3
+image_	include/usb_cam/usb_cam.h	/^  camera_image_t *image_;$/;"	m	class:usb_cam::UsbCam
+image_height_	nodes/usb_cam_node.cpp	/^  int image_width_, image_height_, framerate_, exposure_, brightness_, contrast_, saturation_, sharpness_, focus_,$/;"	m	class:usb_cam::UsbCamNode	file:
+image_height_	sensing/sensing_camera_node.cpp	/^        int image_width_, image_height_, framerate_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+image_pub_	nodes/usb_cam_node.cpp	/^  image_transport::CameraPublisher image_pub_;$/;"	m	class:usb_cam::UsbCamNode	file:
+image_pub_	sensing/sensing_camera_node.cpp	/^        image_transport::CameraPublisher image_pub_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+image_size	include/usb_cam/usb_cam.h	/^    int image_size;$/;"	m	struct:usb_cam::UsbCam::__anon3
+image_topic	sensing/sensing_camera_node.cpp	/^        std::string image_topic;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+image_width_	nodes/usb_cam_node.cpp	/^  int image_width_, image_height_, framerate_, exposure_, brightness_, contrast_, saturation_, sharpness_, focus_,$/;"	m	class:usb_cam::UsbCamNode	file:
+image_width_	sensing/sensing_camera_node.cpp	/^        int image_width_, image_height_, framerate_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+img_	nodes/usb_cam_node.cpp	/^  sensor_msgs::Image img_;$/;"	m	class:usb_cam::UsbCamNode	file:
+img_	sensing/sensing_camera_node.cpp	/^        sensor_msgs::Image img_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+init_device	src/usb_cam.cpp	/^void UsbCam::init_device(int image_width, int image_height, int framerate)$/;"	f	class:usb_cam::UsbCam
+init_mjpeg_decoder	src/usb_cam.cpp	/^int UsbCam::init_mjpeg_decoder(int image_width, int image_height)$/;"	f	class:usb_cam::UsbCam
+init_mmap	src/usb_cam.cpp	/^void UsbCam::init_mmap(void)$/;"	f	class:usb_cam::UsbCam
+init_read	src/usb_cam.cpp	/^void UsbCam::init_read(unsigned int buffer_size)$/;"	f	class:usb_cam::UsbCam
+init_userp	src/usb_cam.cpp	/^void UsbCam::init_userp(unsigned int buffer_size)$/;"	f	class:usb_cam::UsbCam
+intrinsic_matrix	sensing/sensing_camera_node.cpp	/^        cv::Mat intrinsic_matrix;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+intrinsic_params	sensing/sensing_camera_node.cpp	/^        Eigen::Matrix3f intrinsic_params;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+io_	include/usb_cam/usb_cam.h	/^  io_method io_;$/;"	m	class:usb_cam::UsbCam
+io_method	include/usb_cam/usb_cam.h	/^  } io_method;$/;"	t	class:usb_cam::UsbCam	typeref:enum:usb_cam::UsbCam::__anon1
+io_method_from_string	src/usb_cam.cpp	/^UsbCam::io_method UsbCam::io_method_from_string(const std::string& str)$/;"	f	class:usb_cam::UsbCam
+io_method_name_	nodes/usb_cam_node.cpp	/^  std::string video_device_name_, io_method_name_, pixel_format_name_, camera_name_, camera_info_url_;$/;"	m	class:usb_cam::UsbCamNode	file:
+is_capturing	src/usb_cam.cpp	/^bool UsbCam::is_capturing() {$/;"	f	class:usb_cam::UsbCam
+is_capturing_	include/usb_cam/usb_cam.h	/^  bool is_capturing_;$/;"	m	class:usb_cam::UsbCam
+is_new	include/usb_cam/usb_cam.h	/^    int is_new;$/;"	m	struct:usb_cam::UsbCam::__anon3
+is_opened_	sensing/sensing_camera_node.cpp	/^        bool is_opened_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+length	include/usb_cam/usb_cam.h	/^    size_t length;$/;"	m	struct:usb_cam::UsbCam::buffer
+m_gnss	sensing/sensing_camera_node.cpp	/^std::mutex m_gnss;$/;"	v
+main	nodes/usb_cam_node.cpp	/^int main(int argc, char **argv)$/;"	f
+main	sensing/sensing_camera_node.cpp	/^int main(int argc, char **argv)$/;"	f
+map1	sensing/sensing_camera_node.cpp	/^        cv::Mat map1, map2;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+map2	sensing/sensing_camera_node.cpp	/^        cv::Mat map1, map2;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+mjpeg2rgb	src/usb_cam.cpp	/^void UsbCam::mjpeg2rgb(char *MJPEG, int len, char *RGB, int NumPixels)$/;"	f	class:usb_cam::UsbCam
+mono102mono8	src/usb_cam.cpp	/^static void mono102mono8(char *RAW, char *MONO, int NumPixels)$/;"	f	namespace:usb_cam
+monochrome_	include/usb_cam/usb_cam.h	/^  bool monochrome_;$/;"	m	class:usb_cam::UsbCam
+n_buffers_	include/usb_cam/usb_cam.h	/^  unsigned int n_buffers_;$/;"	m	class:usb_cam::UsbCam
+node_	nodes/usb_cam_node.cpp	/^  ros::NodeHandle node_;$/;"	m	class:usb_cam::UsbCamNode	file:
+node_	sensing/sensing_camera_node.cpp	/^        ros::NodeHandle node_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+open_device	src/usb_cam.cpp	/^void UsbCam::open_device(void)$/;"	f	class:usb_cam::UsbCam
+pixel_format	include/usb_cam/usb_cam.h	/^  } pixel_format;$/;"	t	class:usb_cam::UsbCam	typeref:enum:usb_cam::UsbCam::__anon2
+pixel_format_from_string	src/usb_cam.cpp	/^UsbCam::pixel_format UsbCam::pixel_format_from_string(const std::string& str)$/;"	f	class:usb_cam::UsbCam
+pixel_format_name_	nodes/usb_cam_node.cpp	/^  std::string video_device_name_, io_method_name_, pixel_format_name_, camera_name_, camera_info_url_;$/;"	m	class:usb_cam::UsbCamNode	file:
+pixelformat_	include/usb_cam/usb_cam.h	/^  unsigned int pixelformat_;$/;"	m	class:usb_cam::UsbCam
+pn_	nodes/usb_cam_node.cpp	/^  ros::NodeHandle pn_;$/;"	m	class:usb_cam::UsbCamNode	file:
+pn_	sensing/sensing_camera_node.cpp	/^        ros::NodeHandle pn_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+process_image	src/usb_cam.cpp	/^void UsbCam::process_image(const void * src, int len, camera_image_t *dest)$/;"	f	class:usb_cam::UsbCam
+read_frame	src/usb_cam.cpp	/^int UsbCam::read_frame()$/;"	f	class:usb_cam::UsbCam
+rgb242rgb	src/usb_cam.cpp	/^void rgb242rgb(char *YUV, char *RGB, int NumPixels)$/;"	f	namespace:usb_cam
+saturation_	nodes/usb_cam_node.cpp	/^  int image_width_, image_height_, framerate_, exposure_, brightness_, contrast_, saturation_, sharpness_, focus_,$/;"	m	class:usb_cam::UsbCamNode	file:
+seq	sensing/sensing_camera_node.cpp	/^        uint32_t seq;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+service_start_	nodes/usb_cam_node.cpp	/^  ros::ServiceServer service_start_, service_stop_;$/;"	m	class:usb_cam::UsbCamNode	file:
+service_start_	sensing/sensing_camera_node.cpp	/^        ros::ServiceServer service_start_, service_stop_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+service_start_cap	nodes/usb_cam_node.cpp	/^  bool service_start_cap(std_srvs::Empty::Request  &req, std_srvs::Empty::Response &res )$/;"	f	class:usb_cam::UsbCamNode
+service_start_cap	sensing/sensing_camera_node.cpp	/^        bool service_start_cap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)$/;"	f	class:gmsl_cam::GmslCamNode
+service_stop_	nodes/usb_cam_node.cpp	/^  ros::ServiceServer service_start_, service_stop_;$/;"	m	class:usb_cam::UsbCamNode	file:
+service_stop_	sensing/sensing_camera_node.cpp	/^        ros::ServiceServer service_start_, service_stop_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+service_stop_cap	nodes/usb_cam_node.cpp	/^  bool service_stop_cap( std_srvs::Empty::Request  &req, std_srvs::Empty::Response &res )$/;"	f	class:usb_cam::UsbCamNode
+service_stop_cap	sensing/sensing_camera_node.cpp	/^        bool service_stop_cap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)$/;"	f	class:gmsl_cam::GmslCamNode
+set_auto_focus	src/usb_cam.cpp	/^void UsbCam::set_auto_focus(int value)$/;"	f	class:usb_cam::UsbCam
+set_v4l_parameter	src/usb_cam.cpp	/^void UsbCam::set_v4l_parameter(const std::string& param, const std::string& value)$/;"	f	class:usb_cam::UsbCam
+set_v4l_parameter	src/usb_cam.cpp	/^void UsbCam::set_v4l_parameter(const std::string& param, int value)$/;"	f	class:usb_cam::UsbCam
+sharpness_	nodes/usb_cam_node.cpp	/^  int image_width_, image_height_, framerate_, exposure_, brightness_, contrast_, saturation_, sharpness_, focus_,$/;"	m	class:usb_cam::UsbCamNode	file:
+shutdown	src/usb_cam.cpp	/^void UsbCam::shutdown(void)$/;"	f	class:usb_cam::UsbCam
+spin	nodes/usb_cam_node.cpp	/^  bool spin()$/;"	f	class:usb_cam::UsbCamNode
+spin	sensing/sensing_camera_node.cpp	/^        bool spin()$/;"	f	class:gmsl_cam::GmslCamNode
+start	include/usb_cam/usb_cam.h	/^    void * start;$/;"	m	struct:usb_cam::UsbCam::buffer
+start	src/usb_cam.cpp	/^void UsbCam::start(const std::string& dev, io_method io_method,$/;"	f	class:usb_cam::UsbCam
+start_capturing	src/usb_cam.cpp	/^void UsbCam::start_capturing(void)$/;"	f	class:usb_cam::UsbCam
+stop_capturing	src/usb_cam.cpp	/^void UsbCam::stop_capturing(void)$/;"	f	class:usb_cam::UsbCam
+streaming_status_	nodes/usb_cam_node.cpp	/^  bool streaming_status_;$/;"	m	class:usb_cam::UsbCamNode	file:
+sub	sensing/sensing_camera_node.cpp	/^        ros::Subscriber sub;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+take_and_send_image	nodes/usb_cam_node.cpp	/^  bool take_and_send_image()$/;"	f	class:usb_cam::UsbCamNode
+take_and_send_image	sensing/sensing_camera_node.cpp	/^        bool take_and_send_image()$/;"	f	class:gmsl_cam::GmslCamNode
+transform_publisher_	nodes/usb_cam_node.cpp	/^  drivers::common::TransformPublisher transform_publisher_;$/;"	m	class:usb_cam::UsbCamNode	file:
+transform_publisher_	sensing/sensing_camera_node.cpp	/^        drivers::common::TransformPublisher transform_publisher_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+uchar_clipping_table	src/usb_cam.cpp	/^const unsigned char uchar_clipping_table[] = {$/;"	m	namespace:usb_cam	file:
+undistort_	sensing/sensing_camera_node.cpp	/^        int undistort_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+uninit_device	src/usb_cam.cpp	/^void UsbCam::uninit_device(void)$/;"	f	class:usb_cam::UsbCam
+usb_cam	include/usb_cam/usb_cam.h	/^namespace usb_cam {$/;"	n
+usb_cam	nodes/usb_cam_node.cpp	/^namespace usb_cam {$/;"	n	file:
+usb_cam	src/usb_cam.cpp	/^namespace usb_cam {$/;"	n	file:
+uyvy2rgb	src/usb_cam.cpp	/^void uyvy2rgb(char *YUV, char *RGB, int NumPixels)$/;"	f	namespace:usb_cam
+video_device_	sensing/sensing_camera_node.cpp	/^        std::string video_device_, camera_name_;$/;"	m	class:gmsl_cam::GmslCamNode	file:
+video_device_name_	nodes/usb_cam_node.cpp	/^  std::string video_device_name_, io_method_name_, pixel_format_name_, camera_name_, camera_info_url_;$/;"	m	class:usb_cam::UsbCamNode	file:
+video_sws_	include/usb_cam/usb_cam.h	/^  struct SwsContext *video_sws_;$/;"	m	class:usb_cam::UsbCam	typeref:struct:usb_cam::UsbCam::SwsContext
+white_balance_	nodes/usb_cam_node.cpp	/^      white_balance_, gain_;$/;"	m	class:usb_cam::UsbCamNode	file:
+width	include/usb_cam/usb_cam.h	/^    int width;$/;"	m	struct:usb_cam::UsbCam::__anon3
+xioctl	src/usb_cam.cpp	/^static int xioctl(int fd, int request, void * arg)$/;"	f	namespace:usb_cam
+yuyv2rgb	src/usb_cam.cpp	/^static void yuyv2rgb(char *YUV, char *RGB, int NumPixels)$/;"	f	namespace:usb_cam
+~GmslCamNode	sensing/sensing_camera_node.cpp	/^        virtual ~GmslCamNode()$/;"	f	class:gmsl_cam::GmslCamNode
+~UsbCam	src/usb_cam.cpp	/^UsbCam::~UsbCam()$/;"	f	class:usb_cam::UsbCam
+~UsbCamNode	nodes/usb_cam_node.cpp	/^  virtual ~UsbCamNode()$/;"	f	class:usb_cam::UsbCamNode

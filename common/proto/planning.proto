@@ -52,5 +52,9 @@ message PlanningConfig {
     optional double pre_coef = 68;
     optional int32 trj_num = 69;
     optional double filter_coef = 70;
+    optional double vc_input_low = 71;
+    optional double vc_input_high = 72;
+    optional double vc_out_low = 73;
+    optional double vc_out_high = 74;
 
 }

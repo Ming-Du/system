@@ -1,0 +1,54 @@
+syntax = "proto2";
+
+package LightInfo;
+
+import "lightstate.proto";
+
+
+message Time {
+  optional uint32 sec = 1;
+  optional uint32 nsec = 2;
+}
+
+message Header {
+  // Sequence number for each message. Each module maintains its own counter for
+  // sequence_num, always starting from 1 on boot.
+  optional uint32 seq = 1;
+
+  // Message publishing time in seconds.
+  optional Time stamp = 2;
+
+  // frame id
+  optional string frame_id = 3;
+
+  // Module name.
+  optional string module_name = 4;
+}
+
+
+message LightInfo
+{
+    //路口ID
+  optional string     nCrossID = 1;
+  //纬度
+  optional double   lat = 2;
+  //经度
+  optional double   lon = 3;
+  //方向
+  optional string    direction = 4;
+  //航向角
+  optional string    heading  = 5;
+  //信号灯ID
+  optional int32 lightID = 6;
+  //行车车道号
+  optional int32     laneNo = 7;
+  //地面元素（转向）
+  optional int32     arrowNo = 8;
+  //左转
+  optional lightstate.state left = 9;
+  //直行
+  optional lightstate.state mid = 11;
+  //右转
+  optional lightstate.state right = 13;
+  optional Header header = 15;
+}

@@ -67,12 +67,15 @@ def simu_hz():
     elemHz = pbTopicHz.topic_hz.add()
     elemHz.name = "topic_name_1"
     elemHz.hz = seq_hz
+    elemHz.max_delay = 1
     elemHz = pbTopicHz.topic_hz.add()
     elemHz.name = "topic_name_2"
     elemHz.hz = seq_hz
+    elemHz.max_delay = 2
     elemHz = pbTopicHz.topic_hz.add()
     elemHz.name = "topic_name_3"
     elemHz.hz = seq_hz
+    elemHz.max_delay = 3
     strBuffer = pbTopicHz.SerializeToString()
     rosMsg.data = strBuffer
     rosMsg.size = len(strBuffer)

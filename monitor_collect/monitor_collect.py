@@ -63,7 +63,8 @@ globalPubToMonitorProcessControlCmd = rospy.Publisher('/monitor_collect/control/
 globalPubOperatorToolNodeHealth = rospy.Publisher("/monitor_process/nodes/health/operate_tool", BinaryData,
                                                   queue_size=1000)
 
-rDictHzTable = {}
+tree = lambda: collections.defaultdict(tree)
+rDictHzTable = tree()
 listSubScriptHzItem = []
 global_hz_time_write_interval = 0
 
@@ -102,9 +103,11 @@ def task_topic_hz(msg):
         pbMonitorHzWidthCarInfo = monitor_topic_hz_pb2.MonitorTopicHz()
         global rDictHzTable
         for elemHz in pbTopicHz.topic_hz:
-            rDictHzTable[elemHz.name] = elemHz.hz
-            print elemHz.name
-            print elemHz.hz
+            # rDictHzTable[elemHz.name] = elemHz.hz
+            dictHzRecord['pLogInfo']['topic_hz'][elemHz.name]['value']['hz'] = elemHz.hz
+            dictHzRecord['pLogInfo']['topic_hz'][elemHz.name]['value']['max_delay'] = elemHz.max_delay
+            # print elemHz.name
+            # print elemHz.hz
         pbMonitorHzWidthCarInfo.pLogInfo.header.seq = pbTopicHz.header.seq
         print "pbMonitorHzWidthCarInfo.pLogInfo.header.seq:%d" % (pbMonitorHzWidthCarInfo.pLogInfo.header.seq)
         dictHzRecord["log_type"] = "topic_hz"
@@ -138,17 +141,20 @@ def task_topic_hz(msg):
         #         hzItem.name = k
         #         hzItem.hz = v
         #         print "send:%s" % (k)
-        listHzCollect = []
-        for k, v in rDictHzTable.items():
-            dictHzUnit = {}
-            hzItem = pbMonitorHzWidthCarInfo.pLogInfo.topic_hz.add()
-            hzItem.name = k
-            dictHzUnit['name'] = hzItem.name
-            hzItem.hz = v
-            dictHzUnit['hz'] = hzItem.hz
-            dictHzRecord['pLogInfo']['topic_hz'][hzItem.name] = hzItem.hz
-            listHzCollect.append(dictHzUnit)
-            # print "send:%s" % (k)
+        # listHzCollect = []
+        # dictHzUnit = None
+        # for k, v in rDictHzTable.items():
+        #     dictHzUnit = None
+        #     dictHzUnit = tree()
+        #     hzItem = pbMonitorHzWidthCarInfo.pLogInfo.topic_hz.add()
+        #     hzItem.name = k
+        #     dictHzUnit['name'] = hzItem.name
+        #     hzItem.hz = v
+        #     dictHzUnit['value']['hz'] = hzItem.hz
+        #     dictHzUnit['value']['max_delay'] = hzItem.max_delay
+        #     dictHzRecord['pLogInfo']['topic_hz'][hzItem.name] = hzItem.hz
+        # listHzCollect.append(dictHzUnit)
+        # print "send:%s" % (k)
         # dictHzRecord['pLogInfo']['topic_hz'] = listHzCollect
         pbMonitorHzWidthCarInfo.carinfo.car_type = globalCommonPara.dictCarInfo['car_type']
         dictHzRecord['carinfo']['car_type'] = globalCommonPara.dictCarInfo['car_type']
@@ -160,9 +166,9 @@ def task_topic_hz(msg):
         print "before dest buffer file "
         strDestPbBufferToFile = pbMonitorHzWidthCarInfo.SerializeToString()
         print "before rebuild rosmsg"
-        rosMessage = BinaryData()
-        rosMessage.data = strDestPbBufferToFile
-        rosMessage.size = len(strDestPbBufferToFile)
+        # rosMessage = BinaryData()
+        # rosMessage.data = strDestPbBufferToFile
+        # rosMessage.size = len(strDestPbBufferToFile)
         global_hz_time_write_interval = global_hz_time_write_interval + 1
     except Exception as e:
         print "exception happend"
@@ -172,7 +178,7 @@ def task_topic_hz(msg):
         print 'str(e):\t\t', str(e)
         print 'repr(e):\t', repr(e)
         print 'e.message:\t', e.message
-        print 'traceback.print_exc():';
+        print 'traceback.print_exc():'
         traceback.print_exc()
         print 'traceback.format_exc():\n%s' % (traceback.format_exc())
 
@@ -195,12 +201,12 @@ def task_topic_hz(msg):
         exit(-1)
     print "before send "
 
-    try:
-        globalPubToTelematicsTopicHz.publish(msg)
-        print "finish send message"
-        print "send size : %d" % (msg.size)
-    except Exception as e:
-        print "globalPubToTelematicsTopicHz.publish happend exeception"
+    # try:
+    #     globalPubToTelematicsTopicHz.publish(msg)
+    #     print "finish send message"
+    #     print "send size : %d" % (msg.size)
+    # except Exception as e:
+    #     print "globalPubToTelematicsTopicHz.publish happend exeception"
 
 
 def task_topic_msg(msg):
@@ -218,7 +224,7 @@ def task_topic_msg(msg):
         print "timestamp.nsec:%d" % (pbRecvMsg.timestamp.nsec)
         dictMsgInfoRecord['reportmsg']['timestamp']['nsec'] = pbRecvMsg.timestamp.nsec
         dictMsgInfoRecord['reportmsg']['timestamp'][
-            'msec'] = (pbRecvMsg.timestamp.sec * 1000) + (pbRecvMsg.timestamp.nsec / 1000000 )
+            'msec'] = (pbRecvMsg.timestamp.sec * 1000) + (pbRecvMsg.timestamp.nsec / 1000000)
         pbSend.reportmsg.src = pbRecvMsg.src
         print "pbRecvMsg.src:%s" % (pbRecvMsg.src)
         dictMsgInfoRecord['reportmsg']['src'] = pbRecvMsg.src
@@ -315,7 +321,7 @@ def task_topic_msg(msg):
 
 
 def topicHzRecvCallback(msg):
-    print "--------------------------------------------------recv from channel  /autopilot_info/report_topic_hz "
+    print "--------------------------------------------------recv from channel  /autopilot_info/internal/report_topic_hz "
     if msg.size > 0:
         globalTopicHzPool.submit(task_topic_hz, msg)
 
@@ -337,7 +343,7 @@ def task_cpu_info(msg):
     dictSaveToFile["timestamp"]["sec"] = rospy.Time.now().secs
     dictSaveToFile["timestamp"]["nsec"] = rospy.Time.now().nsecs
     dictSaveToFile["timestamp"]["msec"] = (dictSaveToFile["timestamp"]["sec"] * 1000) + (dictSaveToFile["timestamp"][
-        "nsec"] / 1000000)
+                                                                                             "nsec"] / 1000000)
     dictSaveToFile["report_msg"] = dictTempInfo
     dictSaveToFile["report_msg"]["header"]["pilot_mode"] = globalCollectVehicleInfo.int_pilot_mode
     strJsonSaveToFile = json.dumps(dictSaveToFile)
@@ -368,8 +374,9 @@ def task_node_health(msg):
     dictSaveToFile = tree()
     dictTempInfo = json.loads(str(msg.data))
     strMac = dictTempInfo['header']['mac']
+    strIp = dictTempInfo['header']['ip']
     globalDictHostMacInfo[strMac] = 1
-
+    print "recv node status from mac:{0},ip: {1}".format(strMac, strIp)
     print "#################################################################   dictTempInfo['data']"
     print dictTempInfo['data']
     print len(dictTempInfo['data'])

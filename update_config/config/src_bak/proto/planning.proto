@@ -1,0 +1,24 @@
+syntax = "proto2";
+package planning;
+
+enum PlanningMode {
+  LOCAL = 0;
+  GLOBAL = 1;
+}
+
+message PlanningConfig {
+    optional uint32 frequency = 1;
+    optional double speed_max = 2;
+    optional double acc_min = 3;
+    optional double acc_max = 4;
+    optional double jerk_min = 5;
+    optional double jerk_max = 6;
+    optional double time_sample = 7;
+    optional double path_sample = 8;
+    optional double safe_distance_buffer = 9;
+    optional double safe_distance_by_time = 10;
+    //int map_builder_mode = 0;
+    optional double safe_lateral_buffer = 11;
+    optional double car_follow_factor = 12;
+    optional bool  flag_lane_change = 13;
+}

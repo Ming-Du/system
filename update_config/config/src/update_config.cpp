@@ -5,6 +5,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <vector>
+#include <map>
 
 #include "mogo_curl.h"
 #include "const.h"
@@ -28,36 +29,50 @@ bool MoveTempMapFile()
 	closedir(dir);
 }
 
-bool UpdatePbFile()
-{
-	MogoCurl *pCurl = new MogoCurl;
-	pCurl->Init();
-	std::string url_list = "https://mdev.zhidaohulian.com/config/driver/list";
-	std::string url_pull = "https://mdev.zhidaohulian.com/config/driver/pull";
-	std::string url_sync = "https://mdev.zhidaohulian.com/config/driver/sync";
-	std::string SN = pCurl->GetPlate();
-	char szMac[18];
-	int nRtn = get_mac(szMac, sizeof(szMac));
-	for(int i=0; i<strlen(szMac); i++)
-        {
-                szMac[i] = tolower(szMac[i]);
-        }
-	bool flag = true;
-	flag = pCurl->DownloadFileContentImpl(url_list, url_pull, url_sync, szMac, SN);
-	if(flag == false)
-	{
-		int times = 0;
-		while(times++<5)
-		{
-			sleep(1);
-			flag = pCurl->DownloadFileContentImpl(url_list, url_pull, url_sync, szMac, SN);
-			if(flag ==true) break;
-		}
-	}
-	delete pCurl;
-	return flag;
-}
 
+void LinkFile(std::string file_path, std::string SN)
+{
+        std::map<std::string, std::string> file_link_map;
+        std::string rm_cmd = "rm -rf /home/mogo/autopilot/share/config/vehicle";
+        system(rm_cmd.c_str());
+        std::string link_cmd = "ln -s /home/mogo/data/vehicle_monitor/" + SN + " /home/mogo/autopilot/share/config/vehicle";
+        system(link_cmd.c_str());
+        char line[1000];
+        FILE *fpr = fopen(file_path.c_str(), "r+");
+        if(fpr)
+        {
+                while(!feof(fpr))
+                {
+                        memset(line, 0, 1000);
+                        fgets(line,1000,fpr);
+                        if(strlen(line)<10) continue;
+                        std::string str = line;
+                        if(str[str.size()-1]=='\n')
+                        {
+                                str = str.substr(0, str.size()-1);
+                        }
+                        string::size_type pos = str.find(":");
+                        if(pos == -1) continue;
+                        std::string src_path = str.substr(0, pos);
+                        std::string link_path = str.substr(pos+1, str.size());
+                        file_link_map[src_path] = link_path;
+                }
+                fclose(fpr);
+        }
+        else
+        {
+                ROS_ERROR("open all file link list error");
+        }
+	        for(auto it=file_link_map.begin(); it!=file_link_map.end(); it++)
+        {
+                std::string src_file = it->first;
+                std::string link_file = it->second;
+                std::string rm_cmd = "rm -rf " + link_file;
+                std::string link_cmd = "ln -s " + src_file + " " + link_file;
+                system(rm_cmd.c_str());
+                system(link_cmd.c_str());
+        }
+}
 
 bool UpdateOtherFile()
 {
@@ -85,6 +100,9 @@ bool UpdateOtherFile()
 		}
 	}
 	delete pCurl;
+	LinkFile("/home/mogo/autopilot/share/config/vehicle/slinks.cfg", SN);
+        LinkFile("/home/mogo/data/vehicle_monitor/slinks.cfg", SN);
+
 	return flag;
 }
 
@@ -97,8 +115,6 @@ int main(int argc, char **argv)
 	ros::Rate loop_rate(1);
 
 
-	MoveTempMapFile();
-	UpdatePbFile();
 	UpdateOtherFile();
 	int sec = 0;
         while(ros::ok() && sec++ < 1)
