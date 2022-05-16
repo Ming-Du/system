@@ -206,7 +206,7 @@ bool MogoCurl::DownloadBinaryFile(const std::string check_url, const std::string
 	std::string file_path = pFile.file_path;
 	int pos = file_path.find_last_of("/");
 	std::string path_str = file_path.substr(0, pos);
-	if(access(path_str.data(), NULL) != 0)
+	if(access(path_str.data(), F_OK) != 0)
 	{
 		ROS_WARN("update config DownloadBinaryFile create dir [%s] error", path_str.data());
 		CreateDir(path_str.data());
@@ -331,7 +331,7 @@ bool MogoCurl::GetUpdateFileList(const std::string &update_url, const std::strin
 			return false;
 		}
 
-		if(access(file_path.data(), NULL)!=0)
+		if(access(file_path.data(), F_OK)!=0)
 		{
 			file_list.emplace_back(file_path);
 		}
@@ -395,7 +395,7 @@ bool MogoCurl::DownloadFileContent(const std::string &download_url, const std::s
 
 	int pos = file_path.find_last_of("/");
 	std::string path_str = file_path.substr(0, pos);
-	if(access(path_str.data(), NULL) != 0)
+	if(access(path_str.data(), F_OK) != 0)
 	{
 		ROS_WARN("update config DownloadFileContent create dir [%s]", path_str.data());
 		CreateDir(path_str.data());
@@ -415,7 +415,7 @@ bool MogoCurl::DownloadFileContent(const std::string &download_url, const std::s
                 return false;
 	}
 
-	if(access(file_path.data(), NULL)==0)
+	if(access(file_path.data(), F_OK)==0)
 	{
 		std::string mv_cmd = "mv " + file_path + " " + file_path + "_bak";
 		system(mv_cmd.data());
