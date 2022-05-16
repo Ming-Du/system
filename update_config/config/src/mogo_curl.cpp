@@ -178,7 +178,7 @@ bool MogoCurl::GetUpdateBinaryFileList(const std::string &update_url, const std:
                 }
 
 		DownloadFile pFile = {file_path, map_url, version};
-		if(access(file_path.data(), NULL)!=0)
+		if(access(file_path.data(), F_OK)!=0)
 		{
 			file_list.emplace_back(pFile);
 		}
