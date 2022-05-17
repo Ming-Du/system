@@ -154,7 +154,7 @@ def readNodeList():
             for idx in range(len(lines)):
                 if len(lines[idx]) > 0:
                     linesLaunchFile.append(lines[idx])
-        # linesLaunchFile.append("/home/mogo/data/radar_408_front_308_rear.launch")
+        linesLaunchFile.append("/home/mogo/data/radar_408_front_308_rear.launch")
         for idx in range(len(linesLaunchFile)):
             strCmd = "roslaunch --nodes {0}".format(linesLaunchFile[idx])
             print  "strCmd :{0}".format(strCmd)
@@ -163,7 +163,8 @@ def readNodeList():
                 multy_list = output.split('\n')
                 print "multy_list: {0}".format(multy_list)
                 for input_idx in range(len(multy_list)):
-                    listAllNode.append(multy_list[input_idx])
+                    if len(multy_list[input_idx]) > 0:
+                        listAllNode.append(multy_list[input_idx])
     except Exception as e:
         print "exception happend"
         print e.message
