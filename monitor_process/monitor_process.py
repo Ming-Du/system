@@ -154,7 +154,7 @@ def readNodeList():
             for idx in range(len(lines)):
                 if len(lines[idx]) > 0:
                     linesLaunchFile.append(lines[idx])
-        linesLaunchFile.append("/home/mogo/data/radar_408_front_308_rear.launch")
+        # linesLaunchFile.append("/home/mogo/data/radar_408_front_308_rear.launch")
         for idx in range(len(linesLaunchFile)):
             strCmd = "roslaunch --nodes {0}".format(linesLaunchFile[idx])
             print  "strCmd :{0}".format(strCmd)
