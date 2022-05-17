@@ -78,6 +78,7 @@ globalSumNodeHealthRecvInfo = 0
 globalListNodeHealthRecvInfo = []
 globalDictHostMacInfo = {}
 globalDictTableNodeHealth = {}
+globalDictTableNodeHealthTimeout = {}
 globalDelayTimeInterval = 0
 
 
@@ -370,6 +371,7 @@ def task_node_health(msg):
     global globalListNodeHealthRecvInfo
     global globalDictHostMacInfo
     global globalDictTableNodeHealth
+    global globalDictTableNodeHealthTimeout
     tree = lambda: collections.defaultdict(tree)
     dictSaveToFile = tree()
     dictTempInfo = json.loads(str(msg.data))
@@ -381,13 +383,15 @@ def task_node_health(msg):
     print dictTempInfo['data']
     print len(dictTempInfo['data'])
     print "#################################################################   dictTempInfo['data']"
+    dictSaveToFile["timestamp"]["sec"] = rospy.Time.now().secs
     if len(dictTempInfo['data']) > 0:
         for key, value in dictTempInfo['data'].items():
             globalDictTableNodeHealth[key] = value
+            globalDictTableNodeHealthTimeout[key] = dictSaveToFile["timestamp"]["sec"]
     print "########################################   now task_node_health len : %d " % len(globalDictHostMacInfo)
     dictSaveToFile["log_type"] = "node_health"
     dictSaveToFile["carinfo"] = globalCommonPara.dictCarInfo
-    dictSaveToFile["timestamp"]["sec"] = rospy.Time.now().secs
+
     dictSaveToFile["timestamp"]["nsec"] = rospy.Time.now().nsecs
     dictSaveToFile["timestamp"]["msec"] = (dictSaveToFile["timestamp"]["sec"] * 1000) + (dictSaveToFile["timestamp"][
                                                                                              "nsec"] / 1000000)
@@ -527,26 +531,38 @@ def addLocalizationListener():
     rospy.Subscriber('/chassis/vehicle_state', BinaryData, autopilotModeCallback)
 
 
-def threadSendControlCmd(strThreadName, intDelay):
+# def threadSendControlCmd(strThreadName, intDelay):
+#     while True:
+#         rosControlMsg = BinaryData()
+#         strUuid = str(uuid.uuid1())
+#         # print type(strUuid)
+#         # print strUuid
+#         rosControlMsg.data = strUuid
+#         rosControlMsg.size = len(rosControlMsg.data)
+#         rospy.Time.now().secs
+#         print "+++++++++++++++++++++++++++++++++=%d.%d  threadSendControlCmd publish ControlCmd .......Request_Uuid:%s " % (
+#             rospy.Time.now().secs, rospy.Time.now().nsecs, strUuid)
+#         globalPubToMonitorProcessControlCmd.publish(rosControlMsg)
+#         time.sleep(intDelay)
+
+
+def threadTimeoutRestNodeStatus(strThreadName, intDelay):
     while True:
-        rosControlMsg = BinaryData()
-        strUuid = str(uuid.uuid1())
-        # print type(strUuid)
-        # print strUuid
-        rosControlMsg.data = strUuid
-        rosControlMsg.size = len(rosControlMsg.data)
-        rospy.Time.now().secs
-        print "+++++++++++++++++++++++++++++++++=%d.%d  threadSendControlCmd publish ControlCmd .......Request_Uuid:%s " % (
-            rospy.Time.now().secs, rospy.Time.now().nsecs, strUuid)
-        globalPubToMonitorProcessControlCmd.publish(rosControlMsg)
+        intCurrentSec = rospy.Time.now().secs
+        global globalDictTableNodeHealthTimeout
+        global globalDictTableNodeHealth
+        for key, value in globalDictTableNodeHealthTimeout.items():
+            if (intCurrentSec - value) > intDelay:
+                globalDictTableNodeHealth[key] = "off"
+                rospy.logerr("node has timeout: " + key)
         time.sleep(intDelay)
 
 
-# def startThreadControlCmd(intTimeVal):
-#     try:
-#         thread.start_new_thread(threadSendControlCmd, ("ControlCmd", int(intTimeVal),))
-#     except:
-#         print "Error: unable to start thread"
+def startThreadControlCmd(intTimeVal):
+    try:
+        thread.start_new_thread(threadTimeoutRestNodeStatus, ("ControlCmd", int(intTimeVal),))
+    except:
+        print "Error: unable to start thread"
 
 
 def main():
@@ -568,7 +584,7 @@ def main():
     print "=============================set globalDelayTimeInterval:%d" % globalDelayTimeInterval
     # add listener
     addLocalizationListener()
-    # startThreadControlCmd(globalDelayTimeInterval)
+    startThreadControlCmd(globalDelayTimeInterval)
     ## wait msg
     rospy.spin()
 
