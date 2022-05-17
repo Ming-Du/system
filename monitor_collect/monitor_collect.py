@@ -542,11 +542,11 @@ def threadSendControlCmd(strThreadName, intDelay):
         time.sleep(intDelay)
 
 
-def startThreadControlCmd(intTimeVal):
-    try:
-        thread.start_new_thread(threadSendControlCmd, ("ControlCmd", int(intTimeVal),))
-    except:
-        print "Error: unable to start thread"
+# def startThreadControlCmd(intTimeVal):
+#     try:
+#         thread.start_new_thread(threadSendControlCmd, ("ControlCmd", int(intTimeVal),))
+#     except:
+#         print "Error: unable to start thread"
 
 
 def main():
@@ -568,7 +568,7 @@ def main():
     print "=============================set globalDelayTimeInterval:%d" % globalDelayTimeInterval
     # add listener
     addLocalizationListener()
-    startThreadControlCmd(globalDelayTimeInterval)
+    # startThreadControlCmd(globalDelayTimeInterval)
     ## wait msg
     rospy.spin()
 

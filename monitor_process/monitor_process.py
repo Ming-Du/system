@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import threading
 import traceback
+import uuid
 
 from random import random
 
@@ -128,10 +129,6 @@ def getHostName():
     return strHostName
 
 
-
-
-
-
 def readNodeList():
     listAllNode = []
     linesLaunchFile = []
@@ -139,7 +136,7 @@ def readNodeList():
         strHostName = getHostName()
         strFileListName = "/autocar-code/install/share/launch/%s.list" % (strHostName)
         # print "strFileListName:%s" % (strFileListName)
-        #strFileListName = "/home/mogo/data/jhf/system/launch/all.list"
+        # strFileListName = "/home/mogo/data/jhf/system/launch/all.list"
 
         if os.path.exists(strFileListName):
             pass
@@ -318,43 +315,32 @@ def cpu_watch(strUuid):
         print "send cpu_status success"
 
 
-def controlStatusCmdRecvCallBack(msg):
-    if msg.size > 0:
-        strCmdContent = str(msg.data)
-        while True:
-            if 1:
-                globalTaskExecutePool.submit(mem_watch, strCmdContent)
-                globalTaskExecutePool.submit(cpu_watch, strCmdContent)
-                globalTaskExecutePool.submit(node_watch, strCmdContent)
-                break
-            break
+def ControlStatusCmdReportCallBack():
+    while True:
+        strCmdContent = str(uuid.uuid1())
+        globalTaskExecutePool.submit(mem_watch, strCmdContent)
+        globalTaskExecutePool.submit(cpu_watch, strCmdContent)
+        globalTaskExecutePool.submit(node_watch, strCmdContent)
+        time.sleep(5)
 
 
 def addLocalizationListener():
     rospy.Subscriber("/monitor_collect/control/status_report/cmd", BinaryData, controlStatusCmdRecvCallBack)
 
 
-# def UpdateMsgTopic():
-#
-#     pass
+class SysInfoWatchThread(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
 
-# class MsgLogThread(threading.Thread):
-#     def __init__(self):
-#         global set_msg_log_pub_info
-#         global set_msg_log_pub_error
-#         threading.Thread.__init__(self)
-#         set_msg_log_pub_info = Publisher('/autopilot_info/report_msg_info', BinaryData, queue_size=1000)
-#         set_msg_log_pub_error = Publisher('/autopilot_info/report_msg_error', BinaryData, queue_size=1000)
-#
-#     def run(self):
-#         UpdateMsgTopic()
+    def run(self):
+        ControlStatusCmdReportCallBack()
 
 
 def main():
     # initial node
     globalCommonPara.initPara()
     rospy.init_node('monitor_process', anonymous=True)
-    addLocalizationListener()
+    # addLocalizationListener()
     # add listener
     global globalNetCardName
     strFullParaName = "%s/net_card_name" % (rospy.get_name())
@@ -373,10 +359,8 @@ def main():
     print "=============================set globalCollectInterval:%d" % (globalCollectInterval)
     print globalListNode
 
-    # msg_log_thread = MsgLogThread()
-    # msg_log_thread.start()
-
-    # node_watch("")
+    sys_report_thread = SysInfoWatchThread()
+    sys_report_thread.start()
     rospy.spin()
 
 
