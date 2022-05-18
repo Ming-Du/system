@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package common;
+
+import "header.proto";
+import "RoadsideSafetyMessage_PB.proto";
+
+message RSM_PB {
+	required RoadsideSafetyMessage_PB rsmFrame =1;
+	optional Header header = 2;
+}

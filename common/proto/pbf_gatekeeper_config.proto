@@ -19,4 +19,9 @@ message PbfGatekeeperConfig {
 
   optional double existence_threshold = 12;
   optional double radar_existence_threshold = 13;
+  // Modify(@liuxinyu): obu_test
+  optional bool publish_if_has_obu = 14 [default = true];
+  optional double min_obu_publish_distance = 15;
+  optional bool publish_if_has_falcon_lidar = 16 [default = true];
+
 }

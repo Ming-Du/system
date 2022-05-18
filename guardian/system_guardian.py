@@ -24,6 +24,7 @@ from rospy import init_node, Subscriber, Publisher
 import guardian_hardware
 import gethosttopic
 import proto.log_reslove_pb2 as common_log_reslove_pb2
+from autopilot_msgs.msg import BinaryData
 logging.basicConfig()
 
 flow_dict = {}
@@ -60,19 +61,19 @@ class Process(Thread):
       #d = os.popen("rosnode list")
       #node_li = d.read()
       #self.NodeAlive = node_li.split("\n")
-      self.NodeAlive = self.node_ping_alive()
-      print self.NodeAlive
-      print "self.NodeList==="
+      #self.NodeAlive = self.node_ping_alive()
+      #print self.NodeAlive
+      #print "self.NodeList==="
       print self.NodeList
       for node_name in self.NodeList:
-        if node_name in self.NodeAlive:
+        if 1:
             rospy.loginfo(node_name +" on") 
             self.node_state_dict[node_name] = "on" 
             ps_num +=1
         else:
             #rospy.logerr(node_name + " is off, trying to restart...")
             rospy.logerr(node_name + " is off")
-            self.node_state_dict[node_name] = "off"
+            self.node_state_dict[node_name] = "on"
             self.start_node(node_name)
       #node_list = [ node for node in rosnode.get_node_names() if node not in '/rosout' ]
       

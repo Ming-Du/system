@@ -1,0 +1,37 @@
+# the result of the lon controller
+Header header
+
+float64 station_reference
+float64 station_error
+float64 station_error_limited
+float64 preview_station_error
+float64 speed_offset
+float64 speed_reference
+float64 speed_error
+float64 speed_error_limited
+float64 preview_speed_reference
+float64 preview_speed_error
+float64 preview_acceleration_reference
+float64 acceleration_cmd_closeloop
+float64 acceleration_cmd
+float64 acceleration_lookup
+float64 speed_lookup
+float64 calibration_value
+float64 throttle_cmd
+float64 brake_cmd
+bool is_full_stop
+float64 speed
+float64 x
+float64 y
+float64 yaw
+float64 TimenowInSeconds
+float64 slope_offset_compensation
+uint32 trajectory_seq
+float64 ref_point_t
+float64 ref_point_x
+float64 ref_point_y
+float64 ref_point_theta
+float64 ref_point_speed
+float64 ref_point_accel
+float64 ref_point_kappa
+float64 ref_point_s

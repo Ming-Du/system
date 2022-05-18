@@ -18,4 +18,9 @@ message ProbabilisticFusionConfig {
 
   // initialization for static members in base/sensor.h
   optional int64 max_cached_frame_num = 11 [default = 50];
+  // Modify(@liuxinyu): obu_test
+  optional bool use_obu = 12 [default = true];
+  optional double max_obu_invisible_period = 13 [default = 0.75];
+  optional bool use_falcon_lidar = 14[default = true];
+  optional double max_falcon_lidar_invisible_period = 15[default = 0.30];
 }

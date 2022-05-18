@@ -1,0 +1,35 @@
+syntax = "proto2";
+package v2x;
+
+import "geometry.proto";
+
+message ObuObject {
+    optional uint64 vehId = 1;
+    optional double msTime = 2;
+    optional uint32 vehicleWidth = 3;
+    optional uint32 vehicleLength = 4;
+    optional uint32 vehicleHeight = 5;
+    optional uint32 basicVehicleClass = 6;
+    optional int32 latitude = 7;
+    optional int32 longitude = 8;
+    optional uint32 elvation = 9;
+    optional uint32 semiMajorAxisAccuracy = 10;
+    optional uint32 semiMinorAccuracy = 11;
+    optional uint32 semiMajorOrientation = 12;
+    optional uint32 heading = 13;
+    optional uint32 speed = 14;
+    optional int32 angle = 15;
+    optional int32 longitudinalAcce = 16;
+    optional int32 laterAcce = 17;
+    optional int32 yawrate = 18;
+    optional uint32 brakePedalStatus = 19;
+    optional uint32 brakeAppliedStatus = 20;
+    optional uint32 tractionControlStatus = 21;
+    optional uint32 exteriorLights = 22;
+    optional uint32 transmissionState = 23;
+    optional uint32 eventflag = 24;
+    optional int32 pathPrediction = 25;
+    optional geometry.Vector3 size = 26;   // length width height(in meter)
+    optional geometry.Point  center = 27;         // x,y,z in meter
+    // optional int32 pathHistory = 26;
+}

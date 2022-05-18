@@ -1,2 +1,0 @@
-vehicle_num:JLBJA40776D
-vehicle_color:255255000

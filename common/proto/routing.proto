@@ -9,6 +9,7 @@ message Waypoint {
   optional string id = 1;
   optional double s = 2;
   optional geometry.Point pose = 3;//utm 坐标值
+  optional double theta = 4;  //direction of v
 }
 
 message RoutingRequest {
@@ -35,6 +36,8 @@ message RoutingRequest {
   optional double speedlimit = 7;
   optional string startName = 8;
   optional string endName = 9;
-  optional int32 vehicleType = 10;
+  optional int32 vehicleType = 10;  // 9 - taxi, 10 - bus
+  optional uint32 bus_routeid = 11;
+  optional string bus_routename = 12;
 }
 

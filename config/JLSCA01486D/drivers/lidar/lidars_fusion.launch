@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-  <node name="xiaoba_lidars_fusion" pkg="xiaoba_fusion" type="xiaoba_fusion_node" output="screen">
-  </node>
-</launch>

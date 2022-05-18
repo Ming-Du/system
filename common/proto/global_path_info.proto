@@ -2,7 +2,6 @@ syntax = "proto2";
 package hadmap;
 
 import "header.proto";
-import "hadmap.proto";
 import "geometry.proto";
 
 

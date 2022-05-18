@@ -57,6 +57,13 @@ enum LaneType {
     LANE_TYPE_JuncTurnRight         = 27;//路口右转车道
     LANE_TYPE_Turn                  = 28;//掉头车道
     LANE_TYPE_Diversion             = 29;//导流带车道
+    LANE_TYPE_DrivingSide           = 30;//普通车道-辅路
+    LANE_TYPE_BikingSide            = 31;//非机动车道-辅路
+    LANE_TYPE_TurnRighSide          = 32;//右转车道-辅路
+    LANE_TYPE_TaxiLane              = 33;//出租车专用车道
+    LANE_TYPE_LeftOrUturnWaite      = 34;//左转或调头待转车道
+    LANE_TYPE_PoliceCarLane         = 35;//警务专用车道
+    LANE_TYPE_AcceleOrDeceleLane    = 36;//加减速车道
 }
 
 enum LaneArrow {
@@ -300,6 +307,12 @@ message LaneLink {
 
     // to road lane id
     optional int32 to_lane_id = 7;
+
+    // 驶出路口的lanlink，次字段true，非路口fasle
+    optional bool from_junction = 8;
+
+    // 进出路口的lanlink，次字段true，非路口false
+    optional bool to_junction = 9;
 }
 
 

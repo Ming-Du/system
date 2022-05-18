@@ -1,2 +1,0 @@
-vehicle_num:DFHYD07407
-vehicle_color:255255255

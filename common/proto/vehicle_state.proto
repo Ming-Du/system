@@ -38,4 +38,9 @@ message VehicleState {
     optional bool chassis_status_missing = 29 [default = false]; //未收到车辆底盘反馈信息
     optional bool brake_light_status = 30 [default = false]; //自驾模式下制动灯状态
     optional bool pilot_mode_condition_met = 31 [default = false];
+    
+    optional float steeringSpd = 32 [default = 0]; // steering angle speed in degrees/s
+
+    optional float leftFrontWheelAngle = 33 [default = 0];//左前轮角度（deg）,左负右正
+    optional float rightFrontWheelAngle = 34 [default = 0]; //右前轮角度（deg）,左负右正
 }

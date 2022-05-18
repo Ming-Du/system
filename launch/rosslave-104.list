@@ -2,4 +2,5 @@ launch drivers_perception_radar.launch
 log_collect_client log_collect_client.launch
 log_msg_collect_client log_msg_collect_client.launch
 guardian system_guardian_slave2.launch
-record_cache record_cache.launch
+launch drivers_innolidar.launch
+monitor_process monitor_process_rosslave_104.launch 

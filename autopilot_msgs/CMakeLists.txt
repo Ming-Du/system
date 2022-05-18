@@ -19,6 +19,8 @@ add_message_files(
   CommonObject.msg
   CommonObjects.msg
   ControlCommand.msg
+  ControlLatDataPool.msg
+  ControlLonDataPool.msg
   LaneLineCubicCurve.msg
   LaneMark.msg
   LaneMarks.msg
@@ -30,6 +32,9 @@ add_message_files(
   TrajectoryPoint.msg
   VisualObject.msg
   VisualObjects.msg
+  RoadArrow.msg
+  LaneLine.msg
+  LaneLines.msg
 )
 
 add_service_files(
