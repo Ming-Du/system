@@ -3,10 +3,6 @@ info {
   msg: "已找到轨迹文件"
 }
 
-info {
-  code: IMAP_TRA_LOADED
-  msg: "轨迹文件加载成功"
-}
 
 error
 {
