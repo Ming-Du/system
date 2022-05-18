@@ -112,7 +112,7 @@ message Object {
   // obu supplement
   optional ObuObjectsSupplement obu_supplement = 21;
  //falcon lidar supplement
-  optional FalconLidarObjectSupplement falcon_lidar_supplement = 22;
+  optional FalconLidarObjectSupplement falcon_lidar_supplement = 23;
 
 }
 
