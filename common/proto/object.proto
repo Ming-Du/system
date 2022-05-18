@@ -48,6 +48,12 @@ message LidarObjectSupplement {
   repeated double cloud = 2 [packed = true];
 }
 
+message FalconLidarObjectSupplement {
+  optional bool on_use = 1 [default = false];
+  // Format: [x0, y0, z0, x1, y1, z1...]
+  repeated double cloud = 2 [packed = true];
+}
+
 message RadarObjectSupplement {
   optional bool on_use = 1 [default = false];  
   optional float x = 2;
@@ -105,6 +111,9 @@ message Object {
   // Modify(@liuxinyu): obu_test
   // obu supplement
   optional ObuObjectsSupplement obu_supplement = 21;
+ //falcon lidar supplement
+  optional FalconLidarObjectSupplement falcon_lidar_supplement = 22;
+
 }
 
 message VisualObject {
