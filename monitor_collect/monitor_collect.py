@@ -121,6 +121,7 @@ def task_topic_hz(msg):
         print "pbMonitorHzWidthCarInfo.pLogInfo.header.stamp.nsec:%d" % (
             pbMonitorHzWidthCarInfo.pLogInfo.header.stamp.nsec)
         dictHzRecord['pLogInfo']['header']['stamp']['nsec'] = (pbTopicHz.header.stamp.nsec)
+        dictHzRecord['pLogInfo']['header']['stamp']['msec'] = int(dictHzRecord['pLogInfo']['header']['stamp']['sec'])*1000 + int(dictHzRecord['pLogInfo']['header']['stamp']['nsec'])/1000000
         pbMonitorHzWidthCarInfo.pLogInfo.header.frame_id = pbTopicHz.header.frame_id
         print "pbMonitorHzWidthCarInfo.pLogInfo.header.frame_id:%s " % (
             pbMonitorHzWidthCarInfo.pLogInfo.header.frame_id)
@@ -431,7 +432,7 @@ def task_memory_info(msg):
     dictSaveToFile["carinfo"] = globalCommonPara.dictCarInfo
     dictSaveToFile["timestamp"]["sec"] = rospy.Time.now().secs
     dictSaveToFile["timestamp"]["nsec"] = rospy.Time.now().nsecs
-    dictSaveToFile["timestamp"]["nsec"] = (dictSaveToFile["timestamp"]["sec"] * 1000) + (dictSaveToFile["timestamp"][
+    dictSaveToFile["timestamp"]["msec"] = (dictSaveToFile["timestamp"]["sec"] * 1000) + (dictSaveToFile["timestamp"][
                                                                                              "nsec"] / 1000000)
     dictSaveToFile["report_msg"] = dictTempInfo
     dictSaveToFile["report_msg"]["header"]["pilot_mode"] = globalCollectVehicleInfo.int_pilot_mode

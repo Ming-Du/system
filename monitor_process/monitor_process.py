@@ -208,8 +208,10 @@ def node_status_check(listNodeList, strUuid):
         for elem_name in unpinged:
             rospy.logerr(elem_name + " is off")
             node_state_dict['data'][elem_name] = "off"
-        node_state_dict['header']['timestamp']['sec'] = rospy.Time.now().secs
-        node_state_dict['header']['timestamp']['nsec'] = rospy.Time.now().nsecs
+        # node_state_dict['header']['timestamp']['sec'] = rospy.Time.now().secs
+        # node_state_dict['header']['timestamp']['nsec'] = rospy.Time.now().nsecs
+        # node_state_dict['header']['timestamp']['msec'] = int(node_state_dict['header']['timestamp']['sec'])*1000 + int(node_state_dict['header']['timestamp']['nsec'])/1000000
+
         # node_state_dict['header']['uuid'] = strUuid
         node_state_dict['header']['ip'] = globalDictIpInfo['ip']
         node_state_dict['header']['mac'] = globalDictIpInfo['mac']
@@ -254,8 +256,9 @@ def mem_watch(strUuid):
     if len(dictMemInfo) > 0:
         tree = lambda: collections.defaultdict(tree)
         dictMemOut = tree()
-        dictMemOut['header']['timestamp']['sec'] = rospy.Time.now().secs
-        dictMemOut['header']['timestamp']['nsec'] = rospy.Time.now().nsecs
+        # dictMemOut['header']['timestamp']['sec'] = rospy.Time.now().secs
+        # dictMemOut['header']['timestamp']['nsec'] = rospy.Time.now().nsecs
+        #dictMemOut['header']['timestamp']['msec']=int(dictMemOut['header']['timestamp']['sec'])*1000 + int(dictMemOut['header']['timestamp']['nsec'])/1000000
         # dictMemOut['header']['uuid'] = strUuid
         dictMemOut['header']['ip'] = globalDictIpInfo['ip']
         dictMemOut['header']['mac'] = globalDictIpInfo['mac']
@@ -298,8 +301,9 @@ def cpu_watch(strUuid):
     print "floatUsedCpu:%f" % floatUsedCpu
     tree = lambda: collections.defaultdict(tree)
     dictCpuInfo = tree()
-    dictCpuInfo['header']['timestamp']['sec'] = rospy.Time.now().secs
-    dictCpuInfo['header']['timestamp']['nsec'] = rospy.Time.now().nsecs
+    # dictCpuInfo['header']['timestamp']['sec'] = rospy.Time.now().secs
+    # dictCpuInfo['header']['timestamp']['nsec'] = rospy.Time.now().nsecs
+    # dictCpuInfo['header']['timestamp']['msec']=int(dictCpuInfo['header']['timestamp']['sec']) * 1000 + int(dictCpuInfo['header']['timestamp']['nsec'])/1000000
     dictCpuInfo['header']["mac"] = globalDictIpInfo["mac"]
     dictCpuInfo['header']["ip"] = globalDictIpInfo["ip"]
     # dictCpuInfo['header']["uuid"] = strUuid
