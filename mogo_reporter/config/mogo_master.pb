@@ -34,6 +34,11 @@ info {
 }
 
 info {
+  code: ISYS_CAN_NORMAL	
+  msg: "底盘状态正常或恢复正常"
+}z
+
+info {
   code: ISYS_RTK_STATUS_NORMAL	
   msg: "rtk状态正常或恢复正常"
 }
@@ -98,6 +103,13 @@ error
   result: "RESULT_AUTOPILOT_DISABLE"
 }
 
+error
+{
+  code: EHW_CAN
+  msg: "无法与底盘通信，获取不到地盘状态，无法进入自动驾驶"
+  result: "RESULT_AUTOPILOT_DISABLE"
+  action: "ACTION_REBOOT_VEHICLE"
+}
 
 
 
