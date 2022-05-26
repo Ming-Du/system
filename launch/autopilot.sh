@@ -547,6 +547,27 @@ if [[ -z "$opt_launch_file" && (-z "$VehicleType" || $(echo $vehicletypes | grep
     exit 1
 fi
 set_bashrc
+\rm -rf /home/mogo/data/vehicle_use.info.error
+try_times=0
+while true
+do
+        python ${ABS_PATH}/vehicle_init.py
+        if [ -e "/home/mogo/data/vehicle_use.info" ];then
+                echo "found"
+                break
+        fi
+        try_times=`expr $try_times + 1`
+        echo $try_times
+        if [  $try_times -eq 5 ];then
+                echo "try times eq 5 times,abort get vehicle use"
+                break
+        fi
+        sleep 3
+done
+if [ ! -e "/home/mogo/data/vehicle_use.info" ];then
+        echo "not exists"
+        echo  "{\"cannot access url\"}" >  /home/mogo/data/vehicle_use.info.error
+fi
 LoggingINFO "cwd:$ABS_PATH    command:$0 $args"
 LoggingINFO "rosmachine:${ros_machine} rosmaster:${ros_master}"
 LoggingINFO "start list file:$list_file"
