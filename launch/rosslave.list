@@ -1,3 +1,4 @@
+monitor_collect  monitor_collect.launch
 launch drivers_lidar.launch
 log_reslove log_reslove.launch
 log_collect_server log_collect_server.launch
@@ -11,6 +12,5 @@ launch perception_fusion.launch
 launch slam_localization.launch
 guardian system_guardian_slave1.launch
 monitor_gnss  monitor_gnss.launch
-monitor_collect monitor_collect.launch
 monitor_process  monitor_process_rosslave.launch
 
