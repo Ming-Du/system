@@ -3,6 +3,10 @@ info {
   msg: "已找到轨迹文件"
 }
 
+info {
+  code: IMAP_TRA_ROUTING
+  msg: "算路成功"
+}
 
 error
 {

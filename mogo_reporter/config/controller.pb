@@ -21,3 +21,13 @@ error
   result: "RESULT_AUTOPILOT_INFERIOR"
   action: "ACTION_CONTACT_TECH_SUPPORT"
 }
+
+error
+{
+  code: EVHC_GEAR
+  msg: "档位不是D或N档"
+  result: "RESULT_AUTOPILOT_DISABLE"
+  result: "RESULT_REMOTEPILOT_DISABLE"
+  action: "ACTION_HANDLE_VEHICLE_TURN_GEAR"
+  action: "ACTION_TRY_AGAIN_LATER"
+}

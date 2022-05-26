@@ -57,14 +57,6 @@ error
 
 error
 {
-  code: EMAP_EXIT_AUTOPILOT_FOR_DISTANCE
-  msg: "因planning起点距离当前过远强退自动驾驶"
-  result: "RESULT_AUTOPILOT_INFERIOR"
-  action: "ACTION_CONTACT_TECH_SUPPORT"
-}
-
-error
-{
   code: EMAP_HADMAP_NO_TRAJECTORY
   msg: "hadmap未发布全局路径"
   result: "RESULT_AUTOPILOT_DISABLE"
