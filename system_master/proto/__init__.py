@@ -2,8 +2,8 @@ from sys import path
 import os
 path.append(os.path.dirname(__file__))
 
-import vehicle_state_pb2   as vehicle_state
-import chassis_pb2         as common_chassis
+#import vehicle_state_pb2   as vehicle_state
+#import chassis_pb2         as common_chassis
 import control_command_pb2 as common_control_command
 import error_code_pb2      as common_error_code
 import geometry_pb2        as common_geometry
@@ -20,4 +20,3 @@ import vehicle_config_pb2  as common_vehicle_config
 import vehicle_state_pb2   as common_vehicle_state
 import log_reslove_pb2     as common_log_reslove
 import mogo_report_msg_pb2 as common_mogo_report_msg
-import system_pilot_mode_pb2
