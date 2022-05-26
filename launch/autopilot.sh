@@ -336,9 +336,10 @@ install_ros_log() {
     mkdir -p /home/mogo/data/log/ROS_STAT/
     mkdir -p /home/mogo/data/log/ROS_STAT/EXPORT/
     chmod 777 -R /home/mogo/data/log/
-   #roscore_xml_path=$(find /autocar-code/install/ -name 'roscore.xml' | head -n 1)
-   #\cp -rf $roscore_xml_path  /opt/ros/melodic/etc/ros/roscore.xml
-   #\mv /usr/bin/rosversion  /usr/bin/rosversion_backup
+    roscore_xml_path=$(find /autocar-code/install/ -name 'roscore.xml' | head -n 1)
+   \cp -rf $roscore_xml_path  /opt/ros/melodic/etc/ros/roscore.xml
+   \cp -rf $roscore_xml_path  /opt/ros/melodic/share/roslaunch/resources/roscore.xml
+   \mv /usr/bin/rosversion  /usr/bin/rosversion_backup
 }
 
 add_privilege_monitor_gnss() {
