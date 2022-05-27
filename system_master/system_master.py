@@ -153,7 +153,8 @@ class System_Master(object):
             if act == 0: 
                 if self.show_mode_flag == True:
                     self.node_handler_entity.set_pilot_mode(1)
-                else:
+                    # Mark: if set_pilot_mode failed, there not change sys_globals.System_State !
+                elif self.sys_state in (sys_globals.System_State.SYS_RUNNING, sys_globals.System_State.AUTO_PILOT_RUNNING):
                     self.set_sys_state_and_save(sys_globals.System_State.AUTO_PILOT_READY)
             else:
                 if self.auto_polit_wait_thread and self.auto_polit_wait_thread.isAlive():

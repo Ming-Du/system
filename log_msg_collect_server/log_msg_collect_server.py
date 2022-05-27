@@ -36,7 +36,9 @@ def recv_data(sock, addr):
 def run():
     if os.path.exists(tmp_dir) == False:
         os.mkdir(tmp_dir)
-
+    if os.path.exists(output_dir) == False:
+        os.mkdir(output_dir)
+        
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # 监听端口:
     s.bind(('0.0.0.0', 1120))

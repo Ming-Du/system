@@ -759,7 +759,7 @@ def LoadMsglogs(input_paths):
                 LoadOneMsgLog(path)
                 os.remove(path)
         except Exception as e:
-            pass
+            print ('loadMsglogs has error: {}'.format(e))
 
 def buildOneLogMsg(one_log_dict):
     #common_mogo_report_msg MogoReportMessage
@@ -844,6 +844,10 @@ class MsgLogThread (threading.Thread):
         set_msg_log_pub_error = Publisher('/autopilot_info/report_msg_error', BinaryData, queue_size=500)
         time.sleep(10)
     def run(self):
+        if os.path.exists("/home/mogo/data/log/msg_log/") == False:
+            os.mkdir("/home/mogo/data/log/msg_log/")
+        if os.path.exists("/home/mogo/data/log/msg_log_temp/") == False:
+            os.mkdir("/home/mogo/data/log/msg_log_temp/")
         UpdateMsgTopic()
 
 
