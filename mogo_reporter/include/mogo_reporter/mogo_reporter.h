@@ -25,6 +25,8 @@ namespace mogo
     }
     bool publish(std::string src, mogo_msg::ReportMsgCode code, const std::string &msg = "");
 
+    void test_all();
+
   private:
     MessageReporter();
     MessageReporter(const MessageReporter &) = delete;

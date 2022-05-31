@@ -234,4 +234,12 @@ namespace mogo
     }
     return true;
   }
+
+  void MessageReporter::test_all()
+  {
+    for (auto &it : s_msg_map)
+    {
+      publish(it.first);
+    }
+  }
 }

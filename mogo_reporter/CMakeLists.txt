@@ -73,10 +73,13 @@ add_dependencies(${PROJECT_NAME} compile_protos)
 add_executable(mogo_report_test test/mogo_report_test.cpp)
 target_link_libraries(mogo_report_test ${PROJECT_NAME})
 
+add_executable(mogo_report_test_all test/mogo_report_test_all.cpp)
+target_link_libraries(mogo_report_test_all ${PROJECT_NAME})
+
 add_executable(mogo_report_sub test/mogo_report_sub.cpp)
 target_link_libraries(mogo_report_sub ${PROJECT_NAME})
 
-install(TARGETS ${PROJECT_NAME} mogo_report_test mogo_report_sub
+install(TARGETS ${PROJECT_NAME} mogo_report_sub
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

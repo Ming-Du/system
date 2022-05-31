@@ -36,7 +36,7 @@ info {
 info {
   code: ISYS_CAN_NORMAL	
   msg: "底盘状态正常或恢复正常"
-}z
+}
 
 info {
   code: ISYS_RTK_STATUS_NORMAL	
