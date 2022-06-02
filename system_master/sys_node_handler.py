@@ -22,7 +22,7 @@ from sensor_msgs.msg import NavSatFix
 from sys_globals import System_State, System_Msg_Report, Sys_Health_Check
 import sys_globals, sys_config
 
-from system_master.srv import StatusQuery, StatusQueryResponse
+#from system_master.srv import StatusQuery, StatusQueryResponse
 
 
 class Vehicle_State():
@@ -164,7 +164,7 @@ class Node_Handler(object):
         #self.system_event_error_pub = rospy.Publisher('/autopilot_info/report_msg_error', BinaryData, queue_size=50)
 
         ## add service by liyl 20200601
-        self.query_request_service = rospy.Service('query_master_status', StatusQuery, self.handle_status_query_req)
+        #self.query_request_service = rospy.Service('query_master_status', StatusQuery, self.handle_status_query_req)
     
               
     def set_pilot_mode(self, Mode):
@@ -385,7 +385,20 @@ class Node_Handler(object):
 
 
     def handle_status_query_req(self, req):
-        pass
+        """
+        #@name: 
+        #@msg: the callback for handle status query request
+        #@return {*}
+        """
+
+        try:
+            print (req.sec_stamp)
+
+            rsp = StatusQueryResponse()
+            # TODO: add handle
+            return rsp
+        except Exception as e:
+            print('Error: handle status query, {}'.format(e))
 
 
     def run(self):
