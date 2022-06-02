@@ -3,7 +3,7 @@
 check_pid()
 {
 sysmaster_pid=$(ps -ef | grep "system_master.py" |grep -v grep |awk '{print $2}')
-if [ -z $sysmaster_pid ]; then
+if [ -z "$sysmaster_pid" ]; then
 	datetime=$(date +"%Y-%m-%d %H:%M:%S")
 	echo "    [$datetime] system_master alread exited, now start again!"
 	cd /home/mogo/autopilot/share/system_master/

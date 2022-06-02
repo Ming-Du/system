@@ -16,10 +16,12 @@ LoggingINFO() {
 install_ros_log() {
         mkdir -p /home/mogo/data/log/msg_log
         chmod 777 -R /home/mogo/data/log/msg_log
+        rm -f /home/mogo/data/log/start_master-*.log
+        mv /home/mogo/data/log/system_master.log /home/mogo/data/log/system_master_before.log
+        rm -f /tmp/system_state
 }
 
 declare -g LOGFILE
-declare -g LOG_DIR="/home/mogo/data/log"
 curtime=$(date +"%Y%m%d%H%M%S")
 LOGFILE="/home/mogo/data/log/start_master-${curtime}.log"
 install_ros_log
@@ -92,10 +94,8 @@ start_system_pid=$(ps -ef | grep "keep_system_pid_alived_102.sh" |grep -v grep |
 if [ -n "$start_system_pid" ]; then
         kill -9 $start_system_pid
 fi
-LoggingINFO "first time start"
-mv /home/mogo/data/log/system_master.log /home/mogo/data/log/system_master_before.log
-rm -f /tmp/system_state
 
+LoggingINFO "first time start"
 nohup bash /home/mogo/autopilot/share/system_master/keep_system_pid_alived_102.sh >> $LOGFILE 2>&1 &
 LoggingINFO "start keep_system_pid_alived success!"
 exit 0

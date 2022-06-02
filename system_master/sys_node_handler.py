@@ -15,12 +15,14 @@ sys.setdefaultencoding('utf-8')
 import time
 
 import rospy
-from proto import common_vehicle_state, system_pilot_mode_pb2, system_cmd_pb2, common_mogo_report_msg, common_log_reslove
+from proto import common_vehicle_state, system_pilot_mode_pb2, system_cmd_pb2, common_mogo_report_msg, common_log_reslove, system_state_report_pb2
 from autopilot_msgs.msg import BinaryData
-from std_msgs.msg import Int32, Int64
+from std_msgs.msg import Int32, UInt64
 from sensor_msgs.msg import NavSatFix
 from sys_globals import System_State, System_Msg_Report, Sys_Health_Check
 import sys_globals, sys_config
+
+from system_master.srv import StatusQuery, StatusQueryResponse
 
 
 class Vehicle_State():
@@ -153,12 +155,16 @@ class Node_Handler(object):
         self.vehicle_state_entity = Vehicle_State()
         self.report_msg_entity = Report_Msg_Analyze()
         self.rtk_status_detection_sub = rospy.Subscriber('/sensor/gnss/gps_fix', NavSatFix, self.handle_rtk_status)
+        self.system_state_report_sub = rospy.Subscriber('/system_master/StateReport', BinaryData, self.handle_state_report)
         self.topic_status_detection_sub = rospy.Subscriber("/autopilot_info/internal/report_topic_hz", BinaryData, self.handle_topic_hz_status)
         self.system_command_sub = rospy.Subscriber("/system_master/SystemCmd", BinaryData, self.handle_system_cmd)
         self.system_autopolit_cmd_pub = rospy.Publisher('/autopilot/AutoPilotCmd', Int32, queue_size=10)
-        self.system_diagnose_cmd_pub = rospy.Publisher('/system_master/CheckCmd', Int64, queue_size=5)
+        self.system_diagnose_cmd_pub = rospy.Publisher('/system_master/CheckCmd', UInt64, queue_size=5)
         #self.system_event_info_pub  = rospy.Publisher('/autopilot_info/report_msg_info', BinaryData, queue_size=50)
         #self.system_event_error_pub = rospy.Publisher('/autopilot_info/report_msg_error', BinaryData, queue_size=50)
+
+        ## add service by liyl 20200601
+        self.query_request_service = rospy.Service('query_master_status', StatusQuery, self.handle_status_query_req)
     
               
     def set_pilot_mode(self, Mode):
@@ -184,7 +190,7 @@ class Node_Handler(object):
         """
 
         print('publist /system_master/CheckCmd: {}'.format(self.autopolit_cmd_pub_time))
-        checkcmd = Int64()
+        checkcmd = UInt64()
         checkcmd.data = self.autopolit_cmd_pub_time.to_nsec()
         self.system_diagnose_cmd_pub.publish(checkcmd)
 
@@ -362,9 +368,29 @@ class Node_Handler(object):
                 self.system_event_report(code='ISYS_CAN_NORMAL', desc=msg_desc)
                 Sys_Health_Check.g_can_adapter_had_send_error = False
 
+    def handle_state_report(self, ros_msg):
+        state_report_msg = system_state_report_pb2.PubLogInfo()
+        state_report_msg.ParseFromString(ros_msg.data)
+
+        if 'localization' == state_report_msg.src:
+            if state_report_msg.state in (state_report_msg.STATE_NORMAL, state_report_msg.STATE_FAULT, state_report_msg.STATE_UNKNOW):
+                if state_report_msg.state != Sys_Health_Check.g_rtk_state_report_val:
+                    print('rtk status change form {} to {}'.format(Sys_Health_Check.g_rtk_state_report_val, state_report_msg.state))
+                    self.system_event_report(code=state_report_msg.code, desc=' '+state_report_msg.desc)
+                    Sys_Health_Check.g_rtk_state_report_val = state_report_msg.state
+            else:
+                print('the state is unexpect! ignored! state={}'.format(state_report_msg.state))
+        else:
+            print('the src is unexpect! ignored! src={}'.format(state_report_msg.src))
+
+
+    def handle_status_query_req(self, req):
+		pass
+
 
     def run(self):
         # rospy.init_node('system_master', disable_signals=True)
+        Sys_Health_Check.g_can_adapter_last_recvtime = time.time()
         rospy.spin()
 
     

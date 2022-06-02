@@ -19,6 +19,10 @@ import threading
 ###### ros module
 import rospy
 
+##### used master.pb from mogo_reporter
+sys.path.append('../mogo_reporter/script')
+from get_msg_by_code import gen_report_msg
+
 #import local file
 import sys_globals, sys_config
 from sys_node_handler import Node_Handler
@@ -85,22 +89,31 @@ class System_Master(object):
         "code": "EVHC_TYPE_UNDEFINED", "result": ["RESULT_AUTOPILOT_SYSTEM_UNSTARTED", "RESULT_AUTOPILOT_DISABLE"], 
         "level": "error", "msg": "vehicle type undefined"}
         '''
-        cur_time = int(time.time())
-        msg_dict = {
-            "timestamp": {
-                "sec": cur_time, 
-                "nsec": int((time.time() - cur_time) * 1000000000)}, 
-            "src": "system_master", 
-            "code": code, 
-            "level": level, 
-            "result": results,
-            "action": actions,
-            "msg": msg
-        }
+        json_msg = '{}'
+        if sys_config.g_get_report_msg_config_by_pb:
+            try:
+                json_msg = gen_report_msg(sys_globals.System_Msg_Report.SYSTEM_MASTER_PB_DEF_FILE, code)
+            except Exception as e:
+                print('Error: gen report msg failed!, {}'.format(e))
+
+        if json_msg == '{}':  # if not used pb or call function error, used local config
+            cur_time = int(time.time())
+            msg_dict = {
+                "timestamp": {
+                    "sec": cur_time, 
+                    "nsec": int((time.time() - cur_time) * 1000000000)}, 
+                "src": "system_master", 
+                "code": code, 
+                "level": level, 
+                "result": results,
+                "action": actions,
+                "msg": msg
+            }
+            json_msg = json.dumps(msg_dict)
 
         try:
             with open(sys_globals.g_system_master_state_report, 'a+') as fp:
-                fp.write(json.dumps(msg_dict)+'\n')
+                fp.write(json_msg +'\n')
         except Exception as e:
             print('Error: save report msg to file, {}'.format(e))
 
@@ -160,6 +173,8 @@ class System_Master(object):
                 if self.auto_polit_wait_thread and self.auto_polit_wait_thread.isAlive():
                     self.auto_polit_wait_thread.cancel()
                     self.set_sys_state_and_save(sys_globals.System_State.AUTO_PILOT_RUNNING)
+                else:
+                    print('polit mode change to 1 but no wait thread, unexpect!!')
 
         elif reason == sys_globals.System_State.STATE_CHANGE_BY_SYS_REBOOT_CMD:  # reboot
             self.set_sys_state_and_save(sys_globals.System_State.SYS_EXITING)

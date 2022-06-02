@@ -88,6 +88,8 @@ class SysCmd_to_Agent():
 
 
 class System_Msg_Report():
+    SYSTEM_MASTER_PB_DEF_FILE = 'mogo_master.pb'
+
     Error_Report_Code = {
         #code: ['msg','results','actions']
         'EHW_CAN': ['can adapter pub msg lost',['RESULT_AUTOPILOT_DISABLE'],['ACTION_REBOOT_VEHICLE']],
@@ -113,6 +115,8 @@ class System_Msg_Report():
 class Sys_Health_Check():
     g_rtk_last_timestamp = 0
     g_rtk_had_send_error = False
+    
+    g_rtk_state_report_val = 2
 
     g_topic_hz_error_dict = dict()
     g_topic_hz_send_error = False

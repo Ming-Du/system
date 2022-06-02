@@ -5,15 +5,17 @@
 #@Date: 2022-05-16 09:57:08
 #@FilePath: /catkin_ws/src/system/system_master/sys_config.py
 #@Email: liyuelei@zhidaoauto.com
-#@LastEditTime: 2022-05-20 22:55:14
+#@LastEditTime: 2022-06-01 20:12:53
 """
 
 
-SYSTRM_MASTER_VERSION = "MAP-V2.4.0(MASTER-V1.0.2)"
+SYSTRM_MASTER_VERSION = "MAP-V2.4.0(MASTER-V1.0.3)"
 
 g_local_test_flag = False  # if local test, not in car, can set it Ture
 
-AUTO_POLIT_START_WAIT_TIME = 2   # sec   HQ|DF: need 5 sec  BUS: need 2 sec
+g_get_report_msg_config_by_pb = True  # if true used master.pb form mogo_reporter
+
+AUTO_POLIT_START_WAIT_TIME = 6   # sec   HQ|DF: need 5 sec  BUS: need 2 sec
 
 HEARTBEAT_TIMEOUT_OF_AGENT = 5   # sec
 

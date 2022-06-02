@@ -3,10 +3,22 @@ cmake_minimum_required(VERSION 2.8.3)
 project(system_master)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  rospy
+  std_msgs
   autopilot_msgs
+  message_generation
   # ${PROJECT_NAME}_proto
 )
 find_package(Protobuf REQUIRED)
+
+add_service_files(FILES
+        StatusQuery.srv
+)
+
+generate_messages(DEPENDENCIES
+        std_msgs
+        autopilot_msgs
+)
 
 catkin_package(CATKIN_DEPENDS)
 
