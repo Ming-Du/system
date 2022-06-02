@@ -1,4 +1,4 @@
-launch drivers_perception_radar.launch
+/home/mogo/autopilot/share/config/vehicle/perception/radar/radar_408_front_308_rear.launch
 /home/mogo/autopilot/share/config/vehicle/drivers/camera/sensing120_back.launch
 perception_camera_3D vidar_2camera.launch
 log_collect_client log_collect_client.launch

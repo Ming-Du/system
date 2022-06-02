@@ -1,4 +1,4 @@
-launch drivers_perception_radar.launch
+/home/mogo/autopilot/share/config/vehicle/perception/radar/radar_308_front.launch
 log_collect_client log_collect_client.launch
 log_msg_collect_client log_msg_collect_client.launch
 guardian system_guardian_slave2.launch
