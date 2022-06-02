@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os
 import sys
 import json
@@ -14,9 +16,13 @@ def gen_report_msg(pd_name, code):
     return '{}'
 
   msg_list = ReportMsgList()
-  with open(path, "r") as fp:
-    pd_str = fp.read()
-    text_format.Parse(pd_str, msg_list)
+  try:
+    with open(path, "r") as fp:
+      pd_str = fp.read()
+      text_format.Parse(pd_str, msg_list)
+  except Exception as e:
+    print('text_format.Parse has error: {}'.format(e))
+    return '{}'
 
   ret = {}
   level = ""
@@ -39,7 +45,7 @@ def gen_report_msg(pd_name, code):
     cur_time = int(time.time())
     ret["timestamp"] = {
       "sec": cur_time, 
-      "nsec": int((time.time() - cur_time) * 1000000000)}, 
+      "nsec": int((time.time() - cur_time) * 1000000000)}
     ret["level"] = level
     ret["code"] = ReportMsgCode.Name(msg_tar.code)
     ret["msg"] = msg_tar.msg

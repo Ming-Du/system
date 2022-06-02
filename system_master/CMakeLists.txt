@@ -6,21 +6,26 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   autopilot_msgs
-  message_generation
-  # ${PROJECT_NAME}_proto
+  #message_generation
 )
 find_package(Protobuf REQUIRED)
 
-add_service_files(FILES
-        StatusQuery.srv
-)
+#add_service_files(FILES
+#        StatusQuery.srv
+#)
 
-generate_messages(DEPENDENCIES
-        std_msgs
-        autopilot_msgs
-)
+#generate_messages(DEPENDENCIES
+#        std_msgs
+#        autopilot_msgs
+#)
 
-catkin_package(CATKIN_DEPENDS)
+catkin_package(CATKIN_DEPENDS
+  roscpp
+  rospy
+  std_msgs
+  autopilot_msgs
+  #message_runtime
+)
 
 include_directories(
   ${catkin_INCLUDE_DIRS} 
@@ -69,6 +74,7 @@ catkin_install_python(PROGRAMS
 	sys_config.py
 	sys_globals.py
 	sys_test_tools.py
+        sys_test_srv_client.py
 	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 

@@ -56,6 +56,8 @@ class System_Master(object):
                 state = int(st)
         if state == -1:
             self.set_sys_state_and_save(sys_globals.System_State.SYS_STARTING)
+        else:
+            self.sys_state = state
 
     def set_sys_state_and_save(self, new_state):
         """

@@ -102,7 +102,8 @@ class System_Msg_Report():
         'ESYS_NOT_ALLOW_REBOOT': ['state not allow sysreboot',[],['ACTION_TRY_AGAIN_LATER']],
         'ESYS_TOPIC_FREQ_DROPED': ['some topic frequency droped',['RESULT_AUTOPILOT_INFERIOR'],[]],
         'ESYS_RTK_STATUS_FAULT': ['rtk status is unexpected',['RESULT_AUTOPILOT_INFERIOR'],[]],
-        'ESYS_AUTOPILOT_TAKEN_OVER_BY_REMOTE': ['rtk status is unexpected',['RESULT_AUTOPILOT_DISABLE'],[]]
+        'ELCT_RTK_STATUS_UNKNOWN': ['rtk status is unkonw',['RESULT_SHOW_WARNING'],[]],
+        'ESYS_AUTOPILOT_TAKEN_OVER_BY_REMOTE': ['autopilot is takeover by remote',['RESULT_AUTOPILOT_DISABLE'],[]]
     }
 
     Info_Report_Code = {
@@ -115,13 +116,23 @@ class System_Msg_Report():
 class Sys_Health_Check():
     g_rtk_last_timestamp = 0
     g_rtk_had_send_error = False
-    
-    g_rtk_state_report_val = 2
 
     g_topic_hz_error_dict = dict()
     g_topic_hz_send_error = False
 
     g_can_adapter_last_recvtime = 0
     g_can_adapter_had_send_error = False
+
+    g_health_status_dict = {
+        #node : [state,code,desc]
+        "localization":{
+            'state': 0,
+            'code': 'ISYS_RTK_STATUS_NORMAL',
+            'desc': 'rtk state check'},
+        "can_adapter":{
+            'state': 0,
+            'code': 'ISYS_CAN_NORMAL',
+            'desc': 'can_adapter msg drop check'}
+    }   
 
 

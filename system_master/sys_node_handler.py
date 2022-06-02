@@ -15,14 +15,15 @@ sys.setdefaultencoding('utf-8')
 import time
 
 import rospy
-from proto import common_vehicle_state, system_pilot_mode_pb2, system_cmd_pb2, common_mogo_report_msg, common_log_reslove, system_state_report_pb2
+from proto import common_vehicle_state, common_mogo_report_msg, common_log_reslove
+from proto import system_pilot_mode_pb2, system_cmd_pb2, system_state_report_pb2, system_status_info_pb2
 from autopilot_msgs.msg import BinaryData
 from std_msgs.msg import Int32, UInt64
 from sensor_msgs.msg import NavSatFix
 from sys_globals import System_State, System_Msg_Report, Sys_Health_Check
 import sys_globals, sys_config
 
-#from system_master.srv import StatusQuery, StatusQueryResponse
+from autopilot_msgs.srv import StatusQuery, StatusQueryResponse
 
 
 class Vehicle_State():
@@ -164,7 +165,7 @@ class Node_Handler(object):
         #self.system_event_error_pub = rospy.Publisher('/autopilot_info/report_msg_error', BinaryData, queue_size=50)
 
         ## add service by liyl 20200601
-        #self.query_request_service = rospy.Service('query_master_status', StatusQuery, self.handle_status_query_req)
+        self.query_request_service = rospy.Service('query_master_status', StatusQuery, self.handle_status_query_req)
     
               
     def set_pilot_mode(self, Mode):
@@ -362,11 +363,20 @@ class Node_Handler(object):
                 msg_desc=' timestamp:{}'.format(cur_time)
                 self.system_event_report(code='EHW_CAN', desc=msg_desc)
                 Sys_Health_Check.g_can_adapter_had_send_error = True
+
+                Sys_Health_Check.g_health_status_dict['can_adapter']['state'] = 1
+                Sys_Health_Check.g_health_status_dict['can_adapter']['code'] = 'EHW_CAN'
+                Sys_Health_Check.g_health_status_dict['can_adapter']['desc'] = 'can msg dropped'
         else:
             if Sys_Health_Check.g_can_adapter_had_send_error:
                 msg_desc=' timestamp:{}'.format(cur_time)
                 self.system_event_report(code='ISYS_CAN_NORMAL', desc=msg_desc)
                 Sys_Health_Check.g_can_adapter_had_send_error = False
+
+                Sys_Health_Check.g_health_status_dict['can_adapter']['state'] = 0
+                Sys_Health_Check.g_health_status_dict['can_adapter']['code'] = 'ISYS_CAN_NORMAL'
+                Sys_Health_Check.g_health_status_dict['can_adapter']['desc'] = 'receive can msg again'
+
 
     def handle_state_report(self, ros_msg):
         state_report_msg = system_state_report_pb2.PubLogInfo()
@@ -374,10 +384,14 @@ class Node_Handler(object):
 
         if 'localization' == state_report_msg.src:
             if state_report_msg.state in (state_report_msg.STATE_NORMAL, state_report_msg.STATE_FAULT, state_report_msg.STATE_UNKNOW):
-                if state_report_msg.state != Sys_Health_Check.g_rtk_state_report_val:
-                    print('rtk status change form {} to {}'.format(Sys_Health_Check.g_rtk_state_report_val, state_report_msg.state))
+                if state_report_msg.state != Sys_Health_Check.g_health_status_dict['localization']['state']:
+                    print('rtk status change form {} to {}'.format(Sys_Health_Check.g_health_status_dict['localization']['state'], state_report_msg.state))
                     self.system_event_report(code=state_report_msg.code, desc=' '+state_report_msg.desc)
-                    Sys_Health_Check.g_rtk_state_report_val = state_report_msg.state
+
+                    Sys_Health_Check.g_health_status_dict['localization']['state'] = state_report_msg.state
+                    Sys_Health_Check.g_health_status_dict['localization']['code'] = state_report_msg.code
+                    Sys_Health_Check.g_health_status_dict['localization']['desc'] = state_report_msg.desc
+
             else:
                 print('the state is unexpect! ignored! state={}'.format(state_report_msg.state))
         else:
@@ -391,14 +405,41 @@ class Node_Handler(object):
         #@return {*}
         """
 
+        print ('receive request! req=', req.sec_stamp)
         try:
-            print (req.sec_stamp)
+            rsp_status_info = system_status_info_pb2.StatusInfo()
 
-            rsp = StatusQueryResponse()
-            # TODO: add handle
-            return rsp
+            rsp_status_info.sys_state = sys_globals.g_system_master_entity.sys_state
+            for k,v in Sys_Health_Check.g_health_status_dict.items():
+                health_info = rsp_status_info.health_info.add()
+                health_info.name = k
+                health_info.state = v['state']
+                health_info.code = v['code']
+                health_info.desc = v['desc']
+            if len(Sys_Health_Check.g_topic_hz_error_dict):
+                rsp_status_info.topic_drop_info.sum = len(Sys_Health_Check.g_topic_hz_error_dict)
+                for name,hz in Sys_Health_Check.g_topic_hz_error_dict.items():
+                    t = rsp_status_info.topic_drop_info.topic.add()
+                    t.name = name
+                    t.hz = hz
+            rsp_status_info.reserved = 'The status info form system master'
+            rsp_msg_data_str = rsp_status_info.SerializeToString()
         except Exception as e:
-            print('Error: handle status query, {}'.format(e))
+            print('system_status_info_pb2 build error'.format(e))
+            rsp_msg_data_str=''
+
+        status_msg = BinaryData()
+        status_msg.header.seq          = 1
+        status_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
+        status_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
+        status_msg.header.frame_id     = "system_master_frame_id"
+        status_msg.name = "system_master.StatusInfo"
+        status_msg.size = len(rsp_msg_data_str)
+        status_msg.data = rsp_msg_data_str
+
+        rsp = StatusQueryResponse()
+        rsp.status_msg = status_msg
+        return rsp
 
 
     def run(self):

@@ -90,7 +90,9 @@ install(DIRECTORY include/
 install(FILES ${OUTPUT_CXX_HEADER}
   DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}/mogo_reporter
 )
-install(DIRECTORY script/
+
+file(GLOB PYTHON_FILES "script/*.py")
+catkin_install_python(PROGRAMS ${PYTHON_FILES}
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/script
 )
 
