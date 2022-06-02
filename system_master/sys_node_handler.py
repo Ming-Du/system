@@ -385,7 +385,7 @@ class Node_Handler(object):
 
 
     def handle_status_query_req(self, req):
-		pass
+        pass
 
 
     def run(self):
