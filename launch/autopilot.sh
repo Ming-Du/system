@@ -573,7 +573,7 @@ python ${ABS_PATH}/vehicle_init.py
 vehicle_property=$?
 LoggingINFO "current property of $VEHICLE_PLATE is $vehicle_property"
 ((vehicle_property==3||vehicle_property==4)) && launch_prefix="$launch_prefix --respawn"
-[[ "${ros_machine}" == "${ros_master}" && -z "$opt_launch_file" ]] && bash ${ABS_PATH}/../system_master/start_system_master.sh
+# [[ "${ros_machine}" == "${ros_master}" && -z "$opt_launch_file" ]] && bash ${ABS_PATH}/../system_master/start_system_master.sh
 write_action 0 #初始化中
 # 后台发送心跳
 heart_beat &
