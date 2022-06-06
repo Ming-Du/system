@@ -17,6 +17,7 @@ enum cmd_act {
   StopPilot = 3;
   BeginShowMode = 4;
   EndShowMode = 5;
+  DownloadTrajectory = 6;
 }
 
 message SystemCmd {
@@ -25,6 +26,7 @@ optional common.Header header = 1;
 required cmd_src src = 2;
 required cmd_act action= 3;
 optional string desc= 4;
+optional bytes content = 5;
 }
 
 
