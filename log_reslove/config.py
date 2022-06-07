@@ -12,10 +12,12 @@ node_config["/jinlv_can_adapter"]["pub"] = ""
 node_config["/controller"] = {}
 node_config["/controller"]["sub"] = ["/planning/trajectory"]
 node_config["/controller"]["pub"] = "/chassis/command"
+node_config["/controller"]["man_beg"] = "controller_begin"
 
 node_config["/local_planning"] = {}
 node_config["/local_planning"]["sub"] = ["/perception/fusion/obstacles"]
 node_config["/local_planning"]["pub"] = "/planning/trajectory"
+node_config["/local_planning"]["man_beg"] = "planning_begin"
 
 node_config["/perception/fusion/perception_fusion2"] = {}
 node_config["/perception/fusion/perception_fusion2"]["sub"] = ["/perception/lidar/lidar_obstacle", "/perception/camera/camera_obstacle_front60"]
@@ -48,9 +50,11 @@ node_config["/sensor/lidar/c32/front_right/c32_right_decoder"]["pub"] = "/sensor
 node_config["/perception_camera_2D_front"] = {}
 node_config["/perception_camera_2D_front"]["sub"] = ["/sensor/camera/sensing/image_raw_60/nvjpeg"]
 node_config["/perception_camera_2D_front"]["pub"] = "/perception/camera/camera_obstacle_front60"
+node_config["/perception_camera_2D_front"]["man_end"] = "detection_front60_end"
 
 node_config["/sensor/camera/sensing60/drivers_camera_sensing60"] = {}
 node_config["/sensor/camera/sensing60/drivers_camera_sensing60"]["sub"] = []
 node_config["/sensor/camera/sensing60/drivers_camera_sensing60"]["pub"] = "/sensor/camera/sensing/image_raw_60/nvjpeg"
+node_config["/sensor/camera/sensing60/drivers_camera_sensing60"]["man_beg"] = "camera_grab"
 
 

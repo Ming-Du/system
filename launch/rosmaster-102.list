@@ -1,4 +1,6 @@
 launch drivers_gnss.launch
+log_collect_client log_collect_client.launch
+log_msg_collect_client log_msg_collect_client.launch
 launch drivers_camera60.launch
 perception_camera_SEG lane_detection.launch
 launch can_adapter.launch

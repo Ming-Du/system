@@ -1,182 +1,147 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
-import sys
-import json
-import os
-import time
-import datetime
-import threading
-import time
-import copy
-import sys
-import json
-import os
-import copy
-import time
-import datetime
 
+import os
+import json
+import time
+import threading
+import copy
+
+## local config file
 from config import node_config
-import subprocess
-
-import threading
 
 ###### ros module
 import rospy
-import rostopic
-import rosgraph
-import roslaunch
-import rosnode
-import rosservice
-from std_msgs.msg import String, UInt8, Int32
-from rospy import init_node, Subscriber, Publisher
-from rospy import rostime
 
-###### mogo
-#import proto
-from proto import *
+###### mogo msg
+from proto import common_log_reslove, system_pilot_mode_pb2
 from autopilot_msgs.msg import BinaryData
 
-g_vstate_brake_pre    = -1
-g_vstate_throttle_pre = -1
-g_vstate_brake        = -1
-g_vstate_throttle     = -1
-g_longitude_driving_mode = -1
-g_longitude_driving_mode_pre = -1
-g_brake_secs         = 0
-g_pilot_mode         = 0
-g_pilot_mode_pre     = 0
+##### file async handle
+import asyncio
+#import aiofiles
 
+
+## constants
 work_dir = "/home/mogo/data/log"
 output_dir = os.path.join(work_dir, "ROS_STAT_RESULT")
-output_topic_hz_path = os.path.join(output_dir, "topic_hz")
+# output_topic_hz_path = os.path.join(output_dir, "topic_hz")
 input_dir = os.path.join(work_dir, "ROS_STAT" ,"EXPORT")
 tmp_dir = os.path.join(work_dir, "ROS_STAT_TMP")
 output_path = os.path.join(output_dir, "topic_stat")
 
 
-topic_dict = {}
-handle_rate = 1     # 日志过大时切分处理
+## globals
+g_pilot_mode = 0
+car_info = {}
+
+# handle_rate = 1     # 日志过大时切分处理
 handle_index = -1
 last_timestamp = 0  # 清理已处理过的msg
 all_pub_msg = {}
 all_sub_msg = {}
-node_callback_history = {}
-
-car_info = {}
-log_cache_list = []
-
-set_msg_log_pub_info = 0
-set_msg_log_pub_error = 0
-set_topic_hz_pub = 0
-set_log_cache_msg_pub = 0
+node_callback_history = {}  # {tpoic:one_log}
+all_man_tag_beg = {}     # tag: one_log
+all_man_tag_end = {}   # {tag: {stamp: one_log}
 
 
+all_topic_hz_info = dict()  # k=name, v={dst_node:[list], start_time:t1, end_time:t2 pub:num max_delay:usec}
+g_topic_hz_handler = None
 
-def listToJson(lst):
-    import json
-    jsonList = []
-    for i in range(len(lst)):
-        jsonList.append(i)
-    str_json = json.dumps(jsonList)  # json转为string
-    return str_json
+g_time_split_threshold = 5  # sec
+g_time_start_value = time.time()
+g_time_split_value = time.time()
+g_time_split_end = time.time()
 
-def buildTopicLogMsg(topic_dict):
-    print(topic_dict)
-    try:
-        log_pub_msg = common_log_reslove.PubLogInfo()
-        log_pub_msg.header.seq         = 1
-        log_pub_msg.header.stamp.sec   = rostime.Time.now().secs
-        log_pub_msg.header.stamp.nsec  = rostime.Time.now().nsecs
-        log_pub_msg.header.frame_id    = "log_reslove_frame_id"
-        log_pub_msg.header.module_name = "log_reslove"
-        log_pub_msg.start_stamp = 0
-        log_pub_msg.end_stamp = 0
-        for k,v in topic_dict.items():
-            start_time = topic_dict[k]['start_time']
-            end_time = topic_dict[k]['end_time']
-            v["num"] = v["num"]/(end_time-start_time)
-            print("time diff is {0}".format((topic_dict[k]['end_time']-topic_dict[k]['start_time'])))
-            topic_hz = log_pub_msg.topic_hz.add()
-            topic_hz.name = k
-            print("the topic dist is {0}".format(topic_dict[k]["dst"]))
-            topic_hz.hz = (int)(v["num"])
-    except Exception as e:
-        pass
-    return log_pub_msg
+# the follow used for test
+g_test_mode = True   # default set False
+log_exceptions_dict = dict()   # k=node_name, v={ topic_name : error_num }    # used for no seq log record
 
 
-def get_topic_hz():
-    global topic_dict
-    global set_topic_hz_pub
-    #print(len(topic_dict))
-    topic_dict_copy = copy.deepcopy(topic_dict)
-    topic_dict.clear()
-    log_pub_msg = buildTopicLogMsg(topic_dict_copy)
-    #topic_dict_copy_str = json.dumps(topic_dict_copy)
-    #log_pub_msg = buildLogMsg(topic_dict_copy_str)
-    log_pub_msg_str = log_pub_msg.SerializeToString()
-    topic_hz_msg = BinaryData()
+## utils
+def get_time_used(func):
+    def wrapper(*args,**kwargs):
+        start_time=time.time()
+        ret = func(*args,**kwargs)
+        end_time=time.time()
+        if g_test_mode or 1 < end_time - start_time:
+            print('{} used time is {}'.format(func.__name__, end_time-start_time))
+        return ret
+    return wrapper
 
-    topic_hz_msg.header.seq         = 1
-    topic_hz_msg.header.stamp.secs   = rostime.Time.now().secs
-    topic_hz_msg.header.stamp.nsecs  = rostime.Time.now().nsecs
-    topic_hz_msg.header.frame_id    = "log_reslove_frame_id"
-    topic_hz_msg.name = "log_reslove"
-    topic_hz_msg.size = len(log_pub_msg_str)
-    topic_hz_msg.data = log_pub_msg_str
-    set_topic_hz_pub.publish(topic_hz_msg)
 
-    #for test parse
-    test_topic_hz = common_log_reslove.PubLogInfo()
-    test_topic_hz.ParseFromString(topic_hz_msg.data)
-    for one_topic_hz in test_topic_hz.topic_hz:
-        print(one_topic_hz.name)
-        print(one_topic_hz.hz)
+class TopicHZ():
+    """
+    create for topic hz pub
+    """
+    def __init__(self):
+        self.set_topic_hz_pub = rospy.Publisher('/autopilot_info/internal/report_topic_hz', BinaryData, queue_size=10)
+        self.log_pub_msg = None
 
-def anlyzeLogCache():
-    global log_cache_list
-    global topic_dict
-    if len(log_cache_list)<=0:
-        return False
-    #topic_dict['start_time'] = log_cache_list[0]["stamp"]/1000000000
-    #topic_dict['end_time'] = log_cache_list[-1]["stamp"]/1000000000
-    for one in log_cache_list:
+    def pub_topic_hz_info(self):
+        '''
+        pub topic hz info
+        '''
+       
+        log_pub_msg_str = self.log_pub_msg.SerializeToString()
+        topic_hz_msg = BinaryData()
+
+        topic_hz_msg.header.seq         = 1
+        topic_hz_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
+        topic_hz_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
+        topic_hz_msg.header.frame_id    = "log_reslove_frame_id"
+        topic_hz_msg.name = "log_reslove"
+        topic_hz_msg.size = len(log_pub_msg_str)
+        topic_hz_msg.data = log_pub_msg_str
+        self.set_topic_hz_pub.publish(topic_hz_msg)
+
+        #for test parse
+        if g_test_mode:
+            test_topic_hz = common_log_reslove.PubLogInfo()
+            test_topic_hz.ParseFromString(topic_hz_msg.data)
+            for one_topic_hz in test_topic_hz.topic_hz:
+                print(one_topic_hz.name)
+                print(one_topic_hz.hz)
+                print(one_topic_hz.max_delay)
+
+    def analyse_all_topic(self):
+        '''
+        analyse data from  all_topic_hz_info
+        '''
+        log_pub_msg = None
         try:
-            if topic_dict.get(one["topic"]) == None:
-                topic_dict[one["topic"]]={}
-                topic_dict[one["topic"]]["num"] = 1
-                topic_dict[one["topic"]]["start_time"] = 999999999999
-                topic_dict[one["topic"]]["end_time"] = 0
-                topic_dict[one["topic"]]["dst"] = {}
-                topic_dict[one["topic"]]["dst"][one["link"]["dst"]] = 1
-            else:
-                if topic_dict[one["topic"]]["dst"][one["link"]["dst"]] != None:
-                    topic_dict[one["topic"]]["num"] = topic_dict[one["topic"]]["num"] + 1
-            
-            if topic_dict.get(one["topic"]) != None: 
-                if one["stamp"]/1000000000 < topic_dict[one["topic"]]["start_time"]:
-                    topic_dict[one["topic"]]["start_time"] = one["stamp"]/1000000000
-                if one["stamp"]/1000000000 > topic_dict[one["topic"]]["end_time"]:
-                    topic_dict[one["topic"]]["end_time"] = one["stamp"]/1000000000
-
-
+            log_pub_msg = common_log_reslove.PubLogInfo()
+            log_pub_msg.header.seq         = 1
+            log_pub_msg.header.stamp.sec   = rospy.rostime.Time.now().secs
+            log_pub_msg.header.stamp.nsec  = rospy.rostime.Time.now().nsecs
+            log_pub_msg.header.frame_id    = "log_reslove_frame_id"
+            log_pub_msg.header.module_name = "log_reslove"
+            log_pub_msg.start_stamp = 0
+            log_pub_msg.end_stamp = 0
+            for name, info in all_topic_hz_info.items():
+                if info['end_time'] == info['start_time']:
+                    continue
+                # print("get topic is {}, info {}".format(name, info))
+                hz_num = int(info["num"] / ((info['end_time']-info['start_time'])/1000000000))
+                topic_hz = log_pub_msg.topic_hz.add()
+                topic_hz.name = name
+                topic_hz.hz = hz_num
+                topic_hz.max_delay = int(info['max_delay']/1000000)  # msec
+                # clear data for next time used
+                all_topic_hz_info[name]['start_time'] = all_topic_hz_info[name]['end_time'] 
+                all_topic_hz_info[name]['num'] = 0
+                all_topic_hz_info[name]['max_delay'] = 0  # get new max_delay every loop
         except Exception as e:
-            pass
-    log_cache_list = []
-    return True
+            print('There has some error:{}'.format(e))
 
-class TopicThread (threading.Thread):
-    def __init__(self, times):
-        global set_topic_hz_pub
-        threading.Thread.__init__(self)
-        self.times = times
-        set_topic_hz_pub  = Publisher('/autopilot_info/internal/report_topic_hz', BinaryData, queue_size=10)
-        time.sleep(10)
-    def run(self):
-        while True:
-            time.sleep(self.times)
-            if anlyzeLogCache()==True:
-                get_topic_hz()
+        self.log_pub_msg = log_pub_msg
+        return 
+
+    @get_time_used
+    def pub_topic_hz_once(self):
+        self.analyse_all_topic()
+        self.pub_topic_hz_info()
+
 
 def set_car_info(data):
     data["code_version"] = car_info.get("code_version", "")
@@ -190,53 +155,58 @@ def read_car_info():
 
         car_info["code_version"] = contents[1][len("Version:"):]
     except Exception as e:
-        pass
-
+        print('get code_version failed: {}'.format(e))
+       
     try:
         with open("/home/mogo/data/vehicle_monitor/vehicle_config.txt") as fp:
             contents = fp.read().split("\n")
 
         plate = contents[0].split(":")[-1]
-        plate = plate.strip().strip("\"")
+        car_info["carplate"] = plate.strip().strip("\"")
+        brand = contents[1].split(":")[-1]      
+        car_info["cartype"] = brand.strip().strip("\"")
 
-        brand = contents[1].split(":")[-1]
-        brand = brand.strip().strip("\"")
-
-        car_info["carplate"] = plate
-        car_info["cartype"] = brand
     except Exception as e:
-        pass
+        print('get vehicle_config failed: {}'.format(e))
 
-def push_log_cache(one):
-    global log_cache_list
-    log_cache_list.append(one)
+def add_log_to_topic_hz_dict(one):
+    if one['topic'] not in all_topic_hz_info:
+        all_topic_hz_info[one['topic']] = dict()
+        all_topic_hz_info[one['topic']]['dst_node'] = list()
+        all_topic_hz_info[one['topic']]['start_time'] = one['stamp']
+        all_topic_hz_info[one['topic']]['end_time'] = one['stamp']
+        all_topic_hz_info[one['topic']]['num'] = 0
+        all_topic_hz_info[one['topic']]['max_delay'] = 0
+
+    if one['link']['dst'] not in all_topic_hz_info[one['topic']]['dst_node']:
+        all_topic_hz_info[one['topic']]['dst_node'].append(one['link']['dst'])
+        
+    if  one['stamp'] < all_topic_hz_info[one['topic']]['start_time']:
+        ## the follow add for error record
+        if g_test_mode:
+            if one['node'] in log_exceptions_dict:
+                if one['topic'] in log_exceptions_dict[one['node']]:
+                    log_exceptions_dict[one['node']][one['topic']] += 1 
+                else:
+                    log_exceptions_dict[one['node']][one['topic']] = 1
+            else:
+                print('###topic:{}, pub_node:{} log save error! ### The case should not ingress!!!!!'.format(one['topic'], one['node']))
+                log_exceptions_dict[one['node']] = dict()
+                log_exceptions_dict[one['node']][one['topic']] = 1
+
+    if one['stamp'] > all_topic_hz_info[one['topic']]['end_time']:
+        if one['stamp'] - all_topic_hz_info[one['topic']]['end_time'] > all_topic_hz_info[one['topic']]['max_delay']:
+            all_topic_hz_info[one['topic']]['max_delay'] = one['stamp'] - all_topic_hz_info[one['topic']]['end_time']
+        all_topic_hz_info[one['topic']]['end_time'] = one['stamp']
+        all_topic_hz_info[one['topic']]['num'] += 1   # same pub, the stamp is same
+
 
 def update_one_log(one):
-    global topic_dict
     global g_pilot_mode
-    global log_cache_list
-    global auto_now_time
-
-    #log cache
-    #if len(log_cache_list)<10000 and one["type"] == 0:
-    #    log_cache_list.append(one)
-    #else:
-    #    if len(log_cache_list)>10000 and one["type"] == 0:
-    #        log_cache_list.pop(0)
-    #        log_cache_list.append(one)
-
-            
+       
     # 0是pub记录
     if one["type"] == 0:
-        push_log_cache(one)
-        #push topic to list
-        #try:
-        #    if topic_dict.get(one["topic"]) == None:
-        #        topic_dict[one["topic"]] = 1
-        #    else:
-        #        topic_dict[one["topic"]] = topic_dict[one["topic"]]+1
-        #except Exception as e:
-        #    pass
+        add_log_to_topic_hz_dict(one)
 
         if one["node"] not in node_config:
             return
@@ -244,7 +214,7 @@ def update_one_log(one):
         if one["topic"] != node_config[one["node"]]["pub"]:
             return
 
-        if g_pilot_mode == 0:
+        if not g_test_mode and g_pilot_mode == 0:
             return
 
         if one["link"]["dst"] not in node_config:
@@ -257,6 +227,7 @@ def update_one_log(one):
         one["use_callback"] = []
         if len(node_config[one["node"]]["sub"]) == 0:
             one["no_callback"] = True
+        
         for sub_topic in node_config[one["node"]]["sub"]:
             if sub_topic not in node_callback_history:
                 if sub_topic != "":
@@ -277,14 +248,21 @@ def update_one_log(one):
         if one["uuid"] in all_pub_msg[one["topic"]]:
             #print("uuid exist")
             one["uuid_wrong"] = True
+
+        if node_config[one["node"]].get('man_beg','') != '':
+            tag = node_config[one["node"]].get('man_beg')
+            if tag in all_man_tag_beg:
+                one["use_beg_tag"] = all_man_tag_beg[tag]  # all beg and pub in same thread
+
         #放到all_pub里面
         all_pub_msg[one["topic"]][one["uuid"]] = one
+
     # 1是callback记录
     elif one["type"] == 1:
         if one["node"] not in node_config:
             return
 
-        if g_pilot_mode == 0:
+        if not g_test_mode and g_pilot_mode == 0:
             return
 
         if one["topic"] not in node_config[one["node"]]["sub"]:
@@ -303,84 +281,225 @@ def update_one_log(one):
             #print("uuid exist")  dxc
             one["uuid_wrong"] = True
         all_sub_msg[one["topic"]][one["uuid"]] = one
+
+    elif one["type"] == 2:
+        if one["node"] not in node_config:
+            return
+        if one.get("tag",'') != node_config[one["node"]].get("man_beg","notag"):
+            return
+        
+        one["uuid"] = one['ident'] or one['stamp']  # id ident is 0 used stamp as key-id 
+
+        if one["tag"] not in all_man_tag_beg:
+            all_man_tag_beg[one["tag"]] = one
+
+    elif one["type"] == 3:
+        if one["node"] not in node_config:
+            return
+        if one.get("tag",'') != node_config[one["node"]].get("man_end","notag"):
+            return
+
+        one["uuid"] = one['ident'] or one['stamp']
+
+        if one["tag"] not in all_man_tag_end:
+            all_man_tag_end[one["tag"]] = {}
+        if one["uuid"] in all_man_tag_end[one["tag"]]:
+            #print("uuid exist")
+            one["uuid_wrong"] = True
+        
+        all_man_tag_end[one["tag"]][one["uuid"]] = one  # only 2D_front used end, contact by ident
     else:
         return
+    
+
+''' begin used asyncio handle '''
+async def load_remote_log(paths):
+    """
+    read remote log from paths which are named begin "remote"
+    """
+    global g_time_start_value
+    global g_time_split_value
+
+    handle_time = int(g_time_start_value%10000)
+    remote_log_src=['102','103','104','105','106','107']
+    
+    while handle_time < int(g_time_split_value%10000):
+        for src in remote_log_src:
+            path_key=src+'_'+str(handle_time)
+            for file_name in paths:            
+                if path_key in file_name:
+                    print(file_name)
+                    with open(file_name, 'r') as fp:
+                        contents = fp.read()
+                        lines = contents.split("\n")
+                        for line in lines:
+                            start = line.find("#key-log#", 0, 128)
+                            if start == -1:
+                                continue
+                            try:
+                                one = json.loads(line[start+9:])
+                                update_one_log(one)
+                            except Exception as e:
+                                print("the log {} in file {} is unexpect style! {}".format(line[start+9:], file_name, e))
+                                continue                   
+                            
+        handle_time += 1
+        await asyncio.sleep(0.1) 
 
 
-def load_one_log(path):
-    global handle_index
-    lines = []
-    try:
-        with open(path) as fp:
-            contents = fp.read()
-            #print(contents)
-            lines = contents.split("\n")
-    except Exception as e:
-        print("receive error")
-        pass
-    #print("lines len is {0}".format(len(lines)))
-    #print("handle_index is {0}".format(handle_index))
-    # TODO 切片模式下，不要读所有内容
-    #if handle_index >= 0:
-    #    size = len(lines)
-    #    cut_size = int(size*handle_rate)
-    #    start = cut_size * handle_index
-    #    end = start + cut_size
-    #    if end > size:
-    #        end = size
-    #    lines = lines[start:end]
-    #print("now lines len is {0}".format(len(lines)))
+async def load_log_by_time(filename):
+    """
+    read log info from local files which are named begin "ros_time"
+    """
+    global g_test_mode
+    global g_time_start_value
+    global g_time_split_value
+    #print('filename is', filename)
+
+    with open(filename, 'r') as fp:
+        contents = fp.read()
+        lines = contents.split("\n")
 
     for line in lines:
-        #print(line)
-        start = line.find(":", 0, 128)
-        if start == -1:
-            continue
+        sec_stamp = line.split('.')[0].split('[')[-1]
+        if sec_stamp:
+            if not g_test_mode and int(sec_stamp) < g_time_start_value: # alread handle
+                continue
+  
+            if int(sec_stamp) < g_time_split_value:
+                start = line.find("#key-log#", 0, 128)
+                if start == -1:
+                    await asyncio.sleep(0)
+                    continue
+                try:
+                    one = json.loads(line[start+9:])
+                    update_one_log(one)
+                except Exception as e:
+                    print("the log {} in file {} is unexpect style! {}".format(line[start+9:], filename, e))
+                    continue               
+                
+            else:
+                break
+''' end used asyncio handle '''
 
-        start += 1
-        if len(line) < start+10:
-            continue
+''' handel file one by one '''
+def load_one_log_by_time(ros_time_paths, remote_paths):
+    global g_test_mode
+    global g_time_start_value
+    global g_time_split_value
 
-        if line[start:start+10] != " #key-log#":
-            continue
+    #print('ros_time={},remote={}'.format(ros_time_paths, remote_paths))
+    #print('start_time={},split_time={}'.format(g_time_start_value,g_time_split_value))
 
-        start += 10
+    for path in ros_time_paths:
+        with open(path, 'r') as fp:
+            contents = fp.read()
+            lines = contents.split("\n")
+
+        for line in lines:
+            sec_stamp = line.split('.')[0].split('[')[-1]
+            if sec_stamp:
+                if not g_test_mode and int(sec_stamp) < g_time_start_value: # alread handle
+                    continue
     
-        try:
-            one = json.loads(line[start:])
-            #print("log is ")
-            #print(one)
-            update_one_log(one)
-        except Exception as e:
-        #    print("update log failed {0}".format(line[start:]))
-            continue
+                if int(sec_stamp) < g_time_split_value:
+                    start = line.find("#key-log#", 0, 128)
+                    if start == -1:
+                        continue
+                    try:
+                        one = json.loads(line[start+9:])
+                        update_one_log(one)
+                    except Exception as e:
+                        print("the log {} in file {} is unexpect style! {}".format(line[start+9:], path, e))
+                        continue
+                    
+                else:
+                    break
+    
+    handle_time = int(g_time_start_value%10000) if not g_test_mode else 0
+    end_time = int(g_time_split_value%10000) if not g_test_mode else 9999
+    remote_log_src=['102','103','104','105','106','107']
 
+    while handle_time < end_time:
+        for src in remote_log_src:
+            path_key='{}_{}.log'.format(src, handle_time)
+            for file_name in remote_paths:            
+                if path_key in file_name:
+                    # print(file_name)
+                    with open(file_name, 'r') as fp:
+                        contents = fp.read()
+                        lines = contents.split("\n")
+                        for line in lines:
+                            start = line.find("#key-log#", 0, 128)
+                            if start == -1:
+                                continue
+                            try:
+                                one = json.loads(line[start+9:])
+                                update_one_log(one)
+                            except Exception as e:
+                                print("the log {} in file {} is unexpect style! {}".format(line[start+9:], file_name, e))
+                                continue
+                        
+        handle_time += 1
+
+
+@get_time_used
 def load_logs(input_paths):
     global handle_index
-    global handle_rate
+    global g_time_start_value
+    global g_time_split_value
+    global g_time_split_end
+    global g_time_split_threshold
 
-    #if handle_index == -1:
-    #    max_size = 0
-    #    for path in input_paths:
-    #        stat = os.stat(path)
-    #        if max_size <  stat.st_size:
-    #            max_size = stat.st_size
+    if handle_index == -1:
+        st_atime = int(time.time())
+        st_mtime = 0
+        for path in input_paths:
+            stat = os.stat(path)
+            if st_atime > stat.st_atime:
+                st_atime = stat.st_atime
+            if st_mtime <  stat.st_mtime:
+                st_mtime = stat.st_mtime
 
-    #    if max_size > 5000000:
-    #        handle_rate = 5000000/max_size
-    #        handle_index = 0
+        g_time_start_value = st_atime - 2  # before min access time 2 sec
+        g_time_split_end = st_mtime
+        if st_mtime - st_atime > g_time_split_threshold:   # log 1.7M/s  30s about 50M
+            print('log save {} secs, more than {}, handle a part!'.format(st_mtime-st_atime, g_time_split_threshold) )
+            g_time_split_value = st_atime + g_time_split_threshold
+            handle_index = 0
+        else:
+            g_time_split_value = g_time_split_end
+        
+    if len(input_paths):
+        ros_time_paths=[]
+        remote_paths=[]
+        for path in input_paths:
+            if 'ros_time' in path:
+                ros_time_paths.append(path)
+            else:
+                remote_paths.append(path)
 
-    for path in input_paths:
-        load_one_log(path)
+        '''  used asyncio handle
+        loop=asyncio.get_event_loop()
+        tasks=[load_log_by_time(path) for path in ros_time_paths]
+        tasks.append(load_remote_log(remote_paths))
+        loop.run_until_complete(asyncio.wait(tasks))
+        #loop.close()
+        '''
+
+        ''' handel file one by one '''
+        load_one_log_by_time(ros_time_paths, remote_paths)
 
     # 分片处理流程
-    #if handle_index >= 0:
+    if handle_index >= 0:
         # 如果处理完了，恢复全量处理
-    #    if handle_index * handle_rate > 0.99:
-    #        handle_index = -1
-    #        handle_rate = 1
-    #    else:
-    #        handle_index += 1
+        if g_time_split_value >= g_time_split_end:
+            handle_index = -1
+        else:
+            g_time_start_value = g_time_split_value
+            g_time_split_value += g_time_split_threshold
+            handle_index += 1
+
 
 def analyze_outside_node(callback, data, record):
     if callback["topic"] not in all_pub_msg:
@@ -406,6 +525,7 @@ def analyze_outside_node(callback, data, record):
         data["wrong"] = "uuid wrong"
         return
 
+    ''' del by liyl
     use_time = round(float(callback["recv_stamp"] - pub["stamp"])/1000000, 2)
     wait_time = round(float(callback["stamp"] - callback["recv_stamp"])/1000000, 2)
     if use_time + wait_time > 20000:
@@ -416,17 +536,46 @@ def analyze_outside_node(callback, data, record):
     data["use_time"] += use_time + wait_time
     data["path"].append({"type":"pub_recv", "node":callback["node"], "use_time":use_time})
     data["path"].append({"type":"recv_call", "node":callback["node"], "use_time":wait_time})
+    '''
+    pub_recv_time = callback["recv_stamp"] - pub["stamp"]
+    recv_call_time = callback["stamp"] - callback["recv_stamp"]
+    data["use_time"] += pub_recv_time + recv_call_time
+    if pub_recv_time + recv_call_time > 2*1000000000:
+        data["wrong"] = ">2 sec"
+        return
+    data["path"].append({"type":"pub_recv", "node":callback["node"], "use_time":pub_recv_time})
+    data["path"].append({"type":"recv_call", "node":callback["node"], "use_time":recv_call_time})
 
     analyze_inside_node(pub, data, record)
 
 def analyze_inside_node(pub, data, record):
     if pub.get("no_callback", False) != False:
+        if node_config[pub['node']].get("man_beg",'') != '':
+            # add by liyil: man_beg -> pub
+            # tag_name = node_config[pub['node']].get("man_beg")
+            if 'use_beg_tag' in pub and pub.get('use_beg_tag',''):
+                #beg = all_sub_msg[tag_name][pub['uuid']]
+                beg = pub['use_beg_tag']
+                beg_end_time = pub["stamp"] - beg["stamp"]
+                u_spend = pub["utime"] - beg["utime"]
+                s_spend = pub["stime"] - beg["stime"]
+                w_spend = pub["wtime"] - beg["wtime"]
+                idle_spend = beg_end_time - u_spend - s_spend - w_spend    
+                u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
+                pdata["use_time"] += beg_end_time
+                pdata["path"].append({"type": "beg_end", "node": pub["node"], "use_time": beg_end_time})
+                pdata["path"].append({"type": "beg_end_cpu", "node": pub["node"], "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
+
         return
 
     if "use_callback" not in pub or len(pub["use_callback"]) == 0:
         #print("no use_callback")
         data["wrong"] = "can't find callback"
         return
+    
+    beg=None
+    if 'use_beg_tag' in pub and pub.get('use_beg_tag',''):
+        beg = pub['use_beg_tag']
 
     callback_size = len(pub["use_callback"])
     index = 0
@@ -443,7 +592,6 @@ def analyze_inside_node(pub, data, record):
         if callback_size > 1:
             pdata["split_path"].append(callback["topic"])
 
-        simple_path = False
         if pub.get("uuid_wrong", False) == True or callback.get("uuid_wrong", False) == True:
             #print("uuid wrong 3")
             #print(pub)
@@ -451,6 +599,7 @@ def analyze_inside_node(pub, data, record):
             pdata["wrong"] = "uuid wrong"
             continue
 
+        '''del by liyl
         use_time = round(float(pub["stamp"] - callback["stamp"])/1000000, 2)
         if use_time > 20000:
             #print("callback-pub use time {0}".format(use_time))
@@ -465,26 +614,69 @@ def analyze_inside_node(pub, data, record):
         if w_spend > 20000:
             pdata["wrong"] = "w_spend>20000, cb tid:{} {} {}, pub tid:{} {} {}".format(callback["tid"], callback["thread"], callback["wtime"], pub["tid"], pub["thread"], pub["wtime"])
             continue
-        w_percent = round(float(w_spend / use_time), 2)
-        idle_spend = round(float(use_time - u_spend - s_spend - w_spend), 2)
-        idle_percent = round(float(idle_spend / use_time), 2)
-
-        pdata["use_time"] += use_time
-        pdata["path"].append({"type": "call_pub", "node": callback["node"], "use_time": use_time})
+        #w_percent = round(float(w_spend / use_time), 2)
+        #idle_spend = round(float(use_time - u_spend - s_spend - w_spend), 2)
+        #idle_percent = round(float(idle_spend / use_time), 2)
+        '''
+        call_pub_time = pub["stamp"] - callback["stamp"]
+        if call_pub_time > 2*1000000000:  # 2s
+            #print("callback-pub use time {0}".format(use_time))
+            pdata["wrong"] = ">2 sec"
+            continue
+        u_spend = pub["utime"] - callback["utime"]
+        s_spend = pub["stime"] - callback["stime"]
+        w_spend = pub["wtime"] - callback["wtime"]
+        if w_spend > 2*1000000000:  # 2 sec
+            pdata["wrong"] = "w_spend>2 sec, cb tid:{} {} {}, pub tid:{} {} {}".format(callback["tid"], callback["thread"], callback["wtime"], pub["tid"], pub["thread"], pub["wtime"])
+            continue
+        idle_spend = call_pub_time - u_spend - s_spend - w_spend    
+        u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/call_pub_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
+        pdata["use_time"] += call_pub_time
+        pdata["path"].append({"type": "call_pub", "node": callback["node"], "use_time": call_pub_time})
         pdata["path"].append({"type": "call_pub_cpu", "node": callback["node"], "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
+
+        ''' add by liyl 20220607 '''
+        end=None
+        if node_config[pub['node']].get('man_end', '') != '':
+            end_tag_name = node_config[pub['node']].get('man_end')
+            if beg:
+                # this not happen in bus250
+                if beg['ident'] in all_man_tag_end.get(end_tag_name,[]):
+                    end = all_man_tag_end[end_tag_name][beg['ident']]
+                else:
+                    print('no end match with beg')
+            elif callback['uuid'] in all_man_tag_end.get(end_tag_name,[]):
+                end=all_man_tag_end[end_tag_name][callback['uuid']]
+        
+        if beg or end:  ## at least have one tag
+            if not beg:
+                beg = callback
+            if not end:
+                end = pub
+            beg_end_time = end["stamp"] - beg["stamp"]
+            u_spend = end["utime"] - beg["utime"]
+            s_spend = end["stime"] - beg["stime"]
+            w_spend = end["wtime"] - beg["wtime"]
+            idle_spend = beg_end_time - u_spend - s_spend - w_spend    
+            u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
+            pdata["path"].append({"type": "beg_end", "node": pub["node"], "use_time": beg_end_time})
+            pdata["path"].append({"type": "beg_end_cpu", "node": pub["node"], "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
+
         analyze_outside_node(callback, pdata, record)
 
-
+@get_time_used
 def analyze_logs():
     global last_timestamp
 
     result = {}
     target = "/chassis/command"
+    target_handle_complate = dict()
     # target = "/topic2"
 
     if target not in all_sub_msg:
-        all_sub_msg.clear()
-        all_pub_msg.clear()
+        #all_sub_msg.clear()
+        #all_pub_msg.clear()
+        last_timestamp += 1*1000000000
         return result
 
     for uuid in all_sub_msg[target]:
@@ -496,7 +688,7 @@ def analyze_logs():
         data["use_time"] = 0
         data["path"] = []
         data["split_path"] = []
-        set_car_info(data)
+        # set_car_info(data)  no read used
         record.append(data)
 
         analyze_outside_node(pub, data, record)
@@ -506,19 +698,34 @@ def analyze_logs():
                 #print(data["wrong"])
                 continue
 
-            data["use_time"] = round(data["use_time"], 2)
             data["split_path_str"] = "_".join(data["split_path"])
 
             if data["split_path_str"] not in result:
                 result[data["split_path_str"]] = []
             result[data["split_path_str"]].append(data)
 
-            if last_timestamp < pub["stamp"]:
-                last_timestamp = pub["stamp"]
+            if uuid not in target_handle_complate:
+                target_handle_complate[uuid] = 1
+            else:
+                target_handle_complate[uuid] += 1
 
+            if last_timestamp < pub["stamp"] - data['use_time'] - 1*1000000000:  #mod by liyl 20220414 delay 1 sec for test:
+                last_timestamp = pub["stamp"] - data['use_time'] - 1*1000000000
+
+    ''' del by liyl because repeat 
     for split_path_str in result:
         result[split_path_str].sort(key=lambda s: s["use_time"], reverse=False)
         #print(len(result[split_path_str]))
+    '''
+
+    match_once_num = 0
+    for uuid_time, match_num in target_handle_complate.items():
+        if match_num == 2:
+            del all_sub_msg[target][uuid_time]
+        else:
+            match_once_num += 1
+    if g_test_mode:
+        print("add by liyl ######### total_command={}, match_one_times={}".format(len(target_handle_complate), match_once_num))
 
     all_msg_num = 0
     for topic in all_pub_msg:
@@ -536,12 +743,20 @@ def analyze_logs():
                 tmp_list[uuid] = all_sub_msg[topic][uuid]
         all_sub_msg[topic] = tmp_list
         all_msg_num += len(all_sub_msg[topic])
+    
+    for tag in all_man_tag_end:
+        tmp_list = {}
+        for uuid in all_man_tag_end[tag]:
+            if uuid > last_timestamp:
+                tmp_list[uuid] = all_pub_msg[topic][uuid]
+        all_man_tag_end[tag] = tmp_list
 
-    if all_msg_num > 1000000:
+    if all_msg_num > 10000000:
         all_pub_msg.clear()
         all_sub_msg.clear()
 
     return result
+
 
 def get_usetime_pt(result, key="use_time"):
     size = len(result)
@@ -549,7 +764,10 @@ def get_usetime_pt(result, key="use_time"):
     size90 = int(size*0.9)
     size99 = int(size*0.99)
 
-    return result[size50][key], result[size90][key], result[size99][key]
+    if 'percent' in key:
+        return result[size50][key], result[size90][key], result[size99][key]
+    else:
+        return round(result[size50][key]*1.0/1000000,2), round(result[size90][key]*1.0/1000000,2), round(result[size99][key]*1.0/1000000,2)
 
 def handle_cpu_time(split_data, save_data, mtype, node, type):
     split_data[mtype][node].sort(key=lambda s: s[type], reverse=False)
@@ -560,6 +778,7 @@ def handle_cpu_time(split_data, save_data, mtype, node, type):
     save_data[mtype][node][type] = {} 
     (save_data[mtype][node][type]["p50"], save_data[mtype][node][type]["p90"], save_data[mtype][node][type]["p99"]) = get_usetime_pt(split_data[mtype][node], type)
 
+@get_time_used
 def save_logs(output_path, results):
     for split_path_str in results:
         result = results[split_path_str]
@@ -576,12 +795,16 @@ def save_logs(output_path, results):
         save_data["recv_call"] = {}
         save_data["call_pub"] = {}
         save_data["call_pub_cpu"] = {}
+        save_data["beg_end"] = {}
+        save_data["beg_end_cpu"] = {}
 
         split_data = {}
         split_data["pub_recv"] = {}
         split_data["recv_call"] = {}
         split_data["call_pub"] = {}
         split_data["call_pub_cpu"] = {}
+        split_data["beg_end"] = {}
+        split_data["beg_end_cpu"] = {}
 
         for one in result:
             for data in one["path"]:
@@ -591,7 +814,7 @@ def save_logs(output_path, results):
                 split_data[data["type"]][data["node"]].append(data)
 
         for mtype in split_data:
-            if mtype != "call_pub_cpu":
+            if mtype not in ("call_pub_cpu", "beg_end_cpu"):
                 for node in split_data[mtype]:
                     split_data[mtype][node].sort(key=lambda s: s["use_time"], reverse=False)
                 
@@ -618,36 +841,36 @@ def save_logs(output_path, results):
             fp.write("{0}\n".format(json.dumps(save_data)))
 
 def handle_logs(output_path, input_paths):
-    start = time.time()
+    
     load_logs(input_paths)
-    end = time.time()
-    print("load log use time {0}".format(end-start))
-
-    start = time.time()
+ 
     result = analyze_logs()
-    end = time.time()
-    print("analyze log use time {0}".format(end-start))
 
-    start = time.time()
     save_logs(output_path, result)
-    end = time.time()
-    print("save log use time {0}".format(end-start))
 
 def prepare_input_files():
     global handle_index
+    input_paths = []
 
     # 分片处理模式，不拉取新文件
     if handle_index >= 0:
-        input_paths = []
         files = os.listdir(tmp_dir)
         for file_name in files:
             tmp_file_path = os.path.join(tmp_dir, file_name)
             input_paths.append(tmp_file_path)
-
+        # print('add by liyl handle_index={}, files={}'.format(handle_index, input_paths))
         return input_paths
 
-    input_paths = []
     files = os.listdir(input_dir)
+    if len(files) > 100:
+        #add by liyl if files more than 60, >10s 
+        bak_dir = os.path.join(work_dir, "ROS_STAT", "bak_{}".format(int(time.time())))
+        os.mkdir(bak_dir)
+        for file_name in files:
+            os.rename(input_dir+'/'+file_name, bak_dir+'/'+file_name)
+        # get newtestfile
+        files = os.listdir(input_dir)
+
     for file_name in files:
         file_path = os.path.join(input_dir, file_name)
         tmp_file_path = os.path.join(tmp_dir, file_name)
@@ -667,9 +890,16 @@ def clear_input_files(input_paths):
         os.remove(file_path)
 
 def run_once():
-    input_paths = prepare_input_files()
-    handle_logs(output_path, input_paths)
-    clear_input_files(input_paths)
+    input_paths=prepare_input_files()
+    if input_paths:
+        input_paths.sort()
+        handle_logs(output_path, input_paths)
+        clear_input_files(input_paths)
+
+    if g_test_mode and log_exceptions_dict:
+        print('some log seq error, info is {}'.format(log_exceptions_dict))
+        log_exceptions_dict.clear()
+
 
 def run():
     if os.path.exists(input_dir) == False:
@@ -680,19 +910,21 @@ def run():
         os.mkdir(output_dir)
 
     read_car_info()
-    #print("开始分析")
+    print("开始分析")
     # dxc 读系统信息
     while True:
         start = time.time()
         run_once()
         end = time.time()
+        print('run_once used time {}'.format(end-start))
+        
+        g_topic_hz_handler.pub_topic_hz_once()
 
-        sleep_time = 5 - (end - start)
+        sleep_time = 1 - (end - start)
         if sleep_time > 0.3:
             time.sleep(sleep_time)
 
 
-auto_now_time = 0
 class NodeThread(threading.Thread):
     def __init__(self, topic, msg_type, call_back, parent=None):
         threading.Thread.__init__(self)
@@ -700,168 +932,27 @@ class NodeThread(threading.Thread):
     def run(self):
         rospy.spin()
 
-
 def recv_vstatus(ros_msg):
-    #global  g_vehicle_state
-    global auto_now_time
-    auto_now_time = ros_msg.header.stamp.secs*1000 + ros_msg.header.stamp.nsecs/1000000
-    #print(now_time)
-    g_vehicle_state = common_vehicle_state.VehicleState()
-    g_vehicle_state.ParseFromString(ros_msg.data)
-    global g_vstate_brake
-    global g_vstate_throttle
-    global g_longitude_driving_mode
     global g_pilot_mode
-    g_vstate_brake    = g_vehicle_state.brake
-    g_vstate_throttle = g_vehicle_state.throttle
-    g_longitude_driving_mode = g_vehicle_state.longitude_driving_mode
+
+    g_vehicle_state = system_pilot_mode_pb2.SYSVehicleState()
+    g_vehicle_state.ParseFromString(ros_msg.data)
+    
+    if g_test_mode and g_pilot_mode != g_vehicle_state.pilot_mode:
+        print('autopilot mode changed to {}!'.format(g_vehicle_state.pilot_mode))
     g_pilot_mode = g_vehicle_state.pilot_mode
 
 class Autopilot:
     def __init__(self):
-        #super(Autopilot, self).__init__()
         rospy.init_node('log_reslove')
-        self.startThreads()
+        self.veh_state_thread = NodeThread("/system_master/SysVehicleState", BinaryData, recv_vstatus)
     def startThreads(self):
-        self.veh_state_thread = NodeThread("/chassis/vehicle_state", BinaryData, recv_vstatus)
         self.veh_state_thread.start()
 
 
-#t = time.time()
-#index = int(t) % 100000
-#filename = "remote_{0}_{1}".format(addr[0], index)
-
-def PrepareMsgLogPath():
-    input_paths = []
-    files = os.listdir("/home/mogo/data/log/msg_log/")
-    tmp_files = os.listdir("/home/mogo/data/log/msg_log_temp/")
-
-    for file_name in tmp_files:
-        tmp_file_path = os.path.join("/home/mogo/data/log/msg_log_temp/", file_name)
-        input_paths.append(tmp_file_path)
-
-    for file_name in files:
-        file_path = os.path.join("/home/mogo/data/log/msg_log/", file_name)
-        tmp_file_path = os.path.join("/home/mogo/data/log/msg_log_temp/", file_name)
-        if file_path.find("remote") == -1:
-            t = time.time()*1000000
-            index = int(t) % 100000
-            file_name = "%s_{192.168.0.103}_%d" %(file_name, index) 
-        tmp_file_path = os.path.join("/home/mogo/data/log/msg_log_temp/", file_name)
-        os.rename(file_path, tmp_file_path)
-        input_paths.append(tmp_file_path)
-    return input_paths
-
-def LoadMsglogs(input_paths):
-    for path in input_paths:
-        try:
-            if path.find("swp") == -1:
-                LoadOneMsgLog(path)
-                os.remove(path)
-        except Exception as e:
-            print ('loadMsglogs has error: {}'.format(e))
-
-def buildOneLogMsg(one_log_dict):
-    #common_mogo_report_msg MogoReportMessage
-    mogo_report_msg = common_mogo_report_msg.MogoReportMessage()
-    try:
-        mogo_report_msg.timestamp.sec = one_log_dict["timestamp"]["sec"]
-        mogo_report_msg.timestamp.nsec = one_log_dict["timestamp"]["nsec"]
-        mogo_report_msg.src = one_log_dict["src"]
-        mogo_report_msg.level = one_log_dict["level"]
-        mogo_report_msg.msg = one_log_dict["msg"]
-        mogo_report_msg.code = one_log_dict["code"]
-        if one_log_dict["level"] == "error":
-            for result in one_log_dict["result"]:
-                mogo_report_msg.result.append(result)
-            for action in one_log_dict["actions"]:
-                mogo_report_msg.actions.append(action)
-        else:
-            mogo_report_msg.result.append("")
-            mogo_report_msg.actions.append("")
-        #temp_action =  mogo_report_msg.action.add()
-        #temp_action = action
-    except Exception as e:
-        pass
-    return mogo_report_msg
-
-
-def LoadOneMsgLog(path):
-    try:
-        with open(path) as fp:
-            contents = fp.read()
-            lines = contents.split("\n")
-        for line in lines:
-            one_log_dict = {}
-            #print("line json is ")
-            #print(line)
-            one_log_dict = json.loads(line)
-            #convert json to protobuf
-            log_pub_msg = buildOneLogMsg(one_log_dict)
-            log_pub_msg_str = log_pub_msg.SerializeToString()
-            binary_log_msg = BinaryData()
-
-            binary_log_msg.header.seq         = 1
-            binary_log_msg.header.stamp.secs   = rostime.Time.now().secs
-            binary_log_msg.header.stamp.nsecs  = rostime.Time.now().nsecs
-            binary_log_msg.header.frame_id    = "log_reslove_frame_id"
-            binary_log_msg.name = "log_reslove"
-            binary_log_msg.size = len(log_pub_msg_str)
-            binary_log_msg.data = log_pub_msg_str
-            #print(log_pub_msg_str)
-            if one_log_dict["level"] == "info":
-                set_msg_log_pub_info.publish(binary_log_msg)
-            if one_log_dict["level"] == "error":
-                set_msg_log_pub_error.publish(binary_log_msg)
-
-        #mogo_report_msg_test = common_mogo_report_msg.MogoReportMessage()
-        #mogo_report_msg_test.ParseFromString(binary_log_msg.data)
-        #for one_msg in mogo_report_msg_test.actions:
-        #    print(one_msg)
-        #for one_msg in mogo_report_msg_test.result:
-        #    print(one_msg)
-            time.sleep(1)
-    except Exception as e:
-        pass
-
-
-def UpdateMsgTopic():
-    while(True):
-        input_paths=PrepareMsgLogPath()
-        if len(input_paths)>0:
-            LoadMsglogs(input_paths)
-        else:
-            time.sleep(1)
-        #os.system("rm -f /home/mogo/data/log/msg_log_temp/*")
-
-
-class MsgLogThread (threading.Thread):
-    def __init__(self):
-        global set_msg_log_pub_info
-        global set_msg_log_pub_error
-        threading.Thread.__init__(self)
-        set_msg_log_pub_info  = Publisher('/autopilot_info/report_msg_info', BinaryData, queue_size=500)
-        set_msg_log_pub_error = Publisher('/autopilot_info/report_msg_error', BinaryData, queue_size=500)
-        time.sleep(10)
-    def run(self):
-        if os.path.exists("/home/mogo/data/log/msg_log/") == False:
-            os.mkdir("/home/mogo/data/log/msg_log/")
-        if os.path.exists("/home/mogo/data/log/msg_log_temp/") == False:
-            os.mkdir("/home/mogo/data/log/msg_log_temp/")
-        UpdateMsgTopic()
-
-
-def main():
+if __name__ == '__main__':
     autopilot_thread = Autopilot()
-    time.sleep(5) 
-    topic_thread = TopicThread(5)
-    topic_thread.start()
+    autopilot_thread.startThreads()
+    g_topic_hz_handler = TopicHZ()
     
-    msg_log_thread = MsgLogThread()
-    msg_log_thread.start()
-    #log_msg_thread = logMsgThread(5)
-    #log_msg_thread.start()
-
     run()
-
-main()
