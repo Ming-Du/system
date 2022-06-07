@@ -9,17 +9,14 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roscpp</build_depend>
-  <build_depend>rospy</build_depend>
   <build_depend>roslib</build_depend>
   <build_depend>autopilot_msgs</build_depend>
   <build_depend>common</build_depend>
   <build_export_depend>roscpp</build_export_depend>
-  <build_export_depend>rospy</build_export_depend>
   <build_export_depend>roslib</build_export_depend>
   <build_export_depend>autopilot_msgs</build_export_depend>
   <build_export_depend>common</build_export_depend>
   <exec_depend>roscpp</exec_depend>
-  <exec_depend>rospy</exec_depend>
   <exec_depend>roslib</exec_depend>
   <exec_depend>autopilot_msgs</exec_depend>
   <exec_depend>common</exec_depend>
