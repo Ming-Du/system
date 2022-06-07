@@ -38,6 +38,8 @@ enum MessageType
     MsgTypeArrivalNotification = 0x1010e; //到站提醒
     MsgTypeSystemCmdReq = 0x1010f; //系统命令请求, 比如系统重启，启用新镜像
     MsgTypeTrajectoryDownloadReq = 0x10110; //轨迹下载请求
+    MsgTypeStatusQueryReq = 0x10111; //状态查询请求
+    MsgTypeStatusQueryResp = 0x10112; //状态查询应答
 }
 
 message Header
@@ -327,6 +329,13 @@ message SystemCmdReq
     SystemCmdType cmdType = 1; //
 }
 
+// message definition for MsgTypeStatusQueryReq
+message StatusQueryReq
+{
+}
+
+// message definition for MsgTypeStatusQueryResp
+// refer to system_status_info.proto
 
 
 
