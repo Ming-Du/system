@@ -58,7 +58,7 @@ add_custom_target(
   DEPENDS ${OUTPUT_SOURCES_CXX} ${OUTPUT_SOURCES_PY}
 )
 
-include_directories(include proto ${catkin_INCLUDE_DIRS})
+include_directories(include proto ${PROJECT_SOURCE_DIR}/.. ${catkin_INCLUDE_DIRS})
 
 add_library(${PROJECT_NAME}
   ${OUTPUT_SOURCES_CXX}
