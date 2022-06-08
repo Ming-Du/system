@@ -29,6 +29,10 @@ class System_State():
     AUTO_PILOT_READY = 4
     AUTO_PILOT_STARTING = 5
     AUTO_PILOT_RUNNING = 6
+    # remote state
+    REMOTE_PILOT_STARTING = 7
+    REMOTE_PILOT_RUNNING = 8
+    MANUAL_PILOT_STATE = 9
 
     # mogo_report msg 
     System_Report_Code = {
@@ -39,7 +43,9 @@ class System_State():
         3: ["ESYS_FAULT",['RESULT_AUTOPILOT_INFERIOR','RESULT_REMOTEPILOT_INFERIOR'],['ACTION_CONTACT_TECH_SUPPORT']],
         4: ["ISYS_AUTOPILOT_READY",[],[]],
         5: ["ISYS_AUTOPILOT_STARTING",[],[]],
-        6: ["ISYS_AUTOPILOT_RUNING",[],[]]
+        6: ["ISYS_AUTOPILOT_RUNING",[],[]],
+        7: ["ISYS_REMOTEPILOT_STARTING",[],[]],
+        8: ["ISYS_REMOTEPILOT_RUNING",[],[]]
     }
 
     #state change reason
@@ -48,13 +54,15 @@ class System_State():
     STATE_CHANGE_BY_REAL_VEHICLE_STATE = 2
     STATE_CHANGE_BY_SYS_REBOOT_CMD = 3
     STATE_CHANGE_BY_MOGO_EVENT = 4
+    STATE_CHANGE_BY_TRAJECTORY_RESULT = 5
 
     Change_Reason = {
         0: 'agent_act',     # check agent all(True)
-        1: 'autopilot_cmd',  # 1: start_auto pilot   0: stop autopilot
-        2: 'vehicle_state', # 1: auto pilot already  0: auto pilot real exit 
+        1: 'autopilot_cmd',  # 1: start_auto pilot   0: stop autopilot  2: star remote pilot 
+        2: 'vehicle_state', # 1: auto pilot already  0: auto pilot real exit  2:
         3: 'sys_reboot',  
-        4: 'sys_event_msg' 
+        4: 'sys_event_msg', 
+        5: 'download_Trajectory'  
     }
 
 

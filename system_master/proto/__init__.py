@@ -20,3 +20,7 @@ import vehicle_config_pb2  as common_vehicle_config
 import vehicle_state_pb2   as common_vehicle_state
 import log_reslove_pb2     as common_log_reslove
 import mogo_report_msg_pb2 as common_mogo_report_msg
+import system_cmd_pb2
+import system_pilot_mode_pb2
+import system_state_report_pb2
+import system_status_info_pb2

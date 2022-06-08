@@ -5,7 +5,7 @@
 #@Date: 2022-05-16 09:57:08
 #@FilePath: /catkin_ws/src/system/system_master/sys_config.py
 #@Email: liyuelei@zhidaoauto.com
-#@LastEditTime: 2022-06-01 20:12:53
+#@LastEditTime: 2022-06-07 19:08:19
 """
 
 
@@ -15,7 +15,11 @@ g_local_test_flag = False  # if local test, not in car, can set it Ture
 
 g_get_report_msg_config_by_pb = True  # if true used master.pb form mogo_reporter
 
-AUTO_POLIT_START_WAIT_TIME = 3   # sec   HQ|DF: need 5 sec  BUS: need 2 sec, system larger than them
+TRAJECTORY_DOWNLOAD_WAIT_TIME = 10 #sec
+
+REMOTE_POLIT_START_WAIT_TIME = 6  #sec
+
+AUTO_POLIT_START_WAIT_TIME = 6   # sec   HQ|DF: need 5 sec  BUS: need 2 sec, system larger than them
 
 HEARTBEAT_TIMEOUT_OF_AGENT = 5   # sec
 

@@ -13,10 +13,13 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 import time
+import threading
 
 import rospy
 from proto import common_vehicle_state, common_mogo_report_msg, common_log_reslove
 from proto import system_pilot_mode_pb2, system_cmd_pb2, system_state_report_pb2, system_status_info_pb2
+from proto import message_pad_pb2, trajectory_agent_sync_status_pb2
+from proto import parallel_pb2
 from autopilot_msgs.msg import BinaryData
 from std_msgs.msg import Int32, UInt64
 from sensor_msgs.msg import NavSatFix
@@ -154,7 +157,8 @@ class Node_Handler(object):
     def __init__(self):
         self.autopolit_cmd_pub_time = 0
         self.vehicle_state_entity = Vehicle_State()
-        self.report_msg_entity = Report_Msg_Analyze()
+        if sys_config.g_local_test_flag:  # not real handle, test used
+            self.report_msg_entity = Report_Msg_Analyze()
         self.rtk_status_detection_sub = rospy.Subscriber('/sensor/gnss/gps_fix', NavSatFix, self.handle_rtk_status)
         self.system_state_report_sub = rospy.Subscriber('/system_master/StateReport', BinaryData, self.handle_state_report)
         self.topic_status_detection_sub = rospy.Subscriber("/autopilot_info/internal/report_topic_hz", BinaryData, self.handle_topic_hz_status)
@@ -166,7 +170,16 @@ class Node_Handler(object):
 
         ## add service by liyl 20200601
         self.query_request_service = rospy.Service('query_master_status', StatusQuery, self.handle_status_query_req)
-    
+
+        ## add DownloadTrajectory logical
+        self.download_Traj_wait_thread = None
+        self.download_Traj_result_sub = rospy.Subscriber('/trajectory_agent/cmd/status', BinaryData, self.handle_download_traj_result)
+        self.download_Traj_cmd_pub = rospy.Publisher('/trajectory_agent/cmd/transaction', BinaryData, queue_size=10)
+        
+        ## add remote response 
+        self.remote_pilot_take_over_id = 0
+        self.remote_pilot_state_resp_pub = rospy.Publisher('/parallel/TakeOverCmdResp', BinaryData, queue_size=10) 
+
               
     def set_pilot_mode(self, Mode):
         """
@@ -195,7 +208,76 @@ class Node_Handler(object):
         checkcmd.data = self.autopolit_cmd_pub_time.to_nsec()
         self.system_diagnose_cmd_pub.publish(checkcmd)
 
-    
+    def pub_status_to_parallel(self, result, pilot_state, content='unkonw'):
+        """
+        #@name: 
+        #@msg:  pub remote status to /paraller
+        #@param: result:  0:failed 1:success 2:exit unexpect
+                pilot_mode: 0:manual 1:auto 2:parallel
+        #@return {*}
+        """
+        try:
+            parallel_resp_msg = parallel_pb2.TakeOverStatus()
+            parallel_resp_msg.timestamp.sec = rospy.rostime.Time.now().secs
+            parallel_resp_msg.timestamp.nsec = rospy.rostime.Time.now().nsecs
+            parallel_resp_msg.takeOver = self.remote_pilot_take_over_id
+            parallel_resp_msg.result = result
+            parallel_resp_msg.autopilotStat = pilot_state
+            parallel_resp_msg.content = content
+
+            parallel_resp_data = parallel_resp_msg.SerializeToString()
+            binary_log_msg = BinaryData()
+
+            binary_log_msg.header.seq         = 1
+            binary_log_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
+            binary_log_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
+            binary_log_msg.header.frame_id    = "system_master_frame_id"
+            binary_log_msg.name = "parallel.TakeOverStatus"
+            binary_log_msg.size = len(parallel_resp_data)
+            binary_log_msg.data = parallel_resp_data
+            self.remote_pilot_state_resp_pub.publish(binary_log_msg)
+        except Exception as e:
+            print("pub_status_to_parallel has error, {}".format(e))
+
+    def pub_download_traj_msg(self, content):
+        """
+        #@name: 
+        #@msg:  pub download traj msg to /trajectory_agent
+        #@return {*}
+        """
+        if sys_config.g_local_test_flag:
+            try:
+                download_traj_msg = message_pad_pb2.TrajectoryDownloadReq()
+                download_traj_msg.ParseFromString(content)
+                print("reveice download traj req, line.lineID={}".format(download_traj_msg.line.lineId))
+            except Exception as e:
+                print("parse download_traj msg has error, {}".format(e))
+        
+        ''' need trans ?
+        binary_log_msg = BinaryData()
+        binary_log_msg.header.seq         = 1
+        binary_log_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
+        binary_log_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
+        binary_log_msg.header.frame_id    = "system_master_frame_id"
+        binary_log_msg.name = "parallel.TakeOverStatus"
+        binary_log_msg.size = len(content)
+        binary_log_msg.data = content
+        '''
+        self.download_Traj_cmd_pub.publish(content)
+        self.download_Traj_wait_thread = threading.Timer(sys_config.TRAJECTORY_DOWNLOAD_WAIT_TIME, self.wait_traj_dl_succ)
+        self.download_Traj_wait_thread.start()
+        self.system_event_report(code='ISYS_INIT_TRAJECTORY_START', desc=' trajectory download start')
+
+    def wait_traj_dl_succ(self):
+        """
+        #@name: 
+        #@msg: timer callback, TRAJECTORY_DOWNLOAD_WAIT_TIME timeout, response remote
+        #@return {*}
+        """
+        print("trajectory download used {} sec, timeout!!!!".format(sys_config.TRAJECTORY_DOWNLOAD_WAIT_TIME))
+        self.system_event_report(code='ISYS_INIT_TRAJECTORY_TIMEOUT', desc=' trajectory download timeout')
+
+
     def pub_system_state_msg(self, msg='', code='', results=list(), actions=list(), level='info'):
         """
         #@name: 
@@ -270,6 +352,29 @@ class Node_Handler(object):
         self.pub_system_state_msg(msg, code, results, actions, level='error')
         """
 
+    def handle_download_traj_result(self, ros_msg):
+        """
+        #@name: 
+        #@msg: callback for sub msg for /trajectory_agent
+        #@return {*}
+        """
+
+        try:
+            if self.download_Traj_wait_thread and self.download_Traj_wait_thread.isAlive():
+                self.download_Traj_wait_thread.cancel()
+            dl_traj_result = trajectory_agent_sync_status_pb2.TrajectoryAgentSyncStatus()
+            dl_traj_result.ParseFromString(ros_msg.data)
+            if dl_traj_result.sync_status == 1:
+                print("!!!! trajectory download failed!")
+                self.system_event_report(code='ISYS_INIT_TRAJECTORY_FAILURE', desc=' trajectory download failed')
+            elif dl_traj_result.sync_status == 0:
+                print("#### trajectory download success, can start autopolit!")
+                self.system_event_report(code='ISYS_INIT_TRAJECTORY_SUCCESS', desc=' trajectory download success')
+            else:
+                print("the result is undefined!")
+        except Exception as e:
+            print("pub_status_to_parallel has error, {}".format(e))
+        
 
     def handle_system_cmd(self, ros_msg):
         """
@@ -283,6 +388,11 @@ class Node_Handler(object):
 
         if src_sys_cmd.src == system_cmd_pb2.AutoPolit:
             if src_sys_cmd.action in (system_cmd_pb2.StartPilot, system_cmd_pb2.StopPilot):
+                if src_sys_cmd.action == system_cmd_pb2.StartPilot:
+                    if src_sys_cmd.content:
+						# TODO: send mas to hadmap
+                        pass
+
                 mode = 1 if src_sys_cmd.action == system_cmd_pb2.StartPilot else 0
                 sys_globals.g_system_master_entity.change_sys_state(1, mode)
 
@@ -291,13 +401,22 @@ class Node_Handler(object):
                     self.system_event_report(code='ESYS_NOT_ALLOW_REBOOT', desc=' autopilot is working')
                 else:
                     sys_globals.g_system_master_entity.handle_system_reboot()
+
             elif src_sys_cmd.action in (system_cmd_pb2.BeginShowMode, system_cmd_pb2.EndShowMode):
                 sys_globals.g_system_master_entity.show_mode_flag = True if src_sys_cmd.action == system_cmd_pb2.BeginShowMode else False
                 print('Show mode is {}, recv action {}'.format(sys_globals.g_system_master_entity.show_mode_flag, src_sys_cmd.action))
+
+            elif src_sys_cmd.action is system_cmd_pb2.DownloadTrajectory:
+                if src_sys_cmd.content:
+                    self.pub_download_traj_msg(src_sys_cmd.content)
             else:
                 print('Error: The action is [{}] unexpect!'.format(src_sys_cmd.action))
         elif src_sys_cmd.src == system_cmd_pb2.RemotePilot:
-            print('Please contact liyl, The function need build')
+            if src_sys_cmd.action in (system_cmd_pb2.StartPilot, system_cmd_pb2.StopPilot):
+                self.remote_pilot_take_over_id = int(src_sys_cmd.desc)
+                mode = 2 if src_sys_cmd.action == system_cmd_pb2.StartPilot else 0
+                sys_globals.g_system_master_entity.change_sys_state(2, mode)
+                
 
     def handle_topic_hz_status(self, ros_msg):
         """
