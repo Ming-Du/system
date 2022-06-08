@@ -546,7 +546,8 @@ set_bashrc
 try_times=0
 while true
 do
-        python ${ABS_PATH}/vehicle_init.py
+	vehicle_path=`find /autocar-code/install/share/ -name vehicle_init.py | head  -n 1`
+	python  $vehicle_path
         if [ -e "/home/mogo/data/vehicle_use.info" ];then
                 echo "found"
                 break
