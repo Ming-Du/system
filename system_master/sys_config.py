@@ -5,17 +5,19 @@
 #@Date: 2022-05-16 09:57:08
 #@FilePath: /catkin_ws/src/system/system_master/sys_config.py
 #@Email: liyuelei@zhidaoauto.com
-#@LastEditTime: 2022-06-07 19:08:19
+#@LastEditTime: 2022-06-08 21:21:03
 """
 
 
-SYSTRM_MASTER_VERSION = "MAP-V2.4.0(MASTER-V1.0.3)"
+SYSTRM_MASTER_VERSION = "MAP-V2.5.0(MASTER-V1.0.4)"
 
 g_local_test_flag = False  # if local test, not in car, can set it Ture
 
 g_get_report_msg_config_by_pb = True  # if true used master.pb form mogo_reporter
 
-TRAJECTORY_DOWNLOAD_WAIT_TIME = 10 #sec
+TRAJECTORY_DOWNLOAD_WAIT_TIME = 30 #sec
+
+ALL_AGENT_WORKED_WAIT_TIME = 10*60 #sec
 
 REMOTE_POLIT_START_WAIT_TIME = 6  #sec
 

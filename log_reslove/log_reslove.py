@@ -287,8 +287,6 @@ def update_one_log(one):
             return
         if one.get("tag",'') != node_config[one["node"]].get("man_beg","notag"):
             return
-        
-        one["uuid"] = one['ident'] or one['stamp']  # id ident is 0 used stamp as key-id 
 
         if one["tag"] not in all_man_tag_beg:
             all_man_tag_beg[one["tag"]] = one
@@ -299,7 +297,7 @@ def update_one_log(one):
         if one.get("tag",'') != node_config[one["node"]].get("man_end","notag"):
             return
 
-        one["uuid"] = one['ident'] or one['stamp']
+        one["uuid"] = one['ident'] or one['stamp'] # ident can match,but stamp may need find lately
 
         if one["tag"] not in all_man_tag_end:
             all_man_tag_end[one["tag"]] = {}

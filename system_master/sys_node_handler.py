@@ -14,11 +14,12 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 import time
 import threading
+from pyproj import Proj
 
 import rospy
 from proto import common_vehicle_state, common_mogo_report_msg, common_log_reslove
 from proto import system_pilot_mode_pb2, system_cmd_pb2, system_state_report_pb2, system_status_info_pb2
-from proto import message_pad_pb2, trajectory_agent_sync_status_pb2
+from proto import message_pad_pb2, trajectory_agent_sync_status_pb2, routing_pb2
 from proto import parallel_pb2
 from autopilot_msgs.msg import BinaryData
 from std_msgs.msg import Int32, UInt64
@@ -145,6 +146,41 @@ class Report_Msg_Analyze():
         pass
 
 
+class StartAutopilot(threading.Thread):
+    """
+    #@name: 
+    #@msg: start Autopilot, first send 
+    #@param undefined
+    #@param undefined
+    #@return {*}
+    """
+
+    def __init__(self, binary_msg):
+        threading.Thread.__init__(self)
+        self.binary_data_msg = binary_msg
+        self.auotpilot_routing_req_pub = rospy.Publisher('/routing/request', BinaryData, queue_size=10)
+
+    def run(self):
+        print('begin send routing request to hadmap')
+        pub_succ_flag = False
+        timeout_time = time.time() + 5 
+        while time.time() < timeout_time:
+            brsp = 0
+            self.auotpilot_routing_req_pub.publish(self.binary_data_msg)
+            brsp = rospy.get_param("/routing/request/rsp")
+            if brsp:
+                rospy.set_param("/routing/request/rsp", 0)
+                pub_succ_flag = True
+                break
+            time.sleep(0.1)
+
+        if pub_succ_flag:
+            print('publist /routing/request success, here will start autopilot!')
+            sys_globals.g_system_master_entity.change_sys_state(1, 1) 
+        else:
+            print('publist /routing/request timeout, not start autopilot!')
+            sys_globals.g_system_master_entity.node_handler_entity.system_event_report(code='ESYS_ROUTING_REQ_TIMEOUT', desc=' trajectory download failed')
+    
 
 class Node_Handler(object):
     """
@@ -156,6 +192,9 @@ class Node_Handler(object):
     
     def __init__(self):
         self.autopolit_cmd_pub_time = 0
+        self.autopilot_start_zone = 0
+        self.auotpilot_proj_handle = None
+        self.auotpilot_routereq_thread = None
         self.vehicle_state_entity = Vehicle_State()
         if sys_config.g_local_test_flag:  # not real handle, test used
             self.report_msg_entity = Report_Msg_Analyze()
@@ -226,18 +265,82 @@ class Node_Handler(object):
             parallel_resp_msg.content = content
 
             parallel_resp_data = parallel_resp_msg.SerializeToString()
-            binary_log_msg = BinaryData()
+            binary_msg = BinaryData()
 
-            binary_log_msg.header.seq         = 1
-            binary_log_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
-            binary_log_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
-            binary_log_msg.header.frame_id    = "system_master_frame_id"
-            binary_log_msg.name = "parallel.TakeOverStatus"
-            binary_log_msg.size = len(parallel_resp_data)
-            binary_log_msg.data = parallel_resp_data
-            self.remote_pilot_state_resp_pub.publish(binary_log_msg)
+            binary_msg.header.seq         = 1
+            binary_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
+            binary_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
+            binary_msg.header.frame_id    = "system_master_frame_id"
+            binary_msg.name = "parallel.TakeOverStatus"
+            binary_msg.size = len(parallel_resp_data)
+            binary_msg.data = parallel_resp_data
+            self.remote_pilot_state_resp_pub.publish(binary_msg)
         except Exception as e:
             print("pub_status_to_parallel has error, {}".format(e))
+
+
+    def pub_autopilot_route(self, desc, content):
+        """
+        #@name: 
+        #@msg: pub /routing/request to /hadmap  when autopiolt start
+        #@return {*}
+        """
+        try:
+            zone = int(desc)
+            route_info_msg = message_pad_pb2.RouteInfo()
+            route_info_msg.ParseFromString(content)
+        except Exception as e:
+            print("The param input param error, {}".format(e))
+        
+        if zone and zone != self.autopilot_start_zone:
+            self.auotpilot_proj_handle = Proj(proj='utm',zone=zone,ellps='WGS84', preserve_units=False) # use kwargs
+            # p2 = Proj('+proj=utm +zone=10 +ellps=WGS84', preserve_units=False) # use proj4 string
+            self.autopilot_start_zone = zone
+        
+        if not self.auotpilot_proj_handle:
+            print("auotpilot_proj_handle is not ready!!, here must has bug")
+            return
+
+        try:
+            route_req_msg = routing_pb2.RoutingRequest()
+            x,y=self.auotpilot_proj_handle(route_info_msg.startLocation.longitude, route_info_msg.startLocation.latitude)
+            route_req_msg.start.pose.x = x
+            route_req_msg.start.pose.y = y
+            x,y=self.auotpilot_proj_handle(route_info_msg.endLocation.longitude, route_info_msg.endLocation.latitude)
+            route_req_msg.end.pose.x = x
+            route_req_msg.end.pose.y = y
+            for wpoint in route_info_msg.wayPoints:
+                route_req_msg.waypoint.add()
+                x,y=self.auotpilot_proj_handle(wpoint.longitude, wpoint.latitude)
+                route_req_msg.waypoint.pose.x = x
+                route_req_msg.waypoint.pose.y = y
+            route_req_msg.speedlimit = route_info_msg.speedLimit
+            route_req_msg.startName = route_info_msg.startName
+            route_req_msg.endName = route_info_msg.endName
+            route_req_msg.vehicleType = route_info_msg.vehicleType
+            route_req_msg.routeid = route_info_msg.routeID
+            #route_req_msg.bus_routename = route_info_msg.routeName
+            if route_info_msg.line:
+                route_req_msg.bus_routeid = route_info_msg.line.lineId
+
+            route_req_data = route_req_msg.SerializeToString()
+            binary_msg = BinaryData()
+            binary_msg.header.seq         = 1
+            binary_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
+            binary_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
+            binary_msg.header.frame_id    = "system_master_frame_id"
+            binary_msg.name = "hadmap.RoutingRequest"
+            binary_msg.size = len(route_req_data)
+            binary_msg.data = route_req_data
+
+        except Exception as e:
+            print("build hadmap.RoutingRequest error, {}".format(e)) 
+            return
+        
+        if binary_msg.size > 0:
+            self.auotpilot_routereq_thread = StartAutopilot(binary_msg)
+            self.auotpilot_routereq_thread.start()
+
 
     def pub_download_traj_msg(self, content):
         """
@@ -253,17 +356,16 @@ class Node_Handler(object):
             except Exception as e:
                 print("parse download_traj msg has error, {}".format(e))
         
-        ''' need trans ?
-        binary_log_msg = BinaryData()
-        binary_log_msg.header.seq         = 1
-        binary_log_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
-        binary_log_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
-        binary_log_msg.header.frame_id    = "system_master_frame_id"
-        binary_log_msg.name = "parallel.TakeOverStatus"
-        binary_log_msg.size = len(content)
-        binary_log_msg.data = content
-        '''
-        self.download_Traj_cmd_pub.publish(content)
+        binary_msg = BinaryData()
+        binary_msg.header.seq         = 1
+        binary_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
+        binary_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
+        binary_msg.header.frame_id    = "system_master_frame_id"
+        binary_msg.name = "parallel.TakeOverStatus"
+        binary_msg.size = len(content)
+        binary_msg.data = content
+        
+        self.download_Traj_cmd_pub.publish(binary_msg)
         self.download_Traj_wait_thread = threading.Timer(sys_config.TRAJECTORY_DOWNLOAD_WAIT_TIME, self.wait_traj_dl_succ)
         self.download_Traj_wait_thread.start()
         self.system_event_report(code='ISYS_INIT_TRAJECTORY_START', desc=' trajectory download start')
@@ -364,12 +466,12 @@ class Node_Handler(object):
                 self.download_Traj_wait_thread.cancel()
             dl_traj_result = trajectory_agent_sync_status_pb2.TrajectoryAgentSyncStatus()
             dl_traj_result.ParseFromString(ros_msg.data)
-            if dl_traj_result.sync_status == 1:
+            if dl_traj_result.sync_status == -1:
                 print("!!!! trajectory download failed!")
-                self.system_event_report(code='ISYS_INIT_TRAJECTORY_FAILURE', desc=' trajectory download failed')
+                # self.system_event_report(code='ISYS_INIT_TRAJECTORY_FAILURE', desc=' trajectory download failed')
             elif dl_traj_result.sync_status == 0:
                 print("#### trajectory download success, can start autopolit!")
-                self.system_event_report(code='ISYS_INIT_TRAJECTORY_SUCCESS', desc=' trajectory download success')
+                # self.system_event_report(code='ISYS_INIT_TRAJECTORY_SUCCESS', desc=' trajectory download success')
             else:
                 print("the result is undefined!")
         except Exception as e:
@@ -390,11 +492,11 @@ class Node_Handler(object):
             if src_sys_cmd.action in (system_cmd_pb2.StartPilot, system_cmd_pb2.StopPilot):
                 if src_sys_cmd.action == system_cmd_pb2.StartPilot:
                     if src_sys_cmd.content:
-						# TODO: send mas to hadmap
-                        pass
-
-                mode = 1 if src_sys_cmd.action == system_cmd_pb2.StartPilot else 0
-                sys_globals.g_system_master_entity.change_sys_state(1, mode)
+						# send mas to hadmap && set autopilot cmd to controller
+                        self.pub_autopilot_route(src_sys_cmd.desc, src_sys_cmd.content)
+                else:
+                    mode = 0
+                    sys_globals.g_system_master_entity.change_sys_state(1, mode)
 
             elif src_sys_cmd.action is system_cmd_pb2.SysReboot:
                 if sys_globals.g_system_master_entity.auto_polit_state == 1:

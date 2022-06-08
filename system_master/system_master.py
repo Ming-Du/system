@@ -43,6 +43,7 @@ class System_Master(object):
         self.node_spin_thread = None
         self.auto_polit_wait_thread = None
         self.remote_polit_wait_thread = None
+        self.agent_all_worked_wait_thread = None
         self.get_sys_state_before()
 
     def get_sys_state_before(self):
@@ -311,6 +312,8 @@ class System_Master(object):
     def all_node_worked(self):
         ## check is get roscore starting msg
         self.init_master_node()
+        if self.agent_all_worked_wait_thread and self.agent_all_worked_wait_thread.isAlive():
+            self.agent_all_worked_wait_thread.cancel()
         if self.sys_state == sys_globals.System_State.SYS_STARTING:
             self.change_sys_state(reason=0, act=sys_globals.Agent_State.AGENT_NODES_WORKED)
 
@@ -335,7 +338,13 @@ class System_Master(object):
             return
         self.init_master_node()
 
+    def wait_agent_connect_timeout(self):
+        print("!!!!! its 10 minites, have agent not connected")
+        self.set_sys_state_and_save(sys_globals.System_State.SYS_FAULT)
+
     def run(self):
+        self.agent_all_worked_wait_thread = threading.Timer(sys_config.ALL_AGENT_WORKED_WAIT_TIME, self.wait_agent_connect_timeout)
+        self.agent_all_worked_wait_thread.start()
         self.agent_handler_entity.run()
         while True:
             try:

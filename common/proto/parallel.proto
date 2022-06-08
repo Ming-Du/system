@@ -1,0 +1,50 @@
+syntax = "proto2";
+package parallel;
+
+import "header.proto";
+
+
+/* 控制是否推流指令 */
+message StreamCmd {
+    /* header 不用填写。因为函数 RosToProto 反序列化时，会自动使用 autopilot_msgs::BinaryData::header 来填充 */
+    optional common.Header header = 1;
+    /* 驾舱端下发的消息 ID，回复消息时 StreamCmdResp */
+    required uint64 msgId = 2;
+    /* 推流控制指令  1-开始推流  0-结束推流 */
+    required bool pushCommand = 3;
+}
+
+/* 控制推流指令的回复 */
+message StreamCmdResp {
+    optional common.Header header = 1;
+    /* 驾舱端下发的消息ID */
+    required uint64 msgId = 2;
+
+    /* 0-操作失败，1-操作成功 */
+    required uint32 result = 3;
+
+    /* 失败原因，只有失败时才回传 */
+    optional string content = 4;
+}
+
+/* 接管指令在文件 ./system_cmd.proto */
+
+/* 控制接管指令的回复
+ * 和平行驾驶异常状态的回复。result 为 2 时 */
+message TakeOverStatus {
+    /* header 不用填写。因为函数 RosToProto 反序列化时，会自动使用 autopilot_msgs::BinaryData::header 来填充 */
+    optional common.Header header = 1;
+    /* 驾舱端下发的是否接管指令 takeOver（从 system_master::SystemCmd::desc 解析成 uint32 后，填入该字段）。
+       当 result 为 2 时，不用传该字段
+     */
+    optional uint32 takeOver = 2;
+
+    /* 0-操作失败，1-操作成功  2-异常退出平行驾驶状态 */
+    required uint32 result = 3;
+
+    /* 切换后的驾驶状态 0-手动驾驶 1-自动驾驶 2-平行驾驶。参考：system_master::cmd_src */
+    required uint32 autopilotStat = 4;
+
+    /* 失败原因，只有失败时才回传 */
+    optional string content = 5;
+}

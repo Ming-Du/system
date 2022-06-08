@@ -9,7 +9,6 @@ Description: the file used for common api or method
 FilePath: /catkin_ws/src/system/system_master/sys_common.py
 '''
 
-# Python program using traces to kill threads 
 import sys 
 import trace 
 import threading 
@@ -18,6 +17,7 @@ import subprocess
 import pexpect
 
 
+# Python program using traces to kill threads 
 class thread_with_trace(threading.Thread): 
     '''
     copy from network used trace kill thread
