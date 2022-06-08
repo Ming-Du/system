@@ -1,0 +1,3 @@
+<launch>
+    <node name="simu_hz" pkg="monitor_collect" type="simu_hz.py" output="screen"></node>
+</launch>
