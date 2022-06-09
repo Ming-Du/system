@@ -18,7 +18,7 @@ from proto import common_log_reslove, system_pilot_mode_pb2
 from autopilot_msgs.msg import BinaryData
 
 ##### file async handle
-import asyncio
+#import asyncio
 #import aiofiles
 
 
@@ -48,13 +48,13 @@ all_man_tag_end = {}   # {tag: {stamp: one_log}
 all_topic_hz_info = dict()  # k=name, v={dst_node:[list], start_time:t1, end_time:t2 pub:num max_delay:usec}
 g_topic_hz_handler = None
 
-g_time_split_threshold = 5  # sec
+g_time_split_threshold = 10  # sec
 g_time_start_value = time.time()
 g_time_split_value = time.time()
 g_time_split_end = time.time()
 
 # the follow used for test
-g_test_mode = True   # default set False
+g_test_mode = False   # default set False
 log_exceptions_dict = dict()   # k=node_name, v={ topic_name : error_num }    # used for no seq log record
 
 
@@ -253,6 +253,7 @@ def update_one_log(one):
             tag = node_config[one["node"]].get('man_beg')
             if tag in all_man_tag_beg:
                 one["use_beg_tag"] = all_man_tag_beg[tag]  # all beg and pub in same thread
+                del  all_man_tag_beg[tag]  # add by liyl 20220609 only uesd one time by latest pub
 
         #放到all_pub里面
         all_pub_msg[one["topic"]][one["uuid"]] = one
@@ -288,8 +289,7 @@ def update_one_log(one):
         if one.get("tag",'') != node_config[one["node"]].get("man_beg","notag"):
             return
 
-        if one["tag"] not in all_man_tag_beg:
-            all_man_tag_beg[one["tag"]] = one
+        all_man_tag_beg[one["tag"]] = one  # mod by liyl only record one 
 
     elif one["type"] == 3:
         if one["node"] not in node_config:
@@ -310,7 +310,7 @@ def update_one_log(one):
         return
     
 
-''' begin used asyncio handle '''
+''' begin used asyncio handle 
 async def load_remote_log(paths):
     """
     read remote log from paths which are named begin "remote"
@@ -318,10 +318,10 @@ async def load_remote_log(paths):
     global g_time_start_value
     global g_time_split_value
 
-    handle_time = int(g_time_start_value%10000)
+    handle_time = int(g_time_start_value%100000)
     remote_log_src=['102','103','104','105','106','107']
     
-    while handle_time < int(g_time_split_value%10000):
+    while handle_time < int(g_time_split_value%100000):
         for src in remote_log_src:
             path_key=src+'_'+str(handle_time)
             for file_name in paths:            
@@ -378,7 +378,8 @@ async def load_log_by_time(filename):
                 
             else:
                 break
-''' end used asyncio handle '''
+end used asyncio handle '''
+
 
 ''' handel file one by one '''
 def load_one_log_by_time(ros_time_paths, remote_paths):
@@ -388,6 +389,32 @@ def load_one_log_by_time(ros_time_paths, remote_paths):
 
     #print('ros_time={},remote={}'.format(ros_time_paths, remote_paths))
     #print('start_time={},split_time={}'.format(g_time_start_value,g_time_split_value))
+
+    handle_time = int(g_time_start_value%100000) if not g_test_mode else 0
+    end_time = int(g_time_split_value%100000) if not g_test_mode else 99999
+    remote_log_src=['102','103','104','105','106','107']
+
+    while handle_time < end_time:
+        for src in remote_log_src:
+            path_key='{}_{}.log'.format(src, handle_time)
+            for file_name in remote_paths:            
+                if path_key in file_name:
+                    # print(file_name)
+                    with open(file_name, 'r') as fp:
+                        contents = fp.read()
+                        lines = contents.split("\n")
+                        for line in lines:
+                            start = line.find("#key-log#", 0, 128)
+                            if start == -1:
+                                continue
+                            try:
+                                one = json.loads(line[start+9:])
+                                update_one_log(one)
+                            except Exception as e:
+                                print("the log {} in file {} is unexpect style! {}".format(line[start+9:], file_name, e))
+                                continue
+                        
+        handle_time += 1
 
     for path in ros_time_paths:
         with open(path, 'r') as fp:
@@ -413,32 +440,6 @@ def load_one_log_by_time(ros_time_paths, remote_paths):
                     
                 else:
                     break
-    
-    handle_time = int(g_time_start_value%10000) if not g_test_mode else 0
-    end_time = int(g_time_split_value%10000) if not g_test_mode else 9999
-    remote_log_src=['102','103','104','105','106','107']
-
-    while handle_time < end_time:
-        for src in remote_log_src:
-            path_key='{}_{}.log'.format(src, handle_time)
-            for file_name in remote_paths:            
-                if path_key in file_name:
-                    # print(file_name)
-                    with open(file_name, 'r') as fp:
-                        contents = fp.read()
-                        lines = contents.split("\n")
-                        for line in lines:
-                            start = line.find("#key-log#", 0, 128)
-                            if start == -1:
-                                continue
-                            try:
-                                one = json.loads(line[start+9:])
-                                update_one_log(one)
-                            except Exception as e:
-                                print("the log {} in file {} is unexpect style! {}".format(line[start+9:], file_name, e))
-                                continue
-                        
-        handle_time += 1
 
 
 @get_time_used
@@ -459,8 +460,8 @@ def load_logs(input_paths):
             if st_mtime <  stat.st_mtime:
                 st_mtime = stat.st_mtime
 
-        g_time_start_value = st_atime - 2  # before min access time 2 sec
-        g_time_split_end = st_mtime
+        g_time_start_value = st_atime - 3  # before min access time 2 sec
+        g_time_split_end = st_mtime + 2
         if st_mtime - st_atime > g_time_split_threshold:   # log 1.7M/s  30s about 50M
             print('log save {} secs, more than {}, handle a part!'.format(st_mtime-st_atime, g_time_split_threshold) )
             g_time_split_value = st_atime + g_time_split_threshold
@@ -523,18 +524,6 @@ def analyze_outside_node(callback, data, record):
         data["wrong"] = "uuid wrong"
         return
 
-    ''' del by liyl
-    use_time = round(float(callback["recv_stamp"] - pub["stamp"])/1000000, 2)
-    wait_time = round(float(callback["stamp"] - callback["recv_stamp"])/1000000, 2)
-    if use_time + wait_time > 20000:
-        #print("pub-callback use time {0}".format(use_time))
-        data["wrong"] = ">20000"
-        return
-
-    data["use_time"] += use_time + wait_time
-    data["path"].append({"type":"pub_recv", "node":callback["node"], "use_time":use_time})
-    data["path"].append({"type":"recv_call", "node":callback["node"], "use_time":wait_time})
-    '''
     pub_recv_time = callback["recv_stamp"] - pub["stamp"]
     recv_call_time = callback["stamp"] - callback["recv_stamp"]
     data["use_time"] += pub_recv_time + recv_call_time
@@ -560,9 +549,9 @@ def analyze_inside_node(pub, data, record):
                 w_spend = pub["wtime"] - beg["wtime"]
                 idle_spend = beg_end_time - u_spend - s_spend - w_spend    
                 u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
-                pdata["use_time"] += beg_end_time
-                pdata["path"].append({"type": "beg_end", "node": pub["node"], "use_time": beg_end_time})
-                pdata["path"].append({"type": "beg_end_cpu", "node": pub["node"], "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
+                # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
+                data["path"].append({"type": "beg_end", "node": pub["node"], "use_time": beg_end_time})
+                data["path"].append({"type": "beg_end_cpu", "node": pub["node"], "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
 
         return
 
@@ -597,25 +586,6 @@ def analyze_inside_node(pub, data, record):
             pdata["wrong"] = "uuid wrong"
             continue
 
-        '''del by liyl
-        use_time = round(float(pub["stamp"] - callback["stamp"])/1000000, 2)
-        if use_time > 20000:
-            #print("callback-pub use time {0}".format(use_time))
-            pdata["wrong"] = ">20000"
-            continue
-
-        u_spend = round(float(pub["utime"] - callback["utime"])/1000000, 2)
-        u_percent = round(float(u_spend / use_time), 2)
-        s_spend = round(float(pub["stime"] - callback["stime"])/1000000, 2)
-        s_percent = round(float(s_spend / use_time), 2)
-        w_spend = round(float(pub["wtime"] - callback["wtime"])/1000000, 2)
-        if w_spend > 20000:
-            pdata["wrong"] = "w_spend>20000, cb tid:{} {} {}, pub tid:{} {} {}".format(callback["tid"], callback["thread"], callback["wtime"], pub["tid"], pub["thread"], pub["wtime"])
-            continue
-        #w_percent = round(float(w_spend / use_time), 2)
-        #idle_spend = round(float(use_time - u_spend - s_spend - w_spend), 2)
-        #idle_percent = round(float(idle_spend / use_time), 2)
-        '''
         call_pub_time = pub["stamp"] - callback["stamp"]
         if call_pub_time > 2*1000000000:  # 2s
             #print("callback-pub use time {0}".format(use_time))
@@ -668,6 +638,8 @@ def analyze_logs():
 
     result = {}
     target = "/chassis/command"
+    #if g_test_mode and g_pilot_mode == 0:
+    #    target = '/perception/fusion/obstacles'
     target_handle_complate = dict()
     # target = "/topic2"
 
@@ -709,12 +681,6 @@ def analyze_logs():
 
             if last_timestamp < pub["stamp"] - data['use_time'] - 1*1000000000:  #mod by liyl 20220414 delay 1 sec for test:
                 last_timestamp = pub["stamp"] - data['use_time'] - 1*1000000000
-
-    ''' del by liyl because repeat 
-    for split_path_str in result:
-        result[split_path_str].sort(key=lambda s: s["use_time"], reverse=False)
-        #print(len(result[split_path_str]))
-    '''
 
     match_once_num = 0
     for uuid_time, match_num in target_handle_complate.items():
@@ -918,7 +884,7 @@ def run():
         
         g_topic_hz_handler.pub_topic_hz_once()
 
-        sleep_time = 1 - (end - start)
+        sleep_time = 2 - (end - start)   # change form 1 to 2 by liyl 20220609
         if sleep_time > 0.3:
             time.sleep(sleep_time)
 
