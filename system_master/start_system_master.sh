@@ -86,11 +86,11 @@ curtime=$(date +"%Y%m%d%H%M%S")
 LOGFILE="/home/mogo/data/log/start_master-${curtime}.log"
 
 ethnet_ip=$(ifconfig | grep -v "inet6" | grep -Eo '192[.]168([.][0-9]+){2}' | grep -v "255")
-get_xavier_type ## 鑾峰彇xavier绫诲瀷:1x 2x 6x
+get_xavier_type ## 获取xavier类型:1x 2x 6x
 declare -g -r xavier_type=$?
 LoggingINFO "rosmachine:${ros_machine} rosmaster:${ros_master} xavier_type:${xavier_type}"
 
-[[ "${ros_machine}" = "${ros_master}" ]] && LoggingINFO "system_master need run in ros_master" && exit 1
+[[ "${ros_machine}" != "${ros_master}" ]] && LoggingINFO "system_master need run in ros_master" && exit 1
 
 
 export ROS_HOSTNAME=${ros_machine}
