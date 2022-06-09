@@ -35,7 +35,7 @@ class System_Master(object):
     def __init__(self):
         self.state_file = sys_globals.g_system_state_save_file
         self.sys_state = -1  # default state
-        self.polit_state = -1
+        self.polit_state = 0
         self.show_mode_flag = False
         self.system_reboot_flag = False
         self.agent_handler_entity = Agent_Handler()
@@ -147,7 +147,7 @@ class System_Master(object):
             if act == sys_globals.Agent_State.AGENT_NODES_WORKED: # all agent work
                 self.set_sys_state_and_save(sys_globals.System_State.SYS_RUNNING)
                 if self.node_spin_thread and self.node_spin_thread.isAlive():
-                    self.set_sys_state_and_save(sys_globals.System_State.AUTO_PILOT_READY)
+                    self.set_sys_state_and_save(sys_globals.System_State.MANUAL_PILOT_STATE)
             else:
                 print('the act {} is unexpected!'.format(act))
 
@@ -159,6 +159,7 @@ class System_Master(object):
                     self.auto_polit_wait_thread = threading.Timer(sys_config.AUTO_POLIT_START_WAIT_TIME, self.wait_autopolit_succ)
                     self.auto_polit_wait_thread.start()
                 elif act == 2:
+                    print('start remotepilot now')
                     self.set_sys_state_and_save(sys_globals.System_State.REMOTE_PILOT_STARTING)
                     self.remote_polit_wait_thread = threading.Timer(sys_config.REMOTE_POLIT_START_WAIT_TIME, self.wait_remotepolit_succ)
                     self.remote_polit_wait_thread.start()
@@ -171,13 +172,16 @@ class System_Master(object):
                     self.node_handler_entity.system_event_report(code='ESYS_NOT_ALLOW_AUTOPILOT_FOR_REMOTE', desc=', system state have some fault')
                 elif act==2 and self.polit_state != 0:
                     print("The pilot state not is 0, can't start remote polit")
+                    self.node_handler_entity.pub_status_to_parallel(0, self.polit_state, "parallel already running!!!")
                 else:
                     pass
 
         elif reason == sys_globals.System_State.STATE_CHANGE_BY_REAL_VEHICLE_STATE: # vehicle state
             print('autopilot state change from {} to {}'.format(self.polit_state, act))
-            if self.polit_state == 2:
+            if self.polit_state == 2 and self.sys_state == sys_globals.System_State.REMOTE_PILOT_RUNNING:
+                print("The remote pilot state is exit! ")
                 self.node_handler_entity.pub_status_to_parallel(2, act, "exit parallel unexpect!")
+                self.set_sys_state_and_save(sys_globals.System_State.MANUAL_PILOT_STATE)  ## may change to autopilot in future
 
             self.polit_state = act
             if act == 0: 

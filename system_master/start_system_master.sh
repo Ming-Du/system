@@ -1,12 +1,6 @@
 #!/bin/bash 
 # the local file is /home/mogo/autopilot/share/system_master/start_system_master.sh
 
-ethnet_ip=$(ifconfig | grep -v "inet6" | grep -Eo '192[.]168([.][0-9]+){2}' | grep -v "255")
-if [ "192.168.1.102" != "$ethnet_ip" ]; then
-    echo "ip address not is master, exiting"
-    exit 1
-fi
-
 LoggingINFO() {
         datetime=$(date +"%Y-%m-%d %H:%M:%S")
         echo -e "\033[32m[ INFO] [$datetime] $*\033[0m"
@@ -21,13 +15,16 @@ install_ros_log() {
         rm -f /tmp/system_state
 }
 
-declare -g LOGFILE
-curtime=$(date +"%Y%m%d%H%M%S")
-LOGFILE="/home/mogo/data/log/start_master-${curtime}.log"
-install_ros_log
+get_xavier_type() {
+    # check xavier type
+    [ -z "$ethnet_ip" ] && LoggingERR "ip address is null" && exit 1
+    ros_machine=$(grep -Eo "^[^#]*$ethnet_ip[[:space:]]*ros[^#]*" /etc/hosts | uniq | head -1 | awk '{print $2}')
+    rosmachine=${ros_machine:="localhost"}
+    [[ ${rosmachine} == "localhost" ]] && ros_master="${rosmachine}" || ros_master="rosmaster"
+    ros_hosts=$(grep -Eo "^[^#]*ros[^#]*" /etc/hosts | uniq | wc -l)
+    return $((ros_hosts > 2 ? 3 : ((ros_hosts > 1 ? 2 : 1))))
+}
 
-export ros_master="localhost"
-export ros_machine="${ros_master}"  # 102 must is master
 
 set_bashrc() {
         HOSTNAME="export ROS_HOSTNAME=$ros_machine"
@@ -83,8 +80,24 @@ set_bashrc() {
         fi
 }
 
+declare -g ros_master ros_machine ethnet_ip
+declare -g LOGFILE
+curtime=$(date +"%Y%m%d%H%M%S")
+LOGFILE="/home/mogo/data/log/start_master-${curtime}.log"
+
+ethnet_ip=$(ifconfig | grep -v "inet6" | grep -Eo '192[.]168([.][0-9]+){2}' | grep -v "255")
+get_xavier_type ## 获取xavier类型:1x 2x 6x
+declare -g -r xavier_type=$?
+LoggingINFO "rosmachine:${ros_machine} rosmaster:${ros_master} xavier_type:${xavier_type}"
+
+[[ "${ros_machine}" = "${ros_master}" ]] && LoggingINFO "system_master need run in ros_master" && exit 1
+
+
+export ROS_HOSTNAME=${ros_machine}
+export ROS_MASTER_URI=http://${ros_master}:11311
+export ROS_ENV="export ROS_LOG_DIR=${ROS_LOG_DIR}; export ROS_MASTER_URI=http://${ros_master}:11311; export ROS_HOSTNAME=${ros_machine}"
+install_ros_log
 set_bashrc
-LoggingINFO "rosmachine:${ros_machine} rosmaster:${ros_master}"
 
 source /opt/ros/melodic/setup.bash
 source /home/mogo/autopilot/setup.bash

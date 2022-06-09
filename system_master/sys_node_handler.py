@@ -217,7 +217,7 @@ class Node_Handler(object):
         
         ## add remote response 
         self.remote_pilot_take_over_id = 0
-        self.remote_pilot_state_resp_pub = rospy.Publisher('/parallel/TakeOverCmdResp', BinaryData, queue_size=10) 
+        self.remote_pilot_state_resp_pub = rospy.Publisher('/parallel/TakeOverStatus', BinaryData, queue_size=10) 
 
               
     def set_pilot_mode(self, Mode):
@@ -258,8 +258,8 @@ class Node_Handler(object):
         """
         try:
             parallel_resp_msg = parallel_pb2.TakeOverStatus()
-            parallel_resp_msg.timestamp.sec = rospy.rostime.Time.now().secs
-            parallel_resp_msg.timestamp.nsec = rospy.rostime.Time.now().nsecs
+            #parallel_resp_msg.timestamp.sec = rospy.rostime.Time.now().secs
+            #parallel_resp_msg.timestamp.nsec = rospy.rostime.Time.now().nsecs
             parallel_resp_msg.takeOver = self.remote_pilot_take_over_id
             parallel_resp_msg.result = result
             parallel_resp_msg.autopilotStat = pilot_state
@@ -269,13 +269,14 @@ class Node_Handler(object):
             binary_msg = BinaryData()
 
             binary_msg.header.seq         = 1
-            binary_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
-            binary_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
+            #binary_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
+            #binary_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
             binary_msg.header.frame_id    = "system_master_frame_id"
             binary_msg.name = "parallel.TakeOverStatus"
             binary_msg.size = len(parallel_resp_data)
             binary_msg.data = parallel_resp_data
             self.remote_pilot_state_resp_pub.publish(binary_msg)
+            print("pub_status_to_parallel has success!")
         except Exception as e:
             print("pub_status_to_parallel has error, {}".format(e))
 
@@ -368,6 +369,7 @@ class Node_Handler(object):
         binary_msg.data = content
         
         self.download_Traj_cmd_pub.publish(binary_msg)
+        print("send download_traj req to trajectory_agent success!")
         self.download_Traj_wait_thread = threading.Timer(sys_config.TRAJECTORY_DOWNLOAD_WAIT_TIME, self.wait_traj_dl_succ)
         self.download_Traj_wait_thread.start()
         self.system_event_report(code='ISYS_INIT_TRAJECTORY_START', desc=' trajectory download start')
@@ -472,12 +474,13 @@ class Node_Handler(object):
                 print("!!!! trajectory download failed!")
                 # self.system_event_report(code='ISYS_INIT_TRAJECTORY_FAILURE', desc=' trajectory download failed')
             elif dl_traj_result.sync_status == 0:
-                print("#### trajectory download success, can start autopolit!")
+                print("#### trajectory download success, can start autopolit!!")
                 # self.system_event_report(code='ISYS_INIT_TRAJECTORY_SUCCESS', desc=' trajectory download success')
+                sys_globals.g_system_master_entity.set_sys_state_and_save(sys_globals.System_State.AUTO_PILOT_READY)
             else:
                 print("the result is undefined!")
         except Exception as e:
-            print("pub_status_to_parallel has error, {}".format(e))
+            print("handle_download_traj_result has error, {}".format(e))
         
 
     def handle_system_cmd(self, ros_msg):
@@ -519,7 +522,8 @@ class Node_Handler(object):
             if src_sys_cmd.action in (system_cmd_pb2.StartPilot, system_cmd_pb2.StopPilot):
                 self.remote_pilot_take_over_id = int(src_sys_cmd.desc)
                 mode = 2 if src_sys_cmd.action == system_cmd_pb2.StartPilot else 0
-                sys_globals.g_system_master_entity.change_sys_state(2, mode)
+                print("receive REMOTE pilot req! mode={}".format(mode))
+                sys_globals.g_system_master_entity.change_sys_state(sys_globals.System_State.STATE_CHANGE_BY_AUTOPILOT_CMD, mode)
                 
 
     def handle_topic_hz_status(self, ros_msg):
