@@ -19,25 +19,12 @@ message RoutingRequest {
   optional Waypoint start = 4;
   optional Waypoint end = 5;
   repeated Waypoint waypoint = 6;
-
-
-  //message Lane {
-  //  optional string id = 1;
-  //  optional double start_s = 2;
-  //  optional double end_s = 3;
-  //}
-
-
-  //Route must go through each waypoint in the order from start to end.
-  //Ignored if empty.
-  //repeated Lane blacklisted_lane = 5;
-  //repeated string blacklisted_road = 6;
-  //optional bool broadcast = 7 [default = true];
   optional double speedlimit = 7;
   optional string startName = 8;
   optional string endName = 9;
   optional int32 vehicleType = 10;  // 9 - taxi, 10 - bus
   optional uint32 bus_routeid = 11;
   optional string bus_routename = 12;
+  optional uint64 lineid = 13; // lineid : 0 是无效值用以前的逻辑； > 0 是有效值
 }
 
