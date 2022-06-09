@@ -21,7 +21,7 @@ ALL_AGENT_WORKED_WAIT_TIME = 10*60 #sec
 
 REMOTE_POLIT_START_WAIT_TIME = 6  #sec
 
-AUTO_POLIT_START_WAIT_TIME = 6   # sec   HQ|DF: need 5 sec  BUS: need 2 sec, system larger than them
+AUTO_POLIT_START_WAIT_TIME = 3   # sec   HQ|DF: need 5 sec  BUS: need 2 sec, system larger than them
 
 HEARTBEAT_TIMEOUT_OF_AGENT = 5   # sec
 
