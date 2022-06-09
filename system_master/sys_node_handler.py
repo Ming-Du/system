@@ -247,6 +247,7 @@ class Node_Handler(object):
         checkcmd.data = self.autopolit_cmd_pub_time.to_nsec()
         self.system_diagnose_cmd_pub.publish(checkcmd)
 
+
     def pub_status_to_parallel(self, result, pilot_state, content='unkonw'):
         """
         #@name: 
@@ -291,6 +292,7 @@ class Node_Handler(object):
             route_info_msg.ParseFromString(content)
         except Exception as e:
             print("The param input param error, {}".format(e))
+            return
         
         if zone and zone != self.autopilot_start_zone:
             self.auotpilot_proj_handle = Proj(proj='utm',zone=zone,ellps='WGS84', preserve_units=False) # use kwargs
@@ -321,7 +323,7 @@ class Node_Handler(object):
             route_req_msg.routeid = route_info_msg.routeID
             #route_req_msg.bus_routename = route_info_msg.routeName
             if route_info_msg.line:
-                route_req_msg.bus_routeid = route_info_msg.line.lineId
+                route_req_msg.lineid = route_info_msg.line.lineId
 
             route_req_data = route_req_msg.SerializeToString()
             binary_msg = BinaryData()
@@ -466,7 +468,7 @@ class Node_Handler(object):
                 self.download_Traj_wait_thread.cancel()
             dl_traj_result = trajectory_agent_sync_status_pb2.TrajectoryAgentSyncStatus()
             dl_traj_result.ParseFromString(ros_msg.data)
-            if dl_traj_result.sync_status == -1:
+            if dl_traj_result.sync_status == 1:
                 print("!!!! trajectory download failed!")
                 # self.system_event_report(code='ISYS_INIT_TRAJECTORY_FAILURE', desc=' trajectory download failed')
             elif dl_traj_result.sync_status == 0:
