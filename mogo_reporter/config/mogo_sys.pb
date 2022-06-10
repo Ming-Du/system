@@ -97,11 +97,35 @@ error
   action: "ACTION_REPAIR_VEHICLE"
 }
 
+error
+{
+  code: EVHC_BRAKE_INFERENCE
+  msg: "由于刹车干预退出自动驾驶或无法进入自动驾驶"
+  result: "RESULT_AUTOPILOT_DISABLE"
+  result: "RESULT_REMOTEPILOT_DISABLE"
+  action: "ACTION_HANDLE_VEHICLE_TURN_GEAR"
+  action: "ACTION_TRY_AGAIN_LATER"
+}
 
+error
+{
+  code: EVHC_STEER_INFERENCE
+  msg: "由于方向盘干预退出自动驾驶或无法进入自动驾驶"
+  result: "RESULT_AUTOPILOT_DISABLE"
+  result: "RESULT_REMOTEPILOT_DISABLE"
+  action: "ACTION_HANDLE_VEHICLE_TURN_GEAR"
+  action: "ACTION_TRY_AGAIN_LATER"
+}
 
-
-
-
+error
+{
+  code: EVHC_ACCEL_INFERENCE
+  msg: "由于油门干预退出自动驾驶或无法进入自动驾驶"
+  result: "RESULT_AUTOPILOT_DISABLE"
+  result: "RESULT_REMOTEPILOT_DISABLE"
+  action: "ACTION_HANDLE_VEHICLE_TURN_GEAR"
+  action: "ACTION_TRY_AGAIN_LATER"
+}
 
 
 

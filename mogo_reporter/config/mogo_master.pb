@@ -24,23 +24,43 @@ info {
 }
 
 info {
-  code: ISYS_AUTOPILOT_RUNING	
+  code: ISYS_AUTOPILOT_RUNING
   msg: "自动驾驶运行中"
 }
 
 info {
-  code: ISYS_TOPIC_FREQ_NORMAL	
+  code: ISYS_TOPIC_FREQ_NORMAL
   msg: "topic频率正常或者恢复正常"
 }
 
 info {
-  code: ISYS_CAN_NORMAL	
+  code: ISYS_CAN_NORMAL
   msg: "底盘状态正常或恢复正常"
 }
 
 info {
-  code: ISYS_RTK_STATUS_NORMAL	
+  code: ISYS_REOMTEPILOT_STARTING
+  msg: "平行驾驶启动中"
+}
+
+info {
+  code: ISYS_REOMTEPILOT_RUNING
+  msg: "平行驾驶运行中"
+}
+
+info {
+  code: ILCT_RTK_STATUS_NORMAL
   msg: "rtk状态正常或恢复正常"
+}
+
+info {
+  code: ISYS_INIT_TRAJECTORY_START
+  msg: "轨迹管理_轨迹开始下载"
+}
+
+info {
+  code: ISYS_INIT_TRAJECTORY_TIMEOUT
+  msg: "轨迹管理_轨迹下载超时"
 }
 
 error
@@ -91,13 +111,6 @@ error
 
 error
 {
-  code: ESYS_RTK_STATUS_FAULT
-  msg: "RTK状态持续错误"
-  result: "RESULT_AUTOPILOT_INFERIOR"
-}
-
-error
-{
   code: ESYS_AUTOPILOT_TAKEN_OVER_BY_REMOTE
   msg: "自动驾驶被远程驾驶接管"
   result: "RESULT_AUTOPILOT_DISABLE"
@@ -110,6 +123,39 @@ error
   result: "RESULT_AUTOPILOT_DISABLE"
   action: "ACTION_REBOOT_VEHICLE"
 }
+
+error
+{
+  code: ESYS_ROUTING_REQ_TIMEOUT
+  msg: "自动驾驶开始前，routing请求无响应"
+  result: "RESULT_AUTOPILOT_DISABLE"
+  action: "ACTION_TRY_AGAIN_LATER"
+}
+
+error
+{
+  code: ESYS_FAULT
+  msg: "master启动10分钟，仍有agent未连接"
+  result: "RESULT_AUTOPILOT_DISABLE"
+  action: "ACTION_REBOOT_VEHICLE"
+}
+
+error
+{
+  code: ELCT_RTK_STATUS_FAULT
+  msg: "RTK状态错误"
+  result: "RESULT_AUTOPILOT_DISABLE"
+  action: "ACTION_CONTACT_TECH_SUPPORT"
+}
+
+error
+{
+  code: ELCT_RTK_STATUS_UNKNOWN
+  msg: "RTK状态不确定"
+  result: "RESULT_SHOW_WARNING"
+}
+
+
 
 
 
