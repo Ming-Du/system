@@ -18,6 +18,8 @@ from std_msgs.msg import Int32
 
 # globals
 g_pilot_mode = 0
+pilot_mode_condition_met = 0
+g_pilot_change_time=0
 
 def test_vehicle_state_pub():
     '''
@@ -88,14 +90,28 @@ def test_system_cmd_pub(src, action):
 
 def cmd_recv(ros_msg):
     global g_pilot_mode
+    global pilot_mode_condition_met
+    global g_pilot_change_time
     if ros_msg.data:
-        g_pilot_mode = 1
+        if g_pilot_change_time > 10:
+            g_pilot_mode = 1
+            pilot_mode_condition_met =0
+            g_pilot_change_time = 0
+        g_pilot_change_time+=1
+
     else:
         g_pilot_mode = 0
 
+def route_req_recv(ros_msg):
+    print("receive routing req")
+    rospy.set_param("/routing/request/rsp", 1)
+
+
 def test_autopilot_cmd_sub():
     rospy.Subscriber('/autopilot/AutoPilotCmd', Int32, cmd_recv)
+    rospy.Subscriber('/routing/request', BinaryData, route_req_recv)
     rospy.spin()
+
 
 
 if __name__ == '__main__':
@@ -114,6 +130,16 @@ if __name__ == '__main__':
         test_system_cmd_pub(system_cmd_pb2.AutoPolit, system_cmd_pb2.StartPilot)
         time.sleep(2)
         g_pilot_mode = 0
+        time.sleep(2)
+        pilot_mode_condition_met =1
+        time.sleep(2)
+        g_pilot_mode = 0
+        pilot_mode_condition_met =0
+        time.sleep(2)
+        pilot_mode_condition_met =1
+        time.sleep(2)
+        g_pilot_mode = 0
+
         time.sleep(5)
         test_system_cmd_pub(system_cmd_pb2.AutoPolit, system_cmd_pb2.EndShowMode)
 

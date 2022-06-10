@@ -41,9 +41,24 @@ class Vehicle_State():
     def __init__(self):
         self.last_change_time = int(time.time())
         self.local_vehicle_state = None
+        self.check_autopilot_condition = False
+        self.retry_autopilot_time = 0
         self.sys_vehicle_state_sub = rospy.Subscriber("/chassis/vehicle_state", BinaryData, self.get_vehicle_state)
         self.sys_vehicle_state_pub = rospy.Publisher('/system_master/SysVehicleState', BinaryData, queue_size=10)
 
+    def check_autopolit_condition(self):
+        if sys_globals.g_system_master_entity.show_mode_flag:
+            if not self.local_vehicle_state.pilot_mode and self.local_vehicle_state.pilot_mode_condition_met:
+                sys_globals.g_system_master_entity.node_handler_entity.set_pilot_mode(1)
+                self.retry_autopilot_time += 1
+            elif self.local_vehicle_state.pilot_mode:
+                self.check_autopilot_condition = False
+                print("At show_mode, start autopilot used {} times".format(self.retry_autopilot_time))
+                self.retry_autopilot_time = 0
+        else:
+            self.check_autopilot_condition = False
+            self.retry_autopilot_time = 0
+        
     def get_vehicle_state(self, ros_msg):
         src_vehicle_state = common_vehicle_state.VehicleState()
         src_vehicle_state.ParseFromString(ros_msg.data)
@@ -62,8 +77,13 @@ class Vehicle_State():
                 self.pub_vehicle_state()
             elif cur_time > self.last_change_time:
                 # state not change pub once every seconds 
-                self.local_vehicle_state = src_vehicle_state 
+                self.local_vehicle_state = src_vehicle_state
                 self.pub_vehicle_state()
+            
+            if self.check_autopilot_condition:
+                self.local_vehicle_state = src_vehicle_state
+                self.check_autopolit_condition()
+                
 
     def pub_vehicle_state(self):
         pub_msg_data = system_pilot_mode_pb2.SYSVehicleState()
@@ -499,12 +519,13 @@ class Node_Handler(object):
                     if src_sys_cmd.content:
 						# send mas to hadmap && set autopilot cmd to controller
                         self.pub_autopilot_route(src_sys_cmd.desc, src_sys_cmd.content)
+                    else:
+                        sys_globals.g_system_master_entity.change_sys_state(1, 1) 
                 else:
-                    mode = 0
-                    sys_globals.g_system_master_entity.change_sys_state(1, mode)
+                    sys_globals.g_system_master_entity.change_sys_state(1, 0)
 
             elif src_sys_cmd.action is system_cmd_pb2.SysReboot:
-                if sys_globals.g_system_master_entity.auto_polit_state == 1:
+                if sys_globals.g_system_master_entity.polit_state == 1:
                     self.system_event_report(code='ESYS_NOT_ALLOW_REBOOT', desc=' autopilot is working')
                 else:
                     sys_globals.g_system_master_entity.handle_system_reboot()

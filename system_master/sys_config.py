@@ -5,13 +5,15 @@
 #@Date: 2022-05-16 09:57:08
 #@FilePath: /catkin_ws/src/system/system_master/sys_config.py
 #@Email: liyuelei@zhidaoauto.com
-#@LastEditTime: 2022-06-08 21:21:03
+#@LastEditTime: 2022-06-10 20:17:14
 """
 
 
 SYSTRM_MASTER_VERSION = "MAP-V2.5.0(MASTER-V1.0.4)"
 
 g_local_test_flag = False  # if local test, not in car, can set it Ture
+
+g_test_without_agent = True  ## test not used agent, should set g_local_test_flag True first
 
 g_get_report_msg_config_by_pb = True  # if true used master.pb form mogo_reporter
 
@@ -29,7 +31,7 @@ CAN_PUB_MSG_LSOT_MAX_TIME = 2    # sec
 
 RTK_STATUS_EFFECTIVE_RERIOD = 8  # sec
 
-TOPIC_HZ_DROP_THRESHOLD = 0.6    # 80%
+TOPIC_HZ_DROP_THRESHOLD = 0.4    # 0.8=80%
 
 Minitor_Topic_Dict = {
     # topic_name: freq
@@ -41,7 +43,7 @@ Minitor_Topic_Dict = {
     #'/sensor/camera/sensing/image_raw_60/nvjpeg': 20,
     '/localization/global': 100,
     #'/guardian/aicloud_state': 2,
-    '/planning/trajectory': 10,
+    #'/planning/trajectory': 10,
     #'/planning/leader': 10,
     '/chassis/command': 100,
     '/telematics/light': 2,

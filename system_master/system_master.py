@@ -38,7 +38,8 @@ class System_Master(object):
         self.polit_state = 0
         self.show_mode_flag = False
         self.system_reboot_flag = False
-        self.agent_handler_entity = Agent_Handler()
+        if sys_config.g_local_test_flag and sys_config.g_test_without_agent:
+            self.agent_handler_entity = Agent_Handler()
         self.node_handler_entity = None
         self.node_spin_thread = None
         self.auto_polit_wait_thread = None
@@ -157,6 +158,7 @@ class System_Master(object):
             if self.check_sys_state(act):
                 self.node_handler_entity.set_pilot_mode(act)
                 if act == 1:
+                    print('start autopilot now')
                     self.set_sys_state_and_save(sys_globals.System_State.AUTO_PILOT_STARTING)
                     self.auto_polit_wait_thread = threading.Timer(sys_config.AUTO_POLIT_START_WAIT_TIME, self.wait_autopolit_succ)
                     self.auto_polit_wait_thread.start()
@@ -188,7 +190,8 @@ class System_Master(object):
             self.polit_state = act
             if act == 0: 
                 if self.show_mode_flag == True:
-                    self.node_handler_entity.set_pilot_mode(1)
+                    # self.node_handler_entity.set_pilot_mode(1)
+                    self.node_handler_entity.vehicle_state_entity.check_autopilot_condition = True
                     # Mark: if set_pilot_mode failed, there not change sys_globals.System_State !
                 elif self.sys_state in (sys_globals.System_State.SYS_RUNNING, sys_globals.System_State.AUTO_PILOT_RUNNING):
                     self.set_sys_state_and_save(sys_globals.System_State.MANUAL_PILOT_STATE)
@@ -196,7 +199,7 @@ class System_Master(object):
                 if self.auto_polit_wait_thread and self.auto_polit_wait_thread.isAlive():
                     self.auto_polit_wait_thread.cancel()
                     self.set_sys_state_and_save(sys_globals.System_State.AUTO_PILOT_RUNNING)
-                else:
+                elif not self.show_mode_flag:
                     print('polit mode change to 1 but no wait thread, unexpect!!')
             elif act == 2:
                 if self.remote_polit_wait_thread and self.remote_polit_wait_thread.isAlive():
@@ -355,19 +358,27 @@ class System_Master(object):
         self.set_sys_state_and_save(sys_globals.System_State.SYS_FAULT)
 
     def run(self):
-        self.agent_all_worked_wait_thread = threading.Timer(sys_config.ALL_AGENT_WORKED_WAIT_TIME, self.wait_agent_connect_timeout)
-        self.agent_all_worked_wait_thread.start()
-        self.agent_handler_entity.run()
-        while True:
-            try:
-                self.agent_handler_entity.check_all_agent_timeout()
+        if sys_config.g_local_test_flag and sys_config.g_test_without_agent:
+            self.set_sys_state_and_save(sys_globals.System_State.SYS_RUNNING)
+            self.init_master_node()
+            while True:
                 if self.node_handler_entity and self.node_spin_thread.isAlive():
                     self.node_handler_entity.check_can_adapter_pub_msg()
-                time.sleep(0.5)
-            except Exception as e:
-                print('System_Master.run have some error happen: {}'.format(e))
+                time.sleep(1)
+        else:
+            self.agent_all_worked_wait_thread = threading.Timer(sys_config.ALL_AGENT_WORKED_WAIT_TIME, self.wait_agent_connect_timeout)
+            self.agent_all_worked_wait_thread.start()
+            self.agent_handler_entity.run()
+            while True:
+                try:
+                    self.agent_handler_entity.check_all_agent_timeout()
+                    if self.node_handler_entity and self.node_spin_thread.isAlive():
+                        self.node_handler_entity.check_can_adapter_pub_msg()
+                    time.sleep(0.5)
+                except Exception as e:
+                    print('System_Master.run have some error happen: {}'.format(e))
         
-
+        
 if __name__ == '__main__':
     print('\r\nsystem master start! version is {}'.format(sys_config.SYSTRM_MASTER_VERSION))
     sys_globals.g_system_master_entity = System_Master()
