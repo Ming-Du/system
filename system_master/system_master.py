@@ -71,6 +71,7 @@ class System_Master(object):
         if self.sys_state != new_state:
             if new_state in sys_globals.System_State.System_Report_Code:
                 msg = 'system state changed, form {} to {}'.format(self.sys_state, new_state)
+                print(msg)
                 code = sys_globals.System_State.System_Report_Code[new_state][0]
                 results = sys_globals.System_State.System_Report_Code[new_state][1]
                 actions = sys_globals.System_State.System_Report_Code[new_state][2]
@@ -168,7 +169,7 @@ class System_Master(object):
                     self.node_handler_entity.system_event_report(code='ESYS_IN_INIT', desc=', system is starting')
                 elif act==1 and self.sys_state == sys_globals.System_State.SYS_EXITING:
                     self.node_handler_entity.system_event_report(code='ESYS_IN_EXIT', desc=', system is exiting')
-                elif act==1 and self.sys_state > 6:
+                elif act==1 and self.sys_state in (sys_globals.System_State.REMOTE_PILOT_RUNNING, sys_globals.System_State.REMOTE_PILOT_STARTING):
                     self.node_handler_entity.system_event_report(code='ESYS_NOT_ALLOW_AUTOPILOT_FOR_REMOTE', desc=', system state have some fault')
                 elif act==2 and self.polit_state != 0:
                     print("The pilot state not is 0, can't start remote polit")
@@ -254,13 +255,19 @@ class System_Master(object):
             print('all agent stopping')
             # TODO: wait all agent stop complete
         else:
-            print('Maybe send to some agent failed')
+            print('send to some agent failed!, system off failed!')
+            #TODO: add a mogo_report?
 
     def system_on_process(self):
         ret = self.agent_handler_entity.send_cmd_to_agent(cmd='on')
         if ret is True:
             print('all agent starting')
             # TODO: wait all agent start complete
+            self.agent_all_worked_wait_thread = threading.Timer(sys_config.ALL_AGENT_WORKED_WAIT_TIME, self.wait_agent_connect_timeout)
+            self.agent_all_worked_wait_thread.start()
+        else:
+            print('send to some agent failed!, system on failed!')
+            #TODO: add a mogo_report?
         
 
     def handle_system_reboot(self):

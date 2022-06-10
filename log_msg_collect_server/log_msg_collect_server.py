@@ -151,7 +151,7 @@ def LoadOneMsgLog(path):
         #    print(one_msg)
         #for one_msg in mogo_report_msg_test.result:
         #    print(one_msg)
-            #time.sleep(1) # del by liyl maybe have bag, some line after add cannot handle
+            time.sleep(0.1) # mod by liyl, change 1 to 0.1,  maybe some line after read,  cannot handle
     except Exception as e:
         print ("{} error: {}".format(__name__, e))
 
@@ -174,12 +174,13 @@ class MsgLogThread (threading.Thread):
         threading.Thread.__init__(self)
         set_msg_log_pub_info  = rospy.Publisher('/autopilot_info/report_msg_info', BinaryData, queue_size=500)
         set_msg_log_pub_error = rospy.Publisher('/autopilot_info/report_msg_error', BinaryData, queue_size=500)
-        time.sleep(1)
     def run(self):
         if os.path.exists(msg_log_dir) == False:
             os.mkdir(msg_log_dir)
         if os.path.exists(msg_temp_dir) == False:
             os.mkdir(msg_temp_dir)
+        
+        time.sleep(5)  # wait sub starting
         UpdateMsgTopic()
 
 """ END mogo report msg handle """

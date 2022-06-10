@@ -183,6 +183,30 @@ class Agent_Handler(object):
                 # all_agent_start_flag = False
 
         self.all_agent_start_flag = all_agent_start_flag
+
+    def parse_mian_pid_of_agent(self, results):
+        """
+        #@name: 
+        #@msg:  get agent pid for fix bug adsa-161
+        #@return {pid of 0}
+        """
+        ppid = -1
+        for line in results.split('\n'):
+            ret = line.split()
+            if len(ret) > 7:
+                try:
+                    ppid_tmp, pid_tmp = int(ret[1]), int(ret[2])
+                except:
+                    print("ret[{}] not have pid".format(ret))
+                    continue
+
+                if ppid == -1 and pid_tmp in (0,1):
+                    ppid = ppid_tmp
+                elif ppid == pid_tmp:
+                    print("find ppid success! ppid={}".format(ppid))
+                    break
+
+        return ppid
     
     def send_cmd_to_agent(self, cmd):
         """
@@ -202,9 +226,8 @@ class Agent_Handler(object):
                 ret = False
                 break
             
-            ret = results.split('\n')[1]
-            if ret and len(ret) > 7:
-                pid_str = ret.split()[1]
+            pid_str = self.parse_mian_pid_of_agent(results)
+            if pid_str > 0:
                 print('get agent {} pid is {}'.format(ip, pid_str))
                 if cmd == 'off':
                     kill_cmd = SysCmd_to_Agent.Xavier_Off.format(ip, pid_str)
@@ -215,6 +238,10 @@ class Agent_Handler(object):
                     ret = False
                 else:
                     print('cmd exec success! [{}], ret=[{}]'.format(kill_cmd, result))
+            else:
+                print('Not find agent pid, cmd send failed!!')
+                ret = False
+                break
         
         return ret  
 

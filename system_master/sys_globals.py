@@ -90,7 +90,7 @@ class Agent_State():
 
 class SysCmd_to_Agent():
     g_agent_mogo_pwd = 'CC8775c0fe94'
-    Get_Agent_Pid = 'ssh -p 2222 -l mogo {} ps -ef | grep "autopilot.sh" |grep -v grep' # need ip 
+    Get_Agent_Pid = 'ssh -p 2222 -l mogo {} ps -ef | grep -w "autopilot.sh" |grep -v grep' # need ip 
     Xavier_On = 'ssh -p 2222 -l mogo {} sudo kill -10 {}'  # need ip, pid
     Xavier_Off = 'ssh -p 2222 -l mogo {} sudo kill -12 {}'  # need ip, pid
 
