@@ -665,7 +665,7 @@ class Node_Handler(object):
             for k,v in Sys_Health_Check.g_health_status_dict.items():
                 health_info = rsp_status_info.health_info.add()
                 health_info.name = k
-                health_info.state = v.get('state','0')
+                health_info.state = v.get('state',0)
                 health_info.code = v.get('code', '')
                 health_info.desc = v.get('desc', '')
             if len(Sys_Health_Check.g_topic_hz_error_dict):
