@@ -120,6 +120,7 @@ class System_Master(object):
 
         try:
             with open(sys_globals.g_system_master_state_report, 'a+') as fp:
+                print("write mogo report event: {}".format(msg))
                 fp.write(json_msg +'\n')
         except Exception as e:
             print('Error: save report msg to file, {}'.format(e))
