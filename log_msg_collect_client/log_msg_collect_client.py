@@ -23,7 +23,7 @@ def run_once():
     # 先截取一遍文件
     files = os.listdir(src_dir)
     for file_name in files:
-        if file_name in ("autopilot_report.json", "mogodoctor_report.json", "system_master_report.json"):
+        if file_name in ("autopilot_report.json", "mogodoctor_report.json", "system_master_report.json", 'roslaunch_report.json'):
             file_path = os.path.join(src_dir, file_name)
             tmp_file_path = os.path.join(tmp_dir, file_name)
 

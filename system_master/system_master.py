@@ -99,7 +99,7 @@ class System_Master(object):
         json_msg = '{}'
         if sys_config.g_get_report_msg_config_by_pb:
             try:
-                json_msg = gen_report_msg(sys_globals.System_Msg_Report.SYSTEM_MASTER_PB_DEF_FILE, code)
+                json_msg = gen_report_msg(sys_globals.System_Msg_Report.SYSTEM_MASTER_PB_DEF_FILE, code, "/system_master")
             except Exception as e:
                 print('Error: gen report msg failed!, {}'.format(e))
 
@@ -257,7 +257,7 @@ class System_Master(object):
             # TODO: wait all agent stop complete
         else:
             print('send to some agent failed!, system off failed!')
-            #TODO: add a mogo_report?
+            self.set_sys_state_and_save(sys_globals.System_State.SYS_FAULT)
 
     def system_on_process(self):
         ret = self.agent_handler_entity.send_cmd_to_agent(cmd='on')
@@ -268,7 +268,7 @@ class System_Master(object):
             self.agent_all_worked_wait_thread.start()
         else:
             print('send to some agent failed!, system on failed!')
-            #TODO: add a mogo_report?
+            self.set_sys_state_and_save(sys_globals.System_State.SYS_FAULT)
         
 
     def handle_system_reboot(self):

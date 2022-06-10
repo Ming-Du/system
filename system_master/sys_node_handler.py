@@ -198,7 +198,7 @@ class Node_Handler(object):
         self.vehicle_state_entity = Vehicle_State()
         if sys_config.g_local_test_flag:  # not real handle, test used
             self.report_msg_entity = Report_Msg_Analyze()
-        self.rtk_status_detection_sub = rospy.Subscriber('/sensor/gnss/gps_fix', NavSatFix, self.handle_rtk_status)
+        #self.rtk_status_detection_sub = rospy.Subscriber('/sensor/gnss/gps_fix', NavSatFix, self.handle_rtk_status)
         self.system_state_report_sub = rospy.Subscriber('/system_master/StateReport', BinaryData, self.handle_state_report)
         self.topic_status_detection_sub = rospy.Subscriber("/autopilot_info/internal/report_topic_hz", BinaryData, self.handle_topic_hz_status)
         self.system_command_sub = rospy.Subscriber("/system_master/SystemCmd", BinaryData, self.handle_system_cmd)
@@ -321,8 +321,8 @@ class Node_Handler(object):
             route_req_msg.startName = route_info_msg.startName
             route_req_msg.endName = route_info_msg.endName
             route_req_msg.vehicleType = route_info_msg.vehicleType
-            route_req_msg.routeid = route_info_msg.routeID
-            #route_req_msg.bus_routename = route_info_msg.routeName
+            route_req_msg.bus_routeid = route_info_msg.routeID
+            route_req_msg.bus_routename = route_info_msg.routeName
             if route_info_msg.line:
                 route_req_msg.lineid = route_info_msg.line.lineId
 
@@ -636,13 +636,17 @@ class Node_Handler(object):
         try:
             rsp_status_info = system_status_info_pb2.StatusInfo()
 
-            rsp_status_info.sys_state = sys_globals.g_system_master_entity.sys_state
+            if sys_globals.g_system_master_entity.sys_state == sys_globals.System_State.MANUAL_PILOT_STATE:
+                rsp_status_info.sys_state = sys_globals.System_State.SYS_RUNNING
+            else:
+                rsp_status_info.sys_state = sys_globals.g_system_master_entity.sys_state
+
             for k,v in Sys_Health_Check.g_health_status_dict.items():
                 health_info = rsp_status_info.health_info.add()
                 health_info.name = k
-                health_info.state = v['state']
-                health_info.code = v['code']
-                health_info.desc = v['desc']
+                health_info.state = v.get('state','0')
+                health_info.code = v.get('code', '')
+                health_info.desc = v.get('desc', '')
             if len(Sys_Health_Check.g_topic_hz_error_dict):
                 rsp_status_info.topic_drop_info.sum = len(Sys_Health_Check.g_topic_hz_error_dict)
                 for name,hz in Sys_Health_Check.g_topic_hz_error_dict.items():

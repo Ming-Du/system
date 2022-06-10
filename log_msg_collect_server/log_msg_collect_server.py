@@ -55,7 +55,7 @@ def run():
 
 """ BEGIN mogo report msg handle """
 msg_log_dir = os.path.join(work_dir, "msg_log")
-msg_temp_dir = os.path.join(work_dir, "msg_log", "msg_log_temp_handle")
+msg_temp_dir = os.path.join(work_dir, "msg_log_temp_handle")
 from proto import mogo_report_msg_pb2
 from autopilot_msgs.msg import BinaryData
 
@@ -96,23 +96,24 @@ def buildOneLogMsg(one_log_dict):
     #common_mogo_report_msg MogoReportMessage
     mogo_report_msg = mogo_report_msg_pb2.MogoReportMessage()
     try:
-        mogo_report_msg.timestamp.sec = one_log_dict["timestamp"]["sec"]
-        mogo_report_msg.timestamp.nsec = one_log_dict["timestamp"]["nsec"]
-        mogo_report_msg.src = one_log_dict["src"]
-        mogo_report_msg.level = one_log_dict["level"]
-        mogo_report_msg.msg = one_log_dict["msg"]
-        mogo_report_msg.code = one_log_dict["code"]
-        if one_log_dict["level"] == "error":
-            for result in one_log_dict["result"]:
+        if 'timestamp' in one_log_dict:
+            mogo_report_msg.timestamp.sec = one_log_dict["timestamp"].get("sec", 0)
+            mogo_report_msg.timestamp.nsec = one_log_dict["timestamp"].get("nsec", 0)
+        mogo_report_msg.src = one_log_dict.get("src",'unknow')
+        mogo_report_msg.level = one_log_dict.get("level", 'info')
+        mogo_report_msg.msg = one_log_dict.get("msg",'unknow')
+        mogo_report_msg.code = one_log_dict.get("code", 'unknow')
+        if mogo_report_msg.level == "error":
+            for result in one_log_dict.get("result",""):
                 mogo_report_msg.result.append(result)
-            for action in one_log_dict["actions"]:
+            for action in one_log_dict.get("actions",""):
                 mogo_report_msg.actions.append(action)
         else:
             mogo_report_msg.result.append("")
             mogo_report_msg.actions.append("")
 
     except Exception as e:
-        print ("{} error: {}".format(__name__, e))
+        print ("{} error: {}".format("buildOneLogMsg", e))
     return mogo_report_msg
 
 
@@ -140,10 +141,12 @@ def LoadOneMsgLog(path):
             binary_log_msg.size = len(log_pub_msg_str)
             binary_log_msg.data = log_pub_msg_str
             #print(log_pub_msg_str)
-            if one_log_dict["level"] == "info":
+            if one_log_dict.get("level",'') == "info":
                 set_msg_log_pub_info.publish(binary_log_msg)
-            if one_log_dict["level"] == "error":
+            elif one_log_dict.get("level",'') == "error":
                 set_msg_log_pub_error.publish(binary_log_msg)
+            else:
+                print("there have unexpected level")
 
         #mogo_report_msg_test = common_mogo_report_msg.MogoReportMessage()
         #mogo_report_msg_test.ParseFromString(binary_log_msg.data)

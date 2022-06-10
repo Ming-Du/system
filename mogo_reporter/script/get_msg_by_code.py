@@ -8,9 +8,9 @@ from google.protobuf import text_format
 from mogo_report_codes_pb2 import ReportMsgList, ReportMsgCode
 
 
-def gen_report_msg(pd_name, code):
+def gen_report_msg(pb_name, code, src="test"):
 
-  path=os.path.dirname(os.path.abspath(__file__))+'/../config/'+os.path.basename(pd_name)
+  path=os.path.dirname(os.path.abspath(__file__))+'/../config/'+os.path.basename(pb_name)
   if not os.path.exists(path):
     print (path)
     return '{}'
@@ -18,8 +18,8 @@ def gen_report_msg(pd_name, code):
   msg_list = ReportMsgList()
   try:
     with open(path, "r") as fp:
-      pd_str = fp.read()
-      text_format.Parse(pd_str, msg_list)
+      pb_str = fp.read()
+      text_format.Parse(pb_str, msg_list)
   except Exception as e:
     print('text_format.Parse has error: {}'.format(e))
     return '{}'
@@ -46,6 +46,7 @@ def gen_report_msg(pd_name, code):
     ret["timestamp"] = {
       "sec": cur_time, 
       "nsec": int((time.time() - cur_time) * 1000000000)}
+    ret["src"] = src
     ret["level"] = level
     ret["code"] = ReportMsgCode.Name(msg_tar.code)
     ret["msg"] = msg_tar.msg
