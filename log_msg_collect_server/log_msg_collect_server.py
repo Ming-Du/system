@@ -108,6 +108,8 @@ def buildOneLogMsg(one_log_dict):
                 mogo_report_msg.result.append(result)
             for action in one_log_dict.get("actions",""):
                 mogo_report_msg.actions.append(action)
+            for action in one_log_dict.get("action",""):  # some node used action in msg_log
+                mogo_report_msg.actions.append(action)
         else:
             mogo_report_msg.result.append("")
             mogo_report_msg.actions.append("")
