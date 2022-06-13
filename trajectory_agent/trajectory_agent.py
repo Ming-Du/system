@@ -51,6 +51,12 @@ from os import path, access, R_OK
 import os, sys, stat
 import uuid
 
+from sys import path
+import os
+path.append(os.path.dirname(__file__)+'/../mogo_reporter/script/')
+#sys.path.append('../mogo_reporter/script/')
+from get_msg_by_code import gen_report_msg
+
 tree = lambda: collections.defaultdict(tree)
 
 global_MaxTryTimes = 6
@@ -212,6 +218,39 @@ class CacheUtils:
     #         print 'traceback.print_exc():'
     #         traceback.print_exc()
     #         print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+
+
+def SaveEventToFile(msg='', code='', results=list(), actions=list(), level=''):
+    print "enter SaveEventToFile"
+    json_msg = {}
+    if 1:
+        try:
+            json_msg = gen_report_msg("trajectory_agent.pb", code, "/trajectory_agent")
+        except Exception as e:
+            print('Error: gen report msg failed!, {}'.format(e))
+    print "++++++++++++++++++ event json_msg:{0}".format(json_msg)
+    if json_msg == {}:  # if not used pb or call function error, used local config
+        cur_time = int(time.time())
+        msg_dict = {
+            "timestamp": {
+                "sec": cur_time,
+                "nsec": int((time.time() - cur_time) * 1000000000)},
+            "src": "/trajectory_agent",
+            "code": code,
+            "level": level,
+            "result": results,
+            "action": actions,
+            "msg": msg
+        }
+        json_msg = json.dumps(msg_dict)
+    try:
+        with open("/home/mogo/data/log/msg_log/trajectory_agent.json",'a+') as fp:
+            print("write mogo report event: {}".format(msg))
+            fp.write(json_msg + '\n')
+    except Exception as e:
+        print('Error: save report msg to file, {}'.format(e))
+
+
 
 
 g_CacheUtil = CacheUtils()
@@ -490,14 +529,20 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                 intLocationStampTraj = int(os.path.getmtime(strStandardLocationFileTraj))
                 intLocationStampStop = int(os.path.getmtime(strStandardLocationFileStop))
                 g_CacheUtil.WriteFileCacheInfo(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5,timestamp,timestamp,intLocationStampTraj,intLocationStampStop)
+                print "============================================================================================="
+                SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(), level='info')
                 intProcessRet = 0
                 break
             if (intDownCompleteTrajStatus == 2) or (intDownCompleteStopStatus == 2):
                 print "##########intDownCompleteTrajStatus == False   or  intDownCompleteStopStatus == False happend"
+                print "============================================================================================="
+                SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_FAILURE', results=list(), actions=list(),level='info')
                 intProcessRet = 1
                 break
             if (intDownCompleteTrajStatus == 3) and (intDownCompleteStopStatus == 3):
                 print "##########remote traj not exists,now user local traj"
+                print "============================================================================================="
+                SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_WARNING', results=list(), actions=list(),level='info')
                 intProcessRet = 0
                 break
             break
