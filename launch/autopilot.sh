@@ -467,7 +467,7 @@ declare -g -r ERRFILE="/home/mogo/data/log/autopilot.err" #
 declare -g exit_flag=0 list_file roscore_pid ros_master ros_machine
 declare -g -r action_file=${ABS_PATH}/agent_action.data
 declare -g vehicle_property launch_prefix="--wait"
-declare -g -r master_ip="192.168.1.102"
+declare -g master_ip
 
 exec 6>>$LOGFILE
 exec 7>>$ERRFILE
@@ -569,7 +569,15 @@ python ${ABS_PATH}/vehicle_init.py
 vehicle_property=$?
 LoggingINFO "current property of $VEHICLE_PLATE is $vehicle_property"
 ((vehicle_property==3||vehicle_property==4)) && launch_prefix="$launch_prefix --respawn"
-# [[ "${ros_machine}" == "${ros_master}" && -z "$opt_launch_file" ]] && bash ${ABS_PATH}/../system_master/start_system_master.sh
+#[[ "${ros_machine}" == "${ros_master}" && -z "$opt_launch_file" ]] && bash ${ABS_PATH}/../system_master/start_system_master.sh
+if [[ ${xavier_type} -eq 2 ]]; then
+    master_ip=${ethnet_ip%.*}.103
+elif [[ ${xavier_type} -eq 3 ]]; then
+    master_ip=${ethnet_ip%.*}.106
+else
+    master_ip=${ethnet_ip%.*}.102
+fi
+
 write_action 0 #初始化中
 # 后台发送心跳
 heart_beat &

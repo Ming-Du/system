@@ -38,7 +38,7 @@ class System_Master(object):
         self.polit_state = 0
         self.show_mode_flag = False
         self.system_reboot_flag = False
-        if sys_config.g_local_test_flag and sys_config.g_test_without_agent:
+        if not (sys_config.g_local_test_flag and sys_config.g_test_without_agent):
             self.agent_handler_entity = Agent_Handler()
         self.node_handler_entity = None
         self.node_spin_thread = None
@@ -167,10 +167,11 @@ class System_Master(object):
                     self.set_sys_state_and_save(sys_globals.System_State.REMOTE_PILOT_STARTING)
                     self.remote_polit_wait_thread = threading.Timer(sys_config.REMOTE_POLIT_START_WAIT_TIME, self.wait_remotepolit_succ)
                     self.remote_polit_wait_thread.start()
+                    self.node_handler_entity.vehicle_state_entity.check_remotepilot_condition = True
             else:
-                if act==1 and self.sys_state == sys_globals.System_State.SYS_STARTING:
+                if act and self.sys_state == sys_globals.System_State.SYS_STARTING:
                     self.node_handler_entity.system_event_report(code='ESYS_IN_INIT', desc=', system is starting')
-                elif act==1 and self.sys_state == sys_globals.System_State.SYS_EXITING:
+                elif act and self.sys_state == sys_globals.System_State.SYS_EXITING:
                     self.node_handler_entity.system_event_report(code='ESYS_IN_EXIT', desc=', system is exiting')
                 elif act==1 and self.sys_state in (sys_globals.System_State.REMOTE_PILOT_RUNNING, sys_globals.System_State.REMOTE_PILOT_STARTING):
                     self.node_handler_entity.system_event_report(code='ESYS_NOT_ALLOW_AUTOPILOT_FOR_REMOTE', desc=', system state have some fault')
@@ -231,6 +232,7 @@ class System_Master(object):
         else:
             self.set_sys_state_and_save(sys_globals.System_State.REMOTE_PILOT_RUNNING)
             print('The case should not ingress, there must have async error!')
+        self.node_handler_entity.vehicle_state_entity.check_remotepilot_condition = False
 
 
     def wait_autopolit_succ(self):

@@ -75,6 +75,7 @@ catkin_install_python(PROGRAMS
 	sys_globals.py
 	sys_test_tools.py
         sys_test_srv_client.py
+        get_map_version.py
 	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
