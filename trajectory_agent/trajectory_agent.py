@@ -456,6 +456,7 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                             print "##########intLocationTimeStamp == intCacheModifyNameTraj ,  checkFileMd5(strStandardLocationFileTraj) == " \
                                   "strTrajMd5 "
                             ### direct use
+                            intDownCompleteTrajStatus = 4
                             break
 
                         if checkFileMd5(strStandardLocationFileTraj) != strTrajMd5:
@@ -490,6 +491,7 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                         if checkFileMd5(strStandardLocationFileStop) == strStopMd5:
                             print "##########intLocationTimeStamp == intCacheModifyNameStop , checkFileMd5(strStandardLocationFileStop) == strStopMd5"
                             ### direct use
+                            intDownCompleteStopStatus = 4
                             break
 
                         if checkFileMd5(strStandardLocationFileStop) != strStopMd5:
@@ -542,9 +544,16 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
             if (intDownCompleteTrajStatus == 3) and (intDownCompleteStopStatus == 3):
                 print "##########remote traj not exists,now user local traj"
                 print "============================================================================================="
-                SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_WARNING', results=list(), actions=list(),level='info')
+                SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_WARNING', results=list(), actions=list(),level='warn')
                 intProcessRet = 0
                 break
+            if (intDownCompleteTrajStatus == 4 ) and (intDownCompleteStopStatus == 4):
+                 print "########## traj same with cloud ,not need  update "
+                 print "============================================================================================="
+                 SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(),
+                                 level='info')
+                 intProcessRet = 0
+                 break
             break
 
 
