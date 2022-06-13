@@ -40,13 +40,14 @@ enum MessageType
     MsgTypeTrajectoryDownloadReq = 0x10110; //轨迹下载请求
     MsgTypeStatusQueryReq = 0x10111; //状态查询请求
     MsgTypeStatusQueryResp = 0x10112; //状态查询应答
+    MsgTypeSetRainModeReq = 0x10113; //设置雨天模式
 }
 
 message Header
 {
     uint64 msgID = 1; //消息唯一id，自增
     MessageType msgType = 2; //消息类型
-    double timestamp = 3; //telematics消息发送时间, 单位：秒
+    double timestamp = 3; //消息发送时间, 单位：秒
     double sourceTimestamp = 4; //数据源消息发送时间, 单位：秒
 }
 
@@ -298,6 +299,7 @@ message TrafficLightData
     int32 arrowNo = 8; //当前车道对应地面要素转向
     int32 flashYellow = 9; //黄灯总时间
     TrafficLightDetail laneDetail = 10; //灯态具体信息
+    uint64 timestamp = 11;//当前卫星时间, 单位: ms
 }
 
 // message definition for MsgTypeWarn
@@ -337,5 +339,9 @@ message StatusQueryReq
 // message definition for MsgTypeStatusQueryResp
 // refer to system_status_info.proto
 
-
+// message definition for MsgTypeSetRainModeReq
+message SetRainModeReq
+{
+    uint32 enable = 1; //1: enable, 0: disable
+}
 
