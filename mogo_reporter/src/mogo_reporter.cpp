@@ -31,6 +31,7 @@ namespace mogo
     std::string msg;
     ::google::protobuf::RepeatedPtrField<::std::string> results;
     ::google::protobuf::RepeatedPtrField<::std::string> actions;
+    double last_timestamp;
   };
 
   static std::mutex s_init_locker = {};
@@ -149,6 +150,7 @@ namespace mogo
       report_msg.msg = it->msg();
       report_msg.results.CopyFrom(it->result());
       report_msg.actions.CopyFrom(it->action());
+      report_msg.last_timestamp = 0.0;
       s_msg_map.insert(std::make_pair(it->code(), report_msg));
     }
 
@@ -161,6 +163,7 @@ namespace mogo
       report_msg.msg = it->msg();
       report_msg.results.CopyFrom(it->result());
       report_msg.actions.CopyFrom(it->action());
+      report_msg.last_timestamp = 0.0;
       s_msg_map.insert(std::make_pair(it->code(), report_msg));
     }
 
@@ -168,7 +171,7 @@ namespace mogo
     return true;
   }
 
-  bool MessageReporter::publish(std::string src, mogo_msg::ReportMsgCode code, const std::string &msg)
+  bool MessageReporter::publish(std::string src, mogo_msg::ReportMsgCode code, const std::string &msg, double span_sec)
   {
     if (!s_is_init)
     {
@@ -178,11 +181,16 @@ namespace mogo
     auto iter = s_msg_map.find(code);
     if (iter == s_msg_map.end())
     {
-      ROS_WARN("MessageReporter_publish: unknow code[%d], ignore", (int)code);
+      ROS_WARN("MessageReporter_publish: unknow code[%s], ignore", mogo_msg::ReportMsgCode_Name(code).c_str());
       return false;
     }
 
     ros::Time now = ros::Time::now();
+    if (span_sec > 0.0 && now.toSec() - iter->second.last_timestamp < span_sec)
+    {
+      ROS_WARN("MessageReporter_publish: code[%s] is published in %0.1f sec, ignore", mogo_msg::ReportMsgCode_Name(code).c_str(), span_sec);
+      return false;
+    }
 
     mogo_msg::MogoReportMessage report_msg;
     auto t = report_msg.mutable_timestamp();
@@ -232,6 +240,8 @@ namespace mogo
     {
       s_pub_info.publish(ros_msg);
     }
+
+    iter->second.last_timestamp = now.toSec();
     return true;
   }
 

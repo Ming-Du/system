@@ -19,11 +19,11 @@ namespace mogo
 
     bool init(const std::string &cfg_name = "");
 
-    bool publish(mogo_msg::ReportMsgCode code, const std::string &msg = "")
+    bool publish(mogo_msg::ReportMsgCode code, const std::string &msg = "", double span_sec = 0.0)
     {
-      return publish(ros::this_node::getName(), code, msg);
+      return publish(ros::this_node::getName(), code, msg, span_sec);
     }
-    bool publish(std::string src, mogo_msg::ReportMsgCode code, const std::string &msg = "");
+    bool publish(std::string src, mogo_msg::ReportMsgCode code, const std::string &msg = "", double span_sec = 0.0);
 
     void test_all();
 
