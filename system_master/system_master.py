@@ -232,6 +232,7 @@ class System_Master(object):
         else:
             self.set_sys_state_and_save(sys_globals.System_State.REMOTE_PILOT_RUNNING)
             print('The case should not ingress, there must have async error!')
+            self.node_handler_entity.pub_status_to_parallel(1, self.polit_state, "run parallel success, when timeout!")
         self.node_handler_entity.vehicle_state_entity.check_remotepilot_condition = False
 
 

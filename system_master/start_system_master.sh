@@ -80,17 +80,17 @@ set_bashrc() {
         fi
 }
 
+declare -g ros_master ros_machine ethnet_ip
+declare -g LOGFILE
+curtime=$(date +"%Y%m%d%H%M%S")
+LOGFILE="/home/mogo/data/log/start_master-${curtime}.log"
+
 map_ver=$(/usr/bin/python /home/mogo/autopilot/share/system_master/get_map_version.py)
 LoggingINFO "get MAP version is $map_ver"
 if [[ "$map_ver" != "250" ]]; then
        LoggingINFO "system_master con't run, due map version before 2.5.0"
        exit 1
 fi
-
-declare -g ros_master ros_machine ethnet_ip
-declare -g LOGFILE
-curtime=$(date +"%Y%m%d%H%M%S")
-LOGFILE="/home/mogo/data/log/start_master-${curtime}.log"
 
 ethnet_ip=$(ifconfig | grep -v "inet6" | grep -Eo '192[.]168([.][0-9]+){2}' | grep -v "255")
 get_xavier_type ## xavier:1x 2x 6x == 1 2 3

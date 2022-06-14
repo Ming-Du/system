@@ -90,7 +90,7 @@ class Agent_State():
 
 class SysCmd_to_Agent():
     g_agent_mogo_pwd = 'CC8775c0fe94'
-    Get_Agent_Pid = 'ssh -p 2222 -l mogo {} ps -ef | grep -w "autopilot.sh" |grep -v grep' # need ip 
+    Get_Agent_Pid = 'ssh -p 2222 -l mogo {} -o StrictHostKeyChecking=no ps -ef | grep -w "autopilot.sh" |grep -v grep' # need ip 
     Xavier_On = 'ssh -p 2222 -l mogo {} sudo kill -10 {}'  # need ip, pid
     Xavier_Off = 'ssh -p 2222 -l mogo {} sudo kill -12 {}'  # need ip, pid
     Get_MAP_Version = 'ssh -p 2222 -l mogo 127.0.0.1 "head -n 3 /autocar-code/project_commit.txt"'
@@ -103,22 +103,27 @@ class System_Msg_Report():
         #code: ['msg','results','actions']
         'EHW_CAN': ['can adapter pub msg lost',['RESULT_AUTOPILOT_DISABLE'],['ACTION_REBOOT_VEHICLE']],
         'ESYS_AUTOPILOT_FAILED': ['autopilot start timeout',['RESULT_AUTOPILOT_DISABLE','RESULT_AUTOPILOT_INFERIOR'],['ACTION_TRY_AGAIN_LATER','ACTION_CONTACT_TECH_SUPPORT']],
-        #'ESYS_REMOTEPILOT_FAILED': ['remotepilot start timeout',['RESULT_REMOTEPILOT_DISABLE'],['ACTION_CONTACT_TECH_SUPPORT']],
+        'ESYS_REMOTEPILOT_FAILED': ['remotepilot start timeout',['RESULT_REMOTEPILOT_DISABLE'],['ACTION_CONTACT_TECH_SUPPORT']],
         'ESYS_IN_INIT': ['state not allow autopilot',['RESULT_AUTOPILOT_DISABLE'],['ACTION_TRY_AGAIN_LATER']],
         'ESYS_IN_EXIT': ['state not allow autopilot',['RESULT_AUTOPILOT_DISABLE'],[]],
         'ESYS_NOT_ALLOW_AUTOPILOT_FOR_REMOTE': ['state not allow autopilot',['RESULT_AUTOPILOT_DISABLE'],[]],
-        #'ESYS_NOT_ALLOW_REMOTEPILOT': ['state not allow remotepilot',['RESULT_REMOTEPILOT_DISABLE'],['ACTION_CONTACT_TECH_SUPPORT']],
+        'ESYS_NOT_ALLOW_REMOTEPILOT': ['state not allow remotepilot',['RESULT_REMOTEPILOT_DISABLE'],['ACTION_CONTACT_TECH_SUPPORT']],
         'ESYS_NOT_ALLOW_REBOOT': ['state not allow sysreboot',[],['ACTION_TRY_AGAIN_LATER']],
         'ESYS_TOPIC_FREQ_DROPED': ['some topic frequency droped',['RESULT_AUTOPILOT_INFERIOR'],[]],
         'ESYS_RTK_STATUS_FAULT': ['rtk status is unexpected',['RESULT_AUTOPILOT_INFERIOR'],[]],
+        'ELCT_RTK_STATUS_FAULT': ['rtk status is error',['RESULT_AUTOPILOT_DISABLE'],[]],
         'ELCT_RTK_STATUS_UNKNOWN': ['rtk status is unkonw',['RESULT_SHOW_WARNING'],[]],
+        'ESYS_ROUTING_REQ_TIMEOUT': ['routing request timeout',['RESULT_AUTOPILOT_DISABLE'],['ACTION_TRY_AGAIN_LATER']],
         'ESYS_AUTOPILOT_TAKEN_OVER_BY_REMOTE': ['autopilot is takeover by remote',['RESULT_AUTOPILOT_DISABLE'],[]]
     }
 
     Info_Report_Code = {
         'ISYS_CAN_NORMAL':['can adapter pub msg normal',[],[]],
         'ISYS_TOPIC_FREQ_NORMAL': ['all topic frequency normal',[],[]],
-        'ISYS_RTK_STATUS_NORMAL': ['rtk status is effective',[],[]]
+        'ISYS_INIT_TRAJECTORY_START': ['start trajectory download',[],[]],
+        'ISYS_INIT_TRAJECTORY_TIMEOUT': ['trajectory download timeout',[],[]],
+        'ILCT_RTK_STATUS_NORMAL': ['rtk status is normal',[],[]], ## used in MAP_V250
+        'ISYS_RTK_STATUS_NORMAL': ['rtk status is effective',[],[]]  ## used in MAP_V240
     }
 
 
