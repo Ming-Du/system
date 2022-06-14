@@ -83,7 +83,6 @@ message Object {
   
   optional double time_stamp = 4;        // sensing time
   optional float confidence = 5;         // probability
-  optional float state = 22;         // predict--2, detect--1
   optional int32 status = 6;             // reserved
 
   optional float x_distance = 7;         // longitudinal distance
@@ -111,8 +110,11 @@ message Object {
   // Modify(@liuxinyu): obu_test
   // obu supplement
   optional ObuObjectsSupplement obu_supplement = 21;
+  optional float state = 22;         // predict--2, detect--1
  //falcon lidar supplement
   optional FalconLidarObjectSupplement falcon_lidar_supplement = 23;
+  //ming.du
+  optional CameraObjectSupplement vidar_supplement = 24;
 
 }
 

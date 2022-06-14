@@ -25,7 +25,8 @@ enum SensorType {
   // Modify(@liuxinyu): obu_test
   V2X = 18;
   OBU_RSM = 19;
-}
+  VIDAR = 20;
+  }
 
 enum SensorOrientation {
   FRONT = 0;
