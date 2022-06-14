@@ -45,6 +45,9 @@ import json
 from os import path, access, R_OK
 import os, sys, stat
 import uuid
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 ### global area
 globalTopicHzPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='globalTopicHzPool')
