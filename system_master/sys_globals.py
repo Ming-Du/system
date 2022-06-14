@@ -93,6 +93,7 @@ class SysCmd_to_Agent():
     Get_Agent_Pid = 'ssh -p 2222 -l mogo {} ps -ef | grep -w "autopilot.sh" |grep -v grep' # need ip 
     Xavier_On = 'ssh -p 2222 -l mogo {} sudo kill -10 {}'  # need ip, pid
     Xavier_Off = 'ssh -p 2222 -l mogo {} sudo kill -12 {}'  # need ip, pid
+    Get_MAP_Version = 'ssh -p 2222 -l mogo 127.0.0.1 "head -n 3 /autocar-code/project_commit.txt"'
 
 
 class System_Msg_Report():

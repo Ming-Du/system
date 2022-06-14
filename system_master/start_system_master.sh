@@ -80,18 +80,28 @@ set_bashrc() {
         fi
 }
 
+map_ver=$(/usr/bin/python /home/mogo/autopilot/share/system_master/get_map_version.py)
+LoggingINFO "get MAP version is $map_ver"
+if [[ "$map_ver" != "250" ]]; then
+       LoggingINFO "system_master con't run, due map version before 2.5.0"
+       exit 1
+fi
+
 declare -g ros_master ros_machine ethnet_ip
 declare -g LOGFILE
 curtime=$(date +"%Y%m%d%H%M%S")
 LOGFILE="/home/mogo/data/log/start_master-${curtime}.log"
 
 ethnet_ip=$(ifconfig | grep -v "inet6" | grep -Eo '192[.]168([.][0-9]+){2}' | grep -v "255")
-get_xavier_type ## 获取xavier类型:1x 2x 6x
-declare -g -r xavier_type=$?
+get_xavier_type ## xavier:1x 2x 6x == 1 2 3
+declare -g xavier_type=$?
 LoggingINFO "rosmachine:${ros_machine} rosmaster:${ros_master} xavier_type:${xavier_type}"
 
-[[ "${ros_machine}" != "${ros_master}" ]] && LoggingINFO "system_master need run in ros_master" && exit 1
-
+if [[ ${xavier_type} -eq 2 ]]; then
+        [[ "${ros_machine}" != "rosslave" ]] && LoggingINFO "2x system_master need run in rosslave" && exit 1
+elif [[ ${xavier_type} -eq 3 ]]; then
+        [[ "${ros_machine}" != "rosslave-106" ]] && LoggingINFO "6x system_master need run in rosslave-106" && exit 1
+fi
 
 export ROS_HOSTNAME=${ros_machine}
 export ROS_MASTER_URI=http://${ros_master}:11311

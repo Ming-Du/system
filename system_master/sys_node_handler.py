@@ -43,17 +43,41 @@ class Vehicle_State():
         self.local_vehicle_state = None
         self.check_autopilot_condition = False
         self.retry_autopilot_time = 0
+        self.check_remotepilot_condition = False
+        self.retry_remotepilot_times = 0
         self.sys_vehicle_state_sub = rospy.Subscriber("/chassis/vehicle_state", BinaryData, self.get_vehicle_state)
         self.sys_vehicle_state_pub = rospy.Publisher('/system_master/SysVehicleState', BinaryData, queue_size=10)
 
-    def check_autopolit_condition(self):
+    def check_remotepilot_start_retry(self):
+        """
+        #@name: 
+        #@msg:  try start remote pilot all the time
+        #@return {*}
+        """
+
+        self.retry_remotepilot_times += 1
+        if self.local_vehicle_state.pilot_mode == 2:
+            self.check_remotepilot_condition = False
+            print("start remote pilot used {} times cmd send!".format(self.retry_remotepilot_times % 10))
+            self.checkretry_remotepilot_times = 0
+        elif 0 == (self.retry_remotepilot_times % 10):  # recv 10 sub 10, pub 1 time
+            sys_globals.g_system_master_entity.node_handler_entity.set_pilot_mode(2)
+
+
+    def check_auto_pilot_condition(self):
+        """
+        #@name: 
+        #@msg:  when show_mode && pilot_mode==0 && condition_met ==1, try start autopilot all the time 
+        #@return {*}
+        """
+
         if sys_globals.g_system_master_entity.show_mode_flag:
             if not self.local_vehicle_state.pilot_mode and self.local_vehicle_state.pilot_mode_condition_met:
                 sys_globals.g_system_master_entity.node_handler_entity.set_pilot_mode(1)
                 self.retry_autopilot_time += 1
             elif self.local_vehicle_state.pilot_mode:
                 self.check_autopilot_condition = False
-                print("At show_mode, start autopilot used {} times".format(self.retry_autopilot_time))
+                print("At show_mode, start autopilot used {} times cmd send!".format(self.retry_autopilot_time))
                 self.retry_autopilot_time = 0
         else:
             self.check_autopilot_condition = False
@@ -82,8 +106,12 @@ class Vehicle_State():
             
             if self.check_autopilot_condition:
                 self.local_vehicle_state = src_vehicle_state
-                self.check_autopolit_condition()
+                self.check_auto_pilot_condition()
                 
+            if self.check_remotepilot_condition:
+                self.local_vehicle_state = src_vehicle_state
+                self.check_remotepilot_start_retry()
+
 
     def pub_vehicle_state(self):
         pub_msg_data = system_pilot_mode_pb2.SYSVehicleState()
@@ -627,11 +655,11 @@ class Node_Handler(object):
 
 
     def handle_state_report(self, ros_msg):
-        state_report_msg = system_state_report_pb2.PubLogInfo()
+        state_report_msg = system_state_report_pb2.StateReport()
         state_report_msg.ParseFromString(ros_msg.data)
 
         if 'localization' == state_report_msg.src:
-            if state_report_msg.state in (state_report_msg.STATE_NORMAL, state_report_msg.STATE_FAULT, state_report_msg.STATE_UNKNOW):
+            if state_report_msg.state in (system_state_report_pb2.STATE_NORMAL, system_state_report_pb2.STATE_FAULT, system_state_report_pb2.STATE_UNKNOW):
                 if state_report_msg.state != Sys_Health_Check.g_health_status_dict['localization']['state']:
                     print('rtk status change form {} to {}'.format(Sys_Health_Check.g_health_status_dict['localization']['state'], state_report_msg.state))
                     self.system_event_report(code=state_report_msg.code, desc=' '+state_report_msg.desc)
