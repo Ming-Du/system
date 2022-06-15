@@ -95,7 +95,6 @@ public:
     {
         data.header.stamp = ros::Time::now();
         data.header.seq = seq++;
-        data.header.frame_id = 0;
         data.name = msg.GetTypeName();
         common::SerializeProto(msg, data.data);
         data.size = data.data.size();
