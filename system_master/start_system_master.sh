@@ -81,11 +81,14 @@ set_bashrc() {
 }
 
 declare -g ros_master ros_machine ethnet_ip
-declare -g LOGFILE
+declare -g LOGFILE map_ver
 curtime=$(date +"%Y%m%d%H%M%S")
 LOGFILE="/home/mogo/data/log/start_master-${curtime}.log"
 
 map_ver=$(/usr/bin/python /home/mogo/autopilot/share/system_master/get_map_version.py)
+while [[ "$map_ver" == "unknow" ]]; do
+        map_ver=$(/usr/bin/python /home/mogo/autopilot/share/system_master/get_map_version.py)
+done
 LoggingINFO "get MAP version is $map_ver"
 if [[ "$map_ver" != "250" ]]; then
        LoggingINFO "system_master con't run, due map version before 2.5.0"

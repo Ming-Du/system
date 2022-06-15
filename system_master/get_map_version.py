@@ -18,7 +18,7 @@ def get_version_of_map():
     status, results = ssh_command(SysCmd_to_Agent.g_agent_mogo_pwd, cmd)
     
     if status or not results:
-        print('cmd result:', status, results)
+        #print('cmd result:', status, results)
         return ret
 
     for line in results.split('\n'):

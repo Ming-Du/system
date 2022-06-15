@@ -163,6 +163,9 @@ class System_Master(object):
                     self.auto_polit_wait_thread = threading.Timer(sys_config.AUTO_POLIT_START_WAIT_TIME, self.wait_autopolit_succ)
                     self.auto_polit_wait_thread.start()
                 elif act == 2:
+                    if self.auto_polit_wait_thread and self.auto_polit_wait_thread.isAlive():
+                        print("The remote is starting, ignored repeat cmd")
+                        return
                     print('start remotepilot now')
                     self.set_sys_state_and_save(sys_globals.System_State.REMOTE_PILOT_STARTING)
                     self.remote_polit_wait_thread = threading.Timer(sys_config.REMOTE_POLIT_START_WAIT_TIME, self.wait_remotepolit_succ)
@@ -175,9 +178,9 @@ class System_Master(object):
                     self.node_handler_entity.system_event_report(code='ESYS_IN_EXIT', desc=', system is exiting')
                 elif act==1 and self.sys_state in (sys_globals.System_State.REMOTE_PILOT_RUNNING, sys_globals.System_State.REMOTE_PILOT_STARTING):
                     self.node_handler_entity.system_event_report(code='ESYS_NOT_ALLOW_AUTOPILOT_FOR_REMOTE', desc=', system state have some fault')
-                elif act==2 and self.polit_state != 0:
-                    print("The pilot state not is 0, can't start remote polit")
-                    self.node_handler_entity.pub_status_to_parallel(0, self.polit_state, "parallel already running!!!")
+                elif act==2 and self.polit_state == 1:
+                    print("The pilot state is 1, can't start remote polit")
+                    self.node_handler_entity.pub_status_to_parallel(0, self.polit_state, "autopilot already running!!!")
                 else:
                     pass
 
