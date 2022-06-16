@@ -6,6 +6,7 @@ import time
 import threading
 import json
 import rospy
+import traceback
 
 work_dir = "/home/mogo/data/log"
 output_dir = os.path.join(work_dir, "msg_log")
@@ -120,45 +121,69 @@ def buildOneLogMsg(one_log_dict):
 
 
 def LoadOneMsgLog(path):
+    idx = 0
+    lines = None
     try:
-        print('path *****', path)
         with open(path) as fp:
             contents = fp.read()
             lines = contents.split("\n")
-        for line in lines:
-            one_log_dict = {}
-            #print("line json is ")
-            #print(line)
-            one_log_dict = json.loads(line)
-            #convert json to protobuf
-            log_pub_msg = buildOneLogMsg(one_log_dict)
-            log_pub_msg_str = log_pub_msg.SerializeToString()
-            binary_log_msg = BinaryData()
-
-            binary_log_msg.header.seq         = 1
-            binary_log_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
-            binary_log_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
-            binary_log_msg.header.frame_id    = "mogo_msg_handle_frame_id"
-            binary_log_msg.name = "mogo_msg_log_handle"
-            binary_log_msg.size = len(log_pub_msg_str)
-            binary_log_msg.data = log_pub_msg_str
-            #print(log_pub_msg_str)
-            if one_log_dict.get("level",'') == "info":
-                set_msg_log_pub_info.publish(binary_log_msg)
-            elif one_log_dict.get("level",'') == "error":
-                set_msg_log_pub_error.publish(binary_log_msg)
-            else:
-                print("there have unexpected level")
-
-        #mogo_report_msg_test = common_mogo_report_msg.MogoReportMessage()
-        #mogo_report_msg_test.ParseFromString(binary_log_msg.data)
-        #for one_msg in mogo_report_msg_test.actions:
-        #    print(one_msg)
-        #for one_msg in mogo_report_msg_test.result:
-        #    print(one_msg)
-            time.sleep(0.1) # mod by liyl, change 1 to 0.1,  maybe some line after read,  cannot handle
     except Exception as e:
-        print ("{} error: {}".format(__name__, e))
+        print "exception happend"
+        print e.message
+        print str(e)
+        print 'str(Exception):\t', str(Exception)
+        print 'str(e):\t\t', str(e)
+        print 'repr(e):\t', repr(e)
+        print 'e.message:\t', e.message
+        print 'traceback.print_exc():'
+        traceback.print_exc()
+        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+    if len(lines) > 0:
+        for line in lines:
+            idx = idx + 1
+            print "line json is: idx {0}".format(idx)
+            if len(line) > 0:
+                one_log_dict = {}
+                print "lineContent:{0}".format(line)
+                try:
+                    one_log_dict = json.loads(line)
+                    #convert json to protobuf
+                    log_pub_msg = buildOneLogMsg(one_log_dict)
+                    log_pub_msg_str = log_pub_msg.SerializeToString()
+                    binary_log_msg = BinaryData()
+
+                    binary_log_msg.header.seq         = 1
+                    binary_log_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
+                    binary_log_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
+                    binary_log_msg.header.frame_id    = "mogo_msg_handle_frame_id"
+                    binary_log_msg.name = "mogo_msg.MogoReportMessage"
+                    binary_log_msg.size = len(log_pub_msg_str)
+                    binary_log_msg.data = log_pub_msg_str
+                    #print(log_pub_msg_str)
+                    if one_log_dict.get("level",'') == "info":
+                        set_msg_log_pub_info.publish(binary_log_msg)
+                    elif one_log_dict.get("level",'') == "error":
+                        set_msg_log_pub_error.publish(binary_log_msg)
+                    else:
+                        print("there have unexpected level")
+                except Exception as e:
+                    print "exception happend"
+                    print e.message
+                    print str(e)
+                    print 'str(Exception):\t', str(Exception)
+                    print 'str(e):\t\t', str(e)
+                    print 'repr(e):\t', repr(e)
+                    print 'e.message:\t', e.message
+                    print 'traceback.print_exc():'
+                    traceback.print_exc()
+                    print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+            #mogo_report_msg_test = common_mogo_report_msg.MogoReportMessage()
+            #mogo_report_msg_test.ParseFromString(binary_log_msg.data)
+            #for one_msg in mogo_report_msg_test.actions:
+            #    print(one_msg)
+            #for one_msg in mogo_report_msg_test.result:
+            #    print(one_msg)
+            time.sleep(0.1)
 
 
 def UpdateMsgTopic():

@@ -13,7 +13,7 @@ SYSTRM_MASTER_VERSION = "MAP-V2.5.0(MASTER-V1.0.4)"
 
 g_local_test_flag = False  # if local test, not in car, can set it Ture
 
-g_test_without_agent = True  ## test not used agent, should set g_local_test_flag True first
+g_test_without_agent = False  ## test not used agent, should set g_local_test_flag True first
 
 g_get_report_msg_config_by_pb = True  # if true used master.pb form mogo_reporter
 

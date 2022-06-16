@@ -5,8 +5,8 @@ Author: your name
 Date: 2022-04-27 15:29:25
 LastEditTime: 2022-05-19 14:14:11
 LastEditors: liyuelei liyuelei@zhidaoauto.com
-Description: this file create for get vehiche state from /chassis/vihecle_state
-FilePath: /catkin_ws/src/system/system_master/sys_vehicle_state.py
+Description: this file handle topic
+FilePath: /catkin_ws/src/system/system_master/sys_node_handler.py
 '''
 
 import sys
@@ -114,34 +114,37 @@ class Vehicle_State():
 
 
     def pub_vehicle_state(self):
-        pub_msg_data = system_pilot_mode_pb2.SYSVehicleState()
-        pub_msg_data.header.seq          = self.local_vehicle_state.header.seq
-        pub_msg_data.header.stamp.sec    = self.local_vehicle_state.header.stamp.sec
-        pub_msg_data.header.stamp.nsec   = self.local_vehicle_state.header.stamp.nsec
-        pub_msg_data.header.frame_id     = self.local_vehicle_state.header.frame_id
-        pub_msg_data.pilot_mode = self.local_vehicle_state.pilot_mode
-        pub_msg_data.steer_inference = self.local_vehicle_state.steer_inference
-        pub_msg_data.brake_inference = self.local_vehicle_state.brake_inference
-        pub_msg_data.accel_inference = self.local_vehicle_state.accel_inference
-        pub_msg_data.gear_switch_inference = self.local_vehicle_state.gear_switch_inference
-        pub_msg_data.location_missing = self.local_vehicle_state.location_missing
-        pub_msg_data.trajectory_missing = self.local_vehicle_state.trajectory_missing
-        pub_msg_data.chassis_status_missing = self.local_vehicle_state.chassis_status_missing
-        pub_msg_data.brake_light_status = self.local_vehicle_state.brake_light_status
-        pub_msg_data.pilot_mode_condition_met = self.local_vehicle_state.pilot_mode_condition_met
+        try:
+            pub_msg_data = system_pilot_mode_pb2.SYSVehicleState()
+            pub_msg_data.header.seq          = self.local_vehicle_state.header.seq
+            pub_msg_data.header.stamp.sec    = self.local_vehicle_state.header.stamp.sec
+            pub_msg_data.header.stamp.nsec   = self.local_vehicle_state.header.stamp.nsec
+            pub_msg_data.header.frame_id     = self.local_vehicle_state.header.frame_id
+            pub_msg_data.pilot_mode = self.local_vehicle_state.pilot_mode
+            pub_msg_data.steer_inference = self.local_vehicle_state.steer_inference
+            pub_msg_data.brake_inference = self.local_vehicle_state.brake_inference
+            pub_msg_data.accel_inference = self.local_vehicle_state.accel_inference
+            pub_msg_data.gear_switch_inference = self.local_vehicle_state.gear_switch_inference
+            pub_msg_data.location_missing = self.local_vehicle_state.location_missing
+            pub_msg_data.trajectory_missing = self.local_vehicle_state.trajectory_missing
+            pub_msg_data.chassis_status_missing = self.local_vehicle_state.chassis_status_missing
+            pub_msg_data.brake_light_status = self.local_vehicle_state.brake_light_status
+            pub_msg_data.pilot_mode_condition_met = self.local_vehicle_state.pilot_mode_condition_met
 
-        pub_msg_data_str = pub_msg_data.SerializeToString()
-        sys_state_msg = BinaryData()
-        sys_state_msg.header.seq          = 1
-        sys_state_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
-        sys_state_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
-        sys_state_msg.header.frame_id     = "system_master_frame_id"
-        sys_state_msg.name = "system_master.SYSVehicleState"
-        sys_state_msg.size = len(pub_msg_data_str)
-        sys_state_msg.data = pub_msg_data_str
-        
-        self.sys_vehicle_state_pub.publish(sys_state_msg)
-        self.last_change_time = int(time.time())
+            pub_msg_data_str = pub_msg_data.SerializeToString()
+            sys_state_msg = BinaryData()
+            sys_state_msg.header.seq          = 1
+            sys_state_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
+            sys_state_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
+            sys_state_msg.header.frame_id     = "system_master_frame_id"
+            sys_state_msg.name = "system_master.SYSVehicleState"
+            sys_state_msg.size = len(pub_msg_data_str)
+            sys_state_msg.data = pub_msg_data_str
+            
+            self.sys_vehicle_state_pub.publish(sys_state_msg)
+            self.last_change_time = int(time.time())
+        except Exception as e:
+            print("pub sys vehile state error:{}".format(e))
 
 
 
@@ -213,13 +216,16 @@ class StartAutopilot(threading.Thread):
         pub_succ_flag = False
         timeout_time = time.time() + 5 
         while time.time() < timeout_time:
-            brsp = 0
-            self.auotpilot_routing_req_pub.publish(self.binary_data_msg)
-            brsp = rospy.get_param("/routing/request/rsp")
-            if brsp:
-                rospy.set_param("/routing/request/rsp", 0)
-                pub_succ_flag = True
-                break
+            try:
+                brsp = 0
+                self.auotpilot_routing_req_pub.publish(self.binary_data_msg)
+                brsp = rospy.get_param("/routing/request/rsp")
+                if brsp:
+                    rospy.set_param("/routing/request/rsp", 0)
+                    pub_succ_flag = True
+                    break
+            except Exception as e:
+                print("pub route req error:{}".format(e))
             time.sleep(0.1)
 
         if pub_succ_flag:
@@ -337,8 +343,12 @@ class Node_Handler(object):
         """
         try:
             zone = int(desc)
-            route_info_msg = message_pad_pb2.RouteInfo()
-            route_info_msg.ParseFromString(content)
+            start_req_msg=message_pad_pb2.SetAutopilotModeReq()
+            start_req_msg.ParseFromString(content)
+            print("start pilot cmd: mode={}, src={}".format(start_req_msg.mode, start_req_msg.source))
+            route_info_msg = start_req_msg.routeInfo
+            # route_info_msg = message_pad_pb2.RouteInfo()
+            # route_info_msg.ParseFromString(content)
         except Exception as e:
             print("The param input param error, {}".format(e))
             return
@@ -347,6 +357,7 @@ class Node_Handler(object):
             self.auotpilot_proj_handle = Proj(proj='utm',zone=zone,ellps='WGS84', preserve_units=False) # use kwargs
             # p2 = Proj('+proj=utm +zone=10 +ellps=WGS84', preserve_units=False) # use proj4 string
             self.autopilot_start_zone = zone
+            print('receive zone: {}'.format(zone))
         
         if not self.auotpilot_proj_handle:
             print("auotpilot_proj_handle is not ready!!, here must has bug")
@@ -357,14 +368,17 @@ class Node_Handler(object):
             x,y=self.auotpilot_proj_handle(route_info_msg.startLocation.longitude, route_info_msg.startLocation.latitude)
             route_req_msg.start.pose.x = x
             route_req_msg.start.pose.y = y
+            print('start: src[{},{}], dst[{},{}]'.format(route_info_msg.startLocation.longitude, route_info_msg.startLocation.latitude, x, y))
             x,y=self.auotpilot_proj_handle(route_info_msg.endLocation.longitude, route_info_msg.endLocation.latitude)
             route_req_msg.end.pose.x = x
             route_req_msg.end.pose.y = y
+            print('end: src[{},{}], dst[{},{}]'.format(route_info_msg.endLocation.longitude, route_info_msg.endLocation.latitude, x, y))
             for wpoint in route_info_msg.wayPoints:
                 route_req_msg.waypoint.add()
                 x,y=self.auotpilot_proj_handle(wpoint.longitude, wpoint.latitude)
                 route_req_msg.waypoint.pose.x = x
                 route_req_msg.waypoint.pose.y = y
+                print('point: src[{},{}], dst[{},{}]'.format(wpoint.longitude, wpoint.latitude, x, y))
             route_req_msg.speedlimit = route_info_msg.speedLimit
             route_req_msg.startName = route_info_msg.startName
             route_req_msg.endName = route_info_msg.endName
@@ -407,20 +421,23 @@ class Node_Handler(object):
             except Exception as e:
                 print("parse download_traj msg has error, {}".format(e))
         
-        binary_msg = BinaryData()
-        binary_msg.header.seq         = 1
-        binary_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
-        binary_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
-        binary_msg.header.frame_id    = "system_master_frame_id"
-        binary_msg.name = "parallel.TakeOverStatus"
-        binary_msg.size = len(content)
-        binary_msg.data = content
-        
-        self.download_Traj_cmd_pub.publish(binary_msg)
-        print("send download_traj req to trajectory_agent success!")
-        self.download_Traj_wait_thread = threading.Timer(sys_config.TRAJECTORY_DOWNLOAD_WAIT_TIME, self.wait_traj_dl_succ)
-        self.download_Traj_wait_thread.start()
-        self.system_event_report(code='ISYS_INIT_TRAJECTORY_START', desc=' trajectory download start')
+        try:
+            binary_msg = BinaryData()
+            binary_msg.header.seq         = 1
+            binary_msg.header.stamp.secs   = rospy.rostime.Time.now().secs
+            binary_msg.header.stamp.nsecs  = rospy.rostime.Time.now().nsecs
+            binary_msg.header.frame_id    = "system_master_frame_id"
+            binary_msg.name = "parallel.TakeOverStatus"
+            binary_msg.size = len(content)
+            binary_msg.data = content
+            
+            self.download_Traj_cmd_pub.publish(binary_msg)
+            print("send download_traj req to trajectory_agent success!")
+            self.download_Traj_wait_thread = threading.Timer(sys_config.TRAJECTORY_DOWNLOAD_WAIT_TIME, self.wait_traj_dl_succ)
+            self.download_Traj_wait_thread.start()
+            self.system_event_report(code='ISYS_INIT_TRAJECTORY_START', desc=' trajectory download start')
+        except Exception as e:
+            print("pub download_traj req error:{}".format(e))
 
     def wait_traj_dl_succ(self):
         """
@@ -538,42 +555,44 @@ class Node_Handler(object):
         #@return {*}
         """
 
-        src_sys_cmd = system_cmd_pb2.SystemCmd()
-        src_sys_cmd.ParseFromString(ros_msg.data)
+        try:
+            src_sys_cmd = system_cmd_pb2.SystemCmd()
+            src_sys_cmd.ParseFromString(ros_msg.data)
 
-        if src_sys_cmd.src == system_cmd_pb2.AutoPolit:
-            if src_sys_cmd.action in (system_cmd_pb2.StartPilot, system_cmd_pb2.StopPilot):
-                if src_sys_cmd.action == system_cmd_pb2.StartPilot:
-                    if src_sys_cmd.content:
-						# send mas to hadmap && set autopilot cmd to controller
-                        self.pub_autopilot_route(src_sys_cmd.desc, src_sys_cmd.content)
+            if src_sys_cmd.src == system_cmd_pb2.AutoPolit:
+                if src_sys_cmd.action in (system_cmd_pb2.StartPilot, system_cmd_pb2.StopPilot):
+                    if src_sys_cmd.action == system_cmd_pb2.StartPilot:
+                        if src_sys_cmd.content:
+                            # send mas to hadmap && set autopilot cmd to controller
+                            self.pub_autopilot_route(src_sys_cmd.desc, src_sys_cmd.content)
+                        else:
+                            sys_globals.g_system_master_entity.change_sys_state(1, 1) 
                     else:
-                        sys_globals.g_system_master_entity.change_sys_state(1, 1) 
+                        sys_globals.g_system_master_entity.change_sys_state(1, 0)
+
+                elif src_sys_cmd.action is system_cmd_pb2.SysReboot:
+                    if sys_globals.g_system_master_entity.polit_state == 1:
+                        self.system_event_report(code='ESYS_NOT_ALLOW_REBOOT', desc=' autopilot is working')
+                    else:
+                        sys_globals.g_system_master_entity.handle_system_reboot()
+
+                elif src_sys_cmd.action in (system_cmd_pb2.BeginShowMode, system_cmd_pb2.EndShowMode):
+                    sys_globals.g_system_master_entity.show_mode_flag = True if src_sys_cmd.action == system_cmd_pb2.BeginShowMode else False
+                    print('Show mode is {}, recv action {}'.format(sys_globals.g_system_master_entity.show_mode_flag, src_sys_cmd.action))
+
+                elif src_sys_cmd.action is system_cmd_pb2.DownloadTrajectory:
+                    if src_sys_cmd.content:
+                        self.pub_download_traj_msg(src_sys_cmd.content)
                 else:
-                    sys_globals.g_system_master_entity.change_sys_state(1, 0)
-
-            elif src_sys_cmd.action is system_cmd_pb2.SysReboot:
-                if sys_globals.g_system_master_entity.polit_state == 1:
-                    self.system_event_report(code='ESYS_NOT_ALLOW_REBOOT', desc=' autopilot is working')
-                else:
-                    sys_globals.g_system_master_entity.handle_system_reboot()
-
-            elif src_sys_cmd.action in (system_cmd_pb2.BeginShowMode, system_cmd_pb2.EndShowMode):
-                sys_globals.g_system_master_entity.show_mode_flag = True if src_sys_cmd.action == system_cmd_pb2.BeginShowMode else False
-                print('Show mode is {}, recv action {}'.format(sys_globals.g_system_master_entity.show_mode_flag, src_sys_cmd.action))
-
-            elif src_sys_cmd.action is system_cmd_pb2.DownloadTrajectory:
-                if src_sys_cmd.content:
-                    self.pub_download_traj_msg(src_sys_cmd.content)
-            else:
-                print('Error: The action is [{}] unexpect!'.format(src_sys_cmd.action))
-        elif src_sys_cmd.src == system_cmd_pb2.RemotePilot:
-            if src_sys_cmd.action in (system_cmd_pb2.StartPilot, system_cmd_pb2.StopPilot):
-                self.remote_pilot_take_over_id = int(src_sys_cmd.desc)
-                mode = 2 if src_sys_cmd.action == system_cmd_pb2.StartPilot else 0
-                print("receive REMOTE pilot req! mode={}".format(mode))
-                sys_globals.g_system_master_entity.change_sys_state(sys_globals.System_State.STATE_CHANGE_BY_AUTOPILOT_CMD, mode)
-                
+                    print('Error: The action is [{}] unexpect!'.format(src_sys_cmd.action))
+            elif src_sys_cmd.src == system_cmd_pb2.RemotePilot:
+                if src_sys_cmd.action in (system_cmd_pb2.StartPilot, system_cmd_pb2.StopPilot):
+                    self.remote_pilot_take_over_id = int(src_sys_cmd.desc)
+                    mode = 2 if src_sys_cmd.action == system_cmd_pb2.StartPilot else 0
+                    print("receive REMOTE pilot req! mode={}".format(mode))
+                    sys_globals.g_system_master_entity.change_sys_state(sys_globals.System_State.STATE_CHANGE_BY_AUTOPILOT_CMD, mode)
+        except Exception as e:
+            print('handle_system_cmd error: {}'.format(e))
 
     def handle_topic_hz_status(self, ros_msg):
         """
@@ -655,23 +674,26 @@ class Node_Handler(object):
 
 
     def handle_state_report(self, ros_msg):
-        state_report_msg = system_state_report_pb2.StateReport()
-        state_report_msg.ParseFromString(ros_msg.data)
+        try:
+            state_report_msg = system_state_report_pb2.StateReport()
+            state_report_msg.ParseFromString(ros_msg.data)
 
-        if 'localization' == state_report_msg.src:
-            if state_report_msg.state in (system_state_report_pb2.STATE_NORMAL, system_state_report_pb2.STATE_FAULT, system_state_report_pb2.STATE_UNKNOW):
-                if state_report_msg.state != Sys_Health_Check.g_health_status_dict['localization']['state']:
-                    print('rtk status change form {} to {}'.format(Sys_Health_Check.g_health_status_dict['localization']['state'], state_report_msg.state))
-                    self.system_event_report(code=state_report_msg.code, desc=' '+state_report_msg.desc)
+            if 'localization' == state_report_msg.src:
+                if state_report_msg.state in (system_state_report_pb2.STATE_NORMAL, system_state_report_pb2.STATE_FAULT, system_state_report_pb2.STATE_UNKNOW):
+                    if state_report_msg.state != Sys_Health_Check.g_health_status_dict['localization']['state']:
+                        print('rtk status change form {} to {}'.format(Sys_Health_Check.g_health_status_dict['localization']['state'], state_report_msg.state))
+                        self.system_event_report(code=state_report_msg.code, desc=' '+state_report_msg.desc)
 
-                    Sys_Health_Check.g_health_status_dict['localization']['state'] = state_report_msg.state
-                    Sys_Health_Check.g_health_status_dict['localization']['code'] = state_report_msg.code
-                    Sys_Health_Check.g_health_status_dict['localization']['desc'] = state_report_msg.desc
+                        Sys_Health_Check.g_health_status_dict['localization']['state'] = state_report_msg.state
+                        Sys_Health_Check.g_health_status_dict['localization']['code'] = state_report_msg.code
+                        Sys_Health_Check.g_health_status_dict['localization']['desc'] = state_report_msg.desc
 
+                else:
+                    print('the state is unexpect! ignored! state={}'.format(state_report_msg.state))
             else:
-                print('the state is unexpect! ignored! state={}'.format(state_report_msg.state))
-        else:
-            print('the src is unexpect! ignored! src={}'.format(state_report_msg.src))
+                print('the src is unexpect! ignored! src={}'.format(state_report_msg.src))
+        except Exception as e:
+            print('handle_state_report error: {}'.format(e))
 
 
     def handle_status_query_req(self, req):

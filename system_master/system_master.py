@@ -45,6 +45,7 @@ class System_Master(object):
         self.auto_polit_wait_thread = None
         self.remote_polit_wait_thread = None
         self.agent_all_worked_wait_thread = None
+        self.thread_lock = threading.Lock()
         self.get_sys_state_before()
 
     def get_sys_state_before(self):
@@ -120,9 +121,15 @@ class System_Master(object):
             json_msg = json.dumps(msg_dict)
 
         try:
-            with open(sys_globals.g_system_master_state_report, 'a+') as fp:
-                print("write mogo report event: {}".format(msg))
-                fp.write(json_msg +'\n')
+            if self.sys_state in (sys_globals.System_State.SYS_STARTING, sys_globals.System_State.SYS_EXITING, sys_globals.System_State.SYS_FAULT) \
+                and code in ('ESYS_RTK_STATUS_FAULT', 'ESYS_TOPIC_FREQ_DROPED', 'EHW_CAN', 'ISYS_CAN_NORMAL', 'ISYS_RTK_STATUS_NORMAL', 'ISYS_TOPIC_FREQ_NORMAL'):
+                print("system not running state, ignore health check, {}".format(code))
+            else:
+                self.thread_lock.acquire()
+                with open(sys_globals.g_system_master_state_report, 'a+') as fp:
+                    print("write mogo report event: {}".format(msg))
+                    fp.write(json_msg.strip() +'\n')
+                self.thread_lock.release()
         except Exception as e:
             print('Error: save report msg to file, {}'.format(e))
 

@@ -84,6 +84,7 @@ declare -g ros_master ros_machine ethnet_ip
 declare -g LOGFILE map_ver
 curtime=$(date +"%Y%m%d%H%M%S")
 LOGFILE="/home/mogo/data/log/start_master-${curtime}.log"
+install_ros_log
 
 map_ver=$(/usr/bin/python /home/mogo/autopilot/share/system_master/get_map_version.py)
 while [[ "$map_ver" == "unknow" ]]; do
@@ -109,7 +110,7 @@ fi
 export ROS_HOSTNAME=${ros_machine}
 export ROS_MASTER_URI=http://${ros_master}:11311
 export ROS_ENV="export ROS_LOG_DIR=${ROS_LOG_DIR}; export ROS_MASTER_URI=http://${ros_master}:11311; export ROS_HOSTNAME=${ros_machine}"
-install_ros_log
+
 set_bashrc
 
 source /opt/ros/melodic/setup.bash

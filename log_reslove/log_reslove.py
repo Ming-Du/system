@@ -120,6 +120,7 @@ class TopicHZ():
             log_pub_msg.end_stamp = 0
             for name, info in all_topic_hz_info.items():
                 if info['end_time'] == info['start_time']:
+                    ## the time if only one or no one, the topic hz can't report.  need add judge in topic  
                     continue
                 # print("get topic is {}, info {}".format(name, info))
                 hz_num = int(info["num"] / ((info['end_time']-info['start_time'])/1000000000))
@@ -128,9 +129,11 @@ class TopicHZ():
                 topic_hz.hz = hz_num
                 topic_hz.max_delay = int(info['max_delay']/1000000)  # msec
                 # clear data for next time used
+                ''' del by liyl 20220616 not smooth
                 all_topic_hz_info[name]['start_time'] = all_topic_hz_info[name]['end_time'] 
                 all_topic_hz_info[name]['num'] = 0
                 all_topic_hz_info[name]['max_delay'] = 0  # get new max_delay every loop
+                '''
         except Exception as e:
             print('There has some error:{}'.format(e))
 
@@ -141,6 +144,7 @@ class TopicHZ():
     def pub_topic_hz_once(self):
         self.analyse_all_topic()
         self.pub_topic_hz_info()
+        all_topic_hz_info.clear()
 
 
 def set_car_info(data):
