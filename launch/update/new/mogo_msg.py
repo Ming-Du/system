@@ -49,5 +49,5 @@ class MOGO_MSG(object):
         timestamp = {"sec":int(s),"nsec":int(ns * 1e9)}
         msg_obj["timestamp"] = timestamp
         msg_obj["src"] = self.ID
-        msg_obj["msg"] = msg.replate('\n','')
+        msg_obj["msg"] = msg.replace('\n','')
         os.popen('echo "%s">>%s'%(json.dumps(msg_obj).replace(r'"',r'\"'),self.logfile))
