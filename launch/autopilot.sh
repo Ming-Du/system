@@ -299,12 +299,12 @@ _update() {
 start_core() {
     [[ -n "$opt_onenode" || -n "$opt_launch_file" ]] && return
     LoggingINFO "starting roscore..."
-    roscore 2>&1 >$ROS_LOG_DIR/roscore.log &
+    roscore >$ROS_LOG_DIR/roscore.log 2>&1 & 
     roscore_pid=$!
     local ret=0
-    local deadtime=$(($(date +"%s")+5))
+    local deadtime=$(($(date +"%s")+10))
     while [[ $ret -ne 124 && $(date +"%s") -le $deadtime ]]; do
-        timeout 0.1 cat &>/dev/null </dev/tcp/${ros_master}/11311
+        timeout 0.2 cat &>/dev/null </dev/tcp/${ros_master}/11311
         ret=$?
     done
     if [ $ret -eq 124 ]; then
@@ -329,7 +329,7 @@ wait_core() {
     LoggingINFO "waiting roscore in ${ros_master:="localhost"}..."
     local ret=0
     while [ $ret -ne 124 -a $exit_flag -eq 0 ]; do
-        timeout 1 cat &>/dev/null </dev/tcp/${ros_master}/11311
+        timeout 0.5 cat &>/dev/null </dev/tcp/${ros_master}/11311
         ret=$?
     done
 }
@@ -415,10 +415,10 @@ start_map() {
     start_node
     if [[ $failed_files_num -eq 0 ]]; then
         write_action 6
-        LoggingINFO "All nodes in ${ros_machine} launched successfully." "IBOOT_MAP_STARTED" 
+        [[ ${model} == " [MAP]" ]] && LoggingINFO "All nodes in ${ros_machine} launched successfully." "IBOOT_MAP_STARTED" 
     else
         write_action 7
-        LoggingERR "${ros_machine} Started finished with partial nodes failure." "EMAP_NODE"
+        [[ ${model} == " [MAP]" ]] && LoggingERR "${ros_machine} Started finished with partial nodes failure." "EMAP_NODE"
     fi
 }
 
@@ -556,9 +556,9 @@ do
 	try_times=`expr $try_times + 1`
         echo $try_times
 	if [  $try_times -eq 5 ];then
-                echo "try times eq 5 times,abort get vehicle use" >> /home/mogo/data/vehicle_use.info.error
-                break
-        fi
+        echo "try times eq 5 times,abort get vehicle use" >> /home/mogo/data/vehicle_use.info.error
+        break
+    fi
         sleep 3
 done
 if [ ! -e "/home/mogo/data/vehicle_use.info" ];then
@@ -577,7 +577,6 @@ elif [[ ${xavier_type} -eq 3 ]]; then
 else
     master_ip=${ethnet_ip%.*}.102
 fi
-
 write_action 0 #初始化中
 # 后台发送心跳
 heart_beat &
@@ -591,10 +590,12 @@ while [ true ]; do
     systime=$(date +"%Y%m%d%H%M%S")
     if [ $systime -gt $last_launch_time ]; then
         # check if mogo_msg config file exist
-        [[ -z "$opt_onenode" || -z "$opt_launch_file" ]] && LoggingINFO "systime synchronization at $systime" "IINIT_TIME_SYNC"
         last_launch_time=$(date +"%F %T")
         echo $systime >$ABS_PATH/launch_time
-        LoggingINFO "boost:$(date -d "$(uptime -s)" +"%F %T")" "IINIT_BOOST" #上电时间
+        if [[ -z "$opt_onenode" && -z "$opt_launch_file" ]]; then
+            LoggingINFO "systime synchronization at $systime" "IINIT_TIME_SYNC"
+            LoggingINFO "boot:$(date -d "$(uptime -s)" +"%F %T")" "IINIT_BOOST" #上电时间
+        fi
         break
     fi
     sleep 1
@@ -619,7 +620,7 @@ LoggingINFO "ROS_LOG_DIR=$ROS_LOG_DIR"
 flock -x 8
 if [[ ! -d $ROS_LOG_DIR ]]; then
     find ${LOG_DIR} -maxdepth 1 -mtime +3 -type d -exec rm -Rf {} \;
-    find $BAG_DIR -maxdepth 1 -mtime +1 -exec rm -Rf {} \;
+    find $BAG_DIR -maxdepth 1 -mtime +10 -exec rm -Rf {} \;
     mkdir -p $ROS_LOG_DIR
     ln -snf $ROS_LOG_DIR ${LOG_DIR}/latest
 fi

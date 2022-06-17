@@ -139,6 +139,60 @@
             "ACTION_REPAIR_VEHICLE"
         ]
     },
+    "EMAP_HADMAP_NO_TRAJECTORY":{
+        "level": "error",
+        "code": "EMAP_HADMAP_NO_TRAJECTORY",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_CONTACT_TECH_SUPPORT"
+        ]
+    },
+    "EMAP_HADMAP_PLANNING_NO_TRAJECTORY":{
+        "level": "error",
+        "code": "EMAP_HADMAP_PLANNING_NO_TRAJECTORY",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_CONTACT_TECH_SUPPORT"
+        ]
+    },
+    "EMAP_CONTROL_ABNORMAL_COMMAND":{
+        "level": "error",
+        "code": "EMAP_CONTROL_ABNORMAL_COMMAND",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_CONTACT_TECH_SUPPORT"
+        ]
+    },
+    "EMAP_CAN_ADAPTER_NO_CHASSIS_INFO":{
+        "level": "error",
+        "code": "EMAP_CAN_ADAPTER_NO_CHASSIS_INFO",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_REBOOT_VEHICLE"
+        ]
+    },
+    "ESYS_TOPIC_FREQ_DROPED":{
+        "level": "error",
+        "code": "ESYS_TOPIC_FREQ_DROPED",
+        "result": [
+            "RESULT_AUTOPILOT_INFERIOR"
+        ]
+    },
+    "ESYS_RTK_STATUS_FAULT":{
+        "level": "error",
+        "code": "ESYS_RTK_STATUS_FAULT",
+        "result": [
+            "RESULT_AUTOPILOT_INFERIOR"
+        ]
+    },
     "IINIT_BOOST": {
         "level": "info",
         "code": "IINIT_BOOST"

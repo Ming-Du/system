@@ -586,12 +586,13 @@ class ProcessMonitor(Thread):
                             self.is_shutdown = True
                         elif not p in respawn:
                             if p.exit_code:
+                                if out_logger:
+                                    out_logger.mogo_write('EMAP_NODE', '%s has dead with code %s - errmsg:%s'%(p.name, p.exit_code, exit_code_str))
                                 printerrlog("[%s] %s"%(p.name, exit_code_str))
                             else:
                                 printlog_bold("[%s] %s"%(p.name, exit_code_str))
                             dead.append(p)
-                            if out_logger:
-                                out_logger.mogo_write('EMAP_NODE','%s has dead with code %s.'%(p.name,p.exit_code))
+                            
                             
                         ## no need for lock as we require listeners be
                         ## added before process monitor is launched

@@ -9,8 +9,12 @@ import time
 class MOGO_MSG(object):
     def __init__(self,ID=__file__,logdir='/home/mogo/data/log'):
         self.ID = ID
-        self.config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),'mogo_report_msg.json')
-        self.logdir = os.path.join(logdir,'msg_log')
+        self.config_file = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), 'mogo_report_msg.json')
+        if logdir == '/home/mogo/data/log':
+            self.logdir = os.path.join(logdir, 'msg_log')
+        else:
+            self.logdir = os.path.join(logdir, '../msg_log')
         self.logfile = os.path.join(self.logdir,'roslaunch_report.json')
         self.json_config_str = {}
         self.state = False
@@ -45,5 +49,5 @@ class MOGO_MSG(object):
         timestamp = {"sec":int(s),"nsec":int(ns * 1e9)}
         msg_obj["timestamp"] = timestamp
         msg_obj["src"] = self.ID
-        msg_obj["msg"] = msg
+        msg_obj["msg"] = msg.replate('\n','')
         os.popen('echo "%s">>%s'%(json.dumps(msg_obj).replace(r'"',r'\"'),self.logfile))
