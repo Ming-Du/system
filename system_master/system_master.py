@@ -163,6 +163,7 @@ class System_Master(object):
 
         elif reason == sys_globals.System_State.STATE_CHANGE_BY_AUTOPILOT_CMD: # auto cmd
             if self.check_sys_state(act):
+                print("check system state ok, pilot cmd = {}".format(act))
                 self.node_handler_entity.set_pilot_mode(act)
                 if act == 1:
                     print('start autopilot now')
@@ -179,6 +180,7 @@ class System_Master(object):
                     self.remote_polit_wait_thread.start()
                     self.node_handler_entity.vehicle_state_entity.check_remotepilot_condition = True
             else:
+                print("check system state return False")
                 if act and self.sys_state == sys_globals.System_State.SYS_STARTING:
                     self.node_handler_entity.system_event_report(code='ESYS_IN_INIT', desc=', system is starting')
                 elif act and self.sys_state == sys_globals.System_State.SYS_EXITING:
@@ -282,6 +284,7 @@ class System_Master(object):
             # TODO: wait all agent start complete
             self.agent_all_worked_wait_thread = threading.Timer(sys_config.ALL_AGENT_WORKED_WAIT_TIME, self.wait_agent_connect_timeout)
             self.agent_all_worked_wait_thread.start()
+            self.set_sys_state_and_save(sys_globals.System_State.SYS_STARTING)			
         else:
             print('send to some agent failed!, system on failed!')
             self.set_sys_state_and_save(sys_globals.System_State.SYS_FAULT)
