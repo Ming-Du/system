@@ -80,6 +80,8 @@ class Vehicle_State():
                 print("At show_mode, start autopilot used {} times cmd send!".format(self.retry_autopilot_time))
                 self.retry_autopilot_time = 0
         else:
+            print('Show_mode Exited, change system state by real vehicle state')
+            sys_globals.g_system_master_entity.change_sys_state(reason=System_State.STATE_CHANGE_BY_REAL_VEHICLE_STATE, act=self.local_vehicle_state.pilot_mode)
             self.check_autopilot_condition = False
             self.retry_autopilot_time = 0
         
