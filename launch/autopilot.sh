@@ -278,6 +278,7 @@ add_privilege_monitor_gnss() {
     #rm /home/mogo/data/log/msg_error_log.txt -rf
     #rm /home/mogo/data/log/topic_hz_log.txt -rf
     rm -rf /home/mogo/data/log/filebeat_upload/*
+    rm -rf /home/mogo/data/log/ROS_STAT/bak_*
     chmod -R 777 /autocar-code/install/share/monitor_gnss >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/share/monitor_collect >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/share/monitor_process >/dev/null 2>&1
