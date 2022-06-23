@@ -123,7 +123,7 @@ class TopicHZ():
                     ## the time if only one or no one, the topic hz can't report.  need add judge in topic  
                     continue
                 # print("get topic is {}, info {}".format(name, info))
-                hz_num = int(info["num"] / ((info['end_time']-info['start_time'])/1000000000))
+                hz_num = int(round(info["num"] * 1000000000.0 / (info['end_time']-info['start_time'])))
                 topic_hz = log_pub_msg.topic_hz.add()
                 topic_hz.name = name
                 topic_hz.hz = hz_num
