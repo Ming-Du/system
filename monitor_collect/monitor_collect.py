@@ -237,7 +237,7 @@ def task_topic_msg(msg):
         print "pbRecvMsg.level%s" % (pbRecvMsg.level)
         dictMsgInfoRecord['reportmsg']['level'] = pbRecvMsg.level
         pbSend.reportmsg.msg = pbRecvMsg.msg
-        print "pbRecvMsg.msg:%s" % (pbRecvMsg.msg)
+        #print "pbRecvMsg.msg:%s" % (pbRecvMsg.msg)
         dictMsgInfoRecord['reportmsg']['msg'] = pbRecvMsg.msg
         pbSend.reportmsg.code = pbRecvMsg.code
         print "pbRecvMsg.code:%s" % (pbRecvMsg.code)
@@ -279,6 +279,16 @@ def task_topic_msg(msg):
         rosMessage.size = len(strBuffer)
     except Exception as e:
         print "Exception happend "
+        print   "exception happend"
+        print   e.message
+        print   str(e)
+        print   'str(Exception):\t', str(Exception)
+        print   'str(e):\t\t', str(e)
+        print   'repr(e):\t', repr(e)
+        print   'e.message:\t', e.message
+        print   'traceback.print_exc():'
+        traceback.print_exc()
+        print   'traceback.format_exc():\n%s' % (traceback.format_exc())
 
     strJson = json.dumps(dictMsgInfoRecord)
     ## send telematics
