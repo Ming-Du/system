@@ -687,13 +687,17 @@ def analyze_logs():
                 last_timestamp = pub["stamp"] - data['use_time'] - 1*1000000000
 
     match_once_num = 0
+    match_two_path = 0
     for uuid_time, match_num in target_handle_complate.items():
         if match_num == 2:
-            del all_sub_msg[target][uuid_time]
-        else:
+            match_two_path += 1
+        elif match_num == 1:
             match_once_num += 1
-    if g_test_mode:
-        print("add by liyl ######### total_command={}, match_one_times={}".format(len(target_handle_complate), match_once_num))
+        
+        del all_sub_msg[target][uuid_time]
+    
+    print("total_command={}, match_two_paths={}, match_one_paths={}".format(
+        len(target_handle_complate), match_two_path, match_once_num))
 
     all_msg_num = 0
     for topic in all_pub_msg:
@@ -888,7 +892,7 @@ def run():
         
         g_topic_hz_handler.pub_topic_hz_once()
 
-        sleep_time = 2 - (end - start)   # change form 1 to 2 by liyl 20220609
+        sleep_time = 5 - (end - start)   # change form 2 to 5 by liyl 20220624
         if sleep_time > 0.3:
             time.sleep(sleep_time)
 
