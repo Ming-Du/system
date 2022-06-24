@@ -290,6 +290,8 @@ def update_one_log(one):
     elif one["type"] == 2:
         if one["node"] not in node_config:
             return
+        if not g_test_mode and g_pilot_mode == 0:
+            return
         if one.get("tag",'') != node_config[one["node"]].get("man_beg","notag"):
             return
 
@@ -297,6 +299,8 @@ def update_one_log(one):
 
     elif one["type"] == 3:
         if one["node"] not in node_config:
+            return
+        if not g_test_mode and g_pilot_mode == 0:
             return
         if one.get("tag",'') != node_config[one["node"]].get("man_end","notag"):
             return
