@@ -245,7 +245,7 @@ def SaveEventToFile(msg='', code='', results=list(), actions=list(), level=''):
         json_msg = json.dumps(msg_dict)
     try:
         with open("/home/mogo/data/log/msg_log/trajectory_agent.json",'a+') as fp:
-            print("write mogo report event: {}".format(msg))
+            #print("write mogo report event: {}".format(json_msg))
             fp.write(json_msg + '\n')
     except Exception as e:
         print('Error: save report msg to file, {}'.format(e))

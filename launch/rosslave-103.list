@@ -1,5 +1,4 @@
 monitor_collect  monitor_collect.launch
-trajectory_agent trajectory_agent.launch
 launch drivers_camera30.launch
 log_reslove log_reslove.launch
 log_collect_server log_collect_server.launch
