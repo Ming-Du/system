@@ -188,6 +188,7 @@ start_node() {
 
 set_pr() {
     for t in $(roslaunch --nodes ${launch_files_array[*]}); do
+        t=${t##*/}
         [[ "$t" =~ "rviz" ]] && continue
         [[ "$t" =~ "update_map" ]] && continue
         #pr
@@ -196,15 +197,15 @@ set_pr() {
         priority=$(top -b -n 1 -p $pid | grep $pid | awk '{print $(NF-9)}')
         [[ "$priority" == "rt" ]] && continue
         case "$t" in
-        "DongFeng_E70_can_adapter" | "jinlv_can_adapter" | "hongqih9_can_adapter") (($priority >= 0)) && chrt -p -r 99 $pid ;;
-        "controller") (($priority >= 0)) && chrt -p -r 99 $pid ;;
-        "localization" | "drivers_gnss" | "drivers_gnss_zy") (($priority >= 0)) && chrt -p -r 99 $pid ;;
-        "local_planning") (($priority >= 0)) && chrt -p -r 99 $pid ;;
-        "hadmap_server" | "hadmap_engine_node") (($priority >= 0)) && chrt -p -r 80 $pid ;;
-        "perception_fusion2" | "perception_fusion") (($priority >= 0)) && chrt -p -r 79 $pid ;;
-        "rs_perception_node" | "trt_yolov5") (($priority >= 0)) && chrt -p -r 69 $pid ;;
+        "DongFeng_E70_can_adapter" | "jinlv_can_adapter" | "hongqih9_can_adapter") (($priority >= 0)) && chrt -a -p -r 99 $pid ;;
+        "controller") (($priority >= 0)) && chrt -a -p -r 99 $pid ;;
+        "localization" | "drivers_gnss" | "drivers_gnss_zy") (($priority >= 0)) && chrt -a -p -r 99 $pid ;;
+        "local_planning") (($priority >= 0)) && chrt -a -p -r 99 $pid ;;
+        "hadmap_server" | "hadmap_engine_node") (($priority >= 0)) && chrt -a -p -r 80 $pid ;;
+        "perception_fusion2" | "perception_fusion") (($priority >= 0)) && chrt -a -p -r 79 $pid ;;
+        "rs_perception_node" | "trt_yolov5") (($priority >= 0)) && chrt -a -p -r 69 $pid ;;
         "drivers_camera_sensing60" | "drivers_camera_sensing30" | "drivers_camera_sensing120" | "drivers_robosense_node")
-            (($priority >= 0)) && chrt -p -r 59 $pid ;;
+            (($priority >= 0)) && chrt -a -p -r 59 $pid ;;
         *) ;;
         esac
     done
