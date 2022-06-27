@@ -532,26 +532,25 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                 intLocationStampStop = int(os.path.getmtime(strStandardLocationFileStop))
                 g_CacheUtil.WriteFileCacheInfo(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5,timestamp,timestamp,intLocationStampTraj,intLocationStampStop)
                 print "============================================================================================="
-                SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(), level='info')
+                #SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(), level='info')
                 intProcessRet = 0
                 break
             if (intDownCompleteTrajStatus == 2) or (intDownCompleteStopStatus == 2):
                 print "##########intDownCompleteTrajStatus == False   or  intDownCompleteStopStatus == False happend"
                 print "============================================================================================="
-                SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_FAILURE', results=list(), actions=list(),level='info')
+                #SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_FAILURE', results=list(), actions=list(),level='info')
                 intProcessRet = 1
                 break
             if (intDownCompleteTrajStatus == 3) and (intDownCompleteStopStatus == 3):
                 print "##########remote traj not exists,now user local traj"
                 print "============================================================================================="
-                SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_WARNING', results=list(), actions=list(),level='warn')
-                intProcessRet = 0
+                #SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_WARNING', results=list(), actions=list(),level='warn')
+                intProcessRet = 2
                 break
             if (intDownCompleteTrajStatus == 4 ) and (intDownCompleteStopStatus == 4):
                  print "########## traj same with cloud ,not need  update "
                  print "============================================================================================="
-                 SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(),
-                                 level='info')
+                 #SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(),level='info')
                  intProcessRet = 0
                  break
             break
@@ -601,12 +600,14 @@ def call_process(msg):
         pbSend.header.frame_id = "trajectory_agent_frame_id"
         pbSend.header.module_name = "trajectory_agent"
 
-        if intResultProcess == 0:
-            pbSend.sync_status = 0
-            print "pbSend.sync_status = 0"
-        else:
-            pbSend.sync_status = -1
-            print "pbSend.sync_status = -1"
+        # if intResultProcess == 0:
+        #     pbSend.sync_status = 0
+        #     print "pbSend.sync_status = 0"
+        # else:
+        #     pbSend.sync_status = -1
+        #     print "pbSend.sync_status = -1"
+        pbSend.sync_status = intResultProcess
+        print "pbSend.sync_status:  {0}".format(intResultProcess)
 
         strBuffer = pbSend.SerializeToString()
         rosMessage = BinaryData()
