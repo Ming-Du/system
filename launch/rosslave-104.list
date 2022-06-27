@@ -3,4 +3,5 @@ log_collect_client log_collect_client.launch
 log_msg_collect_client log_msg_collect_client.launch
 guardian system_guardian_slave2.launch
 launch drivers_innolidar.launch
+launch perception_falcon_lidar.launch
 monitor_process monitor_process_rosslave_104.launch 
