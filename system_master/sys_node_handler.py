@@ -235,7 +235,7 @@ class StartAutopilot(threading.Thread):
             sys_globals.g_system_master_entity.change_sys_state(1, 1) 
         else:
             print('publist /routing/request timeout, not start autopilot!')
-            sys_globals.g_system_master_entity.node_handler_entity.system_event_report(code='ESYS_ROUTING_REQ_TIMEOUT', desc=' trajectory download failed')
+            sys_globals.g_system_master_entity.node_handler_entity.system_event_report(code='ESYS_ROUTING_REQ_TIMEOUT')
     
 
 class Node_Handler(object):
@@ -282,14 +282,15 @@ class Node_Handler(object):
         #@msg: setparam PilotMode and publish /autopilot/AutoPilotCmd to /controller
         #@return {*}
         """
-
-        print('publist /autopilot/AutoPilotCmd: {}'.format(Mode))
-        rospy.set_param("/autopilot/PilotMode", Mode)
-        pilotcmd = Int32()
-        pilotcmd.data = Mode
-        self.system_autopolit_cmd_pub.publish(pilotcmd)
-        self.autopolit_cmd_pub_time = rospy.rostime.Time.now()
-
+        try:
+            print('publist /autopilot/AutoPilotCmd: {}'.format(Mode))
+            rospy.set_param("/autopilot/PilotMode", Mode)
+            pilotcmd = Int32()
+            pilotcmd.data = Mode
+            self.system_autopolit_cmd_pub.publish(pilotcmd)
+            self.autopolit_cmd_pub_time = rospy.rostime.Time.now()
+        except Exception as e:
+            print('system_autopolit_cmd_pub error: {}'.format(e))
 
     def pub_system_diagnose_cmd(self):
         """
@@ -297,12 +298,13 @@ class Node_Handler(object):
         #@msg: publish /system_master/CheckCmd to /mogodoctor
         #@return {*}
         """
-
-        print('publist /system_master/CheckCmd: {}'.format(self.autopolit_cmd_pub_time))
-        checkcmd = UInt64()
-        checkcmd.data = self.autopolit_cmd_pub_time.to_nsec()
-        self.system_diagnose_cmd_pub.publish(checkcmd)
-
+        try:
+            print('publist /system_master/CheckCmd: {}'.format(self.autopolit_cmd_pub_time))
+            checkcmd = UInt64()
+            checkcmd.data = self.autopolit_cmd_pub_time.to_nsec()
+            self.system_diagnose_cmd_pub.publish(checkcmd)
+        except Exception as e:
+            print('pub_system_diagnose_cmd error: {}'.format(e))
 
     def pub_status_to_parallel(self, result, pilot_state, content='unkonw'):
         """
@@ -312,6 +314,7 @@ class Node_Handler(object):
                 pilot_mode: 0:manual 1:auto 2:parallel
         #@return {*}
         """
+        self.vehicle_state_entity.check_remotepilot_condition = False
         try:
             parallel_resp_msg = parallel_pb2.TakeOverStatus()
             #parallel_resp_msg.timestamp.sec = rospy.rostime.Time.now().secs
@@ -320,7 +323,7 @@ class Node_Handler(object):
             parallel_resp_msg.result = result
             parallel_resp_msg.autopilotStat = pilot_state
             parallel_resp_msg.content = content
-
+            print("time={}, result={}, takeover={}".format(rospy.rostime.Time.now(), result, parallel_resp_msg.takeOver))
             parallel_resp_data = parallel_resp_msg.SerializeToString()
             binary_msg = BinaryData()
 
@@ -389,6 +392,7 @@ class Node_Handler(object):
             route_req_msg.bus_routename = route_info_msg.routeName
             if route_info_msg.line:
                 route_req_msg.lineid = route_info_msg.line.lineId
+                print('have line msg, lineid={}'.format(route_req_msg.lineid))
 
             route_req_data = route_req_msg.SerializeToString()
             binary_msg = BinaryData()
@@ -415,13 +419,18 @@ class Node_Handler(object):
         #@msg:  pub download traj msg to /trajectory_agent
         #@return {*}
         """
-        if sys_config.g_local_test_flag:
-            try:
-                download_traj_msg = message_pad_pb2.TrajectoryDownloadReq()
-                download_traj_msg.ParseFromString(content)
-                print("reveice download traj req, line.lineID={}".format(download_traj_msg.line.lineId))
-            except Exception as e:
-                print("parse download_traj msg has error, {}".format(e))
+        
+        try:
+            download_traj_msg = message_pad_pb2.TrajectoryDownloadReq()
+            download_traj_msg.ParseFromString(content)
+            print("reveice download traj req:")
+            if download_traj_msg.line:
+                print("\tlineID={}".format(download_traj_msg.line.lineId))
+                print("\ttrajUrl={}".format(download_traj_msg.line.trajUrl))
+                print("\tstopUrl={}".format(download_traj_msg.line.stopUrl))
+            
+        except Exception as e:
+            print("parse download_traj msg has error, {}".format(e))
         
         try:
             binary_msg = BinaryData()
@@ -437,7 +446,7 @@ class Node_Handler(object):
             print("send download_traj req to trajectory_agent success!")
             self.download_Traj_wait_thread = threading.Timer(sys_config.TRAJECTORY_DOWNLOAD_WAIT_TIME, self.wait_traj_dl_succ)
             self.download_Traj_wait_thread.start()
-            self.system_event_report(code='ISYS_INIT_TRAJECTORY_START', desc=' trajectory download start')
+            self.system_event_report(code='ISYS_INIT_TRAJECTORY_START', desc=' start time {}'.format(time.time()))
         except Exception as e:
             print("pub download_traj req error:{}".format(e))
 
@@ -448,7 +457,7 @@ class Node_Handler(object):
         #@return {*}
         """
         print("trajectory download used {} sec, timeout!!!!".format(sys_config.TRAJECTORY_DOWNLOAD_WAIT_TIME))
-        self.system_event_report(code='ISYS_INIT_TRAJECTORY_TIMEOUT', desc=' trajectory download timeout')
+        self.system_event_report(code='ISYS_INIT_TRAJECTORY_TIMEOUT', desc=' timeout at {}'.format(time.time()))
 
 
     def pub_system_state_msg(self, msg='', code='', results=list(), actions=list(), level='info'):
@@ -539,10 +548,13 @@ class Node_Handler(object):
             dl_traj_result.ParseFromString(ros_msg.data)
             if dl_traj_result.sync_status == 1:
                 print("!!!! trajectory download failed!")
-                # self.system_event_report(code='ISYS_INIT_TRAJECTORY_FAILURE', desc=' trajectory download failed')
+                self.system_event_report(code='ISYS_INIT_TRAJECTORY_FAILURE', desc=' time at {}'.format(time.time()))
             elif dl_traj_result.sync_status == 0:
                 print("#### trajectory download success, can start autopolit!!")
-                # self.system_event_report(code='ISYS_INIT_TRAJECTORY_SUCCESS', desc=' trajectory download success')
+                self.system_event_report(code='ISYS_INIT_TRAJECTORY_SUCCESS', desc=' time at {}'.format(time.time()))
+                sys_globals.g_system_master_entity.set_sys_state_and_save(sys_globals.System_State.AUTO_PILOT_READY)
+            elif dl_traj_result.sync_state == 2:
+                self.system_event_report(code='ISYS_INIT_TRAJECTORY_WARNING', desc=' time at {}'.format(time.time()))
                 sys_globals.g_system_master_entity.set_sys_state_and_save(sys_globals.System_State.AUTO_PILOT_READY)
             else:
                 print("the result is undefined!")

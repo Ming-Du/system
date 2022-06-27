@@ -511,7 +511,7 @@ def load_logs(input_paths):
 def analyze_outside_node(callback, data, record):
     if callback["topic"] not in all_pub_msg:
         #print("no topic")
-        data["wrong"] = "on topic in pub"
+        data["wrong"] = "no topic {} in pub".format(callback['topic'])
         return
 
     if callback.get("uuid_wrong", False) == True:
@@ -565,7 +565,7 @@ def analyze_inside_node(pub, data, record):
 
     if "use_callback" not in pub or len(pub["use_callback"]) == 0:
         #print("no use_callback")
-        data["wrong"] = "can't find callback"
+        data["wrong"] = "can't find callback, node={}".format(pub['node'])
         return
     
     beg=None
@@ -603,7 +603,7 @@ def analyze_inside_node(pub, data, record):
         s_spend = pub["stime"] - callback["stime"]
         w_spend = pub["wtime"] - callback["wtime"]
         if w_spend > 2*1000000000:  # 2 sec
-            pdata["wrong"] = "w_spend>2 sec, cb tid:{} {} {}, pub tid:{} {} {}".format(callback["tid"], callback["thread"], callback["wtime"], pub["tid"], pub["thread"], pub["wtime"])
+            pdata["wrong"] = "w_spend>2 sec, cb tid:{} wt:{}, pub tid:{} wt:{}".format(callback["thread"], callback["wtime"], pub["thread"], pub["wtime"])
             continue
         idle_spend = call_pub_time - u_spend - s_spend - w_spend    
         u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/call_pub_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
@@ -893,12 +893,11 @@ def run():
         run_once()
         end = time.time()
         print('run_once used time {}'.format(end-start))
-        
-        g_topic_hz_handler.pub_topic_hz_once()
 
         sleep_time = 5 - (end - start)   # change form 2 to 5 by liyl 20220624
         if sleep_time > 0.3:
             time.sleep(sleep_time)
+        g_topic_hz_handler.pub_topic_hz_once()
 
 
 class NodeThread(threading.Thread):

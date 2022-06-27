@@ -101,7 +101,7 @@ class System_Master(object):
         json_msg = '{}'
         if sys_config.g_get_report_msg_config_by_pb:
             try:
-                json_msg = gen_report_msg(sys_globals.System_Msg_Report.SYSTEM_MASTER_PB_DEF_FILE, code, "/system_master")
+                json_msg = gen_report_msg(sys_globals.System_Msg_Report.SYSTEM_MASTER_PB_DEF_FILE, code, "/system_master", msg)
             except Exception as e:
                 print('Error: gen report msg failed!, {}'.format(e))
 
@@ -137,6 +137,9 @@ class System_Master(object):
         '''
         if sys_state is AUTO_PILOT_READY, system is RUNMNING, Autopilot can start, return True
         '''
+        if autopilot_act==1 and self.sys_state in (sys_globals.System_State.SYS_STARTING, sys_globals.System_State.SYS_FAULT):
+            print("Temp add at 20220621, sys state is {}, but allow autopilot cmd send")
+            return True
         if autopilot_act==1 and self.sys_state in (sys_globals.System_State.AUTO_PILOT_READY, sys_globals.System_State.MANUAL_PILOT_STATE):
             return True
         if not autopilot_act and self.sys_state in (sys_globals.System_State.AUTO_PILOT_RUNNING, sys_globals.System_State.REMOTE_PILOT_RUNNING):
@@ -183,12 +186,15 @@ class System_Master(object):
                 print("check system state return False")
                 if act and self.sys_state == sys_globals.System_State.SYS_STARTING:
                     self.node_handler_entity.system_event_report(code='ESYS_IN_INIT', desc=', system is starting')
+                elif act and self.sys_state == sys_globals.System_State.SYS_FAULT:
+                    print('sys fault because start timeout or reboot failed, not allow autopilot')
+                    self.node_handler_entity.system_event_report(code='ESYS_IN_INIT', desc=', system can not start')
                 elif act and self.sys_state == sys_globals.System_State.SYS_EXITING:
                     self.node_handler_entity.system_event_report(code='ESYS_IN_EXIT', desc=', system is exiting')
                 elif act==1 and self.sys_state in (sys_globals.System_State.REMOTE_PILOT_RUNNING, sys_globals.System_State.REMOTE_PILOT_STARTING):
                     self.node_handler_entity.system_event_report(code='ESYS_NOT_ALLOW_AUTOPILOT_FOR_REMOTE', desc=', system state have some fault')
                 elif act==2 and self.polit_state == 1:
-                    print("The pilot state is 1, can't start remote polit")
+                    print("The pilot state is 1, can't start remote polit, the version not allow takeover")
                     self.node_handler_entity.pub_status_to_parallel(0, self.polit_state, "autopilot already running!!!")
                 else:
                     pass
@@ -211,17 +217,16 @@ class System_Master(object):
             elif act == 1:
                 if self.auto_polit_wait_thread and self.auto_polit_wait_thread.isAlive():
                     self.auto_polit_wait_thread.cancel()
-                    self.set_sys_state_and_save(sys_globals.System_State.AUTO_PILOT_RUNNING)
                 elif not self.show_mode_flag:
                     print('polit mode change to 1 but no wait thread, unexpect!!')
+                self.set_sys_state_and_save(sys_globals.System_State.AUTO_PILOT_RUNNING)
             elif act == 2:
                 if self.remote_polit_wait_thread and self.remote_polit_wait_thread.isAlive():
                     self.remote_polit_wait_thread.cancel()
                     self.node_handler_entity.pub_status_to_parallel(1, act, "run parallel success!")
-                    self.set_sys_state_and_save(sys_globals.System_State.REMOTE_PILOT_RUNNING)
                 else:
                     print('polit mode change to 2 but no wait thread, unexpect!!')
-            
+                self.set_sys_state_and_save(sys_globals.System_State.REMOTE_PILOT_RUNNING)
 
         elif reason == sys_globals.System_State.STATE_CHANGE_BY_SYS_REBOOT_CMD:  # reboot
             self.set_sys_state_and_save(sys_globals.System_State.SYS_EXITING)
@@ -237,7 +242,6 @@ class System_Master(object):
         """
         if self.polit_state != 2:
             print('start remotepilot failed! while resp failed')
-            # self.set_sys_state_and_save(sys_globals.System_State.SYS_EXITING)  # the state 
             self.node_handler_entity.system_event_report(code='ESYS_REMOTEPILOT_FAILED', desc='')
             self.set_sys_state_and_save(sys_globals.System_State.MANUAL_PILOT_STATE)
             self.node_handler_entity.pub_status_to_parallel(0, self.polit_state, "start parallel timeout!")
@@ -245,7 +249,6 @@ class System_Master(object):
             self.set_sys_state_and_save(sys_globals.System_State.REMOTE_PILOT_RUNNING)
             print('The case should not ingress, there must have async error!')
             self.node_handler_entity.pub_status_to_parallel(1, self.polit_state, "run parallel success, when timeout!")
-        self.node_handler_entity.vehicle_state_entity.check_remotepilot_condition = False
 
 
     def wait_autopolit_succ(self):
@@ -257,7 +260,6 @@ class System_Master(object):
         
         if self.polit_state != 1:
             print('start autopilot failed! while check state')
-            # self.set_sys_state_and_save(sys_globals.System_State.SYS_EXITING)  # the state 
             self.node_handler_entity.system_event_report(code='ESYS_AUTOPILOT_FAILED', desc='')
             self.set_sys_state_and_save(sys_globals.System_State.MANUAL_PILOT_STATE)
             self.node_handler_entity.pub_system_diagnose_cmd()
@@ -347,15 +349,20 @@ class System_Master(object):
             self.agent_all_worked_wait_thread.cancel()
         if self.sys_state == sys_globals.System_State.SYS_STARTING:
             self.change_sys_state(reason=0, act=sys_globals.Agent_State.AGENT_NODES_WORKED)
+        elif self.sys_state == sys_globals.System_State.SYS_FAULT:
+            print('system state is fault,  but now all agent connect success, change state to Running!')
+            self.change_sys_state(reason=0, act=sys_globals.Agent_State.AGENT_NODES_WORKED)
 
     def all_node_stoped(self):
-        if self.node_spin_thread and self.node_spin_thread.isAlive():
+        if self.system_reboot_flag:
             ## not get roscore stopped msg
             print('allnode is shutdown, but master not stop!')
             self.stop_master_node()
-        else:
+        elif self.sys_state == sys_globals.System_State.SYS_EXITING:
             print('all rosnode stopped! here can start again')
             self.system_on_process()
+        else:
+            print('all rosnode stopped! but not by system reboot cmd')
 
     def handle_part_node_worked(self):
         """
@@ -371,7 +378,8 @@ class System_Master(object):
 
     def wait_agent_connect_timeout(self):
         print("!!!!! its 10 minites, have agent not connected")
-        self.set_sys_state_and_save(sys_globals.System_State.SYS_FAULT)
+        if not self.agent_handler_entity.all_agent_start_flag:
+            self.set_sys_state_and_save(sys_globals.System_State.SYS_FAULT)
 
     def run(self):
         if sys_config.g_local_test_flag and sys_config.g_test_without_agent:
@@ -382,8 +390,10 @@ class System_Master(object):
                     self.node_handler_entity.check_can_adapter_pub_msg()
                 time.sleep(1)
         else:
-            self.agent_all_worked_wait_thread = threading.Timer(sys_config.ALL_AGENT_WORKED_WAIT_TIME, self.wait_agent_connect_timeout)
-            self.agent_all_worked_wait_thread.start()
+            if self.sys_state == sys_globals.System_State.SYS_STARTING:
+                print('start by poweron, set agent connect timeout timer')
+                self.agent_all_worked_wait_thread = threading.Timer(sys_config.ALL_AGENT_WORKED_WAIT_TIME, self.wait_agent_connect_timeout)
+                self.agent_all_worked_wait_thread.start()
             self.agent_handler_entity.run()
             while True:
                 try:
