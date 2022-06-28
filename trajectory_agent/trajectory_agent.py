@@ -53,8 +53,9 @@ import uuid
 
 from sys import path
 import os
-path.append(os.path.dirname(__file__)+'/../mogo_reporter/script/')
-#sys.path.append('../mogo_reporter/script/')
+
+path.append(os.path.dirname(__file__) + '/../mogo_reporter/script/')
+# sys.path.append('../mogo_reporter/script/')
 from get_msg_by_code import gen_report_msg
 
 tree = lambda: collections.defaultdict(tree)
@@ -64,6 +65,8 @@ global_MaxTryTimes = 6
 globalProcessRequestPool = ThreadPoolExecutor(max_workers=2, thread_name_prefix='ProcessRequestPool')
 
 globalPubToSystemMasterStatus = rospy.Publisher("/trajectory_agent/cmd/status", BinaryData, queue_size=1000)
+
+globalDictTaskRunningStatus = {}
 
 
 class CacheUtils:
@@ -75,9 +78,11 @@ class CacheUtils:
         self.strDictSaveTime = "/home/mogo/data/trajectory_agent_cache_record.json"
         self.restoreIndex()
 
-    def WriteFileCacheInfo(self, lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timestampTraj,timestampStop,intModifyTime_Traj,intModifyTime_Stop):
+    def WriteFileCacheInfo(self, lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timestampTraj, timestampStop,
+                           intModifyTime_Traj, intModifyTime_Stop):
         print "process WriteFileCacheInfo: lLineId:{0}, strTrajUrl:{1}, strTrajMd5:{2},strStopUrl:{3},strStopMd5:{4},timestampTraj:{5},timestampStop:{6},intModifyTime_Traj:{7},intModifyTime_Stop:{8}".format(
-            lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timestampTraj,timestampStop,intModifyTime_Traj,intModifyTime_Stop)
+            lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timestampTraj, timestampStop, intModifyTime_Traj,
+            intModifyTime_Stop)
         try:
             strTrajName = "traj_{0}.csv".format(lLineId)
             print "strTrajName:{0}".format(strTrajName)
@@ -91,7 +96,7 @@ class CacheUtils:
             self.dictTrajectoryAgentRecord[strStopName]["url"] = strStopUrl
             self.dictTrajectoryAgentRecord[strStopName]["timestamp"] = timestampStop
             self.dictTrajectoryAgentRecord[strStopName]['md5'] = strStopMd5
-            self.dictTrajectoryAgentRecord[strStopName]['modify_time']=intModifyTime_Stop
+            self.dictTrajectoryAgentRecord[strStopName]['modify_time'] = intModifyTime_Stop
 
             print "=======================current dictTrajectoryAgentRecord:{0}".format(
                 json.dumps(self.dictTrajectoryAgentRecord))
@@ -244,13 +249,11 @@ def SaveEventToFile(msg='', code='', results=list(), actions=list(), level=''):
         }
         json_msg = json.dumps(msg_dict)
     try:
-        with open("/home/mogo/data/log/msg_log/trajectory_agent.json",'a+') as fp:
-            #print("write mogo report event: {}".format(json_msg))
+        with open("/home/mogo/data/log/msg_log/trajectory_agent.json", 'a+') as fp:
+            # print("write mogo report event: {}".format(json_msg))
             fp.write(json_msg + '\n')
     except Exception as e:
         print('Error: save report msg to file, {}'.format(e))
-
-
 
 
 g_CacheUtil = CacheUtils()
@@ -371,203 +374,231 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
         lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timestamp)
 
     intProcessRet = 0
+
+    if int(lLineId) < 0 or int(lLineId) == 0:
+        print "processFile recv para error line_id"
+        intProcessRet = 1
+
+    if len(strTrajUrl.strip()) == 0:
+        print "processFile recv para error strTrajUrl"
+        intProcessRet = 1
+
+    if len(strTrajMd5.strip()) == 0:
+        print "processFile recv para error strTrajMd5"
+        intProcessRet = 1
+
+    if len(strStopUrl.strip()) == 0:
+        print "processFile recv para error strStopUrl"
+        intProcessRet = 1
+
+    if len(strStopMd5.strip()) == 0:
+        print "processFile recv para error strStopMd5"
+        intProcessRet = 1
+
+
     global g_CacheUtil
-    intDownCompleteStopStatus = 0
-    intDownCompleteTrajStatus = 0
-    strStandardLocationFileStop = "/home/mogo/data/vehicle_monitor/MapEngine_data/track_record_data/JL/stop_{0}.txt".format(
-        lLineId)
-    strStandardLocationFileTraj = "/home/mogo/data/vehicle_monitor/MapEngine_data/track_record_data/JL/traj_{0}.csv".format(
-        lLineId)
 
-    strDownTempLocationFileStop = "/home/mogo/data/down_traj_agent_tmp/stop_{0}.txt".format(lLineId)
-    strDownTempLocationFileTraj = "/home/mogo/data/down_traj_agent_tmp/traj_{0}.csv".format(lLineId)
-    try:
-        ## check temp Download folder exists
-        strTempDownFolder = '/home/mogo/data/down_traj_agent_tmp/'
-        if os.path.isdir(strTempDownFolder) and os.access(strTempDownFolder, os.R_OK):
-            print "folder exists and is readable"
-        else:
-            print "folder not ready,now create path"
-            os.makedirs(strTempDownFolder)
-            print os.path.isdir(strTempDownFolder)
-            os.chmod(strTempDownFolder, 0777)
+    if intProcessRet == 0:
+        intDownCompleteStopStatus = 0
+        intDownCompleteTrajStatus = 0
+        strStandardLocationFileStop = "/home/mogo/data/vehicle_monitor/MapEngine_data/track_record_data/JL/stop_{0}.txt".format(
+            lLineId)
+        strStandardLocationFileTraj = "/home/mogo/data/vehicle_monitor/MapEngine_data/track_record_data/JL/traj_{0}.csv".format(
+            lLineId)
 
-        strTempDownFolder = '/home/mogo/data/vehicle_monitor/MapEngine_data/track_record_data/JL/'
-        if os.path.isdir(strTempDownFolder) and os.access(strTempDownFolder, os.R_OK):
-            print
-            "folder exists and is readable"
-        else:
-            print
-            "folder not ready,now create path"
-            os.makedirs(strTempDownFolder)
-            print
-            os.path.isdir(strTempDownFolder)
-            os.chmod(strTempDownFolder, 0777)
+        strDownTempLocationFileStop = "/home/mogo/data/down_traj_agent_tmp/stop_{0}.txt".format(lLineId)
+        strDownTempLocationFileTraj = "/home/mogo/data/down_traj_agent_tmp/traj_{0}.csv".format(lLineId)
+        try:
+            ## check temp Download folder exists
+            strTempDownFolder = '/home/mogo/data/down_traj_agent_tmp/'
+            if os.path.isdir(strTempDownFolder) and os.access(strTempDownFolder, os.R_OK):
+                print "folder exists and is readable"
+            else:
+                print "folder not ready,now create path"
+                os.makedirs(strTempDownFolder)
+                print os.path.isdir(strTempDownFolder)
+                os.chmod(strTempDownFolder, 0777)
 
-        ### check Downfile
-        while True:
-            # clear temp down load file
-            if os.path.exists(strDownTempLocationFileStop):
-                os.remove(strDownTempLocationFileStop)
-            if os.path.exists(strDownTempLocationFileTraj):
-                os.remove(strDownTempLocationFileTraj)
+            strTempDownFolder = '/home/mogo/data/vehicle_monitor/MapEngine_data/track_record_data/JL/'
+            if os.path.isdir(strTempDownFolder) and os.access(strTempDownFolder, os.R_OK):
+                print
+                "folder exists and is readable"
+            else:
+                print
+                "folder not ready,now create path"
+                os.makedirs(strTempDownFolder)
+                print
+                os.path.isdir(strTempDownFolder)
+                os.chmod(strTempDownFolder, 0777)
 
-            if not g_CacheUtil.CheckTrajFileCacheExists(lLineId, timestamp, strTrajMd5):
-                print "##########not g_CacheUtil.CheckTrajFileCacheExists(lLineId, timestamp, strTrajMd5)"
-                ## down to temp  location
-                intCheckStatus = 0
-                intCheckStatus = syncFromCloud(strTrajUrl, strTrajMd5, strDownTempLocationFileTraj)
-                if intCheckStatus == 0:
-                    intDownCompleteTrajStatus = 1
-                if intCheckStatus != 0:
-                    intDownCompleteTrajStatus = 2
-                    if os.path.exists(strStandardLocationFileTraj) == True:
-                        intDownCompleteTrajStatus = 3
+            ### check Downfile
+            while True:
+                # clear temp down load file
+                if os.path.exists(strDownTempLocationFileStop):
+                    os.remove(strDownTempLocationFileStop)
+                if os.path.exists(strDownTempLocationFileTraj):
+                    os.remove(strDownTempLocationFileTraj)
 
+                if not g_CacheUtil.CheckTrajFileCacheExists(lLineId, timestamp, strTrajMd5):
+                    print "##########not g_CacheUtil.CheckTrajFileCacheExists(lLineId, timestamp, strTrajMd5)"
+                    ## down to temp  location
+                    intCheckStatus = 0
+                    intCheckStatus = syncFromCloud(strTrajUrl, strTrajMd5, strDownTempLocationFileTraj)
+                    if intCheckStatus == 0:
+                        intDownCompleteTrajStatus = 1
+                    if intCheckStatus != 0:
+                        intDownCompleteTrajStatus = 2
+                        if os.path.exists(strStandardLocationFileTraj) == True:
+                            intDownCompleteTrajStatus = 3
 
-            # os._exit(-1)
+                # os._exit(-1)
 
-            if not g_CacheUtil.CheckStopFileCacheExists(lLineId, timestamp, strStopMd5):
-                print "##########not g_CacheUtil.CheckStopFileCacheExists(lLineId, timestamp, strStopMd5)"
-                ## down to temp  location
-                intCheckStatus = 0
-                intCheckStatus = syncFromCloud(strStopUrl, strStopMd5, strDownTempLocationFileStop)
-                if intCheckStatus == 0:
-                    intDownCompleteStopStatus = 1
-                if intCheckStatus != 0:
-                    intDownCompleteStopStatus = 2
-                    if os.path.exists(strStandardLocationFileStop) == True:
-                        intDownCompleteStopStatus = 3
-                print "strDownTempLocationFileStop:{0}".format(strDownTempLocationFileStop)
-                break
-            # os.__exit(-1)
+                if not g_CacheUtil.CheckStopFileCacheExists(lLineId, timestamp, strStopMd5):
+                    print "##########not g_CacheUtil.CheckStopFileCacheExists(lLineId, timestamp, strStopMd5)"
+                    ## down to temp  location
+                    intCheckStatus = 0
+                    intCheckStatus = syncFromCloud(strStopUrl, strStopMd5, strDownTempLocationFileStop)
+                    if intCheckStatus == 0:
+                        intDownCompleteStopStatus = 1
+                    if intCheckStatus != 0:
+                        intDownCompleteStopStatus = 2
+                        if os.path.exists(strStandardLocationFileStop) == True:
+                            intDownCompleteStopStatus = 3
+                    print "strDownTempLocationFileStop:{0}".format(strDownTempLocationFileStop)
+                    break
+                # os.__exit(-1)
 
-            if (g_CacheUtil.CheckTrajFileCacheExists(lLineId, timestamp, strTrajMd5) == True) and (
-                    os.path.exists(strStandardLocationFileTraj)):
-                intLocationTimeStamp = int(os.path.getmtime(strStandardLocationFileTraj))
+                if (g_CacheUtil.CheckTrajFileCacheExists(lLineId, timestamp, strTrajMd5) == True) and (
+                        os.path.exists(strStandardLocationFileTraj)):
+                    intLocationTimeStamp = int(os.path.getmtime(strStandardLocationFileTraj))
 
-                strTrajName="traj_{0}.csv".format(lLineId)
-                intCacheModifyNameTraj = g_CacheUtil.dictTrajectoryAgentRecord[strTrajName]['modify_time']
-                print "+++++++++++++++++++++++++++++intCacheModifyNameTraj:{0},intLocationTimeStamp:{1}".format(intCacheModifyNameTraj,intLocationTimeStamp)
-                while True:
-                    if intLocationTimeStamp == intCacheModifyNameTraj:
-                        # compare md5
-                        if checkFileMd5(strStandardLocationFileTraj) == strTrajMd5:
-                            print "##########intLocationTimeStamp == intCacheModifyNameTraj ,  checkFileMd5(strStandardLocationFileTraj) == " \
-                                  "strTrajMd5 "
-                            ### direct use
-                            intDownCompleteTrajStatus = 4
+                    strTrajName = "traj_{0}.csv".format(lLineId)
+                    intCacheModifyNameTraj = g_CacheUtil.dictTrajectoryAgentRecord[strTrajName]['modify_time']
+                    print "+++++++++++++++++++++++++++++intCacheModifyNameTraj:{0},intLocationTimeStamp:{1}".format(
+                        intCacheModifyNameTraj, intLocationTimeStamp)
+                    while True:
+                        if intLocationTimeStamp == intCacheModifyNameTraj:
+                            # compare md5
+                            if checkFileMd5(strStandardLocationFileTraj) == strTrajMd5:
+                                print "##########intLocationTimeStamp == intCacheModifyNameTraj ,  checkFileMd5(strStandardLocationFileTraj) == " \
+                                      "strTrajMd5 "
+                                ### direct use
+                                intDownCompleteTrajStatus = 4
+                                break
+
+                            if checkFileMd5(strStandardLocationFileTraj) != strTrajMd5:
+                                print "##########intLocationTimeStamp == intCacheModifyNameTraj, checkFileMd5(strStandardLocationFileTraj) != " \
+                                      "strTrajMd5 "
+                                ##  download file
+                                intCheckStatus = 0
+                                intCheckStatus = syncFromCloud(strTrajUrl, strTrajMd5, strDownTempLocationFileTraj)
+                                if intCheckStatus == 0:
+                                    intDownCompleteTrajStatus = 1
+                                if intCheckStatus != 0:
+                                    intDownCompleteTrajStatus = 2
+                                break
+                        if intLocationTimeStamp > intCacheModifyNameTraj:
+                            print "########## traj intLocationTimeStamp > intCacheModifyNameTraj"
+                            ## direct use
                             break
-
-                        if checkFileMd5(strStandardLocationFileTraj) != strTrajMd5:
-                            print "##########intLocationTimeStamp == intCacheModifyNameTraj, checkFileMd5(strStandardLocationFileTraj) != " \
-                                  "strTrajMd5 "
-                            ##  download file
-                            intCheckStatus = 0
-                            intCheckStatus = syncFromCloud(strTrajUrl, strTrajMd5, strDownTempLocationFileTraj)
-                            if intCheckStatus == 0:
-                                intDownCompleteTrajStatus = 1
-                            if intCheckStatus != 0:
-                                intDownCompleteTrajStatus = 2
+                        if intLocationTimeStamp < intCacheModifyNameTraj:
+                            print "########## traj intLocationTimeStamp < intCacheModifyNameTraj"
+                            ##direct use
                             break
-                    if intLocationTimeStamp > intCacheModifyNameTraj:
-                        print "########## traj intLocationTimeStamp > intCacheModifyNameTraj"
-                        ## direct use
                         break
-                    if intLocationTimeStamp < intCacheModifyNameTraj:
-                        print "########## traj intLocationTimeStamp < intCacheModifyNameTraj"
-                        ##direct use
+                if (g_CacheUtil.CheckStopFileCacheExists(lLineId, timestamp, strStopMd5) == True) and (
+                        os.path.exists(strStandardLocationFileStop)):
+                    intLocationTimeStamp = int(os.path.getmtime(strStandardLocationFileTraj))
+                    strStopName = "traj_{0}.csv".format(lLineId)
+                    intCacheModifyNameStop = g_CacheUtil.dictTrajectoryAgentRecord[strStopName]['modify_time']
+                    print "++++++++++++++++++++++++++++++intCacheModifyNameStop:{0},intLocationTimeStamp:{1}".format(
+                        intCacheModifyNameStop, intLocationTimeStamp)
+                    while True:
+                        if intLocationTimeStamp == intCacheModifyNameStop:
+                            # compare md5
+                            if checkFileMd5(strStandardLocationFileStop) == strStopMd5:
+                                print "##########intLocationTimeStamp == intCacheModifyNameStop , checkFileMd5(strStandardLocationFileStop) == strStopMd5"
+                                ### direct use
+                                intDownCompleteStopStatus = 4
+                                break
+
+                            if checkFileMd5(strStandardLocationFileStop) != strStopMd5:
+                                print "##########intLocationTimeStamp == intCacheModifyNameStop, checkFileMd5(strStandardLocationFileStop) != strStopMd5"
+                                ##  download file
+                                intCheckStatus = 0
+                                intCheckStatus = syncFromCloud(strStopUrl, strStopMd5, strDownTempLocationFileStop)
+                                if intCheckStatus == 0:
+                                    intDownCompleteStopStatus = 1
+                                if intCheckStatus != 0:
+                                    intDownCompleteStopStatus = 2
+                                break
+                        if intLocationTimeStamp > intCacheModifyNameStop:
+                            print "########## stop intLocationTimeStamp > intCacheModifyNameStop"
+                            ## direct use
+                            break
+                        if intLocationTimeStamp < intCacheModifyNameStop:
+                            print "########## stop intLocationTimeStamp < intCacheModifyNameStop"
+                            break
                         break
                     break
-            if (g_CacheUtil.CheckStopFileCacheExists(lLineId, timestamp, strStopMd5) == True) and (
-                    os.path.exists(strStandardLocationFileStop)):
-                intLocationTimeStamp = int(os.path.getmtime(strStandardLocationFileTraj))
-                strStopName = "traj_{0}.csv".format(lLineId)
-                intCacheModifyNameStop = g_CacheUtil.dictTrajectoryAgentRecord[strStopName]['modify_time']
-                print "++++++++++++++++++++++++++++++intCacheModifyNameStop:{0},intLocationTimeStamp:{1}".format(intCacheModifyNameStop,intLocationTimeStamp)
-                while True:
-                    if intLocationTimeStamp == intCacheModifyNameStop:
-                        # compare md5
-                        if checkFileMd5(strStandardLocationFileStop) == strStopMd5:
-                            print "##########intLocationTimeStamp == intCacheModifyNameStop , checkFileMd5(strStandardLocationFileStop) == strStopMd5"
-                            ### direct use
-                            intDownCompleteStopStatus = 4
-                            break
-
-                        if checkFileMd5(strStandardLocationFileStop) != strStopMd5:
-                            print "##########intLocationTimeStamp == intCacheModifyNameStop, checkFileMd5(strStandardLocationFileStop) != strStopMd5"
-                            ##  download file
-                            intCheckStatus = 0
-                            intCheckStatus = syncFromCloud(strStopUrl, strStopMd5, strDownTempLocationFileStop)
-                            if intCheckStatus == 0:
-                                intDownCompleteStopStatus = 1
-                            if intCheckStatus != 0:
-                                intDownCompleteStopStatus = 2
-                            break
-                    if intLocationTimeStamp > intCacheModifyNameStop:
-                        print "########## stop intLocationTimeStamp > intCacheModifyNameStop"
-                        ## direct use
-                        break
-                    if intLocationTimeStamp < intCacheModifyNameStop:
-                        print "########## stop intLocationTimeStamp < intCacheModifyNameStop"
-                        break
+                if os.path.exists(strStandardLocationFileStop) and os.path.exists(strStandardLocationFileTraj):
+                    intDownCompleteStopStatus = 3
+                    intDownCompleteTrajStatus = 3
                     break
                 break
-            if os.path.exists(strStandardLocationFileStop) and os.path.exists(strStandardLocationFileTraj):
-                intDownCompleteStopStatus = 3
-                intDownCompleteTrajStatus = 3
-                break
-            break
 
-        ## start replace  file
-        while True:
-            if (intDownCompleteTrajStatus == 1) and (intDownCompleteStopStatus == 1):
-                print "##########(intDownCompleteTrajStatus  == 1)  and  (intDownCompleteStopStatus == 1)"
-                # replace StandardPathFile
-                print "++++++++++=copy file str:{0},dst:{1}".format(strDownTempLocationFileStop,strStandardLocationFileStop)
-                print "++++++++++=copy file str:{0},dst:{1}".format(strDownTempLocationFileTraj,strStandardLocationFileTraj)
-                shutil.copyfile(strDownTempLocationFileStop, strStandardLocationFileStop)
-                shutil.copyfile(strDownTempLocationFileTraj, strStandardLocationFileTraj)
-                intLocationStampTraj = int(os.path.getmtime(strStandardLocationFileTraj))
-                intLocationStampStop = int(os.path.getmtime(strStandardLocationFileStop))
-                g_CacheUtil.WriteFileCacheInfo(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5,timestamp,timestamp,intLocationStampTraj,intLocationStampStop)
-                print "============================================================================================="
-                #SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(), level='info')
-                intProcessRet = 0
+            ## start replace  file
+            while True:
+                if (intDownCompleteTrajStatus == 1) and (intDownCompleteStopStatus == 1):
+                    print "##########(intDownCompleteTrajStatus  == 1)  and  (intDownCompleteStopStatus == 1)"
+                    # replace StandardPathFile
+                    print "++++++++++=copy file str:{0},dst:{1}".format(strDownTempLocationFileStop,
+                                                                        strStandardLocationFileStop)
+                    print "++++++++++=copy file str:{0},dst:{1}".format(strDownTempLocationFileTraj,
+                                                                        strStandardLocationFileTraj)
+                    shutil.copyfile(strDownTempLocationFileStop, strStandardLocationFileStop)
+                    shutil.copyfile(strDownTempLocationFileTraj, strStandardLocationFileTraj)
+                    intLocationStampTraj = int(os.path.getmtime(strStandardLocationFileTraj))
+                    intLocationStampStop = int(os.path.getmtime(strStandardLocationFileStop))
+                    g_CacheUtil.WriteFileCacheInfo(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timestamp,
+                                                   timestamp, intLocationStampTraj, intLocationStampStop)
+                    print "============================================================================================="
+                    # SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(), level='info')
+                    intProcessRet = 0
+                    break
+                if (intDownCompleteTrajStatus == 2) or (intDownCompleteStopStatus == 2):
+                    print "##########intDownCompleteTrajStatus == False   or  intDownCompleteStopStatus == False happend"
+                    print "============================================================================================="
+                    # SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_FAILURE', results=list(), actions=list(),level='info')
+                    intProcessRet = 1
+                    break
+                if (intDownCompleteTrajStatus == 3) and (intDownCompleteStopStatus == 3):
+                    print "##########remote traj not exists,now user local traj"
+                    print "============================================================================================="
+                    # SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_WARNING', results=list(), actions=list(),level='warn')
+                    intProcessRet = 2
+                    break
+                if (intDownCompleteTrajStatus == 4) and (intDownCompleteStopStatus == 4):
+                    print "########## traj same with cloud ,not need  update "
+                    print "============================================================================================="
+                    # SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(),level='info')
+                    intProcessRet = 0
+                    break
                 break
-            if (intDownCompleteTrajStatus == 2) or (intDownCompleteStopStatus == 2):
-                print "##########intDownCompleteTrajStatus == False   or  intDownCompleteStopStatus == False happend"
-                print "============================================================================================="
-                #SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_FAILURE', results=list(), actions=list(),level='info')
-                intProcessRet = 1
-                break
-            if (intDownCompleteTrajStatus == 3) and (intDownCompleteStopStatus == 3):
-                print "##########remote traj not exists,now user local traj"
-                print "============================================================================================="
-                #SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_WARNING', results=list(), actions=list(),level='warn')
-                intProcessRet = 2
-                break
-            if (intDownCompleteTrajStatus == 4 ) and (intDownCompleteStopStatus == 4):
-                 print "########## traj same with cloud ,not need  update "
-                 print "============================================================================================="
-                 #SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(),level='info')
-                 intProcessRet = 0
-                 break
-            break
 
 
 
-    except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():'
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        except Exception as e:
+            print "exception happend"
+            print e.message
+            print str(e)
+            print 'str(Exception):\t', str(Exception)
+            print 'str(e):\t\t', str(e)
+            print 'repr(e):\t', repr(e)
+            print 'e.message:\t', e.message
+            print 'traceback.print_exc():'
+            traceback.print_exc()
+            print 'traceback.format_exc():\n%s' % (traceback.format_exc())
     return intProcessRet
 
 
@@ -614,6 +645,12 @@ def call_process(msg):
         rosMessage.data = strBuffer
         rosMessage.size = len(strBuffer)
         globalPubToSystemMasterStatus.publish(rosMessage)
+        global globalDictTaskRunningStatus
+        if globalDictTaskRunningStatus.has_key(int(lLineId)):
+            print "success delete key from  globalDictTaskRunningStatus: {0}".format(int(lLineId))
+            del globalDictTaskRunningStatus[int(lLineId)]
+            print "now  display globalDictTaskRunningStatus:{0}".format(json.dumps(globalDictTaskRunningStatus))
+
 
     except Exception as e:
         print "exception happend"
@@ -630,8 +667,21 @@ def call_process(msg):
 
 def topicMsgCallback(msg):
     print "--------------------------------------------------recv from channel /trajectory_agent/cmd/transaction "
+    global globalDictTaskRunningStatus
     if msg.size > 0:
-        globalProcessRequestPool.submit(call_process, msg)
+        pbLine = common_message_pad_pb2.TrajectoryDownloadReq()
+        pbLine.ParseFromString(msg.data)
+        lLineId = pbLine.line.lineId
+        if globalDictTaskRunningStatus.has_key(lLineId):
+            print "---------recv Task ---ignore---------globalDictTaskRunningStatus has same lineId:{0} ,ingore execute task".format(
+                int(lLineId))
+            pass
+        else:
+            print "---------recv Task ---recv---------globalDictTaskRunningStatus not  has same lineId:{0} ,execute task".format(
+                int(lLineId))
+            globalDictTaskRunningStatus[lLineId] = 0
+            globalProcessRequestPool.submit(call_process, msg)
+        print "current globalDictTaskRunningStatus:{0}".format(json.dumps(globalDictTaskRunningStatus))
 
 
 def addLocalizationListener():
