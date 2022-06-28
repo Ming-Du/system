@@ -122,6 +122,9 @@ class System_Msg_Report():
         'ISYS_TOPIC_FREQ_NORMAL': ['all topic frequency normal',[],[]],
         'ISYS_INIT_TRAJECTORY_START': ['start trajectory download',[],[]],
         'ISYS_INIT_TRAJECTORY_TIMEOUT': ['trajectory download timeout',[],[]],
+        'ISYS_INIT_TRAJECTORY_SUCCESS': ['trajectory download success',[],[]],
+        'ISYS_INIT_TRAJECTORY_FAILURE': ['trajectory download failed',[],[]],
+        'ISYS_INIT_TRAJECTORY_WARNING': ['trajectory download failed, but used local file',[],[]],
         'ILCT_RTK_STATUS_NORMAL': ['rtk status is normal',[],[]], ## used in MAP_V250
         'ISYS_RTK_STATUS_NORMAL': ['rtk status is effective',[],[]]  ## used in MAP_V240
     }

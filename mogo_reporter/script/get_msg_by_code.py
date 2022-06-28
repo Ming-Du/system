@@ -8,7 +8,7 @@ from google.protobuf import text_format
 from mogo_report_codes_pb2 import ReportMsgList, ReportMsgCode
 
 
-def gen_report_msg(pb_name, code, src="test"):
+def gen_report_msg(pb_name, code, src="test", org_msg=''):
 
   path=os.path.dirname(os.path.abspath(__file__))+'/../config/'+os.path.basename(pb_name)
   if not os.path.exists(path):
@@ -49,7 +49,7 @@ def gen_report_msg(pb_name, code, src="test"):
     ret["src"] = src
     ret["level"] = level
     ret["code"] = ReportMsgCode.Name(msg_tar.code)
-    ret["msg"] = msg_tar.msg
+    ret["msg"] = msg_tar.msg + '; ' + org_msg
     ret["result"] = []
     for it in msg_tar.result:
       ret["result"].append(it)

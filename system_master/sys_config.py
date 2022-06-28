@@ -9,7 +9,7 @@
 """
 
 
-SYSTRM_MASTER_VERSION = "MAP-V2.5.0(MASTER-V1.0.4)"
+SYSTRM_MASTER_VERSION = "MAP-V2.5.0(MASTER-V1.0.5)"
 
 g_local_test_flag = False  # if local test, not in car, can set it Ture
 
@@ -47,8 +47,8 @@ Minitor_Topic_Dict = {
     #'/planning/leader': 10,
     '/chassis/command': 100,
     '/telematics/light': 2,
-    '/hadmap_engine/map_msg': 10,
-    '/hadmap_engine/lanes_msg': 10,
+    #'/hadmap_engine/map_msg': 10,
+    #'/hadmap_engine/lanes_msg': 10,
     '/perception/camera/camera_obstacle': 20,
     '/perception/lidar/lidar_obstacle': 10
     #'/perception/camera/trfclts_state': 20,
