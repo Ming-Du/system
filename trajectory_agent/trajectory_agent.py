@@ -74,7 +74,7 @@ class CacheUtils:
     strDictSaveTime = None
 
     def __init__(self):
-        self.dictTrajectoryAgentRecord = tree()
+        self.dictTrajectoryAgentRecord = {}
         self.strDictSaveTime = "/home/mogo/data/trajectory_agent_cache_record.json"
         self.restoreIndex()
 
@@ -84,27 +84,32 @@ class CacheUtils:
             lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timestampTraj, timestampStop, intModifyTime_Traj,
             intModifyTime_Stop)
         try:
+            trajDict = {}
+            stopDict = {}
             strTrajName = "traj_{0}.csv".format(lLineId)
             print "strTrajName:{0}".format(strTrajName)
-            self.dictTrajectoryAgentRecord[strTrajName]['url'] = strTrajUrl
-            self.dictTrajectoryAgentRecord[strTrajName]['timestamp'] = timestampTraj
-            self.dictTrajectoryAgentRecord[strTrajName]['md5'] = strTrajMd5
-            self.dictTrajectoryAgentRecord[strTrajName]['modify_time'] = intModifyTime_Traj
+            trajDict['url'] = strTrajUrl
+            trajDict['timestamp'] = timestampTraj
+            trajDict['md5'] = strTrajMd5
+            trajDict['modify_time'] = intModifyTime_Traj
+            self.dictTrajectoryAgentRecord[strTrajName] = trajDict
 
             strStopName = "stop_{0}.txt".format(lLineId)
             print "strStopName:{0}".format(strStopName)
-            self.dictTrajectoryAgentRecord[strStopName]["url"] = strStopUrl
-            self.dictTrajectoryAgentRecord[strStopName]["timestamp"] = timestampStop
-            self.dictTrajectoryAgentRecord[strStopName]['md5'] = strStopMd5
-            self.dictTrajectoryAgentRecord[strStopName]['modify_time'] = intModifyTime_Stop
+            stopDict["url"] = strStopUrl
+            stopDict["timestamp"] = timestampStop
+            stopDict['md5'] = strStopMd5
+            stopDict['modify_time'] = intModifyTime_Stop
+            self.dictTrajectoryAgentRecord[strStopName] = stopDict
 
             print "=======================current dictTrajectoryAgentRecord:{0}".format(
                 json.dumps(self.dictTrajectoryAgentRecord))
 
-            with open(self.strDictSaveTime, 'w') as f:
-                json.dump(self.dictTrajectoryAgentRecord, f)
-                print "flush file"
-                f.close()
+            # with open(self.strDictSaveTime, 'w') as f:
+            #     json.dump(self.dictTrajectoryAgentRecord, f)
+            #     print "flush file"
+            #     f.close()
+            json.dump(self.dictTrajectoryAgentRecord, open(self.strDictSaveTime, 'w'))
 
 
         except Exception as e:
@@ -171,16 +176,19 @@ class CacheUtils:
         try:
             strFileName = self.strDictSaveTime
             if os.path.exists(strFileName):
-                with open(strFileName) as f:
-                    line = f.readline()
-                    self.dictTrajectoryAgentRecord = json.loads(line)
-                    print "restore index:{0}".format(line)
-                    print type(line)
-                    # self.dictCurrentIndex = json.loads(line)
-                    # print "load success file"
-                    f.close()
-                    if len(self.dictTrajectoryAgentRecord) > 0:
-                        print "restore success"
+                self.dictTrajectoryAgentRecord = json.load(open(strFileName, 'r'))
+                # with open(strFileName) as f:
+                #     line = f.readline()
+                #     self.dictTrajectoryAgentRecord = json.loads(line)
+                #     print "restore index:{0}".format(line)
+                #     print type(line)
+                #     # self.dictCurrentIndex = json.loads(line)
+                #     # print "load success file"
+                #     f.close()
+                if len(self.dictTrajectoryAgentRecord) > 0:
+                    print "restore success"
+                    print "content:{0}".format(json.dumps(self.dictTrajectoryAgentRecord))
+                    #print "dict:{0}".format(self.dictTrajectoryAgentRecord)
             else:
                 print "break point not exists: {0}".format(strFileName)
         except Exception as e:
@@ -394,7 +402,6 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
     if len(strStopMd5.strip()) == 0:
         print "processFile recv para error strStopMd5"
         intProcessRet = 1
-
 
     global g_CacheUtil
 
