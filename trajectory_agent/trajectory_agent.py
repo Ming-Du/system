@@ -128,9 +128,7 @@ class CacheUtils:
         bExists = True
         try:
             strStopName = "stop_{0}.txt".format(lLineId)
-            if (self.dictTrajectoryAgentRecord.has_key(strStopName)) and (
-                    self.dictTrajectoryAgentRecord[strStopName]['timestamp'] == timestamp) and \
-                    (self.dictTrajectoryAgentRecord[strStopName]['md5'] == strStopMd5):
+            if self.dictTrajectoryAgentRecord.has_key(strStopName):
                 bExists = True
             else:
                 bExists = False
@@ -152,9 +150,7 @@ class CacheUtils:
         bExists = True
         try:
             strTrajName = "traj_{0}.csv".format(lLineId)
-            if (self.dictTrajectoryAgentRecord.has_key(strTrajName)) and (
-                    self.dictTrajectoryAgentRecord[strTrajName]['timestamp'] == timestamp) and \
-                    (self.dictTrajectoryAgentRecord[strTrajName]['md5'] == strTrajMd5):
+            if self.dictTrajectoryAgentRecord.has_key(strTrajName):
                 bExists = True
             else:
                 bExists = False
