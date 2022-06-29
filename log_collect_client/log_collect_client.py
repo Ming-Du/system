@@ -50,7 +50,8 @@ def run():
         run_once()
         end = time.time()
 
-        time.sleep(1.0 - (end - start))
+        if 1 > end - start:
+            time.sleep(1.0 - (end - start))
 
 def main():
     run()
