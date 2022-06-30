@@ -252,6 +252,7 @@ def update_one_log(one):
         if one["uuid"] in all_pub_msg[one["topic"]]:
             #print("uuid exist")
             one["uuid_wrong"] = True
+            return
 
         if node_config[one["node"]].get('man_beg','') != '':
             tag = node_config[one["node"]].get('man_beg')
@@ -285,6 +286,7 @@ def update_one_log(one):
         if one["uuid"] in all_sub_msg[one["topic"]]:
             #print("uuid exist")  dxc
             one["uuid_wrong"] = True
+            return
         all_sub_msg[one["topic"]][one["uuid"]] = one
 
     elif one["type"] == 2:
@@ -312,7 +314,7 @@ def update_one_log(one):
         if one["uuid"] in all_man_tag_end[one["tag"]]:
             #print("uuid exist")
             one["uuid_wrong"] = True
-        
+            return        
         all_man_tag_end[one["tag"]][one["uuid"]] = one  # only 2D_front used end, contact by ident
     else:
         return
@@ -432,22 +434,23 @@ def load_one_log_by_time(ros_time_paths, remote_paths):
         for line in lines:
             sec_stamp = line.split('.')[0].split('[')[-1]
             if sec_stamp:
-                if not g_test_mode and int(sec_stamp) < g_time_start_value: # alread handle
-                    continue
-    
-                if int(sec_stamp) < g_time_split_value:
-                    start = line.find("#key-log#", 0, 128)
-                    if start == -1:
+                try:
+                    if not g_test_mode and int(sec_stamp) < g_time_start_value: # alread handle
                         continue
-                    try:
+        
+                    if int(sec_stamp) < g_time_split_value:
+                        start = line.find("#key-log#", 0, 128)
+                        if start == -1:
+                            continue
+                    
                         one = json.loads(line[start+9:])
                         update_one_log(one)
-                    except Exception as e:
-                        print("the log {} in file {} is unexpect style! {}".format(line[start+9:], path, e))
-                        continue
+                    else:
+                        break
+                except Exception as e:
+                    print("the log {} in file {} is unexpect style! {}".format(line[start+9:], path, e))
+                    continue
                     
-                else:
-                    break
 
 
 @get_time_used
@@ -463,6 +466,8 @@ def load_logs(input_paths):
         st_mtime = 0
         for path in input_paths:
             stat = os.stat(path)
+            if 'ros_time' in path:
+                continue
             if st_atime > stat.st_atime:
                 st_atime = stat.st_atime
             if st_mtime <  stat.st_mtime:
@@ -517,7 +522,7 @@ def analyze_outside_node(callback, data, record):
     if callback.get("uuid_wrong", False) == True:
         #print("uuid wrong 1")
         #print(callback)
-        data["wrong"] = "uuid wrong"
+        data["wrong"] = "uuid wrong, sub {}".format(callback['topic'])
         return
 
     if callback["uuid"] not in all_pub_msg[callback["topic"]]:
@@ -529,7 +534,7 @@ def analyze_outside_node(callback, data, record):
     if pub.get("uuid_wrong", False) == True:
         #print("uuid wrong 2")
         #print(pub)
-        data["wrong"] = "uuid wrong"
+        data["wrong"] = "uuid wrong, pub {}".format(pub['topic'])
         return
 
     pub_recv_time = callback["recv_stamp"] - pub["stamp"]
@@ -591,7 +596,7 @@ def analyze_inside_node(pub, data, record):
             #print("uuid wrong 3")
             #print(pub)
             #print(callback)
-            pdata["wrong"] = "uuid wrong"
+            pdata["wrong"] = "uuid wrong, topic {}".format(pub['topic'])
             continue
 
         call_pub_time = pub["stamp"] - callback["stamp"]
