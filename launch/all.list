@@ -1,3 +1,4 @@
+trajectory_agent trajectory_agent.launch
 launch drivers_gnss.launch
 launch drivers_camera.launch
 launch drivers_lidar.launch

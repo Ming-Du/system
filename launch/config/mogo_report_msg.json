@@ -1,47 +1,31 @@
 {
-    "EINIT_SYSKERNAL": {
+    
+    "EINIT_LOST_FILE":{
         "level": "error",
-        "code": "EINIT_SYSKERNAL",
+        "code": "EINIT_LOST_FILE",
         "result": [
-            "RESULT_XAVIER_MALFUNCTION",
-            "RESULT_AUTOPILOT_INFERIOR"
+            "RESULT_AUTOPILOT_SYSTEM_UNSTARTED",
+            "RESULT_AUTOPILOT_DISABLE",
+            "RESULT_REMOTEPILOT_DISABLE"
         ],
         "action": [
-            "ACTION_CONTACT_MAINTENANCE"
-        ]
-    },
-    "EINIT_CAMRA_DRIVER":{
-        "level": "error",
-        "code": "EINIT_CAMRA_DRIVER",
-        "result": [
-            "RESULT_AUTOPILOT_INFERIOR"
-        ],
-        "action": [
-            "ACTION_CONTACT_MAINTENANCE"
-        ]
-    },
-    "EINIT_UPDATE":{
-        "level": "error",
-        "code": "EINIT_UPDATE",
-        "result": [
-            "RESULT_AUTOPILOT_INFERIOR",
-            "RESULT_AUTOPILOT_DISABLE"
-        ],
-        "action": [
-            "ACTION_CHECK_NETWORK"
-        ]
-    },
-    "EINIT_BOOT":{
-        "level": "error",
-        "code": "EINIT_BOOT",
-        "result": [
-            "RESULT_AUTOPILOT_INFERIOR",
-            "RESULT_AUTOPILOT_DISABLE"
-        ],
-        "action": [
-            "ACTION_REBOOT_VEHICLE",
             "ACTION_CONTACT_TECH_SUPPORT"
         ]
+    },
+    "EAGENT_FATAL":{
+        "level": "error",
+        "code": "EAGENT_FATAL",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE",
+            "RESULT_AUTOPILOT_INFERIOR"
+        ],
+        "action": [
+            "ACTION_CONTACT_TECH_SUPPORT"
+        ]
+    },
+    "EAGENT_MASTER_COMMAND_HANDLER_FAILED":{
+        "level": "error",
+        "code": "EAGENT_MASTER_COMMAND_HANDLER_FAILED"
     },
     "EHW_LIDAR":{
         "level": "error",
@@ -122,20 +106,9 @@
             "ACTION_REBOOT_VEHICLE"
         ]
     },
-    "EMAP_TOPIC":{
+    "EMAP_TRA_NOT_EXIST":{
         "level": "error",
-        "code": "EMAP_NODE",
-        "result": [
-            "RESULT_AUTOPILOT_DISABLE",
-            "RESULT_AUTOPILOT_INFERIOR"
-        ],
-        "action": [
-            "ACTION_CONTACT_TECH_SUPPORT"
-        ]
-    },
-    "EMAP_TRA":{
-        "level": "error",
-        "code": "EMAP_TRA",
+        "code": "EMAP_TRA_NOT_EXIST",
         "result": [
             "RESULT_AUTOPILOT_DISABLE"
         ],
@@ -151,42 +124,78 @@
         ],
         "action": [
             "ACTION_HANDLE_VEHICLE_TURN_GEAR",
-            "ACTION_AGAIN"
-        ]
-    },
-    "EVHC_TYPE_UNDEFINED":{
-        "level": "error",
-        "code": "EVHC_TYPE_UNDEFINED",
-        "result": [
-            "RESULT_AUTOPILOT_SYSTEM_UNSTARTED",
-            "RESULT_AUTOPILOT_DISABLE"
-        ],
-        "action": [
-            "ACTION_CONTACT_TECH_SUPPORT",
-            "ACTION_CONTACT_MAINTENANCE"
-        ]
-    },
-    "EVHC_POS":{
-        "level": "error",
-        "code": "EVHC_POS",
-        "result": [
-            "RESULT_AUTOPILOT_DISABLE"
-        ],
-        "action": [
-            "ACTION_HANDLE_VEHICLE_MOVE",
-            "ACTION_AGAIN",
-            "ACTION_CONTACT_TECH_SUPPORT"
+            "ACTION_TRY_AGAIN_LATER"
         ]
     },
     "EVHC_CSS":{
         "level": "error",
         "code": "EVHC_CSS",
         "result": [
+            "RESULT_AUTOPILOT_DISABLE",
+            "RESULT_REMOTEPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_REBOOT_VEHICLE",
+            "ACTION_REPAIR_VEHICLE"
+        ]
+    },
+    "EMAP_HADMAP_NO_TRAJECTORY":{
+        "level": "error",
+        "code": "EMAP_HADMAP_NO_TRAJECTORY",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_CONTACT_TECH_SUPPORT"
+        ]
+    },
+    "EMAP_HADMAP_PLANNING_NO_TRAJECTORY":{
+        "level": "error",
+        "code": "EMAP_HADMAP_PLANNING_NO_TRAJECTORY",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_CONTACT_TECH_SUPPORT"
+        ]
+    },
+    "EMAP_CONTROL_ABNORMAL_COMMAND":{
+        "level": "error",
+        "code": "EMAP_CONTROL_ABNORMAL_COMMAND",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_CONTACT_TECH_SUPPORT"
+        ]
+    },
+    "EMAP_CAN_ADAPTER_NO_CHASSIS_INFO":{
+        "level": "error",
+        "code": "EMAP_CAN_ADAPTER_NO_CHASSIS_INFO",
+        "result": [
             "RESULT_AUTOPILOT_DISABLE"
         ],
         "action": [
             "ACTION_REBOOT_VEHICLE"
         ]
+    },
+    "ESYS_TOPIC_FREQ_DROPED":{
+        "level": "error",
+        "code": "ESYS_TOPIC_FREQ_DROPED",
+        "result": [
+            "RESULT_AUTOPILOT_INFERIOR"
+        ]
+    },
+    "ESYS_RTK_STATUS_FAULT":{
+        "level": "error",
+        "code": "ESYS_RTK_STATUS_FAULT",
+        "result": [
+            "RESULT_AUTOPILOT_INFERIOR"
+        ]
+    },
+    "IINIT_BOOST": {
+        "level": "info",
+        "code": "IINIT_BOOST"
     },
     "IINIT_TIME_SYNC": {
         "level": "info",
@@ -196,40 +205,16 @@
         "level": "info",
         "code": "IINIT_SENSOR_NORMAL"
     },
-    "IINIT_VERSION": {
-        "level": "info",
-        "code": "IINIT_VERSION"
-    },
-    "IBOOT_LOCAL_NODES_STATUS": {
-        "level": "info",
-        "code": "IBOOT_LOCAL_NODES_STATUS"
-    },
-    "IBOOT_CONFIG_UPDATE": {
-        "level": "info",
-        "code": "IBOOT_CONFIG_UPDATE"
-    },
     "IBOOT_MAP_STARTED": {
         "level": "info",
         "code": "IBOOT_MAP_STARTED"
     },
-    "IMAP_START_TIME": {
+    "IMAP_TRA_LOADED": {
         "level": "info",
-        "code": "IMAP_START_TIME"
+        "code": "IMAP_TRA_LOADED"
     },
-    "IMAP_STYLE_TRACKING": {
+    "IAGENT_EXECUTE_MASTER_COMMAND": {
         "level": "info",
-        "code": "IMAP_STYLE_TRACKING"
-    },
-    "IMAP_CONTROL_COMMAND": {
-        "level": "info",
-        "code": "IMAP_CONTROL_COMMAND"
-    },
-    "IMAP_CHASSIS_STATUS": {
-        "level": "info",
-        "code": "IMAP_CHASSIS_STATUS"
-    },
-    "IMAP_GPS_STATUS": {
-        "level": "info",
-        "code": "IMAP_GPS_STATUS"
+        "code": "IAGENT_EXECUTE_MASTER_COMMAND"
     }
 }

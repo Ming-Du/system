@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+message DDateTime_PB {
+   optional int64 year = 1;
+   optional int64 month = 2;
+   optional int64 day = 3;
+   optional int64 hour = 4;
+   optional int64 minute = 5;
+   optional int64 second = 6;
+   optional int64 offset = 7;	
+}

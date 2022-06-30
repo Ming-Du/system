@@ -1,0 +1,30 @@
+syntax = "proto2";
+
+import "String_PB.proto";
+import "Position3D_PB.proto";
+import "PositionOffsetLLV_PB.proto";
+import "PositionConfidenceSet_PB.proto";
+import "TransmissionState_PB.proto";
+import "MotionConfidenceSet_PB.proto";
+import "AccelerationSet4Way_PB.proto";
+import "VehicleSize_PB.proto";
+import "VehicleClassification_PB.proto";
+
+message RSM_ParticipantData_PB {
+    required	int64  ptcType = 1;
+	required	int64  ptcId = 2;
+	required	int64  source = 3;
+	optional	String_PB  id = 4;
+	required	int64  secMark = 5;
+	required	PositionOffsetLLV_PB pos = 6;
+	required	PositionConfidenceSet_PB  posConfidence = 7;
+	optional	TransmissionState_PB transmission = 8;
+	required	int64  speed = 9;
+	required	int64  heading = 10;
+	optional	int32  angle = 11;
+	optional	MotionConfidenceSet_PB  motionCfd = 12;
+	optional	AccelerationSet4Way_PB  accelSet = 13;
+	required	VehicleSize_PB size = 14;
+	optional	VehicleClassification_PB  vehicleClass = 15;
+		
+} 

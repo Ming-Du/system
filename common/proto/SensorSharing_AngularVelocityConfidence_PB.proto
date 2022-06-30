@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+
+message SensorSharing_AngularVelocityConfidence_PB {
+	enum SensorSharing_AngularVConfidence_PB {
+		SensorSharing_AngularVConfidence_unavailable	= 0;
+		SensorSharing_AngularVConfidence_prec100deg	= 1;
+		SensorSharing_AngularVConfidence_prec10deg	= 2;
+		SensorSharing_AngularVConfidence_prec5deg	= 3;
+		SensorSharing_AngularVConfidence_prec1deg	= 4;
+		SensorSharing_AngularVConfidence_prec0_1deg	= 5;
+		SensorSharing_AngularVConfidence_prec0_05deg	= 6;
+		SensorSharing_AngularVConfidence_prec0_01deg	= 7;
+	};
+	required int64 pitchRate = 1;
+	required int64 rollRate = 2;
+	required int64 yawRate = 3;
+} 

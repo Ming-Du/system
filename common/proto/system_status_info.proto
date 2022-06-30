@@ -1,0 +1,47 @@
+syntax = "proto2";
+
+package system_master;
+
+enum SystemState {
+    SYS_STARTING = 0;
+    SYS_RUNNING = 1;
+    SYS_EXITING = 2;
+    SYS_FAULT = 3;
+    PILOT_READY = 4;
+    AUTO_PILOT_STARTING = 5;
+    AUTO_PILOT_RUNNING = 6;
+    REMOTE_PILOT_STARTING = 7;
+    REMOTE_PILOT_RUNNING = 8;
+}
+
+enum HealthState {
+    NORMAL = 0;
+    FAULT = 1;
+    UNKNOW = 2;
+}
+
+message HealthInfo{
+    required string name = 1;            //node name
+    required HealthState state = 2;      //health state
+    optional string code = 3;            //code 与系统事件错误码对应，如有该错误填写，没有不填
+    optional string desc = 4;            //补充描述，用于未知情况
+}
+
+message TopicInfo{
+    optional string name = 1;       //topic name
+    optional int32 hz = 2;          
+    // optional int32 max_delay = 3;   //unit： msec
+}
+
+message DropTopic{
+    required int32 sum = 1;         //dropped topic sum
+    repeated TopicInfo topic = 2;
+}
+
+
+message StatusInfo {
+    required SystemState sys_state=1;        // 当前消息状态
+    repeated HealthInfo health_info=2;       // 健康检查状态信息 
+    optional DropTopic topic_drop_info=3;    // topic 掉频信息， 如有掉频添加没有不添加
+    optional string reserved = 4;            // 预留可选字段，用于接口扩充或者，其他信息补充
+}

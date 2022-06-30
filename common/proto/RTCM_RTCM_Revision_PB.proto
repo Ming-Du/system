@@ -1,0 +1,28 @@
+syntax = "proto2";
+
+message RTCM_RTCM_Revision_PB {
+	enum RTCM_RTCM_Revision {
+	RTCM_RTCM_Revision_unknown	= 0;
+	RTCM_RTCM_Revision_reserved	= 1;
+	RTCM_RTCM_Revision_rtcmCMR	= 2;
+	RTCM_RTCM_Revision_rtcmCMR_Plus	= 3;
+	RTCM_RTCM_Revision_rtcmSAPOS	= 4;
+	RTCM_RTCM_Revision_rtcmSAPOS_Adv	= 5;
+	RTCM_RTCM_Revision_rtcmRTCA	= 6;
+	RTCM_RTCM_Revision_rtcmRAW	= 7;
+	RTCM_RTCM_Revision_rtcmRINEX	= 8;
+	RTCM_RTCM_Revision_rtcmSP3	= 9;
+	RTCM_RTCM_Revision_rtcmBINEX	= 10;
+	RTCM_RTCM_Revision_rtcmRev2_x	= 19;
+	RTCM_RTCM_Revision_rtcmRev2_0	= 20;
+	RTCM_RTCM_Revision_rtcmRev2_1	= 21;
+	RTCM_RTCM_Revision_rtcmRev2_3	= 23;
+	RTCM_RTCM_Revision_rtcmRev3_0	= 30;
+	RTCM_RTCM_Revision_rtcmRev3_1	= 31;
+	RTCM_RTCM_Revision_rtcmRev3_2	= 32;
+	/*
+	 * Enumeration is extensible
+	 */
+	};
+    optional	RTCM_RTCM_Revision  rev = 1;
+} 

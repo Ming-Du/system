@@ -1,0 +1,9 @@
+__init__.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
+nodeprocess.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
+pmon.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
+config.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
+parent.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
+xmlloader.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
+launch.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
+mogo_msg.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
+mogo_report_msg.json /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/

@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+import  "DDateTime_PB.proto";
+import  "Position3D_PB.proto";
+import  "TransmissionState_PB.proto";
+import  "PositionConfidenceSet_PB.proto";
+import  "MotionConfidenceSet_PB.proto";
+import  "TimeConfidence_PB.proto";
+
+message FullPositionVector_PB {
+    
+    optional   DDateTime_PB   utctime=1;
+    required   Position3D_PB   pos=2;
+    optional   int64           heading=3;
+    optional  TransmissionState_PB            transmission=4;
+    optional   int32           speed=5;
+    
+    optional PositionConfidenceSet_PB    posAccuracy=6;
+    optional TimeConfidence_PB        timeConfidence=7;
+    optional PositionConfidenceSet_PB      posConfidence=8;
+    optional MotionConfidenceSet_PB    motionCfd=9;
+}

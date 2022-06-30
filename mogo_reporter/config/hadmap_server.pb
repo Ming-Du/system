@@ -3,11 +3,6 @@ info {
   msg: "轨迹文件加载成功"
 }
 
-info {
-  code: IMAP_TRA_ROUTING
-  msg: "算路成功"
-}
-
 error
 {
   code: EMAP_TRA_LOAD_FAILED

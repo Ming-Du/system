@@ -41,3 +41,16 @@ bool location_missing
 bool trajectory_missing
 bool chassis_status_missing
 bool brake_light_status
+float64 leftfrontwheelangle
+float64 leftfrontwheelangle_mean_filter
+float64 rightfrontwheelangle
+float64 rightfrontwheelangle_mean_filter
+float64 frontwheel_avg_angle_mean_filter
+float64 steer_angle_delt
+float64 TargetSteerAngleFrontWheel
+float64 Err_SteerAngleFrontWheel
+float64 TargetSteerAngleEPS
+float64 x_center
+float64 y_center
+float64 x_front_center
+float64 y_front_center

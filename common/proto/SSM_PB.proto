@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package common;
+
+import "header.proto";
+import "SensorSharingMsg_PB.proto";
+
+
+message SSM_PB {
+	required SensorSharingMsg_PB ssmFrame =1;
+	optional common.Header header = 2;
+}

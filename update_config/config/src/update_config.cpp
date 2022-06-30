@@ -106,9 +106,8 @@ bool UpdateOtherFile()
 		}
 	}
 	delete pCurl;
+	LinkFile("/home/mogo/data/vehicle_monitor/slinks.cfg", SN);
 	LinkFile("/home/mogo/autopilot/share/config/vehicle/slinks.cfg", SN);
-        LinkFile("/home/mogo/data/vehicle_monitor/slinks.cfg", SN);
-
 	return flag;
 }
 

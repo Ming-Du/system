@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package common;
+
+import "header.proto";
+import "SensorSharing_DetectedPTCData_PB.proto";
+
+
+message SSM_PNT_PB {
+	optional SensorSharing_DetectedPTCData_PB participantData =1;
+	optional common.Header header = 2;
+}

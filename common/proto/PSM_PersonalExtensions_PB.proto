@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+import "String_PB.proto";
+
+message PSM_PersonalExtensions_PB {
+	enum PSM_PersonalDeviceUsageState_PB {
+		PSM_PersonalDeviceUsageState_unavailable	= 0;
+		PSM_PersonalDeviceUsageState_other	= 1;
+		PSM_PersonalDeviceUsageState_idle	= 2;
+		PSM_PersonalDeviceUsageState_listeningToAudio = 3;
+		PSM_PersonalDeviceUsageState_typing	= 4;
+		PSM_PersonalDeviceUsageState_calling = 5;
+		PSM_PersonalDeviceUsageState_playingGames = 6;
+		PSM_PersonalDeviceUsageState_reading = 7;
+		PSM_PersonalDeviceUsageState_viewing = 8;
+	} ;
+	optional	String_PB usrState = 1;
+	enum PSM_PersonalAssistive_PB {
+		PSM_PersonalAssistive_unavailable = 0;
+		PSM_PersonalAssistive_otherType	= 1;
+		PSM_PersonalAssistive_vision = 2;
+		PSM_PersonalAssistive_hearing = 3;
+		PSM_PersonalAssistive_movement = 4;
+		PSM_PersonalAssistive_cognition	= 5;
+	};
+	optional	String_PB assistType = 2;
+} 

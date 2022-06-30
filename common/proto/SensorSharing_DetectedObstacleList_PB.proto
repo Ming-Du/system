@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+import "SensorSharing_DetectedObstacleData_PB.proto";
+
+message SensorSharing_DetectedObstacleList_PB {
+    repeated SensorSharing_DetectedObstacleData_PB obs = 1;
+} 

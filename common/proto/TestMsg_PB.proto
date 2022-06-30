@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+import "String_PB.proto";
+
+message TestMsg_PB {
+    required	int64  msgCnt = 1;
+	required	String_PB userData = 2;
+} 

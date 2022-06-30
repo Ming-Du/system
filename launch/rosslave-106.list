@@ -1,7 +1,10 @@
 launch drivers_lidar.launch
 launch perception_lidar.launch
 launch perception_fusion.launch
+launch prediction.launch
 v2x v2x.launch
 launch perception_v2x.launch
 guardian system_guardian_slave4.launch
 monitor_process  monitor_process_rosslave_106.launch
+log_collect_client log_collect_client.launch
+log_msg_collect_client log_msg_collect_client.launch

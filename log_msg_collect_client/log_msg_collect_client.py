@@ -23,7 +23,7 @@ def run_once():
     # 先截取一遍文件
     files = os.listdir(src_dir)
     for file_name in files:
-        if file_name == "autopilot_report.json" or file_name == "mogodoctor_report.json":
+        if file_name in ("autopilot_report.json", "mogodoctor_report.json", "system_master_report.json", 'roslaunch_report.json'):
             file_path = os.path.join(src_dir, file_name)
             tmp_file_path = os.path.join(tmp_dir, file_name)
 
@@ -43,18 +43,20 @@ def run_once():
 def run():
     if os.path.exists(tmp_dir) == False:
         os.mkdir(tmp_dir)
+    if os.path.exists(src_dir) == False:
+        os.mkdir(src_dir)
 
     while True:
         start = time.time()
         run_once()
         end = time.time()
 
-        sleep_time = 1 - (end - start)
-        if sleep_time > 0.3:
-            time.sleep(sleep_time)
+        if 1 > end - start:
+            time.sleep(1.0 - (end - start))
 
 def main():
     run()
+
 if __name__ == '__main__':
     main()
 

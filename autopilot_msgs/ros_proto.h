@@ -82,3 +82,22 @@ public:
         pub.publish(data);
     }
 };
+
+template<class ProtoMessage>
+class NoHeaderProtoPublisher
+{
+private:
+    autopilot_msgs::BinaryData data;
+    uint32_t seq;
+public:
+    NoHeaderProtoPublisher() : seq(1) {}
+    void publish(ros::Publisher& pub, const ProtoMessage& msg)
+    {
+        data.header.stamp = ros::Time::now();
+        data.header.seq = seq++;
+        data.name = msg.GetTypeName();
+        common::SerializeProto(msg, data.data);
+        data.size = data.data.size();
+        pub.publish(data);
+    }
+};

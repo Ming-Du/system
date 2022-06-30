@@ -1,0 +1,166 @@
+{
+    
+    "EINIT_LOST_FILE":{
+        "level": "error",
+        "code": "EINIT_LOST_FILE",
+        "result": [
+            "RESULT_AUTOPILOT_SYSTEM_UNSTARTED",
+            "RESULT_AUTOPILOT_DISABLE",
+            "RESULT_REMOTEPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_CONTACT_TECH_SUPPORT"
+        ]
+    },
+    "EAGENT_FATAL":{
+        "level": "error",
+        "code": "EAGENT_FATAL",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE",
+            "RESULT_AUTOPILOT_INFERIOR"
+        ],
+        "action": [
+            "ACTION_CONTACT_TECH_SUPPORT"
+        ]
+    },
+    "EAGENT_MASTER_COMMAND_HANDLER_FAILED":{
+        "level": "error",
+        "code": "EAGENT_MASTER_COMMAND_HANDLER_FAILED"
+    },
+    "EHW_LIDAR":{
+        "level": "error",
+        "code": "EHW_LIDAR",
+        "result": [
+            "RESULT_AUTOPILOT_INFERIOR"
+        ],
+        "action": [
+            "ACTION_CONTACT_HARDWARE_ENGINEER"
+        ]
+    },
+    "EHW_GNSS":{
+        "level": "error",
+        "code": "EHW_GNSS",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE",
+            "RESULT_AUTOPILOT_SYSTEM_UNSTARTED",
+            "RESULT_DISCONNECTED_WITH_PAD"
+        ],
+        "action": [
+            "ACTION_CONTACT_HARDWARE_ENGINEER"
+        ]
+    },
+    "EHW_RTK":{
+        "level": "error",
+        "code": "EHW_RTK",
+        "result": [
+            "RESULT_AUTOPILOT_INFERIOR"
+        ],
+        "action": [
+            "ACTION_CONTACT_HARDWARE_ENGINEER"
+        ]
+    },
+    "EHW_CAN":{
+        "level": "error",
+        "code": "EHW_CAN",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_REBOOT_VEHICLE"
+        ]
+    },
+    "EHW_NET":{
+        "level": "error",
+        "code": "EHW_NET",
+        "result": [
+            "RESULT_HAILING_DISABLE",
+            "RESULT_DISCONNECTED_WITH_PAD",
+            "RESULT_AUTOPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_REBOOT_APP",
+            "ACTION_REBOOT_PAD",
+            "ACTION_CONTACT_MAINTENANCE"
+        ]
+    },
+    "EMAP_NODE":{
+        "level": "error",
+        "code": "EMAP_NODE",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE",
+            "RESULT_AUTOPILOT_INFERIOR"
+        ],
+        "action": [
+            "ACTION_CONTACT_TECH_SUPPORT"
+        ]
+    },
+    "EMAP_NODE_DEAD":{
+        "level": "error",
+        "code": "EMAP_NODE_DEAD",
+        "result": [
+            "ACTION_CONTACT_TECH_SUPPORT",
+            "RESULT_AUTOPILOT_INFERIOR"
+        ],
+        "action": [
+            "ACTION_CONTACT_TECH_SUPPORT",
+            "ACTION_REBOOT_VEHICLE"
+        ]
+    },
+    "EMAP_TRA_NOT_EXIST":{
+        "level": "error",
+        "code": "EMAP_TRA_NOT_EXIST",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_CONTACT_TECH_SUPPORT"
+        ]
+    },
+    "EVHC_GEAR":{
+        "level": "error",
+        "code": "EVHC_GEAR",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_HANDLE_VEHICLE_TURN_GEAR",
+            "ACTION_TRY_AGAIN_LATER"
+        ]
+    },
+    "EVHC_CSS":{
+        "level": "error",
+        "code": "EVHC_CSS",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE",
+            "RESULT_REMOTEPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_REBOOT_VEHICLE",
+            "ACTION_REPAIR_VEHICLE"
+        ]
+    },
+    "IINIT_BOOST": {
+        "level": "info",
+        "code": "IINIT_BOOST"
+    },
+    "IINIT_TIME_SYNC": {
+        "level": "info",
+        "code": "IINIT_TIME_SYNC"
+    },
+    "IINIT_SENSOR_NORMAL": {
+        "level": "info",
+        "code": "IINIT_SENSOR_NORMAL"
+    },
+    "IBOOT_MAP_STARTED": {
+        "level": "info",
+        "code": "IBOOT_MAP_STARTED"
+    },
+    "IMAP_TRA_LOADED": {
+        "level": "info",
+        "code": "IMAP_TRA_LOADED"
+    },
+    "IAGENT_EXECUTE_MASTER_COMMAND": {
+        "level": "info",
+        "code": "IAGENT_EXECUTE_MASTER_COMMAND"
+    }
+}

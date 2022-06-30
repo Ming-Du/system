@@ -45,6 +45,9 @@ import json
 from os import path, access, R_OK
 import os, sys, stat
 import uuid
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 ### global area
 globalTopicHzPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='globalTopicHzPool')
@@ -121,6 +124,7 @@ def task_topic_hz(msg):
         print "pbMonitorHzWidthCarInfo.pLogInfo.header.stamp.nsec:%d" % (
             pbMonitorHzWidthCarInfo.pLogInfo.header.stamp.nsec)
         dictHzRecord['pLogInfo']['header']['stamp']['nsec'] = (pbTopicHz.header.stamp.nsec)
+        dictHzRecord['pLogInfo']['header']['stamp']['msec'] = int(dictHzRecord['pLogInfo']['header']['stamp']['sec'])*1000 + int(dictHzRecord['pLogInfo']['header']['stamp']['nsec'])/1000000
         pbMonitorHzWidthCarInfo.pLogInfo.header.frame_id = pbTopicHz.header.frame_id
         print "pbMonitorHzWidthCarInfo.pLogInfo.header.frame_id:%s " % (
             pbMonitorHzWidthCarInfo.pLogInfo.header.frame_id)
@@ -233,7 +237,7 @@ def task_topic_msg(msg):
         print "pbRecvMsg.level%s" % (pbRecvMsg.level)
         dictMsgInfoRecord['reportmsg']['level'] = pbRecvMsg.level
         pbSend.reportmsg.msg = pbRecvMsg.msg
-        print "pbRecvMsg.msg:%s" % (pbRecvMsg.msg)
+        #print "pbRecvMsg.msg:%s" % (pbRecvMsg.msg)
         dictMsgInfoRecord['reportmsg']['msg'] = pbRecvMsg.msg
         pbSend.reportmsg.code = pbRecvMsg.code
         print "pbRecvMsg.code:%s" % (pbRecvMsg.code)
@@ -275,6 +279,16 @@ def task_topic_msg(msg):
         rosMessage.size = len(strBuffer)
     except Exception as e:
         print "Exception happend "
+        print   "exception happend"
+        print   e.message
+        print   str(e)
+        print   'str(Exception):\t', str(Exception)
+        print   'str(e):\t\t', str(e)
+        print   'repr(e):\t', repr(e)
+        print   'e.message:\t', e.message
+        print   'traceback.print_exc():'
+        traceback.print_exc()
+        print   'traceback.format_exc():\n%s' % (traceback.format_exc())
 
     strJson = json.dumps(dictMsgInfoRecord)
     ## send telematics
@@ -431,7 +445,7 @@ def task_memory_info(msg):
     dictSaveToFile["carinfo"] = globalCommonPara.dictCarInfo
     dictSaveToFile["timestamp"]["sec"] = rospy.Time.now().secs
     dictSaveToFile["timestamp"]["nsec"] = rospy.Time.now().nsecs
-    dictSaveToFile["timestamp"]["nsec"] = (dictSaveToFile["timestamp"]["sec"] * 1000) + (dictSaveToFile["timestamp"][
+    dictSaveToFile["timestamp"]["msec"] = (dictSaveToFile["timestamp"]["sec"] * 1000) + (dictSaveToFile["timestamp"][
                                                                                              "nsec"] / 1000000)
     dictSaveToFile["report_msg"] = dictTempInfo
     dictSaveToFile["report_msg"]["header"]["pilot_mode"] = globalCollectVehicleInfo.int_pilot_mode

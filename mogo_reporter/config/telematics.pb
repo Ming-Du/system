@@ -9,7 +9,7 @@ info {
 }
 
 info {
-  code: ITELEMATICS_AICLOUD_AUTH_OK	 
+  code: ITELEMATICS_AICLOUD_AUTH_OK	
   msg: "aicloud连接认证成功"
 }
 

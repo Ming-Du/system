@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+
+message SensorSharing_AttitudeConfidence_PB {
+	enum DefMotion_HeadingConfidence_PB {
+		DefMotion_HeadingConfidence_unavailable	= 0;
+		DefMotion_HeadingConfidence_prec10deg	= 1;
+		DefMotion_HeadingConfidence_prec05deg	= 2;
+		DefMotion_HeadingConfidence_prec01deg	= 3;
+		DefMotion_HeadingConfidence_prec0_1deg	= 4;
+		DefMotion_HeadingConfidence_prec0_05deg	= 5;
+		DefMotion_HeadingConfidence_prec0_01deg	= 6;
+		DefMotion_HeadingConfidence_prec0_0125deg	= 7;
+	};
+    required int64 pitchConfidence = 1;
+	required int64 rollRateConfidence = 2;
+	required int64 yawRate = 3;
+} 

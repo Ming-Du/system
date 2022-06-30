@@ -23,8 +23,10 @@ bool is_full_stop
 float64 speed
 float64 x
 float64 y
+float64 z
 float64 yaw
 float64 TimenowInSeconds
+float64 pitch
 float64 slope_offset_compensation
 uint32 trajectory_seq
 float64 ref_point_t

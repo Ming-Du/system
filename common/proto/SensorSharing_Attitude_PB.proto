@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+
+message SensorSharing_Attitude_PB {
+    required int64 pitch = 1;
+	required int64 roll = 2;
+	required int64 yaw = 3;
+} 

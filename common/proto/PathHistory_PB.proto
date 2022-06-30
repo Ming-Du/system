@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+import "FullPositionVector_PB.proto";
+import "GNSSstatus_PB.proto";
+import "PathHistoryPoint_PB.proto";
+
+message PathHistory_PB {
+  
+   optional	FullPositionVector_PB  initialPosition=1;    
+   optional GNSSstatus_PB	currGNSSstatus=2;	/* OPTIONAL */;
+   repeated PathHistoryPoint_PB	 crumbData_list=3;
+
+}

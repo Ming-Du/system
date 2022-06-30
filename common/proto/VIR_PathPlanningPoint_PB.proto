@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+import "String_PB.proto";
+import "RSI_ReferenceLink_PB.proto";
+import "PositionOffsetLLV_PB.proto";
+import "PositionConfidenceSet_PB.proto";
+import "AccelerationSet4Way_PB.proto";
+import "SensorSharing_AccSet4WayConfidence_PB.proto";
+
+message VIR_PathPlanningPoint_PB {
+    optional	RSI_ReferenceLink_PB posInMap = 1;
+	required	PositionOffsetLLV_PB pos = 2;
+	optional	PositionConfidenceSet_PB posAccuracy = 3;
+	optional	int32 speed = 4;
+	optional	int32 speedCfd = 5;
+	optional	int32 heading = 6;
+	optional	int32 headingCfd = 7;
+	optional	AccelerationSet4Way_PB accelSet = 8;
+	optional	SensorSharing_AccSet4WayConfidence_PB acc4WayConfidence = 9;
+	optional	int32 estimatedTime = 10;
+	optional 	int32 timeConfidence = 11;
+} 

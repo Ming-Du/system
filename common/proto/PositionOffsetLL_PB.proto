@@ -1,5 +1,5 @@
 syntax = "proto2";
-package common;
+//package common;
 
 //经纬度偏差，来描述一个坐标点的相对位置。约定偏差值等于真实值减去参考值。
 //提供了 7 种尺度的描述方式

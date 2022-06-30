@@ -1,0 +1,28 @@
+syntax = "proto2";
+
+import "String_PB.proto";
+
+message PSM_RoadWorkerExtensions_PB {
+	enum PSM_RoadWorkerType_PB {
+		PSM_RoadWorkerType_unavailable	= 0;
+		PSM_RoadWorkerType_trafficPolice = 1;
+		PSM_RoadWorkerType_constructionPersonnel = 2;
+		PSM_RoadWorkerType_policeOfficers = 3;
+		PSM_RoadWorkerType_trafficControlPersons = 4;
+		PSM_RoadWorkerType_railroadCrossingGuards = 5;
+		PSM_RoadWorkerType_emergencyOrganizationPersonnel = 6;
+		/*
+		 * Enumeration is extensible
+		 */
+	};
+	optional	int32  workerType = 1;
+	enum PSM_RoadWorkerActivityType_PB {
+		PSM_RoadWorkerActivityType_unavailable	= 0;
+		PSM_RoadWorkerActivityType_workingOnRoad = 1;
+		PSM_RoadWorkerActivityType_settingUpClosures = 2;
+		PSM_RoadWorkerActivityType_respondingToEvents = 3;
+		PSM_RoadWorkerActivityType_directingTraffic	= 4;
+		PSM_RoadWorkerActivityType_otherActivities	= 5;
+	} ;
+	optional	String_PB  activityType = 2;
+} 

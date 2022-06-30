@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+import "String_PB.proto";
+import "Position3D_PB.proto";
+import "SensorSharing_Polygon_PB.proto";
+import "SensorSharing_DetectedPTCList_PB.proto";
+import "SensorSharing_DetectedObstacleList_PB.proto";
+
+message SensorSharingMsg_PB {
+    required	int64  msgCnt = 1;
+	required	String_PB  id = 2;
+	required	int64  equipmentType = 3;
+	required	int64  secMark = 4;
+	required	Position3D_PB sensorPos = 5;
+	optional	SensorSharing_Polygon_PB detectedRegion = 6;
+	optional	SensorSharing_DetectedPTCList_PB  participants = 7;
+	optional	SensorSharing_DetectedObstacleList_PB obstacles = 8;
+		
+} 

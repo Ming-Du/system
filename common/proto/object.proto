@@ -48,12 +48,6 @@ message LidarObjectSupplement {
   repeated double cloud = 2 [packed = true];
 }
 
-message FalconLidarObjectSupplement {
-  optional bool on_use = 1 [default = false];
-  // Format: [x0, y0, z0, x1, y1, z1...]
-  repeated double cloud = 2 [packed = true];
-}
-
 message RadarObjectSupplement {
   optional bool on_use = 1 [default = false];  
   optional float x = 2;
@@ -83,7 +77,6 @@ message Object {
   
   optional double time_stamp = 4;        // sensing time
   optional float confidence = 5;         // probability
-  optional float state = 22;         // predict--2, detect--1
   optional int32 status = 6;             // reserved
 
   optional float x_distance = 7;         // longitudinal distance
@@ -111,8 +104,11 @@ message Object {
   // Modify(@liuxinyu): obu_test
   // obu supplement
   optional ObuObjectsSupplement obu_supplement = 21;
+  optional float state = 22;         // predict--2, detect--1
  //falcon lidar supplement
-  optional FalconLidarObjectSupplement falcon_lidar_supplement = 23;
+  optional LidarObjectSupplement falcon_lidar_supplement = 23;
+  //ming.du
+  optional CameraObjectSupplement vidar_supplement = 24;
 
 }
 
@@ -138,7 +134,7 @@ message TrackedObject {
   optional Object obj = 1;
 
   optional float yaw = 2;       //box orientation angle from x axis, counter clockwise(in rad),range 0 to 2*pi
-  optional float yaw_rate = 3;  //in rad/s
+  optional float yaw_rate = 3 [default = 32767];  //in rad/s
   optional geometry.Vector3 velocity = 4; // absolute velocity, in m/s, vx, vy, vz
   repeated geometry.Trace trace = 5;    // historical positions
   repeated geometry.Trace prediction = 6; // predicted global position in future stamp
@@ -154,9 +150,13 @@ message TrackedObject {
   optional double longitude_p = 13;   // position in East , in meters
   optional double latitude_p = 14;   // position in North , in meters
  
- optional double speed  = 15;// m/s
- optional double heading =16;// degrees
-
+  optional double speed  = 15;// m/s
+  optional double heading =16;// degrees
+  // 1 - participant; 2 - obstacle 
+  optional int32  object_category = 17 [default = 1];
+  optional int32  obu_participant_type = 18 [default = 0];
+  optional int32  obu_obstacle_type = 19 [default = 0];
+  
 //float x_speed             // longitudinal speed relative to host vehicle, m/s
 //float y_speed             // lateral speed relative to host vehicle, m/s
 }

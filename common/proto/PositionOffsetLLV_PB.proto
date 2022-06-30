@@ -1,5 +1,5 @@
 syntax = "proto2";
-package common;
+//package common;
 import "PositionOffsetLL_PB.proto";
 import "VerticalOffset_PB.proto";
 message PositionOffsetLLV_PB{

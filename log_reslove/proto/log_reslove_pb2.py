@@ -13,6 +13,7 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
+import geometry_pb2 as geometry__pb2
 import header_pb2 as header__pb2
 
 
@@ -20,9 +21,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='log_reslove.proto',
   package='log_reslove',
   syntax='proto2',
-  serialized_pb=_b('\n\x11log_reslove.proto\x12\x0blog_reslove\x1a\x0cheader.proto\"#\n\x07TopicHz\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02hz\x18\x02 \x01(\x05\"|\n\nPubLogInfo\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x13\n\x0bstart_stamp\x18\x02 \x01(\x01\x12\x11\n\tend_stamp\x18\x03 \x01(\x01\x12&\n\x08topic_hz\x18\x04 \x03(\x0b\x32\x14.log_reslove.TopicHz')
+  serialized_pb=_b('\n\x11log_reslove.proto\x12\x0blog_reslove\x1a\x0egeometry.proto\x1a\x0cheader.proto\"6\n\x07TopicHz\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02hz\x18\x02 \x01(\x05\x12\x11\n\tmax_delay\x18\x03 \x01(\x05\"|\n\nPubLogInfo\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x13\n\x0bstart_stamp\x18\x02 \x01(\x01\x12\x11\n\tend_stamp\x18\x03 \x01(\x01\x12&\n\x08topic_hz\x18\x04 \x03(\x0b\x32\x14.log_reslove.TopicHz')
   ,
-  dependencies=[header__pb2.DESCRIPTOR,])
+  dependencies=[geometry__pb2.DESCRIPTOR,header__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
@@ -49,6 +50,13 @@ _TOPICHZ = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='max_delay', full_name='log_reslove.TopicHz.max_delay', index=2,
+      number=3, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -61,8 +69,8 @@ _TOPICHZ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=48,
-  serialized_end=83,
+  serialized_start=64,
+  serialized_end=118,
 )
 
 
@@ -113,8 +121,8 @@ _PUBLOGINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=85,
-  serialized_end=209,
+  serialized_start=120,
+  serialized_end=244,
 )
 
 _PUBLOGINFO.fields_by_name['header'].message_type = header__pb2._HEADER

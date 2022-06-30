@@ -1,0 +1,21 @@
+syntax = "proto2";
+
+package system_master;
+
+import "header.proto";
+
+enum StateDef {
+STATE_NORMAL = 0;
+STATE_FAULT = 1;
+STATE_UNKNOW =2;
+}
+
+message StateReport {
+
+optional common.Header header = 1;
+required string src=2;        // 消息来源  node 名称   如： locatization
+required StateDef state=3;    // 三种状态
+required string code=4;       // 消息源上报code，与state对应，与wifi系统消息定义一致。
+optional string desc=5;       // 针对未知状态的进一步信息描述
+optional string reserved = 6; // 预留可选字段，用于接口扩充或者，其他信息补充
+}

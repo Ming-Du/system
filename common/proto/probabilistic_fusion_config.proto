@@ -23,4 +23,6 @@ message ProbabilisticFusionConfig {
   optional double max_obu_invisible_period = 13 [default = 0.75];
   optional bool use_falcon_lidar = 14[default = true];
   optional double max_falcon_lidar_invisible_period = 15[default = 0.30];
+  optional bool use_vidar = 16 [default = false];
+  optional double max_vidar_invisible_period = 17 [default = 0.3];
 }

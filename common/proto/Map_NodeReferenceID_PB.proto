@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+
+message Map_NodeReferenceID_PB {
+	optional	int32 region = 1;
+	required	int64 id = 2;
+} 

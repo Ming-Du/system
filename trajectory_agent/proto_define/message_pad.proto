@@ -1,0 +1,332 @@
+syntax = "proto3";
+package mogo.telematics.pad;
+
+enum ProtocolVersion{
+    Defaultver = 0;
+    CurrentVersion = 3; //每次修改proto文件增加1
+}
+
+enum MessageType
+{
+    MsgTypeDefault = 0;
+
+    MsgTypeTrajectory = 0x10000; //局部轨迹,车前引导线
+    MsgTypeTrackedObjects = 0x10001; //障碍物信息
+    MsgTypeGnssInfo = 0x10002; //惯导信息
+    MsgTypeVehicleState = 0x10003; //底盘信息, 透传底盘状态，pb参考底盘
+    MsgTypeAutopilotState = 0x10004; //自动驾驶状态
+    MsgTypeReportMessage = 0x10005; //监控事件报告
+    MsgTypePerceptionTrafficLight = 0x10006; //感知红绿灯
+    MsgTypePredictionObstacleTrajectory = 0x10007; //他车轨迹预测
+    MsgTypePointCloud = 0x10008; //点云透传
+    MsgTypePlanningObjects = 0x10009; //planning障碍物
+
+    MsgTypeBasicInfoReq = 0x10100; //自动驾驶设备基础信息请求
+    MsgTypeBasicInfoResp = 0x10101; //自动驾驶设备基础信息应答
+    MsgTypeSetAutopilotModeReq = 0x10102; //设置自动驾驶模式
+    MsgTypeSetDemoModeReq = 0x10103; //设置演示模式
+    MsgTypeCarConfigReq = 0x10104; //车机基础信息请求
+    MsgTypeCarConfigResp = 0x10105; //车机基础信息应答
+    MsgTypeRecordCause = 0x10106; //记录人工接管原因
+    MsgTypeRecordData = 0x10107; //数据采集请求
+    MsgTypeRecordResult = 0x10108; //数据采集结果
+    MsgTypeSetAutopilotSpeedReq = 0x10109; //设置自动驾驶最大速度
+    MsgTypeGlobalPathReq = 0x1010a; //自动驾驶路径请求
+    MsgTypeGlobalPathResp = 0x1010b; //自动驾驶路径应答
+    MsgTypeTrafficLightData = 0x1010c; //发送红绿灯数据到工控机
+    MsgTypeWarn = 0x1010d; //预警数据
+    MsgTypeArrivalNotification = 0x1010e; //到站提醒
+    MsgTypeSystemCmdReq = 0x1010f; //系统命令请求, 比如系统重启，启用新镜像
+    MsgTypeTrajectoryDownloadReq = 0x10110; //轨迹下载请求
+}
+
+message Header
+{
+    uint64 msgID = 1; //消息唯一id，自增
+    MessageType msgType = 2; //消息类型
+    double timestamp = 3; //telematics消息发送时间, 单位：秒
+    double sourceTimestamp = 4; //数据源消息发送时间, 单位：秒
+}
+
+// message definition for MsgTypeTrajectory
+message TrajectoryPoint
+{
+    double longitude = 1;
+    double latitude = 2;
+    double altitude = 3;
+    double time = 4;  //时间, 单位：秒
+    double velocity = 5;  //速度, m/s
+    double acceleration = 6; //加速度, m/s^2
+    double theta = 7;  //速度方向
+    double kappa = 8;  //曲率
+    double accumulatedDis = 9; //从起点到目前的总距离
+    double reversedAccumulatedDis = 10; //从当前到终点的距离
+}
+
+message Trajectory
+{
+    repeated TrajectoryPoint points = 1;
+}
+
+// message definition for MsgTypeTrackedObjects
+message TrackedObject
+{
+    uint32 type = 1; //物体类型, 0:Background, 1:Person, 2:Bicycle, 3:Car, 4:MotorCycle, 
+                     //5:TrafficSign, 6:Bus, 7:CellPhone, 8:Truck, 9:Bottle, 10:TrafficLight,
+                     //11:Rider, 12:TriangleRoadblock, 13:WarningTriangle, 100:Unknown
+    double longitude = 2; //经度
+    double latitude = 3; //纬度
+    double altitude = 4; //海拔
+    double systemTime = 5; //系统时间 单位：秒s
+    double satelliteTime = 6; //gps时间 单位：秒s
+    uint32 uuid = 7; //车辆id
+    string carID = 8; //车牌id
+    string color = 9; //车辆颜色
+    double heading = 10; //车辆朝向
+    double speed = 11; //车辆速度
+    uint32 drawLevel = 12; //危险等级 1 绿,2 黄,3 红
+    double driverTime = 13; //驱动感知时间, abandoned
+}
+
+message TrackedObjects
+{
+    repeated TrackedObject objs = 1;
+}
+
+// message definition for MsgTypeGnssInfo
+message GnssInfo
+{
+    double longitude = 1; //经度  
+    double latitude = 2; //纬度
+    double altitude = 3; //海拔
+    double heading = 4; //航向角
+    double acceleration = 5; //加速度
+    double yawRate = 6; //曲率
+    double gnssSpeed  = 7; //惯导车速 m/s
+    double vehicleSpeed = 8; //车辆车速 m/s
+    double satelliteTime = 9; //gps时间 单位：秒s
+    double systemTime = 10; //系统时间 单位：秒s
+}
+
+// message definition for MessageType: MsgTypeVehicleState
+// refer to VehicleState in vehicle_state.proto
+
+// message definition for MessageType: MsgTypeAutopilotState
+message AutopilotState
+{
+    uint32 state = 1; //0: 不可用(abandoned), 1:ready, 2:自动驾驶中
+    uint32 camera = 2; //camera节点状态 1:开启，0:关闭
+    uint32 radar = 3; //雷达节点状态 1:开启，0:关闭
+    uint32 rtk = 4; //RTK节点状态 1:开启，0:关闭
+    uint32 autopilotMode = 5; //自动驾驶状态 0: 非自动驾驶，1: 自动驾驶
+    double speed = 6; //惯导车速 m/s
+    string reason = 7; //不可用原因(abandoned)
+}
+
+// message definition for MessageType: MsgTypeReportMessage
+// refer to mogo_report_msg.proto
+
+// message definition for MessageType: MsgTypePerceptionTrafficLight
+// refer to traffic_light.proto
+
+// message definition for MessageType: MsgTypePredictionObstacleTrajectory
+// refer to prediction.proto
+
+// message definition for MessageType: MsgTypePointCloud
+// refer to mogo_point_cloud.proto
+
+// message definition for MessageType: MsgTypePlanningObjects
+message PlanningObject
+{
+    uint32 uuid = 1; 
+    uint32 type = 2; //影响自车决策的类型, 和感知的障碍物类型不是一回事
+}
+
+message PlanningObjects
+{
+    repeated PlanningObject objs = 1; 
+}
+
+// message definition for MsgTypeTrajectoryDownloadReq
+message Line
+{
+    uint64 lineId = 1; //路线id，默认-1
+    string trajUrl = 2; //轨迹文件下载的cos url，默认“”
+    string trajMd5 = 3; //轨迹文件md5，默认“”
+    string stopUrl = 4; //打点文件下载的cos url，默认“”
+    string stopMd5 = 5; //轨迹文件md5，默认“”
+    uint64 timestamp = 6; //上传轨迹完成时间戳(ms)：用于MEC本地手动导入轨迹验证时不会被云端轨迹覆盖
+    string vehicleModel = 7; //车型号（如红旗H9），默认“”，暂不加入校验逻辑、用于人工排查问题
+}
+
+message TrajectoryDownloadReq
+{
+    Line line = 1; //路线
+}
+
+// message definition for MessageType: MsgTypeBasicInfoReq
+message BasicInfoReq 
+{
+}
+
+// message definition for MessageType: MsgTypeBasicInfoRsp
+message BasicInfoResp
+{
+    string sn = 1;
+    uint32 environment = 2; //1: 研发环境, 2:测试环境, 3:生产环境 4:演示环境
+}
+
+// message definition for MsgTypeSetAutopilotModeReq
+message Location
+{
+    double longitude = 1;
+    double latitude = 2;
+    double altitude = 3;
+    double heading = 4;
+}
+
+message RouteInfo{
+    Location startLocation = 1;  
+    string startName = 2;
+    Location endLocation = 3;
+    string endName = 4;
+    repeated Location wayPoints = 5;
+    double speedLimit = 6; //单位: km/h
+    uint32 vehicleType = 7;
+    bool isSpeakVoice = 8; //abandoned
+    uint32 routeID = 9;
+    string routeName = 10;
+    Line line = 11; //路线信息
+}
+
+message SetAutopilotModeReq
+{
+    uint32 mode = 1; //1: enter autopilot mode, 0: quit autopilot mode
+    uint32 source = 2; //命令来源: 0: pad模拟, 1: aicloud业务
+    RouteInfo routeInfo = 3; //自动驾驶路径信息
+}
+
+// message definition for MsgTypeSetDemoModeReq
+message SetDemoModeReq
+{
+    uint32 enable = 1; //1: enable, 0: disable
+}
+
+// message definition for MsgTypeCarConfigReq
+message CarConfigReq
+{
+}
+
+// message definition for MsgTypeCarConfigResp
+message CarConfigResp
+{
+    string dockVersion = 1;
+    string plateNumber = 2; //车牌
+    string macAddress = 3;
+    ProtocolVersion protocolVersion = 4; //通信协议版本
+    double speedLimit = 5; //自动驾驶限速, 单位：m/s
+    double maxSpeedLimit = 6; //最大自动驾驶限速, 单位：m/s 
+    double minAcceleration = 7; //最小加速度, 单位：m/s²
+    double maxAcceleration = 8; //最大加速度, 单位：m/s²
+}
+
+// message definition for MsgTypeRecordCause
+message RecordCause
+{
+    uint64 key = 1; //bag key 唯一标识
+    string filename = 2; //文件路径
+    string reason = 3; //接管原因
+    string reasonID = 4; //接管原因id
+}
+
+// message definition for MsgTypeRecordData
+message RecordData
+{
+    uint32 id = 1; //采集id
+    uint32 duration = 2; //采集时间长
+    uint32 type = 3; //采集类型, 1:badcase, 2: map; 3: rests
+    bool isRecord = 4; //采集指令, true: 采集, false: 停止采集
+    bool sustain = 5; //是否持续采集
+}
+
+// message definition for MsgTypeRecordResult
+// refer to RecordPanel in record_panel.proto
+
+// message definition for MsgTypeSetAutopilotSpeedReq
+message SetAutopilotSpeedReq
+{
+    double speedLimit = 1; //最大车辆速度, 单位：m/s
+}
+
+// message definition for MsgTypeGlobalPathReq
+message GlobalPathReq
+{
+}
+
+// message definition for MsgTypeGlobalPathResp
+message GlobalPathResp
+{
+    repeated Location wayPoints = 1; 
+}
+
+// message definition for MsgTypeTrafficLightData
+message TrafficLightStatus
+{
+    string phaseNo = 1; //相位编号
+    string color = 2; //灯态： 红灯-R，绿灯-G，绿闪-FG，黄-Y，B-黑
+    int32 remain = 3; //倒计时-秒
+}
+
+message TrafficLightDetail
+{
+    TrafficLightStatus left = 1; //左灯
+    TrafficLightStatus mid = 2; //中间灯
+    TrafficLightStatus right = 3; //右灯
+}
+
+message TrafficLightData
+{
+    string crossID = 1; //roadID
+    double latitude = 2; 
+    double longitude = 3;
+    string heading = 4; //红绿灯方向
+    string direction = 5; //路的航向角
+    int32 lightId = 6; //红绿灯ID
+    int32 laneNo = 7; //车道号
+    int32 arrowNo = 8; //当前车道对应地面要素转向
+    int32 flashYellow = 9; //黄灯总时间
+    TrafficLightDetail laneDetail = 10; //灯态具体信息
+}
+
+// message definition for MsgTypeWarn
+message Warn
+{
+    uint32 type = 1; //16: 小心行人, 17: 前车起步, 18: 左车道偏离, 19: 右车道偏离
+                     //20: 保持车距/小心前车, 23:摩托车碰撞
+                     //40: 禁止掉头, 41: 禁止左转, 42: 禁止右转, 43: 禁止鸣喇叭, 44: 禁止通行, 45: 限速%d
+    string content = 2; //words describe type
+    uint32 level = 3; //1:low 2:high
+    string value = 4; //reserved
+}
+
+// message definition for MsgTypeArrivalNotification
+message ArrivalNotification
+{
+    uint32 carType = 1; //abandoned
+    Location endLocation = 2;
+}
+
+// message definition for MsgTypeSystemCmdReq
+enum SystemCmdType {
+    SYSTEMCMD_NONE = 0;
+    SYSTEMCMD_REBOOT = 1;
+}
+
+message SystemCmdReq
+{
+    SystemCmdType cmdType = 1; //
+}
+
+
+
+

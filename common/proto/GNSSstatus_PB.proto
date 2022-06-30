@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+import  "String_PB.proto";
+
+message GNSSstatus_PB {
+  enum GNSSstatus {
+	GNSSstatus_unavailable	= 0;
+	GNSSstatus_isHealthy	= 1;
+	GNSSstatus_isMonitored	= 2;
+	GNSSstatus_baseStationType	= 3;
+	GNSSstatus_aPDOPofUnder5	= 4;
+	GNSSstatus_inViewOfUnder5	= 5;
+	GNSSstatus_localCorrectionsPresent	= 6;
+	GNSSstatus_networkCorrectionsPresent	= 7;
+    }; 
+   required String_PB currGNSSstatus_bitStr = 1;
+}

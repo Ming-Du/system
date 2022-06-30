@@ -1,0 +1,48 @@
+syntax = "proto2";
+
+import "String_PB.proto";
+import "PSM_PropelledInformation_PB.proto";
+import "PSM_PersonalExtensions_PB.proto";
+import "PSM_RoadWorkerExtensions_PB.proto";
+import "PSM_PersonalRequest_PB.proto";
+
+message PSM_Non_motorData_PB {
+	enum PSM_PersonalDeviceUserType_PB {
+		PSM_PersonalDeviceUserType_unavailable	= 0;
+		PSM_PersonalDeviceUserType_aPEDESTRIAN	= 1;
+		PSM_PersonalDeviceUserType_aPEDALCYCLIST	= 2;
+		PSM_PersonalDeviceUserType_aROADWORKER	= 3;
+		PSM_PersonalDeviceUserType_anANIMAL	= 4;
+		/*
+		 * Enumeration is extensible
+		 */
+	};
+    required	int64  basicType = 1;
+	optional	PSM_PropelledInformation_PB  propulsion = 2;
+	enum PSM_NumberOfParticipantsInCluster_PB {
+		PSM_NumberOfParticipantsInCluster_unavailable	= 0;
+		PSM_NumberOfParticipantsInCluster_small	= 1;
+		PSM_NumberOfParticipantsInCluster_medium	= 2;
+		PSM_NumberOfParticipantsInCluster_large	= 3;
+		/*
+		 * Enumeration is extensible
+		 */
+	};
+	optional	int32  clusterSize = 3;
+	enum PSM_Attachment_PB {
+		PSM_Attachment_unavailable	= 0;
+		PSM_Attachment_stroller	= 1;
+		PSM_Attachment_bicycleTrailer	= 2;
+		PSM_Attachment_cart	= 3;
+		PSM_Attachment_wheelchair	= 4;
+		PSM_Attachment_otherWalkAssistAttachments	= 5;
+		PSM_Attachment_pet	= 6;
+		/*
+		 * Enumeration is extensible
+		 */
+	};
+	optional	int32  attachment = 4;
+	optional	PSM_PersonalExtensions_PB  personalExt = 5;
+	optional	PSM_RoadWorkerExtensions_PB  roadWorkerExt = 6;
+	optional	PSM_PersonalRequest_PB  personalReq = 7;
+} 

@@ -8,6 +8,7 @@ message TopicHz
 {
 optional string name = 1;
 optional int32 hz = 2;
+optional int32 max_delay = 3;
 }
 
 message PubLogInfo {
