@@ -1,0 +1,35 @@
+syntax = "proto2";
+package routing;
+
+import "header.proto";
+
+enum RouteSetStatus{
+  ROUTE_SET_FAIL = 0;
+  ROUTE_SET_SUCESS = 1;
+}
+
+enum NodeType {
+  NODE_UNKNOW = 0;            
+  NODE_ROAD = 1;
+  NODE_JUNC = 2;
+}
+
+enum MotionType {
+  MOVE_UNKNOW = 0;
+  MOVE_STRIGHT = 1;
+  MOVE_LEFT_TURN = 2;
+  MOVE_RIGHT_TURN = 3;
+  MOVE_U_TURN = 4;
+}
+
+message PathNode{
+  optional NodeType node_type = 1 [default = NODE_UNKNOW];
+  optional uint64 node_main_id = 2 [default = 0];
+  optional int64 node_sub_id = 3 [default = 0];
+  optional MotionType motion_type = 4 [default = MOVE_UNKNOW];
+}
+
+message NodeList{
+  optional uint64 num = 1 [default = 0];
+  repeated PathNode node_list = 2;
+}
