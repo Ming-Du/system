@@ -11,6 +11,7 @@ LaneMark[] lanemarks
 # add by wandanpan
 RoadArrow[] arrows
 sensor_msgs/Image lane_arrow_stopline_seg
+sensor_msgs/Image fs_rs_seg  # freespace and roadside
 
 # laneline arrow stopline exist flag
 bool laneline_exist_flag
