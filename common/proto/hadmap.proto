@@ -165,6 +165,15 @@ message BoundaryPoint{
     optional LaneMarkType point_type = 4;
 }
 
+message LanePoint{
+    optional double x = 1;
+    optional double y = 2;
+    optional double z = 3;
+    optional LaneType point_center_type = 4;
+    optional LaneArrow point_center_arrow = 5;
+    optional uint32 point_speed_limit = 6; 
+}
+
 message LaneBoundary {
     // lane boundary primary key
     optional uint64 pkid = 1;
@@ -214,6 +223,7 @@ message Lane {
 
     // lane reference line geometry
     repeated geometry.Point geom = 11;
+    repeated LanePoint point = 12;
 }
 
 message Section {
