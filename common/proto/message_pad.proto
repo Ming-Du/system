@@ -3,7 +3,7 @@ package mogo.telematics.pad;
 
 enum ProtocolVersion{
     Defaultver = 0;
-    CurrentVersion = 3; //每次修改proto文件增加1
+    CurrentVersion = 4; //每次修改proto文件增加1
 }
 
 enum MessageType
@@ -20,6 +20,7 @@ enum MessageType
     MsgTypePredictionObstacleTrajectory = 0x10007; //他车轨迹预测
     MsgTypePointCloud = 0x10008; //点云透传
     MsgTypePlanningObjects = 0x10009; //planning障碍物
+    MsgTypeOBU = 0x1000a; //OBU
 
     MsgTypeBasicInfoReq = 0x10100; //自动驾驶设备基础信息请求
     MsgTypeBasicInfoResp = 0x10101; //自动驾驶设备基础信息应答
@@ -41,6 +42,8 @@ enum MessageType
     MsgTypeStatusQueryReq = 0x10111; //状态查询请求
     MsgTypeStatusQueryResp = 0x10112; //状态查询应答
     MsgTypeSetRainModeReq = 0x10113; //设置雨天模式
+    MsgTypeRecordDataConfigReq = 0x10114; //数据采集配置查询请求
+    MsgTypeRecordDataConfigResp = 0x10115; //数据采集配置查询应答
 }
 
 message Header
@@ -150,6 +153,9 @@ message PlanningObjects
     repeated PlanningObject objs = 1; 
 }
 
+// message definition for MessageType: MsgTypeOBU
+// refer to obu.proto
+
 // message definition for MsgTypeTrajectoryDownloadReq
 message Line
 {
@@ -250,6 +256,7 @@ message RecordData
     uint32 type = 3; //采集类型, 1:badcase, 2: map; 3: rests
     bool isRecord = 4; //采集指令, true: 采集, false: 停止采集
     bool sustain = 5; //是否持续采集
+    uint32 bduration = 6; //前溯时长
 }
 
 // message definition for MsgTypeRecordResult
@@ -343,5 +350,17 @@ message StatusQueryReq
 message SetRainModeReq
 {
     uint32 enable = 1; //1: enable, 0: disable
+}
+
+// message definition for MsgTypeRecordDataConfigReq
+message RecordDataConfigReq
+{
+    uint32 reqType = 1; // 0: all, 其他保留
+}
+
+// message definition for MsgTypeRecordDataConfigResp
+message RecordDataConfig
+{
+    repeated string recordTypes = 1;
 }
 
