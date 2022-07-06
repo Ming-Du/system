@@ -42,5 +42,6 @@ message Task {
   optional string note = 7; //note 
   optional bool auto_trig = 8;
   optional uint64 key = 9;
+  optional int32 bduration = 10; //collection duraiton before start(s) 
 }
 
