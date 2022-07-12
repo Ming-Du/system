@@ -173,7 +173,11 @@ start_onenode() {
     LoggingINFO "launching ${real_launch_file}..."
     launch_file=$(echo $real_launch_file | awk '{print $NF}' | awk -F/ '{print $NF}')
     if [ "$GuiServer" == "silence" ]; then
-        roslaunch $launch_prefix $real_launch_file >>${ROS_LOG_DIR}/${launch_file}.log 2>>${ROS_LOG_DIR}/${launch_file}.err &
+        if [[ "$real_launch_file" == *"can_adapter.launch" ]];then
+            roslaunch $launch_prefix $real_launch_file >/dev/null 2>&1 &
+        else
+            roslaunch $launch_prefix $real_launch_file >>${ROS_LOG_DIR}/${launch_file}.log 2>>${ROS_LOG_DIR}/${launch_file}.err &
+        fi
     else
         $GuiTerminal --tab -e "bash -c 'sleep 3; $BASHRC && roslaunch $launch_prefix $real_launch_file 2>${ROS_LOG_DIR}/${launch_file}.err 2>&1 | tee -i ${ROS_LOG_DIR}/${launch_file}.log';bash" $TitleOpt "${launch_file}" &
     fi
