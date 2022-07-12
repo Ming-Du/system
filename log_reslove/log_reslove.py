@@ -41,7 +41,7 @@ last_timestamp = 0  # 清理已处理过的msg
 all_pub_msg = {}
 all_sub_msg = {}
 node_callback_history = {}  # {tpoic:one_log}
-all_man_tag_beg = {}     # tag: one_log
+all_man_tag_beg = {}     # node_name: one_log
 all_man_tag_end = {}   # {tag: {stamp: one_log}
 
 
@@ -255,10 +255,10 @@ def update_one_log(one):
             return
 
         if node_config[one["node"]].get('man_beg','') != '':
-            tag = node_config[one["node"]].get('man_beg')
-            if tag in all_man_tag_beg:
-                one["use_beg_tag"] = all_man_tag_beg[tag]  # all beg and pub in same thread
-                del  all_man_tag_beg[tag]  # add by liyl 20220609 only uesd one time by latest pub
+            #tag = node_config[one["node"]].get('man_beg')  # bus's lidar_driver have same tag name
+            if one["node"] in all_man_tag_beg:
+                one["use_beg_tag"] = all_man_tag_beg[one["node"]]  # all beg and pub in same thread
+                del  all_man_tag_beg[one["node"]]  # add by liyl 20220609 only uesd one time by latest pub
 
         #放到all_pub里面
         all_pub_msg[one["topic"]][one["uuid"]] = one
@@ -297,7 +297,7 @@ def update_one_log(one):
         if one.get("tag",'') != node_config[one["node"]].get("man_beg","notag"):
             return
 
-        all_man_tag_beg[one["tag"]] = one  # mod by liyl only record one 
+        all_man_tag_beg[one["node"]] = one  # mod by liyl only record one 
 
     elif one["type"] == 3:
         if one["node"] not in node_config:
@@ -314,8 +314,8 @@ def update_one_log(one):
         if one["uuid"] in all_man_tag_end[one["tag"]]:
             #print("uuid exist")
             one["uuid_wrong"] = True
-            return        
-        all_man_tag_end[one["tag"]][one["uuid"]] = one  # only 2D_front used end, contact by ident
+            return
+        all_man_tag_end[one["node"]][one["uuid"]] = one  # only 2D_front used end, contact by ident
     else:
         return
     
@@ -472,8 +472,10 @@ def load_logs(input_paths):
                 st_atime = stat.st_atime
             if st_mtime <  stat.st_mtime:
                 st_mtime = stat.st_mtime
-
-        g_time_start_value = st_atime - 3  # before min access time 2 sec
+        if st_atime < int(time.time()) - 60:  # 
+            g_time_start_value = int(time.time()) - 5
+        else:
+            g_time_start_value = st_atime - 3  # before min access time 2 sec
         g_time_split_end = st_mtime + 2
         if st_mtime - st_atime > g_time_split_threshold:   # log 1.7M/s  30s about 50M
             print('log save {} secs, more than {}, handle a part!'.format(st_mtime-st_atime, g_time_split_threshold) )
@@ -557,6 +559,8 @@ def analyze_inside_node(pub, data, record):
                 #beg = all_sub_msg[tag_name][pub['uuid']]
                 beg = pub['use_beg_tag']
                 beg_end_time = pub["stamp"] - beg["stamp"]
+                if beg_end_time > 1000000000 * 1:  # if beg_end_time > 0.5s  print
+                    print("add by liyl 0704 beg_info:{}, pub_info：{}".format(beg, pub))
                 u_spend = pub["utime"] - beg["utime"]
                 s_spend = pub["stime"] - beg["stime"]
                 w_spend = pub["wtime"] - beg["wtime"]
@@ -604,6 +608,10 @@ def analyze_inside_node(pub, data, record):
             #print("callback-pub use time {0}".format(use_time))
             pdata["wrong"] = ">2 sec"
             continue
+        
+        if g_test_mode and call_pub_time > 1000000000 * 1:  # if beg_end_time > 0.5s  print
+            print("add by liyl 0704 call_info:{}, pub_info{}".format(callback, pub))
+
         u_spend = pub["utime"] - callback["utime"]
         s_spend = pub["stime"] - callback["stime"]
         w_spend = pub["wtime"] - callback["wtime"]
@@ -678,7 +686,8 @@ def analyze_logs():
     
         for data in record:
             if data.get("wrong", False) != False:
-                #print(data["wrong"])
+                if g_test_mode:
+                    print(data["wrong"])
                 continue
 
             data["split_path_str"] = "_".join(data["split_path"])
@@ -843,7 +852,7 @@ def prepare_input_files():
         return input_paths
 
     files = os.listdir(input_dir)
-    if len(files) > 100:
+    if not g_test_mode and len(files) > 100:
         #add by liyl if files more than 60, >10s 
         bak_dir = os.path.join(work_dir, "ROS_STAT", "bak_{}".format(int(time.time())))
         os.mkdir(bak_dir)
