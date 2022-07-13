@@ -1,0 +1,14 @@
+syntax = "proto2";
+package routing;
+
+import "header.proto";
+import "PathNode.proto";
+
+message CurrentLocation{
+  optional common.Header header = 1;
+  optional NodeType type = 2 [default = NODE_UNKNOW];
+  optional uint64 main_id = 3 [default = 0];
+  optional int64 sub_id = 4 [default = 0];
+  optional bool has_left_lane = 5 [default = false];
+  optional bool has_right_lane = 6 [default = false];
+}

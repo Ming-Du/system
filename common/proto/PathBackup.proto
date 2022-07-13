@@ -1,0 +1,12 @@
+syntax = "proto2";
+package routing;
+
+import "header.proto";
+import "PathNode.proto";
+
+message BackupNodeSeq{
+  optional common.Header header = 1;
+  optional PathNode cur_node = 2;
+  optional NodeList prev_node = 3;
+  optional NodeList next_node = 4;
+}

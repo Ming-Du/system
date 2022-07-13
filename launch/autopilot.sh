@@ -187,27 +187,31 @@ start_node() {
 }
 
 set_pr() {
-    for t in $(roslaunch --nodes ${launch_files_array[*]}); do
-        t=${t##*/}
-        [[ "$t" =~ "rviz" ]] && continue
-        [[ "$t" =~ "update_map" ]] && continue
-        #pr
-        pid=$(ps -ef | grep "__name:=$t" | grep -v grep | awk '{print $2}')
-        [[ -z "$pid" ]] && continue
-        priority=$(top -b -n 1 -p $pid | grep $pid | awk '{print $(NF-9)}')
-        [[ "$priority" == "rt" ]] && continue
-        case "$t" in
-        "DongFeng_E70_can_adapter" | "jinlv_can_adapter" | "hongqih9_can_adapter") (($priority >= 0)) && chrt -a -p -r 99 $pid ;;
-        "controller") (($priority >= 0)) && chrt -a -p -r 99 $pid ;;
-        "localization" | "drivers_gnss" | "drivers_gnss_zy") (($priority >= 0)) && chrt -a -p -r 99 $pid ;;
-        "local_planning") (($priority >= 0)) && chrt -a -p -r 99 $pid ;;
-        "hadmap_server" | "hadmap_engine_node") (($priority >= 0)) && chrt -a -p -r 80 $pid ;;
-        "perception_fusion2" | "perception_fusion") (($priority >= 0)) && chrt -a -p -r 79 $pid ;;
-        "rs_perception_node" | "trt_yolov5") (($priority >= 0)) && chrt -a -p -r 69 $pid ;;
-        "drivers_camera_sensing60" | "drivers_camera_sensing30" | "drivers_camera_sensing120" | "drivers_robosense_node")
-            (($priority >= 0)) && chrt -a -p -r 59 $pid ;;
-        *) ;;
-        esac
+    while [ $exit_flag -ne 1 ] ;do
+        sleep 2
+        for t in ${child_node_array[@]}; do
+            t=${t##*/}
+            [[ "$t" =~ "rviz" ]] && continue
+            [[ "$t" =~ "update_map" ]] && continue
+            #pr
+            pid=$(ps -ef | grep "__name:=$t" | grep -v grep | awk '{print $2}')
+            [[ -z "$pid" ]] && continue
+            priority=$(top -b -n 1 -p $pid | grep $pid | awk '{print $(NF-9)}')
+            [[ "$priority" == "rt" ]] && continue
+            case "$t" in
+            "DongFeng_E70_can_adapter" | "jinlv_can_adapter" | "hongqih9_can_adapter")
+                (($priority >= 0)) && (chrt -a -p -r 99 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "controller") (($priority >= 0)) && (chrt -a -p -r 99 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "localization" | "drivers_gnss" | "drivers_gnss_zy") (($priority >= 0)) && (chrt -a -p -r 99 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "local_planning") (($priority >= 0)) && (chrt -a -p -r 99 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "hadmap_server" | "hadmap_engine_node") (($priority >= 0)) && (chrt -a -p -r 80 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "perception_fusion2" | "perception_fusion") (($priority >= 0)) && (chrt -a -p -r 79 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "rs_perception_node" | "trt_yolov5") (($priority >= 0)) && (chrt -a -p -r 69 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "drivers_camera_sensing60" | "drivers_camera_sensing30" | "drivers_camera_sensing120" | "drivers_robosense_node")
+                (($priority >= 0)) && (chrt -a -p -r 59 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            *) ;;
+            esac
+        done
     done
 }
 
@@ -413,6 +417,7 @@ start_map() {
     python $ABS_PATH/mogodoctor.py c
     get_all_launch_files $list_file #获取所有需要启动的launch文件
     failed_files_num=$?
+    child_node_array+=($(roslaunch --nodes ${launch_files_array[*]}))
     write_action 5
     start_node
     if [[ $failed_files_num -eq 0 ]]; then
@@ -549,19 +554,19 @@ set_bashrc
 try_times=0
 while true
 do
-	vehicle_path=`find /autocar-code/install/share/ -name vehicle_init.py | head  -n 1`
-	python  $vehicle_path
-        if [ -e "/home/mogo/data/vehicle_use.info" ];then
-                echo "found"
-                break
-        fi
-	try_times=`expr $try_times + 1`
-        echo $try_times
-	if [  $try_times -eq 5 ];then
-        echo "try times eq 5 times,abort get vehicle use" >> /home/mogo/data/vehicle_use.info.error
-        break
+    vehicle_path=`find /autocar-code/install/share/ -name vehicle_init.py | head  -n 1`
+    [[ -f $vehicle_path ]] && python  $vehicle_path || break
+    if [ -e "/home/mogo/data/vehicle_use.info" ];then
+            echo "found"
+            break
     fi
-        sleep 3
+    try_times=`expr $try_times + 1`
+    echo $try_times
+    if [  $try_times -eq 5 ];then
+            echo "try times eq 5 times,abort get vehicle use" >> /home/mogo/data/vehicle_use.info.error
+            break
+    fi
+    sleep 3
 done
 if [ ! -e "/home/mogo/data/vehicle_use.info" ];then
         echo "not exists"
@@ -628,9 +633,10 @@ if [[ ! -d $ROS_LOG_DIR ]]; then
 fi
 flock -u 8
 start_map
+set_pr &
 while [ $exit_flag -ne 1 ] ;do
     ((${#map_pid_name[@]}==0)) && sleep 5 && continue
-    set_pr #设置节点优先级
+    # set_pr #设置节点优先级
     wait -n ${!map_pid_name[@]}
     LoggingINFO "some of roslaunch processes exited"
     wait_ret=$?
