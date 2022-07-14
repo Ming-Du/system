@@ -6,6 +6,7 @@ import time
 import threading
 import json
 import copy
+import datetime
 from config import node_config
 
 import rospy 
@@ -17,7 +18,7 @@ from proto import system_pilot_mode_pb2
 all_link_node_list = dict()   # k=name, v=node_entry
 all_link_topic_list = dict()  # k=name, v={uuid: topic_entry}
 
-g_test_mode = True
+g_test_mode = False
 g_pilot_mode_list = list()  # [[start1,end1],[start2,end2]]
 
 #constant
@@ -26,6 +27,7 @@ class Constants():
     output_dir = os.path.join(work_dir, "ROS_STAT_RESULT")
     input_dir = os.path.join(work_dir, "ROS_STAT" ,"EXPORT")
     tmp_dir = os.path.join(work_dir, "ROS_STAT_TMP")
+    bak_dir = os.path.join(work_dir, "ROS_STAT" ,datetime.date.today())
     output_file = os.path.join(output_dir, "topic_stat")
     g_time_split_threshold = 10   # second
     g_type_of_pub = 0
@@ -40,7 +42,8 @@ def get_time_used(func):
         start_time=time.time()
         ret = func(*args,**kwargs)
         end_time=time.time()
-        print('{} used time is {}'.format(func.__name__, end_time-start_time))
+        if g_test_mode or 1 < end_time - start_time:
+            print('{} used time is {}'.format(func.__name__, end_time-start_time))
         return ret
     return wrapper
 
@@ -467,6 +470,8 @@ class Log_handler():
         result = dict()
         wrong_count = 0
         target = "/chassis/command"
+        #if g_test_mode:
+        #   target = '/perception/fusion/obstacles'
         target_handle_complate = dict()  #{k=uuid, v=split topic completed}
         
         for topic_entity in all_link_topic_list[target].values():
@@ -625,8 +630,7 @@ class Log_handler():
             return
 
         for file_path in self.input_paths:
-            cmd='mv {} {}_{}'.format(file_path, file_path.replace('ROS_STAT_TMP','msg_log'), int(time.time()))
-            os.popen(cmd)
+            os.rename(file_path, '{}/{}_{}'.format(Constants.bak_dir, os.path.basename(file_path), int(time.time())))
             #os.remove(file_path)
 
         self.input_paths=list()
@@ -732,6 +736,8 @@ def main():
         os.makedirs(Constants.input_dir)
     if os.path.exists(Constants.tmp_dir) == False:
         os.mkdir(Constants.tmp_dir)
+    if os.path.exists(Constants.bak_dir) == False:
+        os.mkdir(Constants.bak_dir)
     if os.path.exists(Constants.output_dir) == False:
         os.mkdir(Constants.output_dir)
 
