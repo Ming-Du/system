@@ -27,7 +27,7 @@ class Constants():
     output_dir = os.path.join(work_dir, "ROS_STAT_RESULT")
     input_dir = os.path.join(work_dir, "ROS_STAT" ,"EXPORT")
     tmp_dir = os.path.join(work_dir, "ROS_STAT_TMP")
-    bak_dir = os.path.join(work_dir, "ROS_STAT" ,datetime.date.today())
+    bak_dir = os.path.join(work_dir, "ROS_STAT", datetime.date.today())
     output_file = os.path.join(output_dir, "topic_stat")
     g_time_split_threshold = 10   # second
     g_type_of_pub = 0
@@ -67,6 +67,9 @@ def get_time_used(func):
 """
 
 class Node_base(object):
+    """
+    以节点创建类，将相关属性实例化，用于topic和 tag 的匹配关联
+    """
     def __init__(self, name):
         self.name = name
         self.id_list = set()   # thread_id  
@@ -82,9 +85,13 @@ class Node_base(object):
         self.beg_end_info = dict()  # { k=end_dict: v=beg_ident}
     
     def update_node_info(self, one):
+        """
+        更新节点信息，topic和tag分别处理
+        """
         try:
             if 'topic' in one and one['topic'] in all_link_topic_list:
                 if one['topic'] in self.sub_topic_list or one['topic'] == self.pub_topic:
+                    # 判断topic链路，防止跨节点的uuid重复
                     topic_uuid = one['ident']
                     if topic_uuid not in all_link_topic_list[one['topic']]:
                         self.create_topic_info( topic_uuid, one)
@@ -107,15 +114,18 @@ class Node_base(object):
                         ## only beg_tag in node, MAP260 need support
                         if topic_uuid in self.beg_msg_dict:
                             self.update_beg_tag_info(topic_uuid, self.beg_msg_dict[topic_uuid])
-                        elif one['thread'] in self.beg_msg_dict and len(self.beg_msg_dict) == 1:
+                        elif one['thread'] in self.beg_msg_dict:
+                            # uuid 不匹配 pub topic的ident， 那么用线程进行匹配，单线程只有一个数据
                             self.update_beg_tag_info(topic_uuid, self.beg_msg_dict[one['thread']])
                 elif one['type'] == Constants.g_type_of_sub:
                     # 该节点发送的 sub消息
                     if one['topic'] in self.sub_topic_list:
+                        # 顺序记录sub topic，只保留最近一次，不按thread匹配，这样多线程也可以最近匹配
                         self.sub_msg_dict[one['topic']] = topic_uuid
                 else:
                     print('the type is {} should not in topic msg'.format(one['type']))
             elif 'tag' in one:
+                ## 手动埋点消息处理
                 if one['type'] == Constants.g_type_of_beg:
                     if one['tag'] != self.beg_tag:
                         return
@@ -129,6 +139,7 @@ class Node_base(object):
                     if self.beg_tag:
                         #TODO add beg and end match handle
                         if tag_uuid in self.beg_msg_dict:
+                            # 生成beg end的配对关系
                             self.beg_end_info['tag_uuid']=(self.beg_msg_dict[tag_uuid], self.end_msg_dict[tag_uuid])
                     else:
                         #TODO add only sub match handle
@@ -138,6 +149,9 @@ class Node_base(object):
             print('update node info error! {}'.format(e))
 
     def create_topic_info(self, uuid, one):
+        """
+        创建topic信息，加入到全局列表里，topic信息里包含pub，sub 关联beg，end
+        """
         topic_entity = all_link_topic_list[one['topic']][uuid] = dict()
         topic_entity['uuid'] = one['ident']  # one['ident'] or one['feature']  # ident or feature
         topic_entity['topic'] = one['topic']
@@ -181,6 +195,9 @@ class Node_base(object):
 
 
 class Log_handler():
+    """
+    整体处理类，从日志加载到数据输出，周期性处理
+    """
     def __init__(self) -> None:
         self.car_info = Car_Status()
         self.last_timestamp = 0
@@ -208,15 +225,19 @@ class Log_handler():
 
         files = os.listdir(Constants.input_dir)
         if not g_test_mode and len(files) > 100:
-            #add by liyl if files more than 60, >10s 
-            bak_dir = os.path.join(Constants.work_dir, "ROS_STAT", "bak_{}".format(int(time.time())))
+            #add by liyl if files more than 60, >10s 日志文件过大不处理，放置到备份目录
+            bak_dir = os.path.join(Constants.bak_dir, "bak_{}".format(int(time.time())))
             os.mkdir(bak_dir)
             for file_name in files:
+                if '.tmp' in file_name:
+                    continue
                 os.rename(Constants.input_dir+'/'+file_name, bak_dir+'/'+file_name)
             # get newtestfile
             files = os.listdir(Constants.input_dir)
 
         for file_name in files:
+            if '.tmp' in file_name:
+                continue
             file_path = os.path.join(Constants.input_dir, file_name)
             tmp_file_path = os.path.join(Constants.tmp_dir, file_name)
             
@@ -232,6 +253,7 @@ class Log_handler():
             if not g_pilot_mode_list:
                 return
 
+            # 仅自动驾驶时间段内的日志进行全链路解析
             log_time = one.get('stamp', 0)/1000000000
             if log_time < g_pilot_mode_list[0][0] and log_time > g_pilot_mode_list[-1][1]:
                 if log_time > g_pilot_mode_list[0][1] + 10:  ## delay 10s  the log must handled
@@ -247,6 +269,7 @@ class Log_handler():
                 return
 
         if one.get('node', 'unknow') in all_link_node_list:
+            # node 在解析配置字典里，进行数据更新
             all_link_node_list[one['node']].update_node_info(one)
 
 
@@ -316,8 +339,6 @@ class Log_handler():
             st_mtime = 0
             for path in self.input_paths:
                 stat = os.stat(path)
-                if '.tmp' in path:
-                    continue
                 if st_atime > stat.st_atime:
                     st_atime = stat.st_atime
                 if st_mtime <  stat.st_mtime:
@@ -371,6 +392,7 @@ class Log_handler():
         data["path"].append({"type":"recv_call", "node":topic['recv_node'].name, "use_time":recv_call_time})
 
         if topic['send_node'].is_start_node:
+            # 节点只有pub，数据源头，如果有beg，计算beg-end用时
             if topic['send_node'].beg_tag:
                 beg_info = topic.get('beg_info', {})
                 if beg_info:
@@ -444,7 +466,7 @@ class Log_handler():
             "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
             "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent}) 
             
-            ### add by liyl 
+            ### TODO 目前只有man_beg, 后续该部分逻辑需要完善，增加man_end处理 
             if topic['send_node'].beg_tag:
                 beg_info = topic.get('beg_info', {})
                 if beg_info:
@@ -513,7 +535,7 @@ class Log_handler():
                 no_match_num += 1
                 continue
             elif match_num == 1:   
-                match_once_num += 1
+                match_one_num += 1
             elif match_num == 2:  # The case is ugly, maybe the sub list more than 2 in future
                 match_two_num += 1
             
@@ -531,7 +553,7 @@ class Log_handler():
                     del topic['send_node'].finish_dict[topic['uuid']]
                     if topic['uuid'] in topic['send_node'].beg_msg_dict:
                         del topic['send_node'].beg_msg_dict[topic['uuid']]
-        
+                    ## TODO：man_end增加后，需要清理 end_msg_dict
             all_link_topic_list[topic_name] = all_link_topic_temp
         
         self.results = result
@@ -547,6 +569,7 @@ class Log_handler():
         if 'percent' in key:
             return result[size50][key], result[size90][key], result[size99][key]
         else:
+            # 时间值，计算到毫秒，保留2位小数
             return round(result[size50][key]*1.0/1000000,2), round(result[size90][key]*1.0/1000000,2), round(result[size99][key]*1.0/1000000,2)
 
     def handle_cpu_time(self, split_data, save_data, mtype, node, type):
@@ -630,6 +653,7 @@ class Log_handler():
             return
 
         for file_path in self.input_paths:
+            # 备份处理后的文件，到备份目录，防止remote文件重复，增加全量时间戳
             os.rename(file_path, '{}/{}_{}'.format(Constants.bak_dir, os.path.basename(file_path), int(time.time())))
             #os.remove(file_path)
 
