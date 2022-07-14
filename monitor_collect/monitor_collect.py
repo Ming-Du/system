@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from timeit import Timer
+
 import thread
 import threading
 import traceback
@@ -45,6 +47,9 @@ import json
 from os import path, access, R_OK
 import os, sys, stat
 import uuid
+from std_msgs.msg import String
+from roscpp.msg import TopicHz
+#import Timer
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -84,6 +89,13 @@ globalDictTableNodeHealth = {}
 globalDictTableNodeHealthTimeout = {}
 globalDelayTimeInterval = 0
 
+#global_hz_time_write_interval = 0
+
+tree = lambda: collections.defaultdict(tree)
+globalDictHzRecord = tree()
+globalDictHzFlag  = {}
+globalListWaitWriteBuffer  = []
+
 
 def folder_check():
     PATH = '/home/mogo/data/log/filebeat_upload/'
@@ -98,83 +110,55 @@ def folder_check():
 
 def task_topic_hz(msg):
     print "++++++++++++++++++++++++"
-    tree = lambda: collections.defaultdict(tree)
+    global global_hz_time_write_interval
+    global globalDictHzRecord
+    global globalDictHzFlag
+    global globalListWaitWriteBuffer
     dictHzRecord = tree()
     try:
-        global global_hz_time_write_interval
-        pbTopicHz = common_log_reslove_pb2.PubLogInfo()
-        pbTopicHz.ParseFromString(msg.data)
-        pbMonitorHzWidthCarInfo = monitor_topic_hz_pb2.MonitorTopicHz()
-        global rDictHzTable
-        for elemHz in pbTopicHz.topic_hz:
-            # rDictHzTable[elemHz.name] = elemHz.hz
-            dictHzRecord['pLogInfo']['topic_hz'][elemHz.name]['value']['hz'] = elemHz.hz
-            dictHzRecord['pLogInfo']['topic_hz'][elemHz.name]['value']['max_delay'] = elemHz.max_delay
-            # print elemHz.name
-            # print elemHz.hz
-        pbMonitorHzWidthCarInfo.pLogInfo.header.seq = pbTopicHz.header.seq
-        print "pbMonitorHzWidthCarInfo.pLogInfo.header.seq:%d" % (pbMonitorHzWidthCarInfo.pLogInfo.header.seq)
-        dictHzRecord["log_type"] = "topic_hz"
-        dictHzRecord['pLogInfo']['header']['seq'] = (pbTopicHz.header.seq)
-        pbMonitorHzWidthCarInfo.pLogInfo.header.stamp.sec = pbTopicHz.header.stamp.sec
-        print "pbMonitorHzWidthCarInfo.pLogInfo.header.stamp.sec:%d" % (
-            pbMonitorHzWidthCarInfo.pLogInfo.header.stamp.sec)
-        dictHzRecord['pLogInfo']['header']['stamp']['sec'] = (pbTopicHz.header.stamp.sec)
-        pbMonitorHzWidthCarInfo.pLogInfo.header.stamp.nsec = pbTopicHz.header.stamp.nsec
-        print "pbMonitorHzWidthCarInfo.pLogInfo.header.stamp.nsec:%d" % (
-            pbMonitorHzWidthCarInfo.pLogInfo.header.stamp.nsec)
-        dictHzRecord['pLogInfo']['header']['stamp']['nsec'] = (pbTopicHz.header.stamp.nsec)
-        dictHzRecord['pLogInfo']['header']['stamp']['msec'] = int(dictHzRecord['pLogInfo']['header']['stamp']['sec'])*1000 + int(dictHzRecord['pLogInfo']['header']['stamp']['nsec'])/1000000
-        pbMonitorHzWidthCarInfo.pLogInfo.header.frame_id = pbTopicHz.header.frame_id
-        print "pbMonitorHzWidthCarInfo.pLogInfo.header.frame_id:%s " % (
-            pbMonitorHzWidthCarInfo.pLogInfo.header.frame_id)
-        dictHzRecord['pLogInfo']['header']['frame_id'] = (pbTopicHz.header.frame_id)
-        print "=================================="
-        pbMonitorHzWidthCarInfo.pLogInfo.header.module_name = pbTopicHz.header.module_name
-        print "pbMonitorHzWidthCarInfo.pLogInfo.header.module_name:%s" % (
-            pbMonitorHzWidthCarInfo.pLogInfo.header.module_name)
-        dictHzRecord['pLogInfo']['header']['module_name'] = pbTopicHz.header.module_name
-        pbMonitorHzWidthCarInfo.pLogInfo.start_stamp = pbTopicHz.start_stamp
-        print "pbMonitorHzWidthCarInfo.pLogInfo.start_stamp:%f" % (pbMonitorHzWidthCarInfo.pLogInfo.start_stamp)
-        dictHzRecord['pLogInfo']['start_stamp'] = pbTopicHz.start_stamp
-        pbMonitorHzWidthCarInfo.pLogInfo.end_stamp = pbTopicHz.end_stamp
-        print "pbMonitorHzWidthCarInfo.pLogInfo.end_stamp:%f" % (pbMonitorHzWidthCarInfo.pLogInfo.end_stamp)
-        dictHzRecord['pLogInfo']['end_stamp'] = pbTopicHz.end_stamp
-        # for k,v in  rDictHzTable.items():
-        #     if k in listSubScriptHzItem:
-        #         hzItem = pbMonitorHzWidthCarInfo.pLogInfo.topic_hz.add()
-        #         hzItem.name = k
-        #         hzItem.hz = v
-        #         print "send:%s" % (k)
-        # listHzCollect = []
-        # dictHzUnit = None
-        # for k, v in rDictHzTable.items():
-        #     dictHzUnit = None
-        #     dictHzUnit = tree()
-        #     hzItem = pbMonitorHzWidthCarInfo.pLogInfo.topic_hz.add()
-        #     hzItem.name = k
-        #     dictHzUnit['name'] = hzItem.name
-        #     hzItem.hz = v
-        #     dictHzUnit['value']['hz'] = hzItem.hz
-        #     dictHzUnit['value']['max_delay'] = hzItem.max_delay
-        #     dictHzRecord['pLogInfo']['topic_hz'][hzItem.name] = hzItem.hz
-        # listHzCollect.append(dictHzUnit)
-        # print "send:%s" % (k)
-        # dictHzRecord['pLogInfo']['topic_hz'] = listHzCollect
-        pbMonitorHzWidthCarInfo.carinfo.car_type = globalCommonPara.dictCarInfo['car_type']
-        dictHzRecord['carinfo']['car_type'] = globalCommonPara.dictCarInfo['car_type']
-        pbMonitorHzWidthCarInfo.carinfo.code_version = globalCommonPara.dictCarInfo['code_version']
-        dictHzRecord['carinfo']['code_version'] = globalCommonPara.dictCarInfo['code_version']
-        pbMonitorHzWidthCarInfo.carinfo.car_plate = globalCommonPara.dictCarInfo['car_plate']
-        dictHzRecord['carinfo']['car_plate'] = globalCommonPara.dictCarInfo['car_plate']
-        print "??????????????????????????????????car_plate:%s" % (dictHzRecord['carinfo']['car_plate'])
-        print "before dest buffer file "
-        strDestPbBufferToFile = pbMonitorHzWidthCarInfo.SerializeToString()
-        print "before rebuild rosmsg"
-        # rosMessage = BinaryData()
-        # rosMessage.data = strDestPbBufferToFile
-        # rosMessage.size = len(strDestPbBufferToFile)
-        global_hz_time_write_interval = global_hz_time_write_interval + 1
+        #rospy.loginfo("node: %s, topic: %s, type: %d, start: %d, hz: %f, max_delay: %d, stop:%d ",msg.node, msg.topic, msg.type, msg.start, msg.hz, msg.max_delay,msg.stop)
+        strType = ""
+        if msg.type == 0:
+            strType = "pub"
+
+        if msg.type == 1:
+            strType = "call"
+
+        ##  process node info write cover
+        strConflictKey = "{0}_{1}".format(msg.node,msg.topic)
+        print "strConflictKey:{0}".format(strConflictKey)
+        if  globalDictHzFlag.has_key(strConflictKey) and len(globalDictHzRecord)> 0:
+            print "same node info  will  cover , first  move to  buffer"
+            ###  has node key, need write buffer
+            ### fillup  upload time and carinfo
+            globalDictHzRecord["log_type"] = "topic_hz"
+            globalDictHzRecord['report_stamp'] = (rospy.Time.now().secs * 1000) + (rospy.Time.now().nsecs / 1000000)
+            globalDictHzRecord['carinfo']['car_type'] = globalCommonPara.dictCarInfo['car_type']
+            globalDictHzRecord['carinfo']['code_version'] = globalCommonPara.dictCarInfo['code_version']
+            globalDictHzRecord['carinfo']['car_plate'] = globalCommonPara.dictCarInfo['car_plate']
+            ### flush to buffer
+            strBufferContent = json.dumps(globalDictHzRecord)
+            print "+++++++++++++++++++push strBufferContent:{0}".format(strBufferContent)
+            ### save buffer to list
+            globalListWaitWriteBuffer.append(strBufferContent)
+            print "------------globalListWaitWriteBuffer size:{0}".format(len(globalListWaitWriteBuffer))
+            ### after write buffer , need  clean flag
+            globalDictHzFlag = {}
+            print "after write buffer ,  globalDictHzFlag:{0}".format(globalDictHzFlag)
+            ### after clean flag , clear globalDictHzRecord
+            globalDictHzRecord = tree()
+            print "after writer buffer, globalDictHzRecord:{0}".format(globalDictHzRecord)
+
+        ## normal  write data
+        ### hzFlag add key msg.node
+        globalDictHzFlag[strConflictKey] = 0
+        globalDictHzRecord[msg.node][msg.topic][strType]['hz']=msg.hz
+        globalDictHzRecord[msg.node][msg.topic][strType]['max_delay'] = msg.max_delay
+        globalDictHzRecord[msg.node][msg.topic][strType]['stime']= msg.start
+        globalDictHzRecord[msg.node][msg.topic][strType]['etime'] = msg.stop
+        print "=================== after write globalDictHzRecord:{0} ".format(globalDictHzRecord)
+        ### message sum
+        #global_hz_time_write_interval = global_hz_time_write_interval + 1
     except Exception as e:
         print "exception happend"
         print e.message
@@ -187,31 +171,6 @@ def task_topic_hz(msg):
         traceback.print_exc()
         print 'traceback.format_exc():\n%s' % (traceback.format_exc())
 
-    print dictHzRecord
-    strJson = json.dumps(dictHzRecord)
-    print "strJson:%s" % (strJson)
-
-    ## Write dest file
-    print "global_hz_time_write_interval:%d " % (global_hz_time_write_interval)
-    print "#######################start write hz to log"
-    try:
-        folder_check()
-        with open('/home/mogo/data/log/filebeat_upload/topic_hz_log.log', 'ab+') as f:
-            f.write(strJson)
-            f.write('\n')
-
-            print "write  local disk finished "
-    except IOError:
-        print  "operate file failed"
-        exit(-1)
-    print "before send "
-
-    # try:
-    #     globalPubToTelematicsTopicHz.publish(msg)
-    #     print "finish send message"
-    #     print "send size : %d" % (msg.size)
-    # except Exception as e:
-    #     print "globalPubToTelematicsTopicHz.publish happend exeception"
 
 
 def task_topic_msg(msg):
@@ -336,9 +295,9 @@ def task_topic_msg(msg):
 
 
 def topicHzRecvCallback(msg):
-    print "--------------------------------------------------recv from channel  /autopilot_info/internal/report_topic_hz "
-    if msg.size > 0:
-        globalTopicHzPool.submit(task_topic_hz, msg)
+    print "--------------------------------------------------recv from channel  /autopilot_info/topic_hz "
+    rospy.loginfo("node: %s, topic: %s, type: %d, start: %d, hz: %f, max_delay: %d",msg.node, msg.topic, msg.type, msg.start, msg.hz, msg.max_delay)
+    globalTopicHzPool.submit(task_topic_hz, msg)
 
 
 def topicMsgCallback(msg):
@@ -536,7 +495,7 @@ def autopilotModeCallback(msg):
 
 
 def addLocalizationListener():
-    rospy.Subscriber("/autopilot_info/internal/report_topic_hz", BinaryData, topicHzRecvCallback)
+    rospy.Subscriber("/autopilot_info/topic_hz", TopicHz, topicHzRecvCallback)
     rospy.Subscriber("/autopilot_info/report_msg_info", BinaryData, topicMsgCallback)
     rospy.Subscriber("/autopilot_info/report_msg_error", BinaryData, topicMsgCallback)
     rospy.Subscriber("/monitor_process/sysinfo/cpu/status", BinaryData, topicCpuStatusCallback)
@@ -578,6 +537,51 @@ def startThreadControlCmd(intTimeVal):
     except:
         print "Error: unable to start thread"
 
+def flushTopicHzWriterBuffer():
+    global globalListWaitWriteBuffer
+    try:
+        folder_check()
+        with open('/home/mogo/data/log/filebeat_upload/topic_hz_log.log', 'ab+') as f:
+            if len(globalListWaitWriteBuffer) > 0:
+                for line in globalListWaitWriteBuffer:
+                    f.write(line)
+                    f.write('\n')
+            print  "================================flushTopicHzWriterBuffer write  local disk finished "
+            globalListWaitWriteBuffer = []
+            print "flushTopicHzWriterBuffer: after flush to  file , globalListWaitWriteBuffer :{0}".format(globalListWaitWriteBuffer)
+    except Exception as e:
+        print "exception happend"
+        print e.message
+        print str(e)
+        print 'str(Exception):\t', str(Exception)
+        print 'str(e):\t\t', str(e)
+        print 'repr(e):\t', repr(e)
+        print 'e.message:\t', e.message
+        print 'traceback.print_exc():'
+        traceback.print_exc()
+        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+
+def threadFlushTopicHz(intTimeVal):
+    while True:
+        print "start check WaitWriteBuffer"
+        flushTopicHzWriterBuffer()
+        time.sleep(30)
+
+
+def startThreadFlushWaitWriteBufferCmd(intTimeVal):
+    try:
+        thread.start_new_thread(threadFlushTopicHz, (int(intTimeVal),))
+    except Exception as e:
+        print "exception happend"
+        print  e.message
+        print   str(e)
+        print   'str(Exception):\t', str(Exception)
+        print   'str(e):\t\t', str(e)
+        print   'repr(e):\t', repr(e)
+        print   'e.message:\t', e.message
+        print   'traceback.print_exc():'
+        traceback.print_exc()
+        print  'traceback.format_exc():\n%s' % (traceback.format_exc())
 
 def main():
     global listSubScriptHzItem
@@ -588,17 +592,19 @@ def main():
     rospy.init_node('monitor_collect', anonymous=True)
 
     global globalDelayTimeInterval
-    strFullParaName = "%s/detect_interval" % (rospy.get_name())
-    print "strFullParaName:%s" % strFullParaName
-    temp = rospy.get_param(strFullParaName)
-    if temp <= 0:
-        globalDelayTimeInterval = 5
-    else:
-        globalDelayTimeInterval = temp
-    print "=============================set globalDelayTimeInterval:%d" % globalDelayTimeInterval
+    globalDelayTimeInterval = 10
+    # strFullParaName = "%s/detect_interval" % (rospy.get_name())
+    # print "strFullParaName:%s" % strFullParaName
+    # temp = rospy.get_param(strFullParaName)
+    # if temp <= 0:
+    #     globalDelayTimeInterval = 5
+    # else:
+    #     globalDelayTimeInterval = temp
+    # print "=============================set globalDelayTimeInterval:%d" % globalDelayTimeInterval
     # add listener
     addLocalizationListener()
     startThreadControlCmd(globalDelayTimeInterval)
+    startThreadFlushWaitWriteBufferCmd(30)
     ## wait msg
     rospy.spin()
 
