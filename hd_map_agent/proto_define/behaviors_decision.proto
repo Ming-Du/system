@@ -1,0 +1,29 @@
+syntax = "proto2";
+package planning;
+
+import "header.proto";
+import "chassis.proto";
+import "trajectory.proto";
+//enum LaneChange {
+  //LANE_KEEPING = 0;
+  //MERGE_LEFT = 1;
+  //MERGE_RIGHT = 2;
+//}
+enum Follow {
+  NO_FOLLOW = 0;
+  FOLLOW = 1;//有车 跟车
+}
+enum Stop {
+  STOP = 0;
+  NO_STOP = 1;//有车 跟车
+  AEB_STOP = 2;
+}
+
+message Behaviors_Decision {
+  optional common.Header header = 1;
+  repeated Follow follow = 3;
+  optional Stop stop = 4;
+  optional LaneChange lane_change = 5;  
+}
+
+

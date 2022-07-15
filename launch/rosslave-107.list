@@ -8,3 +8,4 @@ launch hadmap.launch
 hadmap_engine hadmap_engine.launch
 guardian system_guardian_slave5.launch
 monitor_process  monitor_process_rosslave_107.launch
+hd_map_agent hd_map_agent.launch

@@ -1,0 +1,12 @@
+syntax = "proto2";
+package monitor_msg;
+
+import "mogo_report_msg.proto";
+import "carinfo.proto";
+
+
+message MonitorMsg{
+   required  carinfo.CarInfo carinfo = 1;
+   required  mogo_msg.MogoReportMessage reportmsg = 2;
+}
+
