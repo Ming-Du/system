@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import signal
 import traceback
 import commands
 import os
@@ -860,6 +861,44 @@ def call_process(strReponse):
     finally:
         globalTaskManager.removeTask(strTaskId)
 
+def kill_proc_tree(pid, sig=signal.SIGKILL, include_parent=True,
+                   timeout=None, on_terminate=None):
+    """Kill a process tree (including grandchildren) with signal
+    "sig" and return a (gone, still_alive) tuple.
+    "on_terminate", if specified, is a callback function which is
+    called as soon as a child terminates.
+    """
+    gone = None
+    alive = None
+    #assert pid != os.getpid(), "won't kill myself"
+    if pid == os.getpid():
+        print "won't kill myself"
+        return
+    try:
+        parent = psutil.Process(pid)
+        children = parent.children(recursive=True)
+        if include_parent:
+            children.append(parent)
+        for p in children:
+            try:
+                p.send_signal(sig)
+            except psutil.NoSuchProcess:
+                pass
+        gone, alive = psutil.wait_procs(children, timeout=timeout,
+                                        callback=on_terminate)
+    except Exception as e:
+        print "exception happend"
+        print e.message
+        print str(e)
+        print 'str(Exception):\t', str(Exception)
+        print 'str(e):\t\t', str(e)
+        print 'repr(e):\t', repr(e)
+        print 'e.message:\t', e.message
+        print 'traceback.print_exc():'
+        traceback.print_exc()
+        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+    return (gone, alive)
+
 
 def topicMsgCallback(msg):
     global globalPilotMode
@@ -882,7 +921,7 @@ def topicMsgCallback(msg):
                 if p.ppid() == local_pid:
                     print   "============found sub process,now kill, process  name{0}, pid: {1}".format(p.name(), p.pid)
                     if len(globalTaskManager.dictTaskInfo) > 0:
-                        p.kill()
+                        kill_proc_tree(p.pid)
                         ## clean all  task info
                         globalTaskManager.delAllTask()
             except Exception as e:
