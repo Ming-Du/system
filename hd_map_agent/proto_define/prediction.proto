@@ -1,0 +1,34 @@
+syntax = "proto2";
+
+package prediction;
+
+// common
+import "error_code.proto";
+import "header.proto";
+import "geometry.proto";
+
+
+// estimated obstacle intent
+
+message mPredictionObject {
+  optional int64    m_nid =1;    //target id
+  optional int32    m_nquality =2; //target tracking life quality
+  optional int32    classtype =3;  //target classtype
+  optional int32    m_preconfidence=4;  //target predciton confidence
+
+  repeated geometry.Point  prediction_trajectory = 5;  //target prediction trajectory :vector : meter
+  repeated geometry.Point  prediction_pose = 6;         //targe prediciton pose  vector       angle:°
+  optional geometry.Vector3  objsize = 7; //length width height  :meter                             
+
+}
+
+message mPredictionObjects {
+  optional common.Header header = 1;   
+  optional int32    m_nnum0 =2;   // all target number
+  optional int64    allcyclenum =3;//process cycle number
+  optional double  m_ftime=4;      //time stamp
+  optional double  fdeltat=5;      // deltatime prediciton time stamp default:0.1s
+  repeated mPredictionObject objs=6; //obj capcity 
+
+}
+

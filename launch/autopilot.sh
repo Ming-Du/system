@@ -11,7 +11,6 @@ Usage() {
     echo -e "\t\t-n|--start-node <node name>  \t启动单个节点\tnode name 节点名,eg:telematics"
     echo -e "\t\t--pkg <pkg name>  \t指定package,需要与--launch-file同时使用\tpkg name 包名,eg:telematics"
     echo -e "\t\t--launch-file <launch file name>  \t指定launch文件,需要与--pkg同时使用\tnode-name launch文件名,eg:telematics.launch"
-    echo -e "\t\t-k|--keep-alive              \t监控模式,指定此选项当某节点退出时会重新启动该节点"
     echo -e "\t\t-h|--help                    \t帮助"
     echo
     echo "eg:"
@@ -39,6 +38,9 @@ MOGO_LOG() {
 }
 
 set_bashrc() {
+    if [[ $(grep -c "\. /usr/share/bash-completion/completions/autopilot_completion" ~/.bashrc) -eq 0 ]];then
+        echo ". /usr/share/bash-completion/completions/autopilot_completion" >>~/.bashrc
+    fi
     HOSTNAME="export ROS_HOSTNAME=$ros_machine"
     MASTER_URI="export ROS_MASTER_URI=http://$ros_master:11311"
     #add environment to /root/.bashrc
@@ -67,6 +69,9 @@ set_bashrc() {
     fi
     #add environment to /home/mogo/.bashrc
     if [ "$HOME" == "/root" ]; then
+        if [[ $(grep -c "\. /usr/share/bash-completion/completions/autopilot_completion" /home/mogo/.bashrc) -eq 0 ]];then
+            echo ". /usr/share/bash-completion/completions/autopilot_completion" >> /home/mogo/.bashrc
+        fi
         env_roshostname_mogo=$(grep "export\b[[:space:]]*ROS_HOSTNAME" /home/mogo/.bashrc | grep -v "^#" | tail -1)
         bashrc_hostname_mogo=$(echo $env_roshostname_mogo | awk -F= '{print $2}')
         if [ -z "$bashrc_hostname_mogo" ]; then
@@ -92,17 +97,21 @@ set_bashrc() {
     fi
 }
 add_config() {
-    # echo "package name:$1"
-    local pkg_name=$1
-    local pkg_log_dir=${ROS_LOG_DIR}/${pkg_name}
-    [[ ! -d ${pkg_log_dir} ]] && mkdir -p ${pkg_log_dir}
+    [[ -z "$1" ]] && return
     local level=${2:-ERROR}
-    local Aconsole=C${pkg_name}
-    local InfoAppender=I_${pkg_name}
-    local ErrorAppender=E_${pkg_name}
-    local ErrorFile=${pkg_name}_ERROR.log
-    local INFOFile=${pkg_name}_INFO.log
-    echo "log4j.logger.ros.${pkg_name}=${level},${InfoAppender},${ErrorAppender}
+    ROSCONSOLE_CONFIG_FILE="$ABS_PATH/config/$(echo ${1##*/} | cut -d. -f1)_${level}_console.config"
+    echo >$ROSCONSOLE_CONFIG_FILE
+    pkg_str=$(xmllint --xpath "//@pkg" $1 2>/dev/null | sed 's/\"//g')
+    for value in $pkg_str; do
+        pkg_name=${value/*=/}
+        pkg_log_dir=${ROS_LOG_DIR}/${pkg_name}
+        [[ ! -d ${pkg_log_dir} ]] && mkdir -p ${pkg_log_dir}
+        Aconsole=C${pkg_name}
+        InfoAppender=I_${pkg_name}
+        ErrorAppender=E_${pkg_name}
+        ErrorFile=${pkg_name}_ERROR.log
+        INFOFile=${pkg_name}_INFO.log
+        echo "log4j.logger.ros.${pkg_name}=${level},${InfoAppender},${ErrorAppender}
 log4j.appender.${InfoAppender}=org.apache.log4j.DailyRollingFileAppender
 log4j.appender.${InfoAppender}.Threshold=INFO
 log4j.appender.${InfoAppender}.ImmediateFlush=true
@@ -120,10 +129,11 @@ log4j.appender.${ErrorAppender}.File=${pkg_log_dir}/${ErrorFile}
 log4j.appender.${ErrorAppender}.DatePattern='.'yyyy-MM-dd-HH
 log4j.appender.${ErrorAppender}.layout=org.apache.log4j.PatternLayout
 log4j.appender.${ErrorAppender}.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH:mm:ss.SSS} LWP:%t(%r) %l: %m %n
-"
+" >>$ROSCONSOLE_CONFIG_FILE
+    done
 }
 
-get_all_launch_files() {
+get_launch_files() {
     local file_set
     if [[ ! -f $1 || $(sed '/^\s*$/d' $1 | wc -m) -eq 0 ]]; then
         LoggingERR "list file:$1 doesn't exist or it's empty" "EINIT_LOST_FILE"
@@ -144,52 +154,57 @@ get_all_launch_files() {
             type_name=$(xmllint --xpath "//node[@pkg!='rviz']/@type" $child_file 2>/dev/null | sed 's/\"//g')
             [[ -z "$type_name" ]] && continue
             should_start_list=$should_start_list:$child_file
-            [[ -z "$(xmllint --xpath "//include/@file" $child_file 2>/dev/null)" ]] && continue
-            for f in $(roslaunch --files $child_file); do
-                [[ $(echo $file_set | grep -w -c "$f:") -ne 0 ]] && continue
-                file_set="$f:$file_set"
-                [[ "$f" != "$child_file" ]] && should_start_list=$(echo ${should_start_list} | sed "s#:*$f##g")
-            done
+            if [[ ! -z "$(xmllint --xpath "//include/@file" $child_file 2>/dev/null)" ]]; then
+                for f in $(roslaunch --files $child_file); do
+                    [[ $(echo $file_set | grep -w -c "$f:") -ne 0 ]] && continue
+                    file_set="$f:$file_set"
+                    [[ "$f" != "$child_file" ]] && should_start_list=$(echo ${should_start_list} | sed "s#:*$f##g")
+                done
+            fi
         done
         for v in $(echo ${should_start_list//:/ }); do
-            launch_files_array+=("$v")
+            [[ $(echo ${launch_files_array[@]} | grep -wc $v) -eq 0 ]] && launch_files_array+=("$v")
         done
     done <$1
     return $ret
 }
 
+get_sys_launch_files() {
+    launch_files_array=()
+    sys_launch_files_array=()
+    get_launch_files $sys_list_file
+    ret=$?
+    sys_launch_files_array+=(${launch_files_array[@]})
+    return $ret
+}
+get_map_launch_files() {
+    launch_files_array=()
+    map_launch_files_array=()
+    get_launch_files $map_list_file
+    ret=$?
+    map_launch_files_array+=(${launch_files_array[@]})
+    return $ret
+}
+
 start_onenode() {
     local real_launch_file="$1"
-    local pkg_name
-    pkg_name=$(xmllint --xpath "//@pkg" $real_launch_file 2>/dev/null | sed 's/\"//g')
-    for value in $pkg_name; do
-        pkg=${value/*=/}
-        if [ $(echo $pkg_set | grep -o "$pkg" | wc -l) -eq 0 ]; then
-            pkg_set="$pkg_set|$pkg"
-            ROSCONSOLE_CONFIG_FILE="$ABS_PATH/../config/${pkg}_console.config"
-            add_config $pkg INFO >$ROSCONSOLE_CONFIG_FILE
-        fi
-    done
+    add_config $real_launch_file INFO
     LoggingINFO "launching ${real_launch_file}..."
     launch_file=$(echo $real_launch_file | awk '{print $NF}' | awk -F/ '{print $NF}')
+    local child_pid
     if [ "$GuiServer" == "silence" ]; then
         roslaunch $launch_prefix $real_launch_file >>${ROS_LOG_DIR}/${launch_file}.log 2>>${ROS_LOG_DIR}/${launch_file}.err &
+        child_pid=$!
     else
         $GuiTerminal --tab -e "bash -c 'sleep 3; $BASHRC && roslaunch $launch_prefix $real_launch_file 2>${ROS_LOG_DIR}/${launch_file}.err 2>&1 | tee -i ${ROS_LOG_DIR}/${launch_file}.log';bash" $TitleOpt "${launch_file}" &
     fi
-    map_pid_name[$!]="$launch_file"
-}
-
-start_node() {
-    for launch_file in ${launch_files_array[*]}; do
-        start_onenode "$launch_file"
-    done
+    [[ $2 == "MAP" ]] && map_pid_name[$child_pid]=${launch_file} || sys_pid_name[$child_pid]=${launch_file}
 }
 
 set_pr() {
     while [ $exit_flag -ne 1 ] ;do
         sleep 2
-        for t in ${child_node_array[@]}; do
+        for t in ${map_child_node_array[@]}; do
             t=${t##*/}
             [[ "$t" =~ "rviz" ]] && continue
             [[ "$t" =~ "update_map" ]] && continue
@@ -204,6 +219,7 @@ set_pr() {
             "controller") (($priority >= 0)) && (chrt -a -p -r 99 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             "localization" | "drivers_gnss" | "drivers_gnss_zy") (($priority >= 0)) && (chrt -a -p -r 99 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             "local_planning") (($priority >= 0)) && (chrt -a -p -r 99 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "perception_fusion_mid") (($priority >= 0)) && (chrt -a -p -r 90 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             "hadmap_server" | "hadmap_engine_node") (($priority >= 0)) && (chrt -a -p -r 80 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             "perception_fusion2" | "perception_fusion") (($priority >= 0)) && (chrt -a -p -r 79 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             "rs_perception_node" | "trt_yolov5") (($priority >= 0)) && (chrt -a -p -r 69 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
@@ -243,24 +259,23 @@ get_xavier_type() {
     rosmachine=${ros_machine:="localhost"}
     [[ ${rosmachine} == "localhost" ]] && ros_master="${rosmachine}" || ros_master="rosmaster"
     ros_hosts=$(grep -Eo "^[^#]*ros[^#]*" /etc/hosts | uniq | wc -l)
-    return $((ros_hosts > 2 ? 3 : ((ros_hosts > 1 ? 2 : 1))))
+    ((ros_hosts == 0)) && xavier_type="1x" || xavier_type="${ros_hosts}x"
+    # return $((ros_hosts > 2 ? 3 : ((ros_hosts > 1 ? 2 : 1))))
 }
 
-get_launch_list() {
-    [[ -z "$xavier_type" || $xavier_type -eq 0 ]] && LoggingERR "cannot get xavier type" && return -1
+generate_list() {
     local file_name=""
     if [ ! -z "$opt_launch_file" ]; then
         echo "$opt_pkg $opt_launch_file" | sed 's/^\s*//g' >/tmp/tmp.list
         LoggingINFO "start list file:/tmp/tmp.list"
     else
-        case $xavier_type in
-        1) file_name="${ABS_PATH}/all.list" ;;
-        2) file_name="${ABS_PATH}/${ros_machine}.list" ;;
-        3) [[ ${ros_machine} == "rosmaster" ]] && file_name="${ABS_PATH}/rosmaster-102.list" || file_name="${ABS_PATH}/${ros_machine}.list" ;;
-        *) ;;
-        esac
-        LoggingINFO "start list file:${file_name}"
-        cp ${file_name} /tmp/tmp.list
+        map_list_file="${ABS_PATH}/config/MAP_${VehicleType}_${ros_machine}_${xavier_type}.list"
+        sys_list_file="${ABS_PATH}/config/SYS_${VehicleType}_${ros_machine}_${xavier_type}.list"
+        if [[ -f $ABS_PATH/parse_list.py ]];then
+            python $ABS_PATH/parse_list.py $VehicleType $ros_machine $xavier_type "SYS"
+            python $ABS_PATH/parse_list.py $VehicleType $ros_machine $xavier_type "MAP"
+        fi
+        LoggingINFO "map list file:${map_list_file}    sys list file:${sys_list_file}"
     fi
     list_file="/tmp/tmp.list"
 }
@@ -271,9 +286,11 @@ install_ros_log() {
     mkdir -p /home/mogo/data/log/ROS_STAT/EXPORT/
     chmod 777 -R /home/mogo/data/log/
     roscore_xml_path=$(find /autocar-code/install/ -name 'roscore.xml' | head -n 1)
-   \cp -rf $roscore_xml_path  /opt/ros/melodic/etc/ros/roscore.xml
-   \cp -rf $roscore_xml_path  /opt/ros/melodic/share/roslaunch/resources/roscore.xml
-   \mv /usr/bin/rosversion  /usr/bin/rosversion_backup
+    if [ -n "$roscore_xml_path" ];then
+        \cp -rf $roscore_xml_path  /opt/ros/melodic/etc/ros/roscore.xml
+        \cp -rf $roscore_xml_path  /opt/ros/melodic/share/roslaunch/resources/roscore.xml
+    fi
+    [[ -f /usr/bin/rosversion ]] && \mv /usr/bin/rosversion  /usr/bin/rosversion_backup
 }
 
 add_privilege_monitor_gnss() {
@@ -283,11 +300,10 @@ add_privilege_monitor_gnss() {
     #rm /home/mogo/data/log/msg_error_log.txt -rf
     #rm /home/mogo/data/log/topic_hz_log.txt -rf
     rm -rf /home/mogo/data/log/filebeat_upload/*
-    rm -rf /home/mogo/data/log/ROS_STAT/bak_*
     chmod -R 777 /autocar-code/install/share/monitor_gnss >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/share/monitor_collect >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/share/monitor_process >/dev/null 2>&1
-    chmod -R 777 /autocar-code/install/share/trajectory_agent  >/dev/null 2>&1
+    chmod -R 777 /autocar-code/install/share/hd_map_agent  >/dev/null 2>&1
 }
 
 _update() {
@@ -303,7 +319,10 @@ _update() {
     fi
 }
 start_core() {
-    [[ -n "$opt_onenode" || -n "$opt_launch_file" ]] && return
+    core_stat=0 && write_action
+    [[ -n "$opt_onenode" || -n "$opt_launch_file" ]] && return 1
+    [[ "$ros_machine" != "$ros_master" ]] && return 1
+    kill_ros
     LoggingINFO "starting roscore..."
     roscore >$ROS_LOG_DIR/roscore.log 2>&1 & 
     roscore_pid=$!
@@ -313,38 +332,40 @@ start_core() {
         timeout 0.2 cat &>/dev/null </dev/tcp/${ros_master}/11311
         ret=$?
     done
+    local rosmaster_pid
     if [ $ret -eq 124 ]; then
-        LoggingINFO "starting roscore finished"
-        chrt -p -r 99 $roscore_pid 2>/dev/null
-        write_action 2
-        return 0
+        rosmaster_pid=$(ps -ef | grep -w "rosmaster --core" | grep -v grep | awk '{print $2}')
+        LoggingINFO "starting roscore finished,rosmaster pid:$rosmaster_pid"
+        chrt -a -p -r 99 $rosmaster_pid 2>/dev/null
+        core_stat=1 && write_action
     else
         LoggingERR "starting roscore failed:\n$(cat $ROS_LOG_DIR/roscore.log)" "EMAP_NODE"
-        write_action 4
         return 1
     fi
     return 0
 }
 kill_ros() {
-    [[ -n "$opt_onenode" || -n "$opt_launch_file" ]] && return
-    LoggingINFO "killing exist roscore..."
     core_pid=$(ps aux | grep -v grep | grep -w "rosmaster --core" | awk '{print $2}')
-    [[ ! -z "$core_pid" ]] && kill -2 $core_pid >/dev/null 2>&1
+    [[ ! -z "$core_pid" ]] && LoggingINFO "killing roscore..." && kill -2 $core_pid >/dev/null 2>&1
+    core_stat=0 && write_action
 }
 wait_core() {
     LoggingINFO "waiting roscore in ${ros_master:="localhost"}..."
     local ret=0
     while [ $ret -ne 124 -a $exit_flag -eq 0 ]; do
-        timeout 0.5 cat &>/dev/null </dev/tcp/${ros_master}/11311
+        timeout 1 cat &>/dev/null </dev/tcp/${ros_master}/11311
         ret=$?
     done
+    core_stat=1 && write_action
 }
 
 write_action() {
-    [[ ! -z "$opt_launch_file" ]] && return
-    [[ -z "$1" ]] && LoggingERR "action is empty" && return -1
+    [[ ! -z "$opt_launch_file" || ! -z "$opt_onenode" ]] && return
+    old_action=$(read_action)
+    old_action=${old_action:-"000"}
+    [[ $old_action -eq ${core_stat}${sys_stat}${map_stat} ]] && return
     flock -x 9
-    echo $1 >$action_file
+    echo ${core_stat}${sys_stat}${map_stat} >$action_file
     flock -u 9
     return 0
 }
@@ -365,18 +386,43 @@ read_action() {
 # 7 - nodes partial started
 # 8 - nodes stopping
 # 9 - nodes stopped
+# 10 - map started
+# signal 34 -- start map
+# signal 35 -- stop map
+
+# 状态字段:
+# 第一个字节:roscore状态
+# 第二个字节:其他节点状态
+# 第三个字节:map节点状态
+
+# 状态值
+# 0:未启动
+# 1:全部启动
+# 2:部分启动
 command_handler() {
     local type=$1
     LoggingINFO "receive ${type} command from master"
-    local cur_action=$(read_action)
+    local action=$(read_action)
+    local _core_action=${action:0:1}
+    local _sys_action=${action:1:2}
+    local _map_action=${action:2:3}
     case "$type" in
-    "start") 
+    "start_sys") 
         # only valid when status is stopped or unknown
-        ((${cur_action-0}!=0&&${cur_action-0}!=2&&${cur_action-0}!=9)) && LoggingERR "The operation[${type}] is not allowed in the current state:${cur_action}" "EAGENT_MASTER_COMMAND_HANDLER_FAILED" && return 1
+        ((_sys_action==1)) && LoggingERR "The operation[${type}] hasn't been executed because the sys nodes had be launched" "EAGENT_MASTER_COMMAND_HANDLER_FAILED" && return 1
+        start_sys
+        ;;
+    "stop_sys") 
+        ((_sys_action==0)) && LoggingERR "The operation[${type}] hasn't been executed because the sys nodes hadn't be launched" "EAGENT_MASTER_COMMAND_HANDLER_FAILED" && return 1
+        stop_sys
+        ;;
+    "start_map") 
+        # only valid when status is stopped or unknown
+        ((_map_action==1)) && LoggingERR "The operation[${type}] hasn't been executed because the map nodes had be launched" "EAGENT_MASTER_COMMAND_HANDLER_FAILED" && return 1
         start_map
         ;;
-    "stop") 
-        ((${cur_action-0}!=4&&${cur_action-0}!=6&&${cur_action-0}!=7)) && LoggingERR "The operation[${type}] is not allowed in the current state:${cur_action}" "EAGENT_MASTER_COMMAND_HANDLER_FAILED" && return 1
+    "stop_map") 
+        ((_map_action==0)) && LoggingERR "The operation[${type}] hasn't been executed because the sys nodes hadn't be launched" "EAGENT_MASTER_COMMAND_HANDLER_FAILED" && return 1
         stop_map
         ;;
     *) LoggingERR "unknown command type:${type}" "EAGENT_MASTER_COMMAND_HANDLER_FAILED" && return 1 ;;
@@ -384,55 +430,94 @@ command_handler() {
     LoggingINFO "execute ${type} command successfully" "IAGENT_EXECUTE_MASTER_COMMAND"
 
 }
-start_map() {
-    LoggingINFO "starting${model}..."
-    launch_files_array=()
-    get_launch_list $xavier_type
-    pids=$(ps -ef | grep -w "autopilot\.sh" | grep -v grep | awk '!($3 in arr) && $2 != "'$self_pid'" && $3 != "'$self_pid'" {arr[$2]=$2};END{for(idx in arr){print arr[idx]}}')
-    for pid in $pids; do [[ "$pid" != "$self_pid" ]] && LoggingINFO "clean exist $(basename $0)[$pid]" && kill -2 $pid; done
-    add_privilege_monitor_gnss
-    kill_ros
-    if [[ "$ros_machine" == "$ros_master" && -z "$opt_launch_file" ]]; then
-        start_core
-        [ $? -ne 0 ] && return 1
-    fi
+
+start_sys() {
+    sys_pid_name=()
+    LoggingINFO "starting SYS nodes..."
     wait_core
-    # list中有temematics或guardian才会启动
-    [[ $(grep -wc telematics $list_file) -ge 1 ]] && start_onenode "$(roslaunch --files $(sed -n '/telematics/p' ${list_file}))" && sed -i '/telematics/d' ${list_file}
-    [[ $(grep -wc guardian $list_file) -ge 1 ]] && start_onenode "$(roslaunch --files $(sed -n '/guardian/p' ${list_file}))" && sed -i '/guardian/d' ${list_file}
-    # if [[ $(grep -wc update_config $list_file) -ge 1 ]];then
-    #     update_config_finished=0
-    #     trap "update_config_finished=1" RTMIN
-    #     start_onenode "$(roslaunch --files $(sed -n '/update_config/p' ${list_file}))" && sed -i '/update_config/d' ${list_file}
-    #     local deadtime=$(($(date +"%s")+10))
-    #     while [[ $update_config_finished -ne 1 && $(date +"%s") -lt $deadtime ]];do
-    #         sleep 0.2
-    #     done
-    #     trap " " RTMIN
-    #     ((update_config_finished==1)) && LoggingINFO "update config finished" || LoggingERR "update config timeout"
-    # fi
-    LoggingINFO "update config...."
-    timeout 300 roslaunch --wait update_config update_config.launch >$ROS_LOG_DIR/update_config.launch.log 2>$ROS_LOG_DIR/update_config.launch.err
-    LoggingINFO "update config finished"
-    python $ABS_PATH/mogodoctor.py c
-    get_all_launch_files $list_file #获取所有需要启动的launch文件
+    get_sys_launch_files #获取所有需要启动的launch文件
     failed_files_num=$?
-    child_node_array+=($(roslaunch --nodes ${launch_files_array[*]}))
-    write_action 5
-    start_node
-    if [[ $failed_files_num -eq 0 ]]; then
-        write_action 6
-        [[ ${model} == " [MAP]" ]] && LoggingINFO "All nodes in ${ros_machine} launched successfully." "IBOOT_MAP_STARTED" 
+    ((failed_files_num==255)) && return $failed_files_num
+    sys_child_node_array+=($(roslaunch --nodes ${sys_launch_files_array[*]}))
+    for launch_cmd in ${sys_launch_files_array[*]}; do
+        start_onenode "$launch_cmd" "SYS"
+    done
+    python $ABS_PATH/mogodoctor.py c >/dev/null 2>&1
+    if [[ $failed_files_num -ne 0 ]]; then
+        sys_stat=2 && write_action
+        LoggingERR "partial SYS nodes launched failed."
+        return 0
+    fi
+    sleep 2 
+    if [[ $(ps -p ${!sys_pid_name[@]} | sed '1d' | wc -l) -lt ${#sys_pid_name[@]} ]];then 
+        sys_stat=2 && write_action
+        LoggingERR "partial SYS nodes launched failed."
     else
-        write_action 7
-        [[ ${model} == " [MAP]" ]] && LoggingERR "${ros_machine} Started finished with partial nodes failure." "EMAP_NODE"
+        sys_stat=1 && write_action
+        LoggingINFO "All SYS nodes in launched successfully."
     fi
 }
 
+start_map() {
+    map_pid_name=()
+    LoggingINFO "starting MAP nodes..."
+    wait_core
+    get_map_launch_files #获取所有需要启动的launch文件
+    failed_files_num=$?
+    ((failed_files_num==255)) && return $failed_files_num
+    map_child_node_array+=($(roslaunch --nodes ${map_launch_files_array[*]}))
+    for launch_cmd in ${map_launch_files_array[*]}; do
+        start_onenode "$launch_cmd" "MAP"
+    done
+    if [[ $failed_files_num -ne 0 ]]; then
+        map_stat=2 && write_action
+        LoggingERR "${ros_machine} Started finished with partial nodes failure." "EMAP_NODE"
+        return 0
+    fi
+    sleep 2 
+    if [[ $(ps -p ${!map_pid_name[@]} | sed '1d' | wc -l) -lt ${#map_pid_name[@]} ]];then 
+        map_stat=2 && write_action
+        LoggingERR "${ros_machine} Started MAP finished with partial nodes failure." "EMAP_NODE"
+    else
+        map_stat=1 && write_action
+        LoggingINFO "All MAP nodes in ${ros_machine} launched successfully." "IBOOT_MAP_STARTED" 
+    fi
+}
+
+stop_sys() {
+    LoggingINFO "stopping SYS nodes..." 
+    echo ${!sys_pid_name[@]} | xargs kill -2 >/dev/null 
+    LoggingINFO "stop SYS nodes finished..." 
+    sys_stat=0 && write_action
+}
+
 stop_map() {
-    LoggingINFO "stopping MAP..." 
-    write_action 8
+    LoggingINFO "stopping MAP nodes..." 
     echo ${!map_pid_name[@]} | xargs kill -2 >/dev/null 
+    LoggingINFO "stop MAP nodes finished..." 
+    map_stat=0 && write_action
+}
+
+check_child_stat(){
+    ((map_stat==0&&sys_stat==0)) && return
+    if [[ $map_stat -ne 0 ]];then
+        for pid in ${!map_pid_name[@]};do
+            if [[ $(ps -p ${pid} | sed '1d' | wc -l) -eq 0 ]]; then
+                LoggingINFO "${map_pid_name[$pid]}[${pid}] exited"
+                unset map_pid_name[$pid] 
+                ((map_stat==1)) && map_stat=2 && write_action
+            fi
+        done
+    fi
+    if [[ $sys_stat -ne 0 ]];then
+        for pid in ${!sys_pid_name[@]};do
+            if [[ $(ps -p ${pid} | sed '1d' | wc -l) -eq 0 ]]; then
+                LoggingINFO "${sys_pid_name[$pid]}[${pid}] exited"
+                unset sys_pid_name[$pid] 
+                ((sys_stat==1)) && sys_stat=2 && write_action
+            fi
+        done
+    fi
 }
 
 heart_beat() {
@@ -449,21 +534,24 @@ _exit() {
     LoggingINFO "autopilot shut down"
     jobs -p | xargs kill -15 >/dev/null 2>&1
     action=$(read_action)
-    timeout 3 curl -d "action=${action-0},time=$(date +"%s").$(($(echo $(date +"%N") | sed 's/^0*//') / 1000000))" $master_ip:8080 >/dev/null 2>&1
+    timeout 2 curl -d "action=${action-0},time=$(date +"%s").$(($(echo $(date +"%N") | sed 's/^0*//') / 1000000))" $master_ip:8080 >/dev/null 2>&1
 }
 
 # main
 trap 'LoggingINFO "receive SIGINT/SIGTERM signal";exit_flag=1' INT TERM
 trap '_exit' EXIT
-trap 'command_handler "start"' USR1
-trap 'command_handler "stop"' USR2
+trap 'check_child_stat' CHLD
+trap 'command_handler "start_sys"' USR1
+trap 'command_handler "stop_sys"' USR2
+trap 'command_handler "start_map"' 34
+trap 'command_handler "stop_map"' 35
 export ABS_PATH # autopilot.sh脚本的路径
 ABS_PATH="$(cd "$(dirname $0)" && pwd)"
 
-declare -A -g map_pid_name=()
-declare -g launch_files_array=()
-declare -g child_node_array=()
-declare -g opt_onenode opt_pkg opt_launch_file
+declare -A -g map_pid_name=() sys_pid_name=()
+declare -g launch_files_array=() map_launch_files_array=() sys_launch_files_array=()
+declare -g map_child_node_array=() sys_child_node_array=()
+declare -g opt_onenode opt_pkg opt_launch_file opt_log_level
 declare -g LOG_DIR="/home/mogo/data/log"
 declare -g BAG_DIR="/home/mogo/data/bags"
 declare -g -r MOGO_MSG_CONFIG="$ABS_PATH/config/mogo_report_msg.json"
@@ -471,10 +559,12 @@ declare -g -r MOGO_LOG_DIR="$LOG_DIR/msg_log"
 declare -g -r MOGOLOGFILE="$MOGO_LOG_DIR/autopilot_report.json"
 declare -g -r LOGFILE="/home/mogo/data/log/autopilot.log" #
 declare -g -r ERRFILE="/home/mogo/data/log/autopilot.err" #
-declare -g exit_flag=0 list_file roscore_pid ros_master ros_machine
+declare -g exit_flag=0 map_list_file sys_list_file roscore_pid ros_master ros_machine
 declare -g -r action_file=${ABS_PATH}/agent_action.data
+declare -g xavier_type
 declare -g vehicle_property launch_prefix="--wait"
 declare -g master_ip
+declare -i -g core_stat=0 sys_stat=0 map_stat=0
 
 exec 6>>$LOGFILE
 exec 7>>$ERRFILE
@@ -493,6 +583,7 @@ while true; do
     --launch-file) opt_launch_file=$2 && shift 2 ;;
     -n | --start-node) opt_onenode=$2 && shift 2 ;;
     --pkg) opt_pkg=$2 && shift 2 ;;
+    --node-log-level) opt_log_level=$2 && shift 2 ;;
     --) shift && break ;;
     *) echo "error" && exit 1 ;;
     esac
@@ -504,6 +595,7 @@ done
 [[ ! -d $LOG_DIR ]] && mkdir -p $LOG_DIR
 [[ ! -d $BAG_DIR ]] && mkdir -p $BAG_DIR && chown -R mogo:mogo $BAG_DIR
 [[ ! -d $MOGO_LOG_DIR ]] && mkdir -p $MOGO_LOG_DIR
+[[ ! -d ${ABS_PATH/}config ]] && mkdir -p ${ABS_PATH}/config
 
 # GuiServer:silence -- 后台启动 xfce4 -- docker中启动 终端使用xfce4-terminal gnome -- 宿主机中启动 终端使用gnome-terminal
 export GuiServer=${2:-silence}
@@ -516,7 +608,7 @@ export VEHICLE_PLATE
 if [ -f /home/mogo/data/vehicle_monitor/vehicle_config.txt ]; then
     VEHICLE_PLATE=$(grep plate /home/mogo/data/vehicle_monitor/vehicle_config.txt | awk -F: '{print $2}' | sed -e 's/ //g' -e 's/\"//g')
     [[ -z "$VEHICLE_PLATE" ]] && LoggingERR "cannot read /home/mogo/data/vehicle_monitor/vehicle_config.txt" "EINIT_LOST_FILE"
-    [[ ! -z "$VEHICLE_PLATE" ]] && ln -snf /home/mogo/data/vehicle_monitor/${VEHICLE_PLATE} /home/mogo/autopilot/share/config/vehicle
+    [[ ! -z "$VEHICLE_PLATE" ]] && ln -snf /home/mogo/data/vehicle_monitor/${VEHICLE_PLATE} /home/mogo/autopilot/share/config/vehicle 2>/dev/null
 fi
 vehicletypes="wey df hq byd jinlv kaiwo"
 [[ -z "$opt_launch_file" && (-z "$VehicleType" || $(echo $vehicletypes | grep -wc $VehicleType) -lt 1) ]] && LoggingERR "vehicle type undefined" && Usage && exit 1
@@ -537,8 +629,8 @@ elif [ "$GuiServer" = "g" ]; then
     TitleOpt="-t"
 fi
 get_xavier_type #获取xavier类型:1x 2x 6x
-declare -g -r xavier_type=$?
-LoggingINFO "rosmachine:${ros_machine} rosmaster:${ros_master}"
+generate_list #生成list
+LoggingINFO "rosmachine:${ros_machine} rosmaster:${ros_master} xavier type:$xavier_type"
 LoggingINFO "cwd:$ABS_PATH    command:$0 $args"
 export ROSCONSOLE_CONFIG_FILE
 export ROS_HOSTNAME=${ros_machine}
@@ -557,14 +649,14 @@ do
     vehicle_path=`find /autocar-code/install/share/ -name vehicle_init.py | head  -n 1`
     [[ -f $vehicle_path ]] && python  $vehicle_path || break
     if [ -e "/home/mogo/data/vehicle_use.info" ];then
-            echo "found"
-            break
+        echo "found"
+        break
     fi
     try_times=`expr $try_times + 1`
     echo $try_times
     if [  $try_times -eq 5 ];then
-            echo "try times eq 5 times,abort get vehicle use" >> /home/mogo/data/vehicle_use.info.error
-            break
+        echo "try times eq 5 times,abort get vehicle use" >> /home/mogo/data/vehicle_use.info.error
+        break
     fi
     sleep 3
 done
@@ -572,19 +664,24 @@ if [ ! -e "/home/mogo/data/vehicle_use.info" ];then
         echo "not exists"
         echo  "{\"cannot access url\"}" >>  /home/mogo/data/vehicle_use.info.error
 fi
+if [ -f "/home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup" ];then
+   rm -f /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite
+   \mv /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup    /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite
+fi
 python ${ABS_PATH}/vehicle_init.py
 vehicle_property=$?
 LoggingINFO "current property of $VEHICLE_PLATE is $vehicle_property"
 ((vehicle_property==3||vehicle_property==4)) && launch_prefix="$launch_prefix --respawn"
-#[[ "${ros_machine}" == "${ros_master}" && -z "$opt_launch_file" ]] && bash ${ABS_PATH}/../system_master/start_system_master.sh
-if [[ ${xavier_type} -eq 2 ]]; then
+# [[ "${ros_machine}" == "${ros_master}" && -z "$opt_launch_file" ]] && bash ${ABS_PATH}/../system_master/start_system_master.sh
+if [[ ${xavier_type} == "2x" ]]; then
     master_ip=${ethnet_ip%.*}.103
-elif [[ ${xavier_type} -eq 3 ]]; then
+elif [[ ${xavier_type} == "6x" ]]; then
     master_ip=${ethnet_ip%.*}.106
 else
     master_ip=${ethnet_ip%.*}.102
 fi
-write_action 0 #初始化中
+
+write_action
 # 后台发送心跳
 heart_beat &
 #check system time
@@ -627,28 +724,46 @@ LoggingINFO "ROS_LOG_DIR=$ROS_LOG_DIR"
 flock -x 8
 if [[ ! -d $ROS_LOG_DIR ]]; then
     find ${LOG_DIR} -maxdepth 1 -mtime +3 -type d -exec rm -Rf {} \;
-    find $BAG_DIR -maxdepth 1 -mtime +10 -exec rm -Rf {} \;
+    find $BAG_DIR -maxdepth 10 -mtime +10 -exec rm -Rf {} \;
     mkdir -p $ROS_LOG_DIR
     ln -snf $ROS_LOG_DIR ${LOG_DIR}/latest
 fi
 flock -u 8
-start_map
-set_pr &
-while [ $exit_flag -ne 1 ] ;do
-    ((${#map_pid_name[@]}==0)) && sleep 5 && continue
-    # set_pr #设置节点优先级
-    wait -n ${!map_pid_name[@]}
-    LoggingINFO "some of roslaunch processes exited"
-    wait_ret=$?
-    for pid in ${!map_pid_name[@]};do
-        if [[ $(ps -p ${pid} | sed '1d' | wc -l) -eq 0 ]]; then
-            LoggingINFO "${map_pid_name[$pid]}[${pid}] has exit with code $wait_ret"
-            unset map_pid_name[$pid] 
-            write_action 7
+if [[ -n "$opt_onenode" || -n "$opt_launch_file" ]];then
+    local real_launch_file
+    if [ -n "$opt_launch_file" ];then
+        real_launch_file="$opt_pkg $opt_launch_file"
+    elif [ -n "$opt_onenode" ];then 
+        [[ ${opt_onenode:0:1}=='/' ]] && real_launch_file=$opt_onenode || real_launch_file=$(grep -w $opt_onenode $list_file)
+        if [[ -z $real_launch_file ]]; then
+            real_launch_file=$(grep -w $opt_onenode ${ABS_PATH}/*.list | head -1)
+            if [ -z $real_launch_file ]; then
+                local multy_machine
+                [[ $ros_machine == "rosmaster" ]] && multy_machine="rosmaster-102" || multy_machine=$ros_machine
+                LoggingERR "cannot find $opt_onenode,you can take one of the follow actions to fix this problem:
+                1.add the launching command into ${ABS_PATH}/*.list,1X into all.list,2X into ${ros_machine}.list,others into ${multy_machine}.list.
+                    e.g.:if the command is \"roslaunch launch local_planning.launch\",add \"launch local_planning.launch\" to list
+                        :if the command is \"roslaunch /home/mogo/autopilot/share/launch/local_planning.launch\",add \"/home/mogo/autopilot/share/launch/local_planning.launch\" to list
+                2.using completed path of launch file replaced after -n|--start-node option.
+                    e.g.:/home/mogo/autopilot/share/launch/local_planning.launch.
+                "
+                exit 0
+            fi
         fi
-    done
-    if [[ ${#map_pid_name[@]} -eq 0 && $exit_flag -ne 1 ]]; then
-        write_action 9
-        LoggingINFO "all nodes stopped"
     fi
-done
+    
+    add_config $real_launch_file INFO
+    LoggingINFO "launching ${real_launch_file}..."
+    launch_file=$(echo $real_launch_file | awk '{print $NF}' | awk -F/ '{print $NF}')
+    exec roslaunch $launch_prefix $real_launch_file 2>&1 | tee -a ${ROS_LOG_DIR}/${launch_file}.log 
+    exit 0
+fi
+pids=$(ps -ef | grep -w "autopilot\.sh" | grep -v grep | awk '!($3 in arr) && $2 != "'$self_pid'" && $3 != "'$self_pid'" {arr[$2]=$2};END{for(idx in arr){print arr[idx]}}')
+for pid in $pids; do [[ "$pid" != "$self_pid" ]] && LoggingINFO "clean exist $(basename $0)[$pid]" && kill -2 $pid; done
+add_privilege_monitor_gnss
+start_core
+LoggingINFO "update config...."
+timeout 300 roslaunch --wait update_config update_config.launch >$ROS_LOG_DIR/update_config.launch.log 2>$ROS_LOG_DIR/update_config.launch.err
+LoggingINFO "update config finished"
+start_sys
+set_pr 

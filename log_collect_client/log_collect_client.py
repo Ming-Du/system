@@ -8,7 +8,7 @@ import datetime
 work_dir = "/home/mogo/data/log"
 src_dir = os.path.join(work_dir, "ROS_STAT", "EXPORT")
 tmp_dir = os.path.join(work_dir, "ROS_STAT_TMP")
-bak_dir = os.path.join(work_dir, "ROS_STAT", datetime.date.today())
+bak_dir = os.path.join(work_dir, "ROS_STAT", '{}'.format(datetime.date.today()))
 
 # scp -l Kb/s
 def run_once():

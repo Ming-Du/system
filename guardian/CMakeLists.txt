@@ -19,32 +19,32 @@ install(FILES
   system_guardian.launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
-install(FILES
-  system_guardian_slave1.launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
-install(FILES
-  system_guardian_slave2.launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
-install(FILES
-  system_guardian_slave3.launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
-install(FILES
-  system_guardian_slave4.launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
-install(FILES
-  system_guardian_slave5.launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
-install(FILES
-  system_guardian_slave6.launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
+#install(FILES
+#system_guardian_slave1.launch
+#  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+#)
+#install(FILES
+#  system_guardian_slave2.launch
+#  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+#)
+#install(FILES
+#  system_guardian_slave3.launch
+#  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+#)
+#install(FILES
+#  system_guardian_slave4.launch
+#  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+#)
+#install(FILES
+#  system_guardian_slave5.launch
+#  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+#)
+#install(FILES
+#  system_guardian_slave6.launch
+#  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+#)
 install(DIRECTORY rostopic/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/rostopic
+DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/rostopic
 )
 install(DIRECTORY proto
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
