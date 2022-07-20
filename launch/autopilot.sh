@@ -304,6 +304,7 @@ add_privilege_monitor_gnss() {
     chmod -R 777 /autocar-code/install/share/monitor_collect >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/share/monitor_process >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/share/hd_map_agent  >/dev/null 2>&1
+    chmod -R 777 /autocar-code/install/share/trajectory_agent  >/dev/null 2>&1
 }
 
 _update() {
