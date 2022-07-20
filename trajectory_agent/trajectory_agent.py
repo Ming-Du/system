@@ -235,35 +235,35 @@ class CacheUtils:
     #         print 'traceback.format_exc():\n%s' % (traceback.format_exc())
 
 
-def SaveEventToFile(msg='', code='', results=list(), actions=list(), level=''):
-    print "enter SaveEventToFile"
-    json_msg = {}
-    if 1:
-        try:
-            json_msg = gen_report_msg("trajectory_agent.pb", code, "/trajectory_agent")
-        except Exception as e:
-            print('Error: gen report msg failed!, {}'.format(e))
-    print "++++++++++++++++++ event json_msg:{0}".format(json_msg)
-    if json_msg == {}:  # if not used pb or call function error, used local config
-        cur_time = int(time.time())
-        msg_dict = {
-            "timestamp": {
-                "sec": cur_time,
-                "nsec": int((time.time() - cur_time) * 1000000000)},
-            "src": "/trajectory_agent",
-            "code": code,
-            "level": level,
-            "result": results,
-            "action": actions,
-            "msg": msg
-        }
-        json_msg = json.dumps(msg_dict)
-    try:
-        with open("/home/mogo/data/log/msg_log/trajectory_agent.json", 'a+') as fp:
-            # print("write mogo report event: {}".format(json_msg))
-            fp.write(json_msg + '\n')
-    except Exception as e:
-        print('Error: save report msg to file, {}'.format(e))
+# def SaveEventToFile(msg='', code='', results=list(), actions=list(), level=''):
+#     print "enter SaveEventToFile"
+#     json_msg = {}
+#     if 1:
+#         try:
+#             json_msg = gen_report_msg("trajectory_agent.pb", code, "/trajectory_agent")
+#         except Exception as e:
+#             print('Error: gen report msg failed!, {}'.format(e))
+#     print "++++++++++++++++++ event json_msg:{0}".format(json_msg)
+#     if json_msg == {}:  # if not used pb or call function error, used local config
+#         cur_time = int(time.time())
+#         msg_dict = {
+#             "timestamp": {
+#                 "sec": cur_time,
+#                 "nsec": int((time.time() - cur_time) * 1000000000)},
+#             "src": "/trajectory_agent",
+#             "code": code,
+#             "level": level,
+#             "result": results,
+#             "action": actions,
+#             "msg": msg
+#         }
+#         json_msg = json.dumps(msg_dict)
+#     try:
+#         with open("/home/mogo/data/log/msg_log/trajectory_agent.json", 'a+') as fp:
+#             # print("write mogo report event: {}".format(json_msg))
+#             fp.write(json_msg + '\n')
+#     except Exception as e:
+#         print('Error: save report msg to file, {}'.format(e))
 
 
 g_CacheUtil = CacheUtils()
@@ -276,7 +276,7 @@ def checkFileMd5(strFileName):
     try:
         with open(strFileName, 'rb') as f:
             strFileMd5Value = str(hashlib.md5(f.read()).hexdigest())
-            f.close()
+            #f.close()
         print "checkFileMd5: fileName:{0}, strFileMd5Value:{1}".format(strFileName, strFileMd5Value)
     except Exception as e:
         print "exception happend"
@@ -333,7 +333,7 @@ def downFileFromUrl(strUrl, strTempFileName, lLineId):
             if os.path.exists(strSaveTempFile):
                 with open(strSaveTempFile, 'r') as load_f:
                     content = load_f.read()
-                    load_f.close()
+                    #load_f.close()
                 break
             if not os.path.exists(strSaveTempFile):
                 break
@@ -361,7 +361,7 @@ def downFileFromUrl(strUrl, strTempFileName, lLineId):
                 os.remove(strTempFileName)
             with open(strTempFileName, 'ab+') as f:
                 f.write(strOriginContent)
-                f.close()
+                #f.close()
     except Exception as e:
         print "exception happend"
         print e.message
