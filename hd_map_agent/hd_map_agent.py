@@ -67,8 +67,6 @@ import datetime
 import rospy
 
 from autopilot_msgs.msg import BinaryData
-# import proto.mapectory_agent_sync_status_pb2 as common_mapectory_agent_sync_status_pb2
-import proto.message_pad_pb2 as common_message_pad_pb2
 
 from threading import Thread
 import threading
@@ -83,11 +81,11 @@ import uuid
 from sys import path
 import os
 import requests
-import proto.localization_pb2 as common_localization
+import common.localization_pb2 as common_localization
 # import pycurl
 import StringIO
 import commands
-import proto.vehicle_state_pb2 as common_vehicle_state_pb2
+import common.vehicle_state_pb2 as common_vehicle_state_pb2
 
 path.append(os.path.dirname(__file__) + '/../mogo_reporter/script/')
 sys.path.append('../mogo_reporter/script/')
@@ -113,6 +111,7 @@ globalStrPort = "443"
 
 globalPilotMode = 0
 
+globalHdMapUrlName = "mdev.zhidaohulian.com"
 
 class TaskManager:
     dictTaskInfo = None
@@ -828,7 +827,7 @@ def call_process(strReponse):
                     # print "-----   task_id:{0} ".format(strTaskId)
                     intResultProcess = processFile(intPid, strCosPath, strMd5, intTranslateUpdateTime, strPath)
                     if intResultProcess == 0:
-                        strIp = str("mdev-qa.zhidaohulian.com")
+                        strIp = globalHdMapUrlName
                         strPort = globalStrPort
                         strApiName = "/config/map/sync"
                         ## send  sync url
@@ -1058,7 +1057,7 @@ def managerDownload(strReponse):
 def doCheckMapInfo():
     strReponse = ""
     while True:
-        strIp = "mdev-qa.zhidaohulian.com"
+        strIp = globalHdMapUrlName
         strApiName = "/config/map/list"
         try:
             dictCarInfo = globalCommonPara.read_car_info()
@@ -1116,10 +1115,38 @@ def main():
         traceback.print_exc()
         print 'traceback.format_exc():\n%s' % (traceback.format_exc())
 
+def readConfig():
+    global globalHdMapUrlName
+    strFileContent = ""
+    strConfigName = "/home/mogo/data/hd_map_agent.conf"
+    try:
+        if os.path.exists(strConfigName):
+            with open(strConfigName,"r") as f:
+                strFileContent=f.read()
+            if len(strFileContent) > 0:
+                dictContent = json.loads(strFileContent)
+                if len(dictContent) > 0:
+                    globalHdMapUrlName = dictContent['url']
+    except Exception as e:
+        print  "exception happend"
+        print e.message
+        print str(e)
+        print 'str(Exception):\t', str(Exception)
+        print 'str(e):\t\t', str(e)
+        print 'repr(e):\t', repr(e)
+        print 'e.message:\t', e.message
+        print 'traceback.print_exc():';
+        traceback.print_exc()
+        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+    print "=========config url: {0}".format(globalHdMapUrlName)
+
+
+
+
 
 if __name__ == "__main__":
     try:
-        # prepare_env()
+        readConfig()
         main()
     except KeyboardInterrupt as e:
         print("monitor.py is failed !")
