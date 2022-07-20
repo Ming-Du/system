@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import signal
 import sys
 
 reload(sys)
@@ -53,20 +54,25 @@ import uuid
 
 from sys import path
 import os
+import commands
+import psutil
 
-path.append(os.path.dirname(__file__) + '/../mogo_reporter/script/')
-# sys.path.append('../mogo_reporter/script/')
-from get_msg_by_code import gen_report_msg
+# path.append(os.path.dirname(__file__) + '/../mogo_reporter/script/')
+# # sys.path.append('../mogo_reporter/script/')
+# from get_msg_by_code import gen_report_msg
 
 tree = lambda: collections.defaultdict(tree)
 
-global_MaxTryTimes = 6
+global_MaxTryTimes = 4
 
-globalProcessRequestPool = ThreadPoolExecutor(max_workers=2, thread_name_prefix='ProcessRequestPool')
+globalProcessRequestPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='ProcessRequestPool')
 
 globalPubToSystemMasterStatus = rospy.Publisher("/trajectory_agent/cmd/status", BinaryData, queue_size=1000)
 
-globalDictTaskRunningStatus = {}
+globalDictTaskRunningStatus = -1
+
+
+# globalStopFlag = 0
 
 
 class CacheUtils:
@@ -184,7 +190,7 @@ class CacheUtils:
                 if len(self.dictTrajectoryAgentRecord) > 0:
                     print "restore success"
                     print "content:{0}".format(json.dumps(self.dictTrajectoryAgentRecord))
-                    #print "dict:{0}".format(self.dictTrajectoryAgentRecord)
+                    # print "dict:{0}".format(self.dictTrajectoryAgentRecord)
             else:
                 print "break point not exists: {0}".format(strFileName)
         except Exception as e:
@@ -265,6 +271,8 @@ g_CacheUtil = CacheUtils()
 
 def checkFileMd5(strFileName):
     strFileMd5Value = ""
+    if not os.path.exists(strFileName):
+        return strFileMd5Value
     try:
         with open(strFileName, 'rb') as f:
             strFileMd5Value = str(hashlib.md5(f.read()).hexdigest())
@@ -284,17 +292,53 @@ def checkFileMd5(strFileName):
     return strFileMd5Value
 
 
-def downFileFromUrl(strUrl, strTempFileName):
+def downFileFromUrlWget(strUrl, strTempFileName):
+    ret = -1
+    down_speed = 5 * 1024 * 1024
+    strWgetCmd = " /usr/bin/wget     --connect-timeout=5 --dns-timeout=5  -c    '{0}'  -O   '{1}' ".format(
+        strUrl,
+        strTempFileName)
+    try:
+        print   "execute sub cmd : {0}".format(strWgetCmd)
+        status, output = commands.getstatusoutput(strWgetCmd)
+        print   "status:{0}".format(status)
+        ret = status
+    except Exception as e:
+        print "exception happend"
+        print   e.message
+        print   str(e)
+        print   'str(Exception):\t', str(Exception)
+        print   'str(e):\t\t', str(e)
+        print   'repr(e):\t', repr(e)
+        print   'e.message:\t', e.message
+        print   'traceback.print_exc():'
+        traceback.print_exc()
+        print   'traceback.format_exc():\n%s' % (traceback.format_exc())
+        ret = -1
+    return ret, strTempFileName
+
+
+def downFileFromUrl(strUrl, strTempFileName, lLineId):
     ret = 0
     data = None
     # strTempFileName = ""
     intErrno = 0
     strBase64Content = ""
     strOriginContent = ""
+    content = None
     try:
-        request = urllib2.Request(strUrl)
-        response = urllib2.urlopen(request, timeout=60)
-        content = response.read()
+        strSaveTempFile = "{0}.temp".format(strTempFileName)
+        ret = downFileFromUrlWget(strUrl, strSaveTempFile)
+        while True:
+            if os.path.exists(strSaveTempFile):
+                with open(strSaveTempFile, 'r') as load_f:
+                    content = load_f.read()
+                    load_f.close()
+                break
+            if not os.path.exists(strSaveTempFile):
+                break
+            break
+
         dictContent = None
         if len(content) > 0:
             # print json.loads(content)
@@ -307,8 +351,9 @@ def downFileFromUrl(strUrl, strTempFileName):
                 print "-------------------enter  (intErrno == 0) and (dictContent.has_key('result')) and  strTempFileName:{0} ".format(
                     strTempFileName)
                 strBase64Content = str(dictContent['result'])
+
         if len(strBase64Content) > 0:
-            strOriginContent = base64.b64decode(strBase64Content).decode()
+            strOriginContent = base64.b64decode(strBase64Content)
             # print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  strOriginContent:{0}".format(strOriginContent)
             print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ strTempFileName:{0}".format(strTempFileName)
             # os._exit(-1)
@@ -328,14 +373,24 @@ def downFileFromUrl(strUrl, strTempFileName):
         print 'traceback.print_exc():'
         traceback.print_exc()
         print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        ret = -1
+    if os.path.exists(strTempFileName):
+        ret = 0
+    else:
+        ret = -1
     return ret, strTempFileName
 
 
-def syncFromCloud(strUrl, strMd5, strTempFileName):
+def syncFromCloud(strUrl, strMd5, strTempFileName, lineId):
     retNum = 0
     try_times = 0
     try:
         while True:
+            # if globalStopFlag == 1:
+            #     break
+            # print "=====================globalStopFlag:{0}".format(globalStopFlag)
+            if globalDictTaskRunningStatus != lineId:
+                break
             try_times = try_times + 1
             if try_times > global_MaxTryTimes:
                 print "Exit  Download  , Download file try times:{0} more than global_MaxTryTimes:{1}".format(try_times,
@@ -344,7 +399,7 @@ def syncFromCloud(strUrl, strMd5, strTempFileName):
                 break
 
             if try_times <= global_MaxTryTimes:
-                retDownload, strTempFileName = downFileFromUrl(strUrl, strTempFileName)
+                retDownload, strTempFileName = downFileFromUrl(strUrl, strTempFileName, lineId)
                 ## download files success
                 if retDownload == 0:
                     ## check md5 Success
@@ -442,11 +497,15 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                 if os.path.exists(strDownTempLocationFileTraj):
                     os.remove(strDownTempLocationFileTraj)
 
+                print "--------------------before switch not g_CacheUtil.CheckTrajFileCacheExists"
                 if not g_CacheUtil.CheckTrajFileCacheExists(lLineId, timestamp, strTrajMd5):
-                    print "##########not g_CacheUtil.CheckTrajFileCacheExists(lLineId, timestamp, strTrajMd5)"
+                    print "########## enter switch not g_CacheUtil.CheckTrajFileCacheExists(lLineId, timestamp, strTrajMd5)"
                     ## down to temp  location
+                    if globalDictTaskRunningStatus != lLineId:
+                        break
                     intCheckStatus = 0
-                    intCheckStatus = syncFromCloud(strTrajUrl, strTrajMd5, strDownTempLocationFileTraj)
+                    intCheckStatus = syncFromCloud(strTrajUrl, strTrajMd5, strDownTempLocationFileTraj, lLineId)
+                    print "=============intCheckStatus:{0}".format(intCheckStatus)
                     if intCheckStatus == 0:
                         intDownCompleteTrajStatus = 1
                     if intCheckStatus != 0:
@@ -455,12 +514,15 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                             intDownCompleteTrajStatus = 3
 
                 # os._exit(-1)
-
+                print "------------------------before switch g_CacheUtil.CheckStopFileCacheExists"
                 if not g_CacheUtil.CheckStopFileCacheExists(lLineId, timestamp, strStopMd5):
-                    print "##########not g_CacheUtil.CheckStopFileCacheExists(lLineId, timestamp, strStopMd5)"
+                    print "########## enter switch not g_CacheUtil.CheckStopFileCacheExists(lLineId, timestamp, strStopMd5)"
                     ## down to temp  location
+                    if globalDictTaskRunningStatus != lLineId:
+                        break
                     intCheckStatus = 0
-                    intCheckStatus = syncFromCloud(strStopUrl, strStopMd5, strDownTempLocationFileStop)
+                    intCheckStatus = syncFromCloud(strStopUrl, strStopMd5, strDownTempLocationFileStop, lLineId)
+                    print "=============intCheckStatus:{0}".format(intCheckStatus)
                     if intCheckStatus == 0:
                         intDownCompleteStopStatus = 1
                     if intCheckStatus != 0:
@@ -470,10 +532,13 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                     print "strDownTempLocationFileStop:{0}".format(strDownTempLocationFileStop)
                     break
                 # os.__exit(-1)
-
+                print "--------------------------before switch (g_CacheUtil.CheckTrajFileCacheExists(lLineId, timestamp, strTrajMd5) == True) and (os.path.exists(strStandardLocatio)"
                 if (g_CacheUtil.CheckTrajFileCacheExists(lLineId, timestamp, strTrajMd5) == True) and (
                         os.path.exists(strStandardLocationFileTraj)):
+                    print "===enter switch (g_CacheUtil.CheckTrajFileCacheExists(lLineId, timestamp, strTrajMd5) == True) and (os.path.exists(strStandardLocationFileTraj))"
                     intLocationTimeStamp = int(os.path.getmtime(strStandardLocationFileTraj))
+                    if globalDictTaskRunningStatus != lLineId:
+                        break
 
                     strTrajName = "traj_{0}.csv".format(lLineId)
                     intCacheModifyNameTraj = g_CacheUtil.dictTrajectoryAgentRecord[strTrajName]['modify_time']
@@ -494,11 +559,14 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                                       "strTrajMd5 "
                                 ##  download file
                                 intCheckStatus = 0
-                                intCheckStatus = syncFromCloud(strTrajUrl, strTrajMd5, strDownTempLocationFileTraj)
+                                intCheckStatus = syncFromCloud(strTrajUrl, strTrajMd5, strDownTempLocationFileTraj,
+                                                               lLineId)
                                 if intCheckStatus == 0:
                                     intDownCompleteTrajStatus = 1
                                 if intCheckStatus != 0:
                                     intDownCompleteTrajStatus = 2
+                                    if os.path.exists(strStandardLocationFileTraj):
+                                        intDownCompleteTrajStatus = 3
                                 break
                         if intLocationTimeStamp > intCacheModifyNameTraj:
                             print "########## traj intLocationTimeStamp > intCacheModifyNameTraj"
@@ -509,9 +577,13 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                             ##direct use
                             break
                         break
+                print "----------------------------------before switch (g_CacheUtil.CheckStopFileCacheExists(lLineId, timestamp, strStopMd5) == True) and (os.path.exists(strStandardLocationFileStop))"
                 if (g_CacheUtil.CheckStopFileCacheExists(lLineId, timestamp, strStopMd5) == True) and (
                         os.path.exists(strStandardLocationFileStop)):
+                    print "enter switch (g_CacheUtil.CheckStopFileCacheExists(lLineId, timestamp, strStopMd5) == True) and (os.path.exists(strStandardLocationFileStop))"
                     intLocationTimeStamp = int(os.path.getmtime(strStandardLocationFileTraj))
+                    if globalDictTaskRunningStatus != lLineId:
+                        break
                     strStopName = "traj_{0}.csv".format(lLineId)
                     intCacheModifyNameStop = g_CacheUtil.dictTrajectoryAgentRecord[strStopName]['modify_time']
                     print "++++++++++++++++++++++++++++++intCacheModifyNameStop:{0},intLocationTimeStamp:{1}".format(
@@ -529,11 +601,14 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                                 print "##########intLocationTimeStamp == intCacheModifyNameStop, checkFileMd5(strStandardLocationFileStop) != strStopMd5"
                                 ##  download file
                                 intCheckStatus = 0
-                                intCheckStatus = syncFromCloud(strStopUrl, strStopMd5, strDownTempLocationFileStop)
+                                intCheckStatus = syncFromCloud(strStopUrl, strStopMd5, strDownTempLocationFileStop,
+                                                               lLineId)
                                 if intCheckStatus == 0:
                                     intDownCompleteStopStatus = 1
                                 if intCheckStatus != 0:
                                     intDownCompleteStopStatus = 2
+                                    if os.path.exists(strStandardLocationFileStop):
+                                        intDownCompleteStopStatus = 3
                                 break
                         if intLocationTimeStamp > intCacheModifyNameStop:
                             print "########## stop intLocationTimeStamp > intCacheModifyNameStop"
@@ -544,13 +619,21 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                             break
                         break
                     break
+                print "---------------------------------------before switch os.path.exists(strStandardLocationFileStop) and os.path.exists(strStandardLocationFileTraj)"
+                print "strStandardLocationFileStop:{0}".format(strStandardLocationFileStop)
+                print "strStandardLocationFileTraj:{0}".format(strStandardLocationFileTraj)
                 if os.path.exists(strStandardLocationFileStop) and os.path.exists(strStandardLocationFileTraj):
+                    print "====enter switch  os.path.exists(strStandardLocationFileStop) and os.path.exists(strStandardLocationFileTraj)"
+                    if globalDictTaskRunningStatus != lLineId:
+                        break
                     intDownCompleteStopStatus = 3
                     intDownCompleteTrajStatus = 3
                     break
                 break
 
             ## start replace  file
+            print "-------------status intDownCompleteTrajStatus:{0},intDownCompleteStopStatus:{1}".format(
+                intDownCompleteTrajStatus, intDownCompleteStopStatus)
             while True:
                 if (intDownCompleteTrajStatus == 1) and (intDownCompleteStopStatus == 1):
                     print "##########(intDownCompleteTrajStatus  == 1)  and  (intDownCompleteStopStatus == 1)"
@@ -567,6 +650,7 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                                                    timestamp, intLocationStampTraj, intLocationStampStop)
                     print "============================================================================================="
                     # SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(), level='info')
+                    print "=====ISYS_INIT_TRAJECTORY_SUCCESS"
                     intProcessRet = 0
                     break
                 if (intDownCompleteTrajStatus == 2) or (intDownCompleteStopStatus == 2):
@@ -574,18 +658,21 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                     print "============================================================================================="
                     # SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_FAILURE', results=list(), actions=list(),level='info')
                     intProcessRet = 1
+                    print "=====ISYS_INIT_TRAJECTORY_FAILURE"
                     break
                 if (intDownCompleteTrajStatus == 3) and (intDownCompleteStopStatus == 3):
                     print "##########remote traj not exists,now user local traj"
                     print "============================================================================================="
                     # SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_WARNING', results=list(), actions=list(),level='warn')
                     intProcessRet = 2
+                    print "=====ISYS_INIT_TRAJECTORY_WARNING"
                     break
                 if (intDownCompleteTrajStatus == 4) and (intDownCompleteStopStatus == 4):
                     print "########## traj same with cloud ,not need  update "
                     print "============================================================================================="
                     # SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(),level='info')
                     intProcessRet = 0
+                    print "=====ISYS_INIT_TRAJECTORY_SUCCESS"
                     break
                 break
 
@@ -649,10 +736,10 @@ def call_process(msg):
         rosMessage.size = len(strBuffer)
         globalPubToSystemMasterStatus.publish(rosMessage)
         global globalDictTaskRunningStatus
-        if globalDictTaskRunningStatus.has_key(int(lLineId)):
+        if globalDictTaskRunningStatus == (int(lLineId)):
             print "success delete key from  globalDictTaskRunningStatus: {0}".format(int(lLineId))
-            del globalDictTaskRunningStatus[int(lLineId)]
-            print "now  display globalDictTaskRunningStatus:{0}".format(json.dumps(globalDictTaskRunningStatus))
+            globalDictTaskRunningStatus = -1
+            print "now  display globalDictTaskRunningStatus:{0}".format(globalDictTaskRunningStatus)
 
 
     except Exception as e:
@@ -668,6 +755,72 @@ def call_process(msg):
         print 'traceback.format_exc():\n%s' % (traceback.format_exc())
 
 
+def kill_proc_tree(pid, sig=signal.SIGKILL, include_parent=True,
+                   timeout=None, on_terminate=None):
+    """Kill a process tree (including grandchildren) with signal
+    "sig" and return a (gone, still_alive) tuple.
+    "on_terminate", if specified, is a callback function which is
+    called as soon as a child terminates.
+    """
+    gone = None
+    alive = None
+    # assert pid != os.getpid(), "won't kill myself"
+    if pid == os.getpid():
+        print "won't kill myself"
+        return
+    try:
+        parent = psutil.Process(pid)
+        children = parent.children(recursive=True)
+        if include_parent:
+            children.append(parent)
+        for p in children:
+            try:
+                p.send_signal(sig)
+            except psutil.NoSuchProcess:
+                pass
+        gone, alive = psutil.wait_procs(children, timeout=timeout,
+                                        callback=on_terminate)
+    except Exception as e:
+        print "exception happend"
+        print e.message
+        print str(e)
+        print 'str(Exception):\t', str(Exception)
+        print 'str(e):\t\t', str(e)
+        print 'repr(e):\t', repr(e)
+        print 'e.message:\t', e.message
+        print 'traceback.print_exc():'
+        traceback.print_exc()
+        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+    return (gone, alive)
+
+
+def stopTask():
+    global globalDictTaskRunningStatus
+    globalDictTaskRunningStatus =  -1
+    # global globalStopFlag
+    # globalStopFlag = 1
+    local_pid = os.getpid()
+    pids = psutil.pids()
+    for pid in pids:
+        try:
+            p = psutil.Process(pid)
+            if p.ppid() == local_pid:
+                print   "============found sub process,now kill, process  name{0}, pid: {1}".format(p.name(), p.pid)
+                kill_proc_tree(p.pid)
+        except Exception as e:
+            print "exception happend"
+            print e.message
+            print str(e)
+            print 'str(Exception):\t', str(Exception)
+            print 'str(e):\t\t', str(e)
+            print 'repr(e):\t', repr(e)
+            print 'e.message:\t', e.message
+            print 'traceback.print_exc():'
+            traceback.print_exc()
+            print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+    # globalStopFlag = 0
+
+
 def topicMsgCallback(msg):
     print "--------------------------------------------------recv from channel /trajectory_agent/cmd/transaction "
     global globalDictTaskRunningStatus
@@ -675,16 +828,20 @@ def topicMsgCallback(msg):
         pbLine = common_message_pad_pb2.TrajectoryDownloadReq()
         pbLine.ParseFromString(msg.data)
         lLineId = pbLine.line.lineId
-        if globalDictTaskRunningStatus.has_key(lLineId):
+        if globalDictTaskRunningStatus == lLineId:
             print "---------recv Task ---ignore---------globalDictTaskRunningStatus has same lineId:{0} ,ingore execute task".format(
                 int(lLineId))
             pass
         else:
             print "---------recv Task ---recv---------globalDictTaskRunningStatus not  has same lineId:{0} ,execute task".format(
                 int(lLineId))
-            globalDictTaskRunningStatus[lLineId] = 0
+            ### add code stop current task,clear task list
+            if globalDictTaskRunningStatus != -1:
+                stopTask()
+            ### add code start new task
+            globalDictTaskRunningStatus = lLineId
             globalProcessRequestPool.submit(call_process, msg)
-        print "current globalDictTaskRunningStatus:{0}".format(json.dumps(globalDictTaskRunningStatus))
+        print "current globalDictTaskRunningStatus:{0}".format(globalDictTaskRunningStatus)
 
 
 def addLocalizationListener():
