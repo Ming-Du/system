@@ -92,7 +92,7 @@ class Node_base(object):
             if 'topic' in one and one['topic'] in all_link_topic_list:
                 if one['topic'] in self.sub_topic_list or one['topic'] == self.pub_topic:
                     # 判断topic链路，防止跨节点的uuid重复
-                    topic_uuid = one['ident']
+                    topic_uuid = one['ident'] if one.get('ident', 0) else one['header_stamp'] or one['feature']
                     if topic_uuid not in all_link_topic_list[one['topic']]:
                         self.create_topic_info( topic_uuid, one)
                     else:
@@ -113,10 +113,10 @@ class Node_base(object):
                     elif self.beg_tag:
                         ## only beg_tag in node, MAP260 need support
                         if topic_uuid in self.beg_msg_dict:
-                            self.update_beg_tag_info(topic_uuid, self.beg_msg_dict[topic_uuid])
+                            self.update_beg_tag_info(topic_uuid, one['topic'], self.beg_msg_dict[topic_uuid])
                         elif one['thread'] in self.beg_msg_dict:
                             # uuid 不匹配 pub topic的ident， 那么用线程进行匹配，单线程只有一个数据
-                            self.update_beg_tag_info(topic_uuid, self.beg_msg_dict[one['thread']])
+                            self.update_beg_tag_info(topic_uuid, one['topic'], self.beg_msg_dict[one['thread']])
                 elif one['type'] == Constants.g_type_of_sub:
                     # 该节点发送的 sub消息
                     if one['topic'] in self.sub_topic_list:
@@ -151,9 +151,14 @@ class Node_base(object):
     def create_topic_info(self, uuid, one):
         """
         创建topic信息，加入到全局列表里，topic信息里包含pub，sub 关联beg，end
+        {"type":0,"node":"/controller","topic":"/chassis/command",
+        "link":{"src":"/controller","dst":"/jinlv_can_adapter"},
+        "thread":547556995424,"ident":1658220898474152816,
+        "stamp":1658220898474844432,"recv_stamp":0,
+        "utime":431280000000,"stime":120644000000,"wtime":4149215200}
         """
         topic_entity = all_link_topic_list[one['topic']][uuid] = dict()
-        topic_entity['uuid'] = one['ident']  # one['ident'] or one['feature']  # ident or feature
+        topic_entity['uuid'] = uuid  # one['ident'] # header_stamp or feature
         topic_entity['topic'] = one['topic']
         topic_entity['thread'] = one['thread']
         topic_entity['send_node'] = None  # node_entity
@@ -176,7 +181,7 @@ class Node_base(object):
 
         if one['type'] == Constants.g_type_of_sub:
             if one['node'] in all_link_node_list:
-                self['recv_node'] = all_link_node_list[one['node']]
+                topic_entity['recv_node'] = all_link_node_list[one['node']]
                 topic_entity['info']['recv_stamp'] = one['recv_stamp']
                 topic_entity['info']['call_stamp'] = one['stamp']
                 topic_entity['info']['sub_stime'] = one['stime']
@@ -186,11 +191,11 @@ class Node_base(object):
         if topic_entity.get('send_node', None) and topic_entity.get('recv_node',None):
             topic_entity['finish_flag'] = True
  
-    def update_beg_tag_info(self, uuid, one):
+    def update_beg_tag_info(self, uuid, topic_name, one):
         #key-log#{"type":2,"node":"/sensor/camera/sensing60/drivers_camera_sensing60",
         # "tag":"camera_grab","thread":548320079888,"ident":0,"stamp":1656557475569788227,
         # "utime":392164000000,"stime":88036000000,"wtime":134121769824}
-        topic_entity = all_link_topic_list[one['topic']][uuid]
+        topic_entity = all_link_topic_list[topic_name][uuid]
         topic_entity['beg_info'] = one
 
 
@@ -381,7 +386,7 @@ class Log_handler():
     def get_topic_info(self, topic, data, record):
         if not topic['finish_flag']:
             data['succ'] = False
-            data['wrong'] = '{} not match success'.format(topic['name'])
+            data['wrong'] = '{} not match success'.format(topic['topic'])
             return
 
         # get time used of the topic between put to sub_recv
@@ -397,18 +402,18 @@ class Log_handler():
                 beg_info = topic.get('beg_info', {})
                 if beg_info:
                     beg_end_time = topic['info']['pub_stamp'] - beg_info["stamp"]
-                if beg_end_time > 1000000000 * 1:  # if beg_end_time > 0.5s  print
-                    print("add by liyl topic info: {}".format(topic))
-                u_spend = topic['info']['pub_utime'] - beg_info["utime"]
-                s_spend = topic['info']['pub_utime'] - beg_info["stime"]
-                w_spend = topic['info']['pub_utime'] - beg_info["wtime"]
-                idle_spend = beg_end_time - u_spend - s_spend - w_spend    
-                u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
-                # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
-                data["path"].append({"type": "beg_end", "node": topic['send_node'].name, "use_time": beg_end_time})
-                data["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
-                "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
-                "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
+                    if beg_end_time > 1000000000 * 1:  # if beg_end_time > 0.5s  print
+                        print("add by liyl topic info: {}".format(topic))
+                    u_spend = topic['info']['pub_utime'] - beg_info["utime"]
+                    s_spend = topic['info']['pub_stime'] - beg_info["stime"]
+                    w_spend = topic['info']['pub_wtime'] - beg_info["wtime"]
+                    idle_spend = beg_end_time - u_spend - s_spend - w_spend    
+                    u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
+                    # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
+                    data["path"].append({"type": "beg_end", "node": topic['send_node'].name, "use_time": beg_end_time})
+                    data["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
+                    "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
+                    "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
 
             data['succ'] = True
             return
@@ -444,7 +449,7 @@ class Log_handler():
 
             if callback_size > 1:
                 topic_entity['next_topic'] = topic
-                pdata["split_path"].append(topic_entity)
+                pdata["split_path"].append(topic_entity['topic'])
                 
 
             # get time used of the node between A topic recv_sub to B topic pub
@@ -454,10 +459,9 @@ class Log_handler():
             w_spend = topic['info']['pub_wtime'] - topic_entity['info']['sub_wtime']
             idle_spend = call_pub_time - u_spend - s_spend - w_spend
             if idle_spend < 0:
-                #data['succ'] = False
-                #data['wrong'] = 'The time handle has error! node:{}, topic:{}'.format(topic['recv_node.name, topic['uuid)
-                #return
-                print('The time handle has error! node:{}, topic:{}'.format(topic['send_node'].name, topic['uuid']))
+                data['succ'] = False
+                data['wrong'] = 'The time handle has error! node:{}, topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
+                return
 
             u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/call_pub_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]     
             pdata["use_time"] += call_pub_time
@@ -471,18 +475,18 @@ class Log_handler():
                 beg_info = topic.get('beg_info', {})
                 if beg_info:
                     beg_end_time = topic['info']['pub_stamp'] - beg_info["stamp"]
-                if beg_end_time > 1000000000 * 1:  # if beg_end_time > 0.5s  print
-                    print("add by liyl topic info: {}".format(topic))
-                u_spend = topic['info']['pub_utime'] - beg_info["utime"]
-                s_spend = topic['info']['pub_utime'] - beg_info["stime"]
-                w_spend = topic['info']['pub_utime'] - beg_info["wtime"]
-                idle_spend = beg_end_time - u_spend - s_spend - w_spend    
-                u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
-                # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
-                data["path"].append({"type": "beg_end", "node": topic['send_node'].name, "use_time": beg_end_time})
-                data["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
-                "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
-                "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
+                    if beg_end_time > 1000000000 * 1:  # if beg_end_time > 0.5s  print
+                        print("add by liyl topic info: {}".format(topic))
+                    u_spend = topic['info']['pub_utime'] - beg_info["utime"]
+                    s_spend = topic['info']['pub_stime'] - beg_info["stime"]
+                    w_spend = topic['info']['pub_wtime'] - beg_info["wtime"]
+                    idle_spend = beg_end_time - u_spend - s_spend - w_spend    
+                    u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
+                    # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
+                    data["path"].append({"type": "beg_end", "node": topic['send_node'].name, "use_time": beg_end_time})
+                    data["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
+                    "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
+                    "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
             
             self.get_topic_info(topic_entity, pdata, record)
 
@@ -512,7 +516,7 @@ class Log_handler():
                     print(data.get('wrong', 'unknow reason'))
                     continue
                 
-                data["split_path_str"] = "_".join([x.name for x in data['split_path']])
+                data["split_path_str"] = "_".join([x for x in data['split_path']])
 
                 if data["split_path_str"] not in result:
                     result[data["split_path_str"]] = []
@@ -524,9 +528,6 @@ class Log_handler():
                     self.last_timestamp = topic_entity['info']["recv_stamp"] - data['use_time'] - 1 *1000000000
 
 
-        for split_path_str in result:
-            result[split_path_str].sort(key=lambda s: s["use_time"], reverse=False)
-        
         match_one_num = 0
         match_two_num = 0
         no_match_num = 0  
@@ -543,6 +544,8 @@ class Log_handler():
 
         print("total_command={}, match_two_paths={}, match_one_paths={} no_path={}".format(
             len(target_handle_complate), match_two_num, match_one_num, no_match_num))
+        if len(target_handle_complate) == no_match_num:
+            self.last_timestamp += 5 * 1000000000  
 
         for topic_name in all_link_topic_list.keys():
             all_link_topic_temp = dict()
@@ -619,7 +622,7 @@ class Log_handler():
                     split_data[data["type"]][data["node"]].append(data)
 
             for mtype in split_data:
-                if mtype != "call_pub_cpu":
+                if mtype not in ("call_pub_cpu", "beg_end_cpu"):
                     for node in split_data[mtype]:
                         split_data[mtype][node].sort(key=lambda s: s["use_time"], reverse=False)
                     
