@@ -452,6 +452,9 @@ start_sys() {
     sleep 2 
     if [[ $(ps -p ${!sys_pid_name[@]} | sed '1d' | wc -l) -lt ${#sys_pid_name[@]} ]];then 
         sys_stat=2 && write_action
+        for p in ${!sys_pid_name[@]};do
+            [[ $(ps -p $p | sed '1d' | wc -l) -lt 1 ]] && LoggingERR "SYS node[${sys_pid_name[${p}]}] launched failed." || continue
+        done
         LoggingERR "partial SYS nodes launched failed."
     else
         sys_stat=1 && write_action
@@ -478,7 +481,9 @@ start_map() {
     sleep 2 
     if [[ $(ps -p ${!map_pid_name[@]} | sed '1d' | wc -l) -lt ${#map_pid_name[@]} ]];then 
         map_stat=2 && write_action
-        LoggingERR "${ros_machine} Started MAP finished with partial nodes failure." "EMAP_NODE"
+        for p in ${!map_pid_name[@]};do
+            [[ $(ps -p $p | sed '1d' | wc -l) -lt 1 ]] && LoggingERR "MAP node[${map_pid_name[${p}]}] launched failed." "EMAP_NODE" || continue
+        done
     else
         map_stat=1 && write_action
         LoggingINFO "All MAP nodes in ${ros_machine} launched successfully." "IBOOT_MAP_STARTED" 
@@ -525,7 +530,7 @@ heart_beat() {
     [[ -n "$opt_onenode" || -n "$opt_launch_file" ]] && return
     while [[ $exit_flag -eq 0 ]]; do
         action=$(read_action)
-        timeout 5 curl -d "action=${action-0},time=$(date +"%s").$(($(echo $(date +"%N") | sed 's/^0*//') / 1000000))" $master_ip:8080 >/dev/null 2>&1
+        timeout 5 curl -d "action=${action-"000"},time=$(date +"%s").$(($(echo $(date +"%N") | sed 's/^0*//') / 1000000))" $master_ip:8080 >/dev/null 2>&1
         [[ $? -eq 124 ]] && LoggingERR "cannot connect with master" && continue
         sleep 1
     done
@@ -767,4 +772,5 @@ LoggingINFO "update config...."
 timeout 300 roslaunch --wait update_config update_config.launch >$ROS_LOG_DIR/update_config.launch.log 2>$ROS_LOG_DIR/update_config.launch.err
 LoggingINFO "update config finished"
 start_sys
+start_map
 set_pr 
