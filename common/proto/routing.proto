@@ -26,5 +26,9 @@ message RoutingRequest {
   optional uint32 bus_routeid = 11;
   optional string bus_routename = 12;
   optional uint64 lineid = 13; // lineid : 0 是无效值用以前的逻辑； > 0 是有效值
+  // dpqp = true: 在新的路径下查找轨迹, dpqp = false: 在老的路径下查找轨迹
+  // 老路径/home/mogo/data/vehicle_monitor/MapEngine_data/track_record_data/
+  // 新路径/home/mogo/data/vehicle_monitor/MapEngine_data/track_record_data_dpqp/
+  optional bool dpqp = 14 [default = true];
 }
 
