@@ -166,6 +166,11 @@ message Line
     string stopMd5 = 5; //轨迹文件md5，默认“”
     uint64 timestamp = 6; //上传轨迹完成时间戳(ms)：用于MEC本地手动导入轨迹验证时不会被云端轨迹覆盖
     string vehicleModel = 7; //车型号（如红旗H9），默认“”，暂不加入校验逻辑、用于人工排查问题
+    string trajUrl_dpqp = 8; //轨迹文件下载的cos url，默认“”
+    string trajMd5_dpqp = 9; //轨迹文件md5，默认“”
+    string stopUrl_dpqp = 10; //打点文件下载的cos url，默认“”
+    string stopMd5_dpqp = 11; //轨迹文件md5，默认“”
+    uint64 timestamp_dpqp = 12; //上传轨迹完成时间戳(ms)：用于MEC本地手动导入轨迹验证时不会被云端轨迹覆盖
 }
 
 message TrajectoryDownloadReq
