@@ -671,10 +671,6 @@ if [ ! -e "/home/mogo/data/vehicle_use.info" ];then
         echo "not exists"
         echo  "{\"cannot access url\"}" >>  /home/mogo/data/vehicle_use.info.error
 fi
-if [ -f "/home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup" ];then
-   rm -f /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite
-   \mv /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup    /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite
-fi
 python ${ABS_PATH}/vehicle_init.py
 vehicle_property=$?
 LoggingINFO "current property of $VEHICLE_PLATE is $vehicle_property"
@@ -772,6 +768,9 @@ start_core
 LoggingINFO "update config...."
 timeout 300 roslaunch --wait update_config update_config.launch >$ROS_LOG_DIR/update_config.launch.log 2>$ROS_LOG_DIR/update_config.launch.err
 LoggingINFO "update config finished"
+if [ -f "/home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup" ];then
+ \cp -d /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite
+fi
 start_sys
 start_map
 set_pr 
