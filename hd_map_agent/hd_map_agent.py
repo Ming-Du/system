@@ -81,11 +81,11 @@ import uuid
 from sys import path
 import os
 import requests
-import common.localization_pb2 as common_localization
+import proto.localization_pb2 as common_localization
 # import pycurl
 import StringIO
 import commands
-import common.vehicle_state_pb2 as common_vehicle_state_pb2
+import proto.vehicle_state_pb2 as common_vehicle_state_pb2
 
 path.append(os.path.dirname(__file__) + '/../mogo_reporter/script/')
 sys.path.append('../mogo_reporter/script/')
