@@ -21,6 +21,7 @@ def run_once():
             sock.connect(('rosslave-103', 1119))
         except Exception as e:
             print('sock connect error, {}'.format(e))
+            return
             
     # 先截取一遍文件
     files = os.listdir(src_dir)
@@ -47,7 +48,10 @@ def run_once():
 def run():
     while True:
         start = time.time()
-        run_once()
+        try:
+            run_once()
+        except Exception as e:
+            print("[{}] have error: {}".format(time.time(), e))
         end = time.time()
 
         if 1 > end - start:
