@@ -3,7 +3,7 @@ package mogo.telematics.pad;
 
 enum ProtocolVersion{
     Defaultver = 0;
-    CurrentVersion = 4; //每次修改proto文件增加1
+    CurrentVersion = 6; //每次修改proto文件增加1
 }
 
 enum MessageType
@@ -44,6 +44,8 @@ enum MessageType
     MsgTypeSetRainModeReq = 0x10113; //设置雨天模式
     MsgTypeRecordDataConfigReq = 0x10114; //数据采集配置查询请求
     MsgTypeRecordDataConfigResp = 0x10115; //数据采集配置查询应答
+    MsgTypeOperatorCmdReq = 0x10116; //操控指令
+    MsgTypeSubscribeDataReq = 0x10117; //数据订阅、取消订阅请求
 }
 
 message Header
@@ -156,6 +158,7 @@ message PlanningObjects
 // message definition for MessageType: MsgTypeOBU
 // refer to obu.proto
 
+
 // message definition for MsgTypeTrajectoryDownloadReq
 message Line
 {
@@ -188,6 +191,7 @@ message BasicInfoResp
 {
     string sn = 1;
     uint32 environment = 2; //1: 研发环境, 2:测试环境, 3:生产环境 4:演示环境
+    uint32 role = 3; //客户端角色：0: 司机屏，1: 乘客屏，2: 调试屏
 }
 
 // message definition for MsgTypeSetAutopilotModeReq
@@ -374,4 +378,30 @@ message RecordDataConfig
 {
     repeated RecordDataType recordTypes = 1;
 }
+
+// message definition for MsgTypeSubscribeDataReq
+message SubscribeDataReq
+{
+    uint32 role = 1; //客户端角色：0: 司机屏，1: 乘客屏，2: 调试屏
+    uint32 reqType = 2; //1:订阅, 2:取消订阅
+    repeated uint32 dataTypes = 3; //订阅/取消订阅的消息类型列表, 透传的消息类型参考配置列表，其他消息类型见MsgType
+}
+
+// message definition for MsgTypeOperatorCmdReq
+enum OperatorCmdType {
+    OPERATOR_CMD_NONE = 0;
+    OPERATOR_CMD_CHANGE_LANE = 1;
+    OPERATOR_CMD_SET_ACCELERATED_SPEED = 2;
+    OPERATOR_CMD_SET_HORN = 3;
+}
+
+message OperatorCmdReq
+{
+    OperatorCmdType cmdType = 1;
+    double value = 2; //OPERATOR_CMD_CHANGE_LANE: 1: left 2: right
+                      //OPERATOR_CMD_SET_ACCELERATED_SPEED: accelerated speed
+                      //OPERATOR_CMD_SET_HORN: 1: honk 2: stop honking
+}
+
+
 
