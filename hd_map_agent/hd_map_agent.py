@@ -907,7 +907,7 @@ def topicMsgCallback(msg):
     globalPilotMode = pbStatus.pilot_mode
     # print "=--------------/chassis/vehicle_state:recv  globalPilotMode:{0}".format(globalPilotMode)
     local_pid = os.getpid()
-    if globalPilotMode == 1:
+    if globalPilotMode == 1  or globalPilotMode == 2 :
         # print "=========================globalPilotMode: {0}, start kill sub process".format(globalPilotMode)
         ## stop all sub wget task
         pids = psutil.pids()
