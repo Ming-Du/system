@@ -701,8 +701,10 @@ class Car_Status(object):
         self.plate = 'unknow'
         self.type = 'unknow'
         self.pilot_mode = 0
+        rospy.init_node('log_reslove')
         self.veh_state_thread = NodeThread("/system_master/SysVehicleState", BinaryData, self.recv_vstatus)
         self.get_car_info()
+        self.veh_state_thread.start()
     
     def get_car_info(self):
         try:
