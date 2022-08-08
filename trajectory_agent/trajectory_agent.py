@@ -498,7 +498,7 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                     os.remove(strDownTempLocationFileTraj)
 
                 print "--------------------before switch not g_CacheUtil.CheckTrajFileCacheExists"
-                if not g_CacheUtil.CheckTrajFileCacheExists(lLineId, timestamp, strTrajMd5):
+                if os.path.exists(strStandardLocationFileTraj) == False:
                     print "########## enter switch not g_CacheUtil.CheckTrajFileCacheExists(lLineId, timestamp, strTrajMd5)"
                     ## down to temp  location
                     if globalDictTaskRunningStatus != lLineId:
@@ -515,7 +515,7 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
 
                 # os._exit(-1)
                 print "------------------------before switch g_CacheUtil.CheckStopFileCacheExists"
-                if not g_CacheUtil.CheckStopFileCacheExists(lLineId, timestamp, strStopMd5):
+                if os.path.exists(strStandardLocationFileStop) == False :
                     print "########## enter switch not g_CacheUtil.CheckStopFileCacheExists(lLineId, timestamp, strStopMd5)"
                     ## down to temp  location
                     if globalDictTaskRunningStatus != lLineId:
