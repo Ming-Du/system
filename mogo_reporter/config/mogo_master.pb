@@ -78,6 +78,16 @@ info {
   msg: "轨迹管理_轨迹下载失败，本地有对应轨迹，认为成功"
 }
 
+info {
+  code: ISYS_SYSTEM_IN_IDLE
+  msg: "系统进入空闲状态"
+}
+
+info {
+  code: ISYS_SYSTEM_OUT_IDLE
+  msg: "系统退出空闲状态"
+}
+
 error
 {
   code: ESYS_AUTOPILOT_FAILED
@@ -170,7 +180,13 @@ error
   result: "RESULT_SHOW_WARNING"
 }
 
-
+error
+{
+  code: ESYS_PLANNING_CHANGE_FAILIED
+  msg: "planning版本切换启动失败"
+  result: "RESULT_AUTOPILOT_DISABLE"
+  action: "ACTION_CONTACT_TECH_SUPPORT"
+}
 
 
 

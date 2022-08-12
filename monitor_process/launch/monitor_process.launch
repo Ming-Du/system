@@ -1,5 +1,7 @@
 <launch>
-    <node name="monitor_process" pkg="monitor_process" type="monitor_process.py" output="screen">
+    <arg if="$(eval env('ROS_HOSTNAME')=='' or env('ROS_HOSTNAME')=='rosmaster')" name="node_name" default="monitor_process_rosmaster"/>
+    <arg if="$(eval env('ROS_HOSTNAME')!='' and env('ROS_HOSTNAME')!='rosmaster')" name="node_name" default="$(eval 'monitor_process_'+str(env('ROS_HOSTNAME')).replace('-',''))"/>
+    <node name="$(arg node_name)" pkg="monitor_process" type="monitor_process.py" output="screen">
      <param name="net_card_name" type="string" value="eth0" />
     </node>
 </launch>

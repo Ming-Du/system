@@ -116,9 +116,42 @@
             "ACTION_CONTACT_TECH_SUPPORT"
         ]
     },
-    "EVHC_GEAR":{
+    "EVHC_GEAR_INFERENCE":{
         "level": "error",
-        "code": "EVHC_GEAR",
+        "code": "EVHC_GEAR_INFERENCE",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_HANDLE_VEHICLE_TURN_GEAR",
+            "ACTION_TRY_AGAIN_LATER"
+        ]
+    },
+    "EVHC_BRAKE_INFERENCE":{
+        "level": "error",
+        "code": "EVHC_BRAKE_INFERENCE",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_HANDLE_VEHICLE_TURN_GEAR",
+            "ACTION_TRY_AGAIN_LATER"
+        ]
+    },
+    "EVHC_STEER_INFERENCE":{
+        "level": "error",
+        "code": "EVHC_STEER_INFERENCE",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_HANDLE_VEHICLE_TURN_GEAR",
+            "ACTION_TRY_AGAIN_LATER"
+        ]
+    },
+    "EVHC_ACCEL_INFERENCE":{
+        "level": "error",
+        "code": "EVHC_ACCEL_INFERENCE",
         "result": [
             "RESULT_AUTOPILOT_DISABLE"
         ],
@@ -137,6 +170,16 @@
         "action": [
             "ACTION_REBOOT_VEHICLE",
             "ACTION_REPAIR_VEHICLE"
+        ]
+    },
+    "EMAP_HADMAP_ENGINE_NO_ROUTING_INFO":{
+        "level": "error",
+        "code": "EMAP_HADMAP_ENGINE_NO_ROUTING_INFO",
+        "result": [
+            "RESULT_AUTOPILOT_DISABLE"
+        ],
+        "action": [
+            "ACTION_CONTACT_TECH_SUPPORT"
         ]
     },
     "EMAP_HADMAP_NO_TRAJECTORY":{

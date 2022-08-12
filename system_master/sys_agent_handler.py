@@ -148,6 +148,8 @@ class Agent_Handler(object):
         return ret
 
     def check_all_agent_stop(self):
+        if not self.all_agent_start_flag:
+            return False
         ret = True
         for agent in self.agent_info_list.values():
             if agent['current_state'] != Agent_State.AGENT_NODES_STOPPED:   

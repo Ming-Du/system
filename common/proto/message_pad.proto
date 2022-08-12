@@ -3,7 +3,7 @@ package mogo.telematics.pad;
 
 enum ProtocolVersion{
     Defaultver = 0;
-    CurrentVersion = 3; //每次修改proto文件增加1
+    CurrentVersion = 6; //每次修改proto文件增加1
 }
 
 enum MessageType
@@ -20,6 +20,7 @@ enum MessageType
     MsgTypePredictionObstacleTrajectory = 0x10007; //他车轨迹预测
     MsgTypePointCloud = 0x10008; //点云透传
     MsgTypePlanningObjects = 0x10009; //planning障碍物
+    MsgTypeOBU = 0x1000a; //OBU
 
     MsgTypeBasicInfoReq = 0x10100; //自动驾驶设备基础信息请求
     MsgTypeBasicInfoResp = 0x10101; //自动驾驶设备基础信息应答
@@ -41,6 +42,10 @@ enum MessageType
     MsgTypeStatusQueryReq = 0x10111; //状态查询请求
     MsgTypeStatusQueryResp = 0x10112; //状态查询应答
     MsgTypeSetRainModeReq = 0x10113; //设置雨天模式
+    MsgTypeRecordDataConfigReq = 0x10114; //数据采集配置查询请求
+    MsgTypeRecordDataConfigResp = 0x10115; //数据采集配置查询应答
+    MsgTypeOperatorCmdReq = 0x10116; //操控指令
+    MsgTypeSubscribeDataReq = 0x10117; //数据订阅、取消订阅请求
 }
 
 message Header
@@ -150,6 +155,10 @@ message PlanningObjects
     repeated PlanningObject objs = 1; 
 }
 
+// message definition for MessageType: MsgTypeOBU
+// refer to obu.proto
+
+
 // message definition for MsgTypeTrajectoryDownloadReq
 message Line
 {
@@ -160,6 +169,11 @@ message Line
     string stopMd5 = 5; //轨迹文件md5，默认“”
     uint64 timestamp = 6; //上传轨迹完成时间戳(ms)：用于MEC本地手动导入轨迹验证时不会被云端轨迹覆盖
     string vehicleModel = 7; //车型号（如红旗H9），默认“”，暂不加入校验逻辑、用于人工排查问题
+    string trajUrl_dpqp = 8; //轨迹文件下载的cos url，默认“”
+    string trajMd5_dpqp = 9; //轨迹文件md5，默认“”
+    string stopUrl_dpqp = 10; //打点文件下载的cos url，默认“”
+    string stopMd5_dpqp = 11; //轨迹文件md5，默认“”
+    uint64 timestamp_dpqp = 12; //上传轨迹完成时间戳(ms)：用于MEC本地手动导入轨迹验证时不会被云端轨迹覆盖
 }
 
 message TrajectoryDownloadReq
@@ -177,6 +191,7 @@ message BasicInfoResp
 {
     string sn = 1;
     uint32 environment = 2; //1: 研发环境, 2:测试环境, 3:生产环境 4:演示环境
+    uint32 role = 3; //客户端角色：0: 司机屏，1: 乘客屏，2: 调试屏
 }
 
 // message definition for MsgTypeSetAutopilotModeReq
@@ -250,6 +265,7 @@ message RecordData
     uint32 type = 3; //采集类型, 1:badcase, 2: map; 3: rests
     bool isRecord = 4; //采集指令, true: 采集, false: 停止采集
     bool sustain = 5; //是否持续采集
+    uint32 bduration = 6; //前溯时长
 }
 
 // message definition for MsgTypeRecordResult
@@ -344,4 +360,48 @@ message SetRainModeReq
 {
     uint32 enable = 1; //1: enable, 0: disable
 }
+
+// message definition for MsgTypeRecordDataConfigReq
+message RecordDataConfigReq
+{
+    uint32 reqType = 1; // 0: all, 其他保留
+}
+
+// message definition for MsgTypeRecordDataConfigResp
+message RecordDataType
+{
+    uint32 id = 1; //采集类型id
+    string desc = 2; //采集类型描述
+}
+
+message RecordDataConfig
+{
+    repeated RecordDataType recordTypes = 1;
+}
+
+// message definition for MsgTypeSubscribeDataReq
+message SubscribeDataReq
+{
+    uint32 role = 1; //客户端角色：0: 司机屏，1: 乘客屏，2: 调试屏
+    uint32 reqType = 2; //1:订阅, 2:取消订阅
+    repeated uint32 dataTypes = 3; //订阅/取消订阅的消息类型列表, 透传的消息类型参考配置列表，其他消息类型见MsgType
+}
+
+// message definition for MsgTypeOperatorCmdReq
+enum OperatorCmdType {
+    OPERATOR_CMD_NONE = 0;
+    OPERATOR_CMD_CHANGE_LANE = 1;
+    OPERATOR_CMD_SET_ACCELERATED_SPEED = 2;
+    OPERATOR_CMD_SET_HORN = 3;
+}
+
+message OperatorCmdReq
+{
+    OperatorCmdType cmdType = 1;
+    double value = 2; //OPERATOR_CMD_CHANGE_LANE: 1: left 2: right
+                      //OPERATOR_CMD_SET_ACCELERATED_SPEED: accelerated speed
+                      //OPERATOR_CMD_SET_HORN: 1: honk 2: stop honking
+}
+
+
 

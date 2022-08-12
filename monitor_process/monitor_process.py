@@ -50,6 +50,7 @@ from entity.NetTools import NetTools
 
 # from xml.dom.minidom import parse
 # import xml.dom.minidom
+import entity.GenLaunchList as commonGenLaunchList
 
 globalTaskExecutePool = ThreadPoolExecutor(max_workers=4, thread_name_prefix='ThreadPoolTaskExecutePool')
 globalCollectVehicleInfo = CollectVehicleInfo()
@@ -70,49 +71,16 @@ globalNetCardName = ""
 
 
 def getHostName():
-    XiverType = 0
     strHostName = ""
     try:
-        strCmdCheckMultiXiver = "cat  /etc/hosts | grep slave | wc -l"
-        (status, output) = commands.getstatusoutput(strCmdCheckMultiXiver)
-        if status == 0:
-            print "output:{0}".format(output)
-            while True:
-                if int(output) == 1:
-                    XiverType = 2
-                    break
-
-                if int(output) == 0:
-                    XiverType = 1
-                    break
-
-                if int(output) > 1:
-                    XiverType = 6
-                    break
-                break
-
         strCmd = "ifconfig  %s   | grep inet |  grep netmask | awk '{print $2}'" % globalNetCardName
         (status, output) = commands.getstatusoutput(strCmd)
         print "status:%d,output:%s" % (status, output)
         strIp = output
 
-        strCmd2 = "cat /etc/hosts |  grep '%s' | awk '{print $2}'" % (strIp)
+        strCmd2 = "cat /etc/hosts |  grep '%s' | awk '{print $2}' | head -n 1" % (strIp)
         (status, output) = commands.getstatusoutput(strCmd2)
-        if output == "rosmaster":
-            while True:
-                if XiverType == 2:
-                    strHostName = "rosmaster"
-                    break
-
-                if XiverType == 1:
-                    strHostName = "all"
-                    break
-
-                if XiverType == 6:
-                    strHostName = "rosmaster-102"
-                    break
-                break
-        else:
+        if status == 0 and len(output) > 0:
             strHostName = output
         print "status:%d,output:%s" % (status, strHostName)
     except Exception as e:
@@ -132,15 +100,22 @@ def getHostName():
 def readNodeList():
     listAllNode = []
     linesLaunchFile = []
+    strFileListName = ""
     try:
-        strHostName = getHostName()
-        strFileListName = "/autocar-code/install/share/launch/%s.list" % (strHostName)
-        # print "strFileListName:%s" % (strFileListName)
-        # strFileListName = "/home/mogo/data/jhf/system/launch/all.list"
+        while True:
+            strHostName = getHostName()
+            if len(strHostName) == 0:
+                break
+            instanceGenLaunchList = commonGenLaunchList.GenLaunchList()
+            instanceGenLaunchList.initData()
+            strFileListName, ret, strErrorMsg = instanceGenLaunchList.getLaunchFilePath(strHostName)
+            if len(strFileListName) == 0 or ret == -1 or ret == -2:
+                break
+            break
 
-        if os.path.exists(strFileListName):
-            pass
-        else:
+        print "=========== strFileName:{0}, ret:{1},strErrorMsg:{2}".format(strFileListName, ret, strErrorMsg)
+
+        if not os.path.exists(strFileListName):
             print "file :%s not exists ,checkt host name and net_card_name" % (strFileListName)
             sys.exit(-1)
 
@@ -258,7 +233,7 @@ def mem_watch(strUuid):
         dictMemOut = tree()
         # dictMemOut['header']['timestamp']['sec'] = rospy.Time.now().secs
         # dictMemOut['header']['timestamp']['nsec'] = rospy.Time.now().nsecs
-        #dictMemOut['header']['timestamp']['msec']=int(dictMemOut['header']['timestamp']['sec'])*1000 + int(dictMemOut['header']['timestamp']['nsec'])/1000000
+        # dictMemOut['header']['timestamp']['msec']=int(dictMemOut['header']['timestamp']['sec'])*1000 + int(dictMemOut['header']['timestamp']['nsec'])/1000000
         # dictMemOut['header']['uuid'] = strUuid
         dictMemOut['header']['ip'] = globalDictIpInfo['ip']
         dictMemOut['header']['mac'] = globalDictIpInfo['mac']
@@ -325,7 +300,7 @@ def ControlStatusCmdReportCallBack():
         globalTaskExecutePool.submit(mem_watch, strCmdContent)
         globalTaskExecutePool.submit(cpu_watch, strCmdContent)
         globalTaskExecutePool.submit(node_watch, strCmdContent)
-        time.sleep(5)
+        time.sleep(10)
 
 
 def addLocalizationListener():

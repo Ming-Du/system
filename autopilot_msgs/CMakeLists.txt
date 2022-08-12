@@ -41,6 +41,7 @@ add_service_files(
   FILES
   StringMessage.srv
   StatusQuery.srv
+  RecordDataConfigQuery.srv
 )
 
 ## Generate added messages and services with any dependencies listed here

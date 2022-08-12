@@ -13,6 +13,11 @@ info {
   msg: "加载正确的sqlite"
 }
 
+info {
+  code: IMAP_TRA_TYPE
+  msg: "加载轨迹类型通知"
+}
+
 error
 {
   code: EMAP_TRA_NOT_EXIST

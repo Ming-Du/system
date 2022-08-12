@@ -553,7 +553,7 @@ class Node_Handler(object):
                 print("#### trajectory download success, can start autopolit!!")
                 self.system_event_report(code='ISYS_INIT_TRAJECTORY_SUCCESS', desc=' time at {}'.format(time.time()))
                 sys_globals.g_system_master_entity.set_sys_state_and_save(sys_globals.System_State.AUTO_PILOT_READY)
-            elif dl_traj_result.sync_state == 2:
+            elif dl_traj_result.sync_status == 2:
                 self.system_event_report(code='ISYS_INIT_TRAJECTORY_WARNING', desc=' time at {}'.format(time.time()))
                 sys_globals.g_system_master_entity.set_sys_state_and_save(sys_globals.System_State.AUTO_PILOT_READY)
             else:

@@ -1,0 +1,49 @@
+_autopilot_module() {
+    local cur prev 
+
+    COMPREPLY=()
+
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="-h --help --pkg --launch-file -n --start-node"
+
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+
+    local pkgs=""
+    local -A pkg_dirs=()
+    IFS_OLD=$IFS
+    IFS=$'\n'
+    for pair in $($(which rospack) list);do
+        pkgs+="${pair% *} "
+        pkg_dirs[${pair% *}]="${pair##* }"
+    done
+    IFS=$IFS_OLD
+    case "${prev}" in
+        --pkg) COMPREPLY=( $(compgen -W "${pkgs}" -- ${cur}) ) ;;
+        --launch-file)
+            local i=0
+            local pkg_name
+            while [ $i -lt ${#COMP_WORDS[@]} ]; do
+                if [[ ${COMP_WORDS[$i]} == --pkg ]]; then
+                        pkg_name=${COMP_WORDS[$((i+1))]}
+                        break
+                fi
+                i=$((i+1))
+            done
+            OFS_OLD=$OFS
+            OFS=' '
+            COMPREPLY=( $(compgen -W "$(find ${pkg_dirs[$pkg_name]} -name "*.launch" | xargs -I {} basename {})" -- ${cur}) )
+            OFS=$OFS_OLD
+            return 0
+            ;;
+        -n|--start-node)
+            COMPREPLY=( $(compgen -W "$(grep "\.launch" $(dirname ${COMP_WORDS[0]})/*.list | awk -F':| |/' '{print $NF}' | sort -u | tr -s "\n" "")" -- ${cur}) )
+            return 0
+            ;;
+        *) ;;
+    esac
+}
+complete -F _autopilot_module -o dirnames -f autopilot.sh

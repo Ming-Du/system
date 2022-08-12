@@ -1,5 +1,11 @@
 <launch>
-  <node name="system_guardian" pkg="guardian" type="system_guardian.py"  args="$(find config)/vehicle/guardian/system_guardian.json $(find guardian)/rostopic/rostopic.py $(find config)/vehicle/guardian/guardian_config.json /home/mogo/data/vehicle_monitor/vehicle_config.txt"  output="screen">
-  <param name="rosmachetype" type="string" value="master" />
+  <arg if="$(eval env('ROS_HOSTNAME')=='' or env('ROS_HOSTNAME')=='rosmaster')" name="appendix" default=""/>
+  <arg if="$(eval env('ROS_HOSTNAME')=='rosslave' or env('ROS_HOSTNAME')=='rosslave-103')" name="appendix" default="_slave1"/>
+  <arg if="$(eval env('ROS_HOSTNAME')=='rosslave-104')" name="appendix" default="_slave2"/>
+  <arg if="$(eval env('ROS_HOSTNAME')=='rosslave-105')" name="appendix" default="_slave3"/>
+  <arg if="$(eval env('ROS_HOSTNAME')=='rosslave-106')" name="appendix" default="_slave4"/>
+  <arg if="$(eval env('ROS_HOSTNAME')=='rosslave-107')" name="appendix" default="_slave5"/>
+  <node name="system_guardian$(arg appendix)" pkg="guardian" type="system_guardian.py"  args="$(find config)/vehicle/guardian/system_guardian.json $(find guardian)/rostopic/rostopic.py $(find config)/vehicle/guardian/guardian_config.json /home/mogo/data/vehicle_monitor/vehicle_config.txt"  output="screen">
+  <param name="rosmachetype" type="string" value="$(arg appendix)" />
   </node>
 </launch>

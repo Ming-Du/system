@@ -28,6 +28,11 @@ enum ObjectType {
   TYPE_UNKNOWN_DYNAMIC = 94;
 }
 
+enum ObjectState {
+  STATE_DETECT = 0;
+  STATE_PREDICT = 1;
+};
+
 message BBox2D {
   optional double xmin = 1 [default = nan];  // in pixel.
   optional double ymin = 2 [default = nan];
@@ -104,7 +109,7 @@ message Object {
   // Modify(@liuxinyu): obu_test
   // obu supplement
   optional ObuObjectsSupplement obu_supplement = 21;
-  optional float state = 22;         // predict--2, detect--1
+  optional ObjectState state = 22;         // PRE, DET
  //falcon lidar supplement
   optional LidarObjectSupplement falcon_lidar_supplement = 23;
   //ming.du

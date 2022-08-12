@@ -63,17 +63,17 @@ void LinkFile(std::string file_path, std::string SN)
         {
                 ROS_ERROR("open all file link list error");
         }
-	        for(auto it=file_link_map.begin(); it!=file_link_map.end(); it++)
+	for(auto it=file_link_map.begin(); it!=file_link_map.end(); it++)
         {
                 std::string src_file = it->first;
                 std::string link_file = it->second;
-		if(access(link_file.c_str(), F_OK)==0)
-                {
-                        std::string rm_cmd = "rm -rf " + link_file;
-                        system(rm_cmd.c_str());
-                }
+		ROS_INFO("SRC1:%s, LINK2:%s", src_file.c_str(), link_file.c_str());      
                 if(access(src_file.c_str(), F_OK)==0)
                 {
+                        ROS_INFO("rm soft link: src: %s,   link: %s", src_file.c_str(), link_file.c_str());
+                        std::string rm_cmd = "rm -rf " + link_file;
+                        system(rm_cmd.c_str());
+                        ROS_INFO("add soft link: src: %s,  link: %s", src_file.c_str(), link_file.c_str());
                         std::string link_cmd = "ln -s " + src_file + " " + link_file;
                         system(link_cmd.c_str());
                 }
@@ -88,27 +88,23 @@ bool UpdateOtherFile()
 	std::string url_sync = "https://mdev.zhidaohulian.com/config/file/sync";
 	std::string SN = pCurl->GetPlate();
 	char szMac[18];
-	int nRtn = get_mac(szMac, sizeof(szMac));
-	for(int i=0; i<strlen(szMac); i++)
-        {
-                szMac[i] = tolower(szMac[i]);
-        }
-	bool flag = true;
-	flag = pCurl->DownloadBinaryFileImpl(url_list, url_sync, szMac, SN);
-	if(flag == false)
+	get_mac(szMac, sizeof(szMac));
+	if(!pCurl->DownloadBinaryFileImpl(url_list, url_sync, szMac, SN))
 	{
 		int times = 0;
 		while(times++<5)
 		{
 			sleep(1);
-			flag = pCurl->DownloadBinaryFileImpl(url_list, url_sync, szMac, SN);
-			if(flag ==true) break;
+			if(pCurl->DownloadBinaryFileImpl(url_list, url_sync, szMac, SN))
+                        {
+                                break;
+                        }
 		}
 	}
 	delete pCurl;
 	LinkFile("/home/mogo/data/vehicle_monitor/slinks.cfg", SN);
 	LinkFile("/home/mogo/autopilot/share/config/vehicle/slinks.cfg", SN);
-	return flag;
+	return true;
 }
 
 

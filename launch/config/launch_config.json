@@ -1,0 +1,1249 @@
+{
+    "file_list": [
+        {
+            "name": "drivers_gnss.launch",
+            "package": "launch",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "log_collect_client.launch",
+            "package": "log_collect_client",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster",
+                        "rosslave-104",
+                        "rosslave-105",
+                        "rosslave-106",
+                        "rosslave-107"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster",
+                        "rosslave-104",
+                        "rosslave-105",
+                        "rosslave-106",
+                        "rosslave-107"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster",
+                        "rosslave-104",
+                        "rosslave-105",
+                        "rosslave-106",
+                        "rosslave-107"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
+            "name": "log_msg_collect_client.launch",
+            "package": "log_msg_collect_client",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster",
+                        "rosslave-104",
+                        "rosslave-105",
+                        "rosslave-106",
+                        "rosslave-107"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster",
+                        "rosslave-104",
+                        "rosslave-105",
+                        "rosslave-106",
+                        "rosslave-107"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster",
+                        "rosslave-104",
+                        "rosslave-105",
+                        "rosslave-106",
+                        "rosslave-107"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
+            "name": "drivers_camera30.launch",
+            "package": "launch",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "drivers_camera60.launch",
+            "package": "launch",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "drivers_camera120.launch",
+            "package": "launch",
+            "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "hq": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "sensing120_back.launch",
+            "package":"config",
+            "path": "vehicle/drivers/camera",
+            "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-105"
+                    ]
+                },
+                "hq": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-105"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-105"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "sensing120_right.launch",
+            "package": "config",
+            "path": "vehicle/drivers/camera",
+            "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                },
+                "hq": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "sensing120_left.launch",
+            "package": "config",
+            "path": "vehicle/drivers/camera",
+            "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                },
+                "hq": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "lane_detection.launch",
+            "package": "perception_camera_SEG",
+            "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "hq": {
+                    "2x": [],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "vidar_2camera.launch",
+            "package": "perception_camera_3D",
+            "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-105"
+                    ]
+                },
+                "hq": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-105"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-105"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_2D_side_3camera.launch",
+            "package": "perception_camera_2D_side",
+            "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                },
+                "hq": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_2D_side_2camera.launch",
+            "package": "perception_camera_2D_side",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "can_adapter.launch",
+            "package": "launch",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "localization.launch",
+            "package": "localization",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_2D_front_2camera_2x.launch",
+            "package": "perception_camera_2D_front",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosmaster"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_2D_front_2camera.launch",
+            "package": "perception_camera_2D_front",
+            "machine": {
+                "jinlv": {
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "prediction.launch",
+            "package": "launch",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "local_planning.launch",
+            "package": "launch",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "controller.launch",
+            "package": "launch",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "telematics.launch",
+            "package": "telematics",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosmaster"
+                    ],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
+            "name": "monitor_collect.launch",
+            "package": "monitor_collect",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
+            "name": "trajectory_agent.launch",
+            "package": "trajectory_agent",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
+            "name": "drivers_lidar.launch",
+            "package": "launch",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-104"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-104"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_lidar.launch",
+            "package": "launch",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-104"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-104"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_radar.launch",
+            "package": "perception_radar",
+            "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-105"
+                    ]
+                },
+                "hq": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-105"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_fusion.launch",
+            "package": "launch",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-104"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-104"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "rule_segement.launch",
+            "package": "rule_segement",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-104"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-104"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "v2x.launch",
+            "package": "v2x",
+            "machine": {
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_v2x.launch",
+            "package": "launch",
+            "machine": {
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "log_collect_server.launch",
+            "package": "log_collect_server",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
+            "name": "log_msg_collect_server.launch",
+            "package": "log_msg_collect_server",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
+            "name": "log_reslove.launch",
+            "package": "log_reslove",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
+            "name": "localization_mogo_taxi.launch",
+            "package": "slam_localization",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-104"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-104"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "localization_mogo_bus_right.launch",
+            "package": "slam_localization",
+            "machine": {
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "radar_308_front.launch",
+            "package": "config",
+            "path": "vehicle/perception/radar",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-104"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "radar_408_front_308_rear.launch",
+            "package": "config",
+            "path": "vehicle/perception/radar",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-105"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "drivers_innolidar.launch",
+            "package": "launch",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-104"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_falcon_lidar.launch",
+            "package": "launch",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-104"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "hadmap.launch",
+            "package": "launch",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "hadmap_engine.launch",
+            "package": "hadmap_engine",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "val.launch",
+            "package": "val",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "system_guardian.launch",
+            "package": "guardian",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosmaster",
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosmaster",
+                        "rosslave-103",
+                        "rosslave-104",
+                        "rosslave-105",
+                        "rosslave-106",
+                        "rosslave-107"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosmaster",
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosmaster",
+                        "rosslave-103",
+                        "rosslave-104",
+                        "rosslave-105",
+                        "rosslave-106",
+                        "rosslave-107"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosmaster",
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosmaster",
+                        "rosslave-103",
+                        "rosslave-104",
+                        "rosslave-105",
+                        "rosslave-106",
+                        "rosslave-107"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
+            "name": "monitor_gnss.launch",
+            "package": "monitor_gnss",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
+            "name": "monitor_process.launch",
+            "package": "monitor_process",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosmaster",
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosmaster",
+                        "rosslave-103",
+                        "rosslave-104",
+                        "rosslave-105",
+                        "rosslave-106",
+                        "rosslave-107"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosmaster",
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosmaster",
+                        "rosslave-103",
+                        "rosslave-104",
+                        "rosslave-105",
+                        "rosslave-106",
+                        "rosslave-107"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosmaster",
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosmaster",
+                        "rosslave-103",
+                        "rosslave-104",
+                        "rosslave-105",
+                        "rosslave-106",
+                        "rosslave-107"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
+            "name": "hd_map_agent.launch",
+            "package": "hd_map_agent",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                }
+            },
+            "type": "SYS"
+        }
+    ]
+}
