@@ -56,7 +56,7 @@ bool GetProtoFromASCIIFile(const std::string &file_name,
   }
 
   ZeroCopyInputStream *input = new FileInputStream(file_descriptor);
-  bool success = TextFormat::Parse(input, &message);
+  bool success = TextFormat::Parse(input, &message, true, true);
   if (!success) {
     AERROR << "Failed to parse file " << file_name << " as text proto.";
   }

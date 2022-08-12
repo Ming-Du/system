@@ -43,7 +43,7 @@ def get_vehicle_purpose():
     headers = {'access_token': 'c4a2f30cebf64972bcd11577e1c07f86'}
     try:
         request = urllib2.Request(strUrl, headers=headers)
-        response = urllib2.urlopen(request)
+        response = urllib2.urlopen(request,timeout=3)
         content = response.read()
         dictContent = None
         if len(content) > 0:

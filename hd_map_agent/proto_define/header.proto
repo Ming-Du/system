@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+package common;
+
+message Time {
+  optional uint32 sec = 1;
+  optional uint32 nsec = 2;
+}
+
+message Header {
+  // Sequence number for each message. Each module maintains its own counter for
+  // sequence_num, always starting from 1 on boot.
+  optional uint32 seq = 1;
+
+  // Message publishing time in seconds.
+  optional Time stamp = 2;
+
+  // frame id
+  optional string frame_id = 3;
+
+  // Module name.
+  optional string module_name = 4;
+}

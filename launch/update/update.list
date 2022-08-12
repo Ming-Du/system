@@ -7,3 +7,4 @@ xmlloader.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
 launch.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
 mogo_msg.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
 mogo_report_msg.json /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
+autopilot_completion /usr/share/bash-completion/completions/
