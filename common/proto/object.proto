@@ -114,7 +114,7 @@ message Object {
   optional LidarObjectSupplement falcon_lidar_supplement = 23;
   //ming.du
   optional CameraObjectSupplement vidar_supplement = 24;
-
+  repeated int32 match_ids=25;
 }
 
 message VisualObject {
