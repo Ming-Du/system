@@ -30,11 +30,22 @@ enum ObjectType {
   TYPE_ROADWORK_BREAK_0502 = 502;
 }
 
-enum ObjectState {
+enum DetectState {
   STATE_DETECT = 0;
   STATE_PREDICT = 1;
 };
+  
+enum MotionState {
+  MOTION_STATIC = 0;
+  MOTION_SUSPECTED_STATIC = 1;
+  MOTION_WORM = 2;
+  MOTION_NORMAL = 3;
+};
 
+enum NoiseState {
+  NOISE_CONFIRM = 0;
+  NOISE_SUSPECTED = 1;
+};
 
 message BBox2D {
   optional double xmin = 1 [default = nan];  // in pixel.
@@ -124,12 +135,18 @@ message Object {
   // Modify(@liuxinyu): obu_test
   // obu supplement
   optional ObuObjectsSupplement obu_supplement = 21;
-  optional ObjectState state = 22;         // PRE, DET
+  optional DetectState detect_state = 22;         // PRE, DET
+  optional MotionState motion_state = 23;
+  optional NoiseState noise_state = 24;
  //falcon lidar supplement
-  optional LidarObjectSupplement falcon_lidar_supplement = 23;
+  optional LidarObjectSupplement falcon_lidar_supplement = 25;
   //ming.du
-  optional CameraObjectSupplement vidar_supplement = 24;
-  repeated int32 match_ids=25;
+  optional CameraObjectSupplement vidar_supplement = 26;
+  repeated int32 match_ids=27;
+  optional float type_confidence = 28;
+  optional float exist_confidence = 29;
+  optional float orientation = 30;
+
 }
 
 message VisualObject {
