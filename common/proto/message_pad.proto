@@ -76,6 +76,19 @@ message Trajectory
     repeated TrajectoryPoint points = 1;
 }
 
+message SubSource {
+    //  [default = 0] v2v_bsm = 1  v2i_rsm = 2 v2v_ssm = 3 v2n_rsm = 4
+    uint32 source = 1;
+    // HEX_string
+    string id = 2; 
+}
+
+message TrackedSource {
+    // lidar:1 camera:2 radar:3 v2x:4 vidar:5 falcon:6
+    uint32 source = 1;
+    repeated SubSource sub_source = 2;
+}
+
 // message definition for MsgTypeTrackedObjects
 message TrackedObject
 {
@@ -94,6 +107,8 @@ message TrackedObject
     double speed = 11; //车辆速度
     uint32 drawLevel = 12; //危险等级 1 绿,2 黄,3 红
     double driverTime = 13; //驱动感知时间, abandoned
+    repeated TrackedSource tracked_source = 14;
+
 }
 
 message TrackedObjects

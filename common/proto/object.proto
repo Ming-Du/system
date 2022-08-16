@@ -33,6 +33,14 @@ enum ObjectState {
   STATE_PREDICT = 1;
 };
 
+enum ObjectSource {
+  UNKNOWN = 0;
+  V2V_BSM = 1;
+  V2I_RSM = 2;
+  V2V_SSM = 3;
+  V2N_RSM = 4;
+};
+
 message BBox2D {
   optional double xmin = 1 [default = nan];  // in pixel.
   optional double ymin = 2 [default = nan];
@@ -114,7 +122,7 @@ message Object {
   optional LidarObjectSupplement falcon_lidar_supplement = 23;
   //ming.du
   optional CameraObjectSupplement vidar_supplement = 24;
-
+  repeated int32 match_ids=25;
 }
 
 message VisualObject {
@@ -161,9 +169,8 @@ message TrackedObject {
   optional int32  object_category = 17 [default = 1];
   optional int32  obu_participant_type = 18 [default = 0];
   optional int32  obu_obstacle_type = 19 [default = 0];
-  
-//float x_speed             // longitudinal speed relative to host vehicle, m/s
-//float y_speed             // lateral speed relative to host vehicle, m/s
+    // v2v_bsm = 1  v2i_rsm = 2 v2v_ssm = 3 v2n_rsm = 4
+  optional ObjectSource source = 20;
 }
 
 message TrackedObjects {
@@ -231,7 +238,8 @@ message ObuObject {
   optional float heading = 8;             // gps head 
   optional float speed = 9;               // gps speed
   repeated geometry.Trace trace = 10;      // historical positions
-  optional string source = 11;
+  // v2v_bsm = 1  v2i_rsm = 2 v2v_ssm = 3 v2n_rsm = 4
+  optional ObjectSource source = 11;
 }
 
 message ObuObjects {
