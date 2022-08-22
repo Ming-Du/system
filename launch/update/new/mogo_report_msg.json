@@ -154,6 +154,10 @@
         "level": "info",
         "code": "IBOOT_MAP_STARTED"
     },
+    "IMAP_PARAM_SERVER": {
+        "level": "info",
+        "code": "IMAP_PARAM_SERVER"
+    },
     "IMAP_TRA_LOADED": {
         "level": "info",
         "code": "IMAP_TRA_LOADED"

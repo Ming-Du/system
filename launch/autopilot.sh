@@ -726,7 +726,8 @@ export ROS_LOG_DIR="${LOG_DIR}/$(date +"%Y%m%d")"
 LoggingINFO "ROS_LOG_DIR=$ROS_LOG_DIR"
 flock -x 8
 if [[ ! -d $ROS_LOG_DIR ]]; then
-    find ${LOG_DIR} -maxdepth 1 -mtime +3 -type d -exec rm -Rf {} \;
+    find ${LOG_DIR} -maxdepth 1 -mtime +10 -type d -exec rm -Rf {} \;
+    find ${LOG_DIR}/tracing_log -mindepth 1 -maxdepth 1 -mtime +7 -type d -exec rm -Rf {} \;
     find $BAG_DIR -maxdepth 10 -mtime +10 -exec rm -Rf {} \;
     mkdir -p $ROS_LOG_DIR
     ln -snf $ROS_LOG_DIR ${LOG_DIR}/latest
