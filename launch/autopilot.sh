@@ -224,7 +224,7 @@ set_pr() {
             "perception_fusion2" | "perception_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 30 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             "rs_perception_node") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 20 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             "drivers_camera_sensing60" | "drivers_camera_sensing30" | "drivers_camera_sensing120" | "drivers_robosense_node")
-                (($priority >= 0)) && (ctaskset -a -cp 1-7 $pid && hrt -a -p -r 10 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                (($priority >= 0)) && (taskset -a -cp 1-7 $pid && hrt -a -p -r 10 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             *) ;;
             esac
         done
