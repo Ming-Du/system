@@ -295,6 +295,8 @@ def checkFileMd5(strFileName):
 def downFileFromUrlWget(strUrl, strTempFileName):
     ret = -1
     down_speed = 5 * 1024 * 1024
+    if os.path.exists(strTempFileName):
+        os.remove(strTempFileName)
     strWgetCmd = " /usr/bin/wget     --connect-timeout=5 --dns-timeout=5  -c    '{0}'  -O   '{1}' ".format(
         strUrl,
         strTempFileName)
@@ -497,6 +499,12 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                 if os.path.exists(strDownTempLocationFileTraj):
                     os.remove(strDownTempLocationFileTraj)
 
+                if (os.path.exists(strStandardLocationFileTraj) == False) or (
+                        os.path.exists(strStandardLocationFileStop) == False):
+                    if os.path.exists(strStandardLocationFileTraj):
+                        os.remove(strStandardLocationFileTraj)
+                    if os.path.exists(strStandardLocationFileStop):
+                        os.remove(strStandardLocationFileStop)
                 print "--------------------before switch not g_CacheUtil.CheckTrajFileCacheExists"
                 if os.path.exists(strStandardLocationFileTraj) == False:
                     print "########## enter switch not g_CacheUtil.CheckTrajFileCacheExists(lLineId, timestamp, strTrajMd5)"
@@ -570,10 +578,12 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                                 break
                         if intLocationTimeStamp > intCacheModifyNameTraj:
                             print "########## traj intLocationTimeStamp > intCacheModifyNameTraj"
+                            intDownCompleteTrajStatus = 3
                             ## direct use
                             break
                         if intLocationTimeStamp < intCacheModifyNameTraj:
                             print "########## traj intLocationTimeStamp < intCacheModifyNameTraj"
+                            intDownCompleteTrajStatus = 3
                             ##direct use
                             break
                         break
@@ -612,10 +622,12 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                                 break
                         if intLocationTimeStamp > intCacheModifyNameStop:
                             print "########## stop intLocationTimeStamp > intCacheModifyNameStop"
+                            intDownCompleteStopStatus = 3
                             ## direct use
                             break
                         if intLocationTimeStamp < intCacheModifyNameStop:
                             print "########## stop intLocationTimeStamp < intCacheModifyNameStop"
+                            intDownCompleteStopStatus = 3
                             break
                         break
                     break
@@ -673,6 +685,22 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                     # SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(),level='info')
                     intProcessRet = 0
                     print "=====ISYS_INIT_TRAJECTORY_SUCCESS"
+                    break
+                if (os.path.exists(strStandardLocationFileStop) and os.path.exists(
+                        strStandardLocationFileTraj) and intDownCompleteTrajStatus == 1) or (
+                        os.path.exists(strStandardLocationFileStop) and os.path.exists(
+                    strStandardLocationFileTraj) and intDownCompleteStopStatus == 1):
+                    # replace StandardPathFile
+                    if os.path.exists(strDownTempLocationFileStop):
+                        shutil.copyfile(strDownTempLocationFileStop, strStandardLocationFileStop)
+                        os.remove(strDownTempLocationFileStop)
+                    if os.path.exists(strDownTempLocationFileTraj):
+                        shutil.copyfile(strDownTempLocationFileTraj, strStandardLocationFileTraj)
+                        os.remove(strDownTempLocationFileTraj)
+                    intLocationStampTraj = int(os.path.getmtime(strStandardLocationFileTraj))
+                    intLocationStampStop = int(os.path.getmtime(strStandardLocationFileStop))
+                    g_CacheUtil.WriteFileCacheInfo(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timestamp,
+                                                   timestamp, intLocationStampTraj, intLocationStampStop)
                     break
                 break
 
