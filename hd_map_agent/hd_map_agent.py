@@ -157,7 +157,7 @@ class TaskManager:
         else:
             print "strTask not exists :{0},gbalPilotMode:{1},dictRunningWgetPid:{2}".format(strTaskId,globalPilotMode,dictRunningWgetPid)
             ret = False
-        return retd
+        return ret
 
     def checkHandlerExists(self, strTaskId):
         ret = True
