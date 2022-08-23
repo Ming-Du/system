@@ -45,6 +45,8 @@ class MOGO_MSG(object):
             sys.stderr.write('write mogo message to file error:%s'%self.strerror)
             return
         msg_obj = self.json_config_str.get(no)
+        if msg_obj is None:
+            msg_obj = {}
         (ns,s) = modf(time.time())
         timestamp = {"sec":int(s),"nsec":int(ns * 1e9)}
         msg_obj["timestamp"] = timestamp

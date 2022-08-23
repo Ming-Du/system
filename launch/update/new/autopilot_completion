@@ -40,7 +40,7 @@ _autopilot_module() {
             return 0
             ;;
         -n|--start-node)
-            COMPREPLY=( $(compgen -W "$(grep "\.launch" $(dirname ${COMP_WORDS[0]})/*.list | awk -F':| |/' '{print $NF}' | sort -u | tr -s "\n" "")" -- ${cur}) )
+            COMPREPLY=( $(compgen -W "$(grep "\.launch" $(dirname ${COMP_WORDS[0]})/config/*.list | awk -F':| |/' '{print $NF}' | sort -u | tr -s "\n" " ")" -- ${cur}) )
             return 0
             ;;
         *) ;;
