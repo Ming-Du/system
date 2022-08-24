@@ -667,9 +667,9 @@ def processFile(lMapId, strMapUrl, strMapMd5, timestamp, strStandardLocationFile
                 # if os.path.exists(strDownTempLocationFileMap):
                 #     os.remove(strDownTempLocationFileMap)
 
-                print "--------------------before switch not g_CacheUtil.CheckMapFileCacheExists"
-                if not g_CacheUtil.CheckMapFileCacheExists(lMapId, timestamp, strMapMd5):
-                    print "########## enter switch not g_CacheUtil.CheckMapFileCacheExists(lMapId, timestamp, strMapMd5)"
+                print "--------------------before not os.path.exists(strDownStageLocationFileMap)"
+                if not os.path.exists(strDownStageLocationFileMap):
+                    print "########## enter switch not os.path.exists(strDownStageLocationFileMap)"
                     ## down to temp  location
                     intCheckStatus = 0
                     intCheckStatus = syncFromCloud(strMapUrl, strMapMd5, strDownTempLocationFileMap)
@@ -680,6 +680,7 @@ def processFile(lMapId, strMapUrl, strMapMd5, timestamp, strStandardLocationFile
                         intDownCompleteMapStatus = 2
                         if os.path.exists(strDownStageLocationFileMap) == True:
                             intDownCompleteMapStatus = 3
+                    break
 
                 print "--------------------------before switch (g_CacheUtil.CheckMapFileCacheExists(lMapId, timestamp, strMapMd5) == True) and (os.path.exists(strDownStageLocationFileMap)"
                 print g_CacheUtil.debug()
@@ -792,7 +793,7 @@ def processFile(lMapId, strMapUrl, strMapMd5, timestamp, strStandardLocationFile
                     print "===== LOCAL_SAME_AS_CLOUD_NOT_NEED_UPDATE"
                     if link_file(strDownStageLocationFileMap, strStandardLocationFileMap) == 1:
                         print "============== happend relink , transter to pad"
-                        SaveEventToFile(msg='', code='ISYS_CONFIG_UPDATE_HADMAP', results=list(), actions=list(),level='info')
+                        #SaveEventToFile(msg='', code='ISYS_CONFIG_UPDATE_HADMAP', results=list(), actions=list(),level='info')
                     break
                 break
 
@@ -809,7 +810,7 @@ def processFile(lMapId, strMapUrl, strMapMd5, timestamp, strStandardLocationFile
             print 'traceback.print_exc():'
             traceback.print_exc()
             print 'traceback.format_exc():\n%s' % (traceback.format_exc())
-    return intProcessRet
+    return intProcessRet,intDownCompleteMapStatus
 
 
 def ControlCmd(strJsonControlCmd):
@@ -855,8 +856,8 @@ def call_process(strReponse):
                 if 1:
                     # globalTaskManager.addTask(strTaskId)
                     # print "-----   task_id:{0} ".format(strTaskId)
-                    intResultProcess = processFile(intPid, strCosPath, strMd5, intTranslateUpdateTime, strPath)
-                    if intResultProcess == 0:
+                    intResultProcess,intDownCompleteMapStatus = processFile(intPid, strCosPath, strMd5, intTranslateUpdateTime, strPath)
+                    if (intResultProcess == 0) and (intDownCompleteMapStatus == 1):
                         strIp = globalHdMapUrlName
                         strPort = globalStrPort
                         strApiName = "/config/map/sync"
