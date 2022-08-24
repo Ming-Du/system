@@ -115,6 +115,43 @@ class RedisManager(object):
     def set(self,key,value):
         json_dict = {}
         json_dict["Data"] = value
+        if isinstance(value,int):
+            json_dict["Type"] = 'int'
+        elif isinstance(value,float) and len(str(value)) > 7:
+            json_dict["Type"] = 'double'
+        elif isinstance(value,float) and len(str(value)) <= 7:
+            json_dict["Type"] = 'float'
+        elif isinstance(value,str):
+            json_dict["Type"] = 'str'
+        elif isinstance(value,bool):
+            json_dict["Type"] = 'bool'
+        elif isinstance(value,list):
+            json_dict["Type"] = 'list'
+            if len(value) > 0:
+                if isinstance(value[0],int):
+                    json_dict["SubType"] = 'int'
+                if isinstance(value[0],float) and len(str(value[0])) > 7:
+                    json_dict["SubType"] = 'double'
+                elif isinstance(value[0],float) and len(str(value[0])) <= 7:
+                    json_dict["SubType"] = 'float'
+                elif isinstance(value[0],str):
+                    json_dict["SubType"] = 'str'
+                elif isinstance(value[0],bool):
+                    json_dict["SubType"] = 'bool'
+        elif isinstance(value,dict):
+            json_dict["Type"] = 'dict'
+            if len(value) > 0:
+                if isinstance(value.values()[0],int):
+                    json_dict["SubType"] = 'int'
+                if isinstance(value.values()[0],float) and len(str(value.values()[0])) > 7:
+                    json_dict["SubType"] = 'double'
+                elif isinstance(value.values()[0],float) and len(str(value.values()[0])) <= 7:
+                    json_dict["SubType"] = 'float'
+                elif isinstance(value.values()[0],str):
+                    json_dict["SubType"] = 'str'
+                elif isinstance(value.values()[0],bool):
+                    json_dict["SubType"] = 'bool'
+
         try:
             return self.redis_handler.set(key,json.dumps(json_dict))
         except (ConnectionError, TimeoutError) as e:
