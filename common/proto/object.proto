@@ -80,6 +80,7 @@ message ObuObjectsSupplement {
   optional float relative_vel_y = 5;
   optional float absolute_vel_x = 6;
   optional float absolute_vel_y = 7;
+  optional uint32 measurement_id = 8;
 }
 
 message Object {
