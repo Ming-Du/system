@@ -2,8 +2,16 @@ syntax = "proto2";
 
 package trajectory_agent;
 import "header.proto";
+import "geometry.proto";
+import "message_pad.proto";
+
 message TrajectoryAgentSyncStatus {
   optional common.Header header = 1;
   optional int32 sync_status = 2;
  }
 
+message TrajectoryAgentDownloadCheck {
+  optional mogo.telematics.pad.Line line = 1; //路线
+  optional geometry.Point start = 2;  //起点经纬度
+  optional geometry.Point end = 3;    //终点经纬度
+}
