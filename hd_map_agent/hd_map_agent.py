@@ -105,8 +105,8 @@ globalDictTaskRunningStatus = {}
 
 globalStrTempDownFolder = "/home/mogo/data/down_map_agent_tmp/"
 globalStrStageDownFolder = "/home/mogo/data/down_map_agent_stage/"
-globalMapPosition_longitude = 116.402544
-globalMapPosition_latitude = 39.91405
+globalMapPosition_longitude = -0.1
+globalMapPosition_latitude = -0.1
 globalStrPort = "443"
 
 globalPilotMode = 0
@@ -1109,8 +1109,11 @@ def doCheckMapInfo():
             dictQueryCondition = {'vehicleConfSn': strCarSn, 'lng': globalMapPosition_longitude,
                                   'lat': globalMapPosition_latitude}
             print  "========================== query map info:{0}".format(json.dumps(dictQueryCondition))
-            strReponse = simpleHttpsQuery(strIp, globalStrPort, strApiName, dictQueryCondition)
-            print  "========================== response map info:{0}".format(strReponse)
+            if (globalMapPosition_longitude == -0.1) or (globalMapPosition_latitude == -0.1) :
+                print "error globalMapPosition_longitude and globalMapPosition_latitude,ignore"
+            else:
+                strReponse = simpleHttpsQuery(strIp, globalStrPort, strApiName, dictQueryCondition)
+                print  "========================== response map info:{0}".format(strReponse)
         except Exception as e:
             print "exception happend"
             print e.message
