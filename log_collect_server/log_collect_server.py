@@ -13,7 +13,8 @@ tmp_dir = os.path.join(work_dir, "ROS_STAT_REMOTE")
 def recv_data(sock, addr):
     t = time.time()
     index = int(t) % 100000
-    filename = "remote_{0}_{1}.log".format(addr[0], index)
+    msec = int((t-int(t))*1000)
+    filename = "remote_{2}_{0}_{1}.log".format(addr[0], index, msec)
     output_tmp_path = os.path.join(tmp_dir, filename)
     output_path = os.path.join(output_dir, filename)
 
