@@ -155,7 +155,7 @@ class RedisManager(object):
         try:
             return self.redis_handler.set(key,json.dumps(json_dict))
         except (ConnectionError, TimeoutError) as e:
-            raise 'set key failed:%s'%e
+            raise Exception('set key failed:%s'%e)
         except Exception as e:
             raise e
 
@@ -172,7 +172,7 @@ class RedisManager(object):
             else:
                 raise KeyError('%s is not set'%key)
         except (ConnectionError, TimeoutError) as e:
-            raise 'delete key failed:%s'%e
+            raise Exception('delete key failed:%s'%e)
         except Exception as e:
             raise e
 
