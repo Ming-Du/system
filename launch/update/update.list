@@ -5,9 +5,6 @@ config.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
 parent.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
 xmlloader.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
 launch.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
-master_api.py /opt/ros/melodic/lib/python2.7/dist-packages/rosmaster/
-redis_manager.py /opt/ros/melodic/lib/python2.7/dist-packages/rosmaster/
-rosmaster.yaml /opt/ros/melodic/etc/ros/
 mogo_msg.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
 mogo_report_msg.json /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
 autopilot_completion /usr/share/bash-completion/completions/
