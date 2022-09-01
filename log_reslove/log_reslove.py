@@ -581,6 +581,11 @@ class Log_handler():
                     ## TODO：man_end增加后，需要清理 end_msg_dict
             all_link_topic_list[topic_name] = all_link_topic_temp
         
+        ## add by liyl 20220901 for clear sub msg and beg msg
+        for node_entry in all_link_node_list.values():
+            node_entry.sub_msg_dict.clear()
+            node_entry.beg_msg_dict.clear()
+
         self.results = result
         return 
 
@@ -709,7 +714,7 @@ class Log_handler():
             end = time.time()
             print('run_once used time {}'.format(end-start))
 
-            sleep_time = 5 - (end - start)
+            sleep_time = 2 - (end - start)
             if sleep_time > 0.3:
                 time.sleep(sleep_time)
 
@@ -775,7 +780,7 @@ class Car_Status(object):
                 if g_pilot_mode_list:
                     if cur_time == g_pilot_mode_list[-1][1]:
                         g_pilot_mode_list[-1][1] = cur_time+1
-                    else:
+                    elif cur_time > g_pilot_mode_list[-1][1]:
                         g_pilot_mode_list.append([cur_time, cur_time+1])
                 else:
                     g_pilot_mode_list.append([cur_time, cur_time+1])
