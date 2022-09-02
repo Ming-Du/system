@@ -105,13 +105,14 @@ globalDictTaskRunningStatus = {}
 
 globalStrTempDownFolder = "/home/mogo/data/down_map_agent_tmp/"
 globalStrStageDownFolder = "/home/mogo/data/down_map_agent_stage/"
-globalMapPosition_longitude = 116.402544
-globalMapPosition_latitude = 39.91405
+globalMapPosition_longitude = -0.1
+globalMapPosition_latitude = -0.1
 globalStrPort = "443"
 
 globalPilotMode = 0
 
 globalHdMapUrlName = "mdev.zhidaohulian.com"
+dictRunningWgetPid = {}
 
 class TaskManager:
     dictTaskInfo = None
@@ -151,10 +152,10 @@ class TaskManager:
     def checkTaskExists(self, strTaskId):
         ret = True
         if self.dictTaskInfo.has_key(strTaskId):
-            print "strTask is exists: {0}".format(strTaskId)
+            print "strTask is exists: {0},globalPilotMode:{1},dictRunningWgetPid:{2}".format(strTaskId,globalPilotMode,dictRunningWgetPid)
             ret = True
         else:
-            print "strTask not exists :{0}".format(strTaskId)
+            print "strTask not exists :{0},gbalPilotMode:{1},dictRunningWgetPid:{2}".format(strTaskId,globalPilotMode,dictRunningWgetPid)
             ret = False
         return ret
 
@@ -448,11 +449,40 @@ def getFileCurStat(strFileName):
 def downFileFromUrlWget(strUrl, strTempFileName):
     ret = 0
     down_speed = 5 * 1024 * 1024
-    strWgetCmd = " /usr/bin/wget  --limit-rate=4m   --connect-timeout=5 --dns-timeout=5  -c    '{0}'  -O   '{1}' ".format(
-        strUrl, strTempFileName)
+    status = 0
+    #strWgetCmd = " --limit-rate=4m   --connect-timeout=5 --dns-timeout=5  -c    '{0}'  -O   '{1}' ".format(strUrl, strTempFileName)
+    global dictRunningWgetPid
     try:
-        print   "execute sub cmd : {0}".format(strWgetCmd)
-        status, output = commands.getstatusoutput(strWgetCmd)
+        #print   "execute sub cmd : {0}".format(strWgetCmd)
+        #status, output = commands.getstatusoutput(strWgetCmd)
+        pid = os.fork()
+        while True:
+            ##current process wget, abort create process wget
+            if len(dictRunningWgetPid) > 0:
+                print "len(dictRunningWgetPid) > 0 "
+                break
+            if pid < 0:
+                print "====pid < 0  , create  process failed"
+                status = -1
+                break
+            if pid > 0:
+                print "parent process "
+                dictRunningWgetPid[pid] = 0
+                print "====register sub process_pid:{0}".format(dictRunningWgetPid)
+                os.waitpid(pid , 0)
+                ## after finish wget  ,clear dictRunningWgetPid
+                if dictRunningWgetPid.has_key(pid):
+                    del dictRunningWgetPid[pid]
+                print "====after finish wget dictRunningWgetPid:{0}".format(dictRunningWgetPid)
+                status = 0
+                break
+            if pid == 0:
+                print "====sub process"
+                os.execl("/usr/bin/wget", "/usr/bin/wget", "--limit-rate=4M","--connect-timeout=5","--dns-timeout=5", "-c", strUrl, "-O" , strTempFileName)
+                break
+            break
+
+
         print   "status:{0}".format(status)
         ret = status
     except Exception as e:
@@ -637,9 +667,9 @@ def processFile(lMapId, strMapUrl, strMapMd5, timestamp, strStandardLocationFile
                 # if os.path.exists(strDownTempLocationFileMap):
                 #     os.remove(strDownTempLocationFileMap)
 
-                print "--------------------before switch not g_CacheUtil.CheckMapFileCacheExists"
-                if not g_CacheUtil.CheckMapFileCacheExists(lMapId, timestamp, strMapMd5):
-                    print "########## enter switch not g_CacheUtil.CheckMapFileCacheExists(lMapId, timestamp, strMapMd5)"
+                print "--------------------before not os.path.exists(strDownStageLocationFileMap)"
+                if not os.path.exists(strDownStageLocationFileMap):
+                    print "########## enter switch not os.path.exists(strDownStageLocationFileMap)"
                     ## down to temp  location
                     intCheckStatus = 0
                     intCheckStatus = syncFromCloud(strMapUrl, strMapMd5, strDownTempLocationFileMap)
@@ -650,6 +680,7 @@ def processFile(lMapId, strMapUrl, strMapMd5, timestamp, strStandardLocationFile
                         intDownCompleteMapStatus = 2
                         if os.path.exists(strDownStageLocationFileMap) == True:
                             intDownCompleteMapStatus = 3
+                    break
 
                 print "--------------------------before switch (g_CacheUtil.CheckMapFileCacheExists(lMapId, timestamp, strMapMd5) == True) and (os.path.exists(strDownStageLocationFileMap)"
                 print g_CacheUtil.debug()
@@ -762,7 +793,7 @@ def processFile(lMapId, strMapUrl, strMapMd5, timestamp, strStandardLocationFile
                     print "===== LOCAL_SAME_AS_CLOUD_NOT_NEED_UPDATE"
                     if link_file(strDownStageLocationFileMap, strStandardLocationFileMap) == 1:
                         print "============== happend relink , transter to pad"
-                        SaveEventToFile(msg='', code='ISYS_CONFIG_UPDATE_HADMAP', results=list(), actions=list(),level='info')
+                        #SaveEventToFile(msg='', code='ISYS_CONFIG_UPDATE_HADMAP', results=list(), actions=list(),level='info')
                     break
                 break
 
@@ -779,7 +810,7 @@ def processFile(lMapId, strMapUrl, strMapMd5, timestamp, strStandardLocationFile
             print 'traceback.print_exc():'
             traceback.print_exc()
             print 'traceback.format_exc():\n%s' % (traceback.format_exc())
-    return intProcessRet
+    return intProcessRet,intDownCompleteMapStatus
 
 
 def ControlCmd(strJsonControlCmd):
@@ -825,8 +856,8 @@ def call_process(strReponse):
                 if 1:
                     # globalTaskManager.addTask(strTaskId)
                     # print "-----   task_id:{0} ".format(strTaskId)
-                    intResultProcess = processFile(intPid, strCosPath, strMd5, intTranslateUpdateTime, strPath)
-                    if intResultProcess == 0:
+                    intResultProcess,intDownCompleteMapStatus = processFile(intPid, strCosPath, strMd5, intTranslateUpdateTime, strPath)
+                    if (intResultProcess == 0) and (intDownCompleteMapStatus == 1):
                         strIp = globalHdMapUrlName
                         strPort = globalStrPort
                         strApiName = "/config/map/sync"
@@ -898,42 +929,55 @@ def kill_proc_tree(pid, sig=signal.SIGKILL, include_parent=True,
         print 'traceback.format_exc():\n%s' % (traceback.format_exc())
     return (gone, alive)
 
+def kill_sub_process_wget():
+    global dictRunningWgetPid
+    times = 0
+    try:
+        for (key,value ) in dictRunningWgetPid.items():
+            strKillCmd = "kill -9 {0}".format(key)
+            status, output = commands.getstatusoutput(strKillCmd)
+            print "kill status: {0},output:{1},strCmd:{2}".format(status,output,strKillCmd)
+            times  = times + 1
+        print "=== after kill , dictRunningWgetPid:{0},times: {1}".format(dictRunningWgetPid,times)
+    except Exception as e:
+        print "exception happend"
+        print e.message
+        print str(e)
+        print 'str(Exception):\t', str(Exception)
+        print 'str(e):\t\t', str(e)
+        print 'repr(e):\t', repr(e)
+        print 'e.message:\t', e.message
+        print 'traceback.print_exc():'
+        traceback.print_exc()
+        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
 
 def topicMsgCallback(msg):
     global globalPilotMode
-    # print "--------------------------------------------------recv from channel /chassis/vehicle_state  "
+    #print "--------------------------------------------------recv from channel /chassis/vehicle_state  "
     pbStatus = common_vehicle_state_pb2.VehicleState()
     pbStatus.ParseFromString(msg.data)
     globalPilotMode = pbStatus.pilot_mode
     # print "=--------------/chassis/vehicle_state:recv  globalPilotMode:{0}".format(globalPilotMode)
-    local_pid = os.getpid()
-    if globalPilotMode == 1  or globalPilotMode == 2 :
+    if globalPilotMode == 1 or globalPilotMode == 2:
         # print "=========================globalPilotMode: {0}, start kill sub process".format(globalPilotMode)
         ## stop all sub wget task
-        pids = psutil.pids()
         # print   "============pids:{0}".format(pids)
-        for pid in pids:
-            try:
-                p = psutil.Process(pid)
-                # print   "===================p:{0}".format(p)
-                # print   "====================p.ppid:{0}".format(p.ppid())
-                if p.ppid() == local_pid:
-                    print   "============found sub process,now kill, process  name{0}, pid: {1}".format(p.name(), p.pid)
-                    if len(globalTaskManager.dictTaskInfo) > 0:
-                        kill_proc_tree(p.pid)
-                        ## clean all  task info
-                        globalTaskManager.delAllTask()
-            except Exception as e:
-                print   "exception happend"
-                print   e.message
-                print   str(e)
-                print   'str(Exception):\t', str(Exception)
-                print   'str(e):\t\t', str(e)
-                print   'repr(e):\t', repr(e)
-                print   'e.message:\t', e.message
-                print   'traceback.print_exc():'
-                traceback.print_exc()
-                print   'traceback.format_exc():\n%s' % (traceback.format_exc())
+        try:
+            if len(globalTaskManager.dictTaskInfo) > 0:
+                kill_sub_process_wget()
+                ## clean all  task info
+                globalTaskManager.delAllTask()
+        except Exception as e:
+            print   "exception happend"
+            print   e.message
+            print   str(e)
+            print   'str(Exception):\t', str(Exception)
+            print   'str(e):\t\t', str(e)
+            print   'repr(e):\t', repr(e)
+            print   'e.message:\t', e.message
+            print   'traceback.print_exc():'
+            traceback.print_exc()
+            print   'traceback.format_exc():\n%s' % (traceback.format_exc())
 
 
 def localizationCallback(msg):
@@ -1065,8 +1109,11 @@ def doCheckMapInfo():
             dictQueryCondition = {'vehicleConfSn': strCarSn, 'lng': globalMapPosition_longitude,
                                   'lat': globalMapPosition_latitude}
             print  "========================== query map info:{0}".format(json.dumps(dictQueryCondition))
-            strReponse = simpleHttpsQuery(strIp, globalStrPort, strApiName, dictQueryCondition)
-            print  "========================== response map info:{0}".format(strReponse)
+            if (globalMapPosition_longitude == -0.1) or (globalMapPosition_latitude == -0.1) :
+                print "error globalMapPosition_longitude and globalMapPosition_latitude,ignore"
+            else:
+                strReponse = simpleHttpsQuery(strIp, globalStrPort, strApiName, dictQueryCondition)
+                print  "========================== response map info:{0}".format(strReponse)
         except Exception as e:
             print "exception happend"
             print e.message

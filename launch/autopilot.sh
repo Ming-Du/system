@@ -215,16 +215,16 @@ set_pr() {
             [[ "$priority" == "rt" ]] && continue
             case "$t" in
             "DongFeng_E70_can_adapter" | "jinlv_can_adapter" | "hongqih9_can_adapter")
-                (($priority >= 0)) && (chrt -a -p -r 99 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "controller") (($priority >= 0)) && (chrt -a -p -r 99 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "localization" | "drivers_gnss" | "drivers_gnss_zy") (($priority >= 0)) && (chrt -a -p -r 99 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "local_planning") (($priority >= 0)) && (chrt -a -p -r 99 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "perception_fusion_mid") (($priority >= 0)) && (chrt -a -p -r 90 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "hadmap_server" | "hadmap_engine_node") (($priority >= 0)) && (chrt -a -p -r 80 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "perception_fusion2" | "perception_fusion") (($priority >= 0)) && (chrt -a -p -r 79 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "rs_perception_node" | "trt_yolov5") (($priority >= 0)) && (chrt -a -p -r 69 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 45 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "controller") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 44 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "localization" | "drivers_gnss" | "drivers_gnss_zy") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 42 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "local_planning") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 40 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "perception_fusion_mid") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 29 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "hadmap_server" | "hadmap_engine_node") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 30 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "perception_fusion2" | "perception_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 30 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "rs_perception_node") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 20 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             "drivers_camera_sensing60" | "drivers_camera_sensing30" | "drivers_camera_sensing120" | "drivers_robosense_node")
-                (($priority >= 0)) && (chrt -a -p -r 59 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 10 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             *) ;;
             esac
         done
@@ -338,7 +338,7 @@ start_core() {
     if [ $ret -eq 124 ]; then
         rosmaster_pid=$(ps -ef | grep -w "rosmaster --core" | grep -v grep | awk '{print $2}')
         LoggingINFO "starting roscore finished,rosmaster pid:$rosmaster_pid"
-        chrt -a -p -r 99 $rosmaster_pid 2>/dev/null
+        taskset -a -cp 1-7 $rosmaster_pid && chrt -a -p -r 20 $rosmaster_pid 2>/dev/null
         core_stat=1 && write_action
     else
         LoggingERR "starting roscore failed:\n$(cat $ROS_LOG_DIR/roscore.log)" "EMAP_NODE"
@@ -726,7 +726,8 @@ export ROS_LOG_DIR="${LOG_DIR}/$(date +"%Y%m%d")"
 LoggingINFO "ROS_LOG_DIR=$ROS_LOG_DIR"
 flock -x 8
 if [[ ! -d $ROS_LOG_DIR ]]; then
-    find ${LOG_DIR} -maxdepth 1 -mtime +3 -type d -exec rm -Rf {} \;
+    find ${LOG_DIR} -maxdepth 1 -mtime +10 -type d -exec rm -Rf {} \;
+    find ${LOG_DIR}/tracing_log -mindepth 1 -maxdepth 1 -mtime +7 -type d -exec rm -Rf {} \;
     find $BAG_DIR -maxdepth 10 -mtime +10 -exec rm -Rf {} \;
     mkdir -p $ROS_LOG_DIR
     ln -snf $ROS_LOG_DIR ${LOG_DIR}/latest

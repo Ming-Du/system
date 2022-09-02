@@ -21,6 +21,7 @@ def run_once():
             sock.connect(('rosslave-103', 1119))
         except Exception as e:
             print('sock connect error, {}'.format(e))
+            sock.close()
             return
             
     # 先截取一遍文件

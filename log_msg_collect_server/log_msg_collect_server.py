@@ -129,14 +129,9 @@ def LoadOneMsgLog(path):
             lines = contents.split("\n")
     except Exception as e:
         print "exception happend"
-        print e.message
-        print str(e)
         print 'str(Exception):\t', str(Exception)
         print 'str(e):\t\t', str(e)
         print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():'
-        traceback.print_exc()
         print 'traceback.format_exc():\n%s' % (traceback.format_exc())
     if len(lines) > 0:
         for line in lines:
@@ -168,14 +163,9 @@ def LoadOneMsgLog(path):
                         print("there have unexpected level")
                 except Exception as e:
                     print "exception happend"
-                    print e.message
-                    print str(e)
                     print 'str(Exception):\t', str(Exception)
                     print 'str(e):\t\t', str(e)
                     print 'repr(e):\t', repr(e)
-                    print 'e.message:\t', e.message
-                    print 'traceback.print_exc():'
-                    traceback.print_exc()
                     print 'traceback.format_exc():\n%s' % (traceback.format_exc())
             #mogo_report_msg_test = common_mogo_report_msg.MogoReportMessage()
             #mogo_report_msg_test.ParseFromString(binary_log_msg.data)
