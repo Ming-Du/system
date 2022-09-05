@@ -560,8 +560,9 @@ class Log_handler():
 
         print("total_command={}, match_two_paths={}, match_one_paths={} no_path={}".format(
             len(target_handle_complate), match_two_num, match_one_num, no_match_num))
-        if len(target_handle_complate) == no_match_num:
-            self.last_timestamp += 5 * Constants.unit_stamp_sec  
+            
+        if self.last_timestamp < self.time_start_value * Constants.unit_stamp_sec:
+            self.last_timestamp += self.time_start_value * Constants.unit_stamp_sec
 
         for topic_name in all_link_topic_list.keys():
             all_link_topic_temp = dict()
