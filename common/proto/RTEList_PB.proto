@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package common;
+
+import "RTEData_PB.proto";
+
+message RTEList_PB {
+  //定义道路交通事件集合。
+  //至少包含1个道路交通事件信息，最多包含8个。
+  repeated RTEData_PB rteData=1;
+}

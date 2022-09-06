@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package common;
+
+
+message SignType_PB {
+  enum SignType{
+    SignType_unknown = 0;
+  };
+  required SignType sign_type = 1;
+}
