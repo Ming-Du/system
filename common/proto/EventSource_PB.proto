@@ -1,0 +1,21 @@
+syntax = "proto2";
+
+package common;
+
+message EventSource_PB {
+  //unknown(0), -- 0 Unknown
+  //police(1), -- 1 traffic police
+  //government(2), -- 2 govenment
+  //meteorological(3), -- 3 meteorological department
+  //internet(4), -- 4 internet services
+  //detection(5), -- 5 local detection
+  enum EventSource{
+    EventSource_unknown = 0;
+    EventSource_police = 1;
+    EventSource_government = 2;
+    EventSource_meteorological = 3;
+    EventSource_internet = 4;
+    EventSource_detection = 5;
+  };
+  required EventSource event_source = 1;
+}

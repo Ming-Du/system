@@ -1,0 +1,40 @@
+syntax = "proto2";
+
+package common;
+
+// import "EventType_PB.proto";
+import "EventSource_PB.proto";
+import "PositionOffsetLLV_PB.proto";
+import "String_PB.proto";
+import "RSITimeDetails_PB.proto";
+import "ReferencePathList_PB.proto";
+import "ReferenceLinkList_PB.proto";
+
+message RTEData_PB {
+  //(0..255)
+  required int64 rteId=1;
+  // required EventType_PB eventType=2;
+  required int32  eventType=2;
+  required EventSource_PB eventSource=3;
+  optional PositionOffsetLLV_PB eventPos=4;
+  // 分辨率为10 cm。
+  // (0..65535)
+  optional int64 eventRadius=5;
+  //提供ASCII字符文本形式，支持长度1字节到512字节。该类型不提供
+  //提供中文编码形式，符合GB2312-80的编码规则，1个中文字符由2字节信息编码，支持长度1到256
+  //个中文字符
+  //Description
+  optional String_PB description=6;
+
+  optional RSITimeDetails_PB timeDetails=7;
+  // 表示RSI消息中不同类型交通事件或交通标志的优先级。数值长度占8位，其中低五位为0，为无效
+  //位，高三位为有效数据位。数值有效范围是B00000000到B11100000，分别表示8档由低到高的优先级。
+  //对应 RSIPriority
+  optional String_PB priority=8;
+  optional ReferencePathList_PB referencePaths=9;
+  optional ReferenceLinkList_PB referenceLinks=10;
+  //定义置信度。
+  //分辨率为0.005。
+  // 0-200
+  optional int32 eventConfidence=11;
+}

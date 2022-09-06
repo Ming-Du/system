@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package common;
+
+message EventType_PB {
+  enum EventType{
+    RoadWork_nothing_0500 = 0;
+    RoadWork_occupy_0501 = 1;
+    RoadWork_break_0502 = 2;
+    RoadWork_other_0599 = 99;
+  };
+  required EventType event_type = 1;
+}

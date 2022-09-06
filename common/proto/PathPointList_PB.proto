@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package common;
+
+import "PositionOffsetLLV_PB.proto";
+message PathPointList_PB {
+  //(1..32))
+  repeated PositionOffsetLLV_PB offsetLLV=1;
+}

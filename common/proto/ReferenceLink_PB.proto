@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package common;
+
+import "NodeReferenceID_PB.proto";
+import "ReferenceLanes_PB.proto";
+message ReferenceLink_PB {
+
+  required NodeReferenceID_PB upstreamNodeId=1;
+
+  required NodeReferenceID_PB downstreamNodeId=2;
+
+  optional ReferenceLanes_PB referenceLanes=3;
+
+}

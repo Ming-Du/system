@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package common;
+
+import "header.proto";
+import "RoadSideInformation_PB.proto";
+
+message RSI_PB {
+	required RoadSideInformation_PB rsiFrame =1;
+	optional Header header = 2;
+}

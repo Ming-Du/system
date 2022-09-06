@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package common;
+
+import "PathPointList_PB.proto";
+message ReferencePath_PB {
+  required PathPointList_PB activePath=1;
+  //表示绝对值半径大小。
+  //分辨率为10 cm。
+  //(0..65535)
+  required int64 pathRadius=2;
+
+}

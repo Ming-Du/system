@@ -26,6 +26,8 @@ enum ObjectType {
   TYPE_UNKNOWN_BIG = 92;
   TYPE_UNKNOWN_STATIC = 93;
   TYPE_UNKNOWN_DYNAMIC = 94;
+  TYPE_ROADWORK_OCCUPY_0501 = 501;
+  TYPE_ROADWORK_BREAK_0502 = 502;
 }
 
 enum ObjectState {
@@ -33,13 +35,6 @@ enum ObjectState {
   STATE_PREDICT = 1;
 };
 
-enum ObjectSource {
-  UNKNOWN = 0;
-  V2V_BSM = 1;
-  V2I_RSM = 2;
-  V2V_SSM = 3;
-  V2N_RSM = 4;
-};
 
 message BBox2D {
   optional double xmin = 1 [default = nan];  // in pixel.
@@ -82,6 +77,17 @@ message ObuObjectsSupplement {
   optional float absolute_vel_y = 7;
   optional uint32 measurement_id = 8;
 }
+
+// Modify-baihaijiang
+enum ObjectSource {
+  UNKNOWN = 0;
+  V2V_BSM = 1;
+  V2I_RSM = 2;
+  V2V_SSM = 3;
+  V2N_RSM = 4;
+  V2N_RSI = 5;
+  V2I_SSM = 6;
+};
 
 message Object {
   optional uint32 id = 1;                // obj id, after tracked
@@ -170,7 +176,7 @@ message TrackedObject {
   optional int32  object_category = 17 [default = 1];
   optional int32  obu_participant_type = 18 [default = 0];
   optional int32  obu_obstacle_type = 19 [default = 0];
-    // v2v_bsm = 1  v2i_rsm = 2 v2v_ssm = 3 v2n_rsm = 4
+  // v2v_bsm = 1, v2i_rsm = 2, v2v_ssm = 3, v2n_rsm = 4, v2n_rsi = 5, v2i_ssm = 6
   optional ObjectSource source = 20;
 }
 
@@ -239,7 +245,7 @@ message ObuObject {
   optional float heading = 8;             // gps head 
   optional float speed = 9;               // gps speed
   repeated geometry.Trace trace = 10;      // historical positions
-  // v2v_bsm = 1  v2i_rsm = 2 v2v_ssm = 3 v2n_rsm = 4
+  // v2v_bsm = 1, v2i_rsm = 2, v2v_ssm = 3, v2n_rsm = 4, v2n_rsi = 5, v2i_ssm = 6
   optional ObjectSource source = 11;
 }
 
