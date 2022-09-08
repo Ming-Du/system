@@ -14,7 +14,7 @@ def recv_data(sock, addr):
     t = time.time()
     index = int(t) % 100000
     msec = int((t-int(t))*1000)
-    filename = "remote_{2}_{0}_{1}.log".format(addr[0], index, msec)
+    filename = "remote_{:03d}_{}_{}.log".format(msec, addr[0], index)
     output_tmp_path = os.path.join(tmp_dir, filename)
     output_path = os.path.join(output_dir, filename)
 
