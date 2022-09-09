@@ -73,7 +73,6 @@ from rosmaster.util import xmlrpcapi
 from rosmaster.registrations import RegistrationManager
 from rosmaster.validators import non_empty, non_empty_str, not_none, is_api, is_topic, is_service, valid_type_name, valid_name, empty_or_valid_name, ParameterInvalid
 from rosmaster.redis_manager import RedisManager
-from rosmaster.redis_manager import AuthenticationError,ResponseError,TimeoutError,ConnectionError
 from rospy import logerr, loginfo
 
 NUM_WORKERS = 3 #number of threads we use to send publisher_update notifications
@@ -504,6 +503,18 @@ class ROSMasterHandler(object):
         @rtype: [int, str, XMLRPCLegalValue]
         """
         key = resolve_name(key, caller_id)        
+        if RedisManager().ready:
+            if not key:
+                val = {}
+            else:
+                key = '/' + '/'.join([x for x in key.split('/') if x])
+                try:
+                    val = RedisManager().get(key)
+                except:
+                    val = {}
+            self.reg_manager.register_param_subscriber(key,caller_id, caller_api)
+            mloginfo("+CACHEDPARAM [%s] by %s",key, caller_id)
+            return 1, "Subscribed to parameter [%s]"%key, val
         try:
             # ps_lock has precedence and is required due to
             # potential self.reg_manager modification

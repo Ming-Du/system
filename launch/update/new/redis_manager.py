@@ -1,29 +1,43 @@
 import os
 import logging
-import redis
-from redis import ConnectionPool,StrictRedis
-import yaml
 import traceback
 import json
 from threading import RLock
-# from roslaunch.core import printlog,printerrlog
-_loginfo = logging.getLogger("rosmaster.master").info
-_logerror = logging.getLogger("rosmaster.master").error
 
+_logger = logging.getLogger("rosmaster.master")
 
-AuthenticationError = redis.AuthenticationError
-AuthenticationWrongNumberOfArgsError = redis.AuthenticationWrongNumberOfArgsError
-BusyLoadingError = redis.BusyLoadingError
-ChildDeadlockedError = redis.ChildDeadlockedError
-ConnectionError = redis.ConnectionError
-DataError = redis.DataError
-InvalidResponse = redis.InvalidResponse
-PubSubError = redis.PubSubError
-ReadOnlyError = redis.ReadOnlyError
-RedisError = redis.RedisError
-ResponseError = redis.ResponseError
-TimeoutError = redis.TimeoutError
-WatchError = redis.WatchError
+def logerror(msg, *args):
+    _logger.error(msg, *args)
+    if args:
+        print("ERROR: " + msg % args)
+    else:
+        print("ERROR: " + str(msg))
+
+def logwarn(msg, *args):
+    _logger.warn(msg, *args)
+    if args:
+        print("WARN: " + msg % args)
+    else:
+        print("WARN: " + str(msg))
+
+try:
+    import redis
+    from redis import ConnectionPool,StrictRedis
+    AuthenticationError = redis.AuthenticationError
+    AuthenticationWrongNumberOfArgsError = redis.AuthenticationWrongNumberOfArgsError
+    BusyLoadingError = redis.BusyLoadingError
+    ChildDeadlockedError = redis.ChildDeadlockedError
+    ConnectionError = redis.ConnectionError
+    DataError = redis.DataError
+    InvalidResponse = redis.InvalidResponse
+    PubSubError = redis.PubSubError
+    ReadOnlyError = redis.ReadOnlyError
+    RedisError = redis.RedisError
+    ResponseError = redis.ResponseError
+    TimeoutError = redis.TimeoutError
+    WatchError = redis.WatchError
+except:
+    logwarn("redis module is invalid,to use redis as param server,you can install it manually:pip install redis")
 
 def singleton(cls):
     _instance = {}
@@ -50,13 +64,17 @@ class RedisManager(object):
 
     def _read_config(self):
         config = None
-        config_file = os.path.join(os.environ.get('ROS_ETC_DIR'),'rosmaster.yaml')
+        config_file = os.path.join(os.environ.get('ROS_ETC_DIR'),'rosmaster.json')
         try:
             with open(config_file,'r') as f:
-                config = yaml.load(f.read())
+                config = json.loads(f.read())
         except IOError as e:
-            _logerror('open config file failed:%s'%e)
+            logerror('open config file failed:%s'%e)
             return False
+        except ValueError: 
+            logerror('parse config failed:%s'%e)
+            return False
+
         try:
             self.rhost = config['redis']['host']
         except:
@@ -76,34 +94,30 @@ class RedisManager(object):
         return True
 
     def connect(self,retry_times=10):
+        self.lock.acquire()
         try:
-            self.lock.acquire()
             self.pool = ConnectionPool(host=self.rhost,port=self.rport, db=0, username=self.ruser,password=self.rpassword, max_connections=3,decode_responses=True)
             self.redis_handler = StrictRedis(connection_pool=self.pool,socket_connect_timeout=self.connect_timeout,socket_keepalive=True,socket_timeout=self.socket_timeout,health_check_interval=5)
-            for i in range(retry_times):
-                try:
-                    self.redis_handler.ping()
-                    self.ready = True
-                    return True
-                except (ConnectionError, TimeoutError) as e:
-                    _logerror('ConnectionError or TimeoutError:Cannot conneted with redis server[%s:%s]:%s'%(self.rhost,self.rport,e))
-                except AuthenticationError as e:
-                    _logerror('Cannot conneted with redis server[%s:%s]:%s'%(self.rhost,self.rport,e))
-                    break
-                except ResponseError as e:
-                    _logerror('ResponseError:Server[%s:%s] response error:%s'%(self.rhost,self.rport,e))
-                    return False
-                except:
-                    _logerror('Cannot conneted with redis server[%s:%s]'%(self.rhost,self.rport))
-            return False
-        finally:
+        except Exception as e:
+            logwarn("functions of redis are invalid:%s"%e)
             self.lock.release()
+            return False
+        for i in range(retry_times):
+            try:
+                self.redis_handler.ping()
+                self.ready = True
+                return True
+            except (ConnectionError, TimeoutError) as e:
+                logerror('Connet redis server[%s:%s] failed:%s'%(self.rhost,self.rport,e))
+                continue
+            except Exception as e:
+                logerror(e)
+                self.lock.release()
+                return False
 
     def init(self):
-        _logerror("test err log")
-        _loginfo("test info log")
+        self.lock.acquire()
         try:
-            self.lock.acquire()
             if self.ready:
                 return True
             if not self._read_config():
@@ -160,10 +174,13 @@ class RedisManager(object):
             raise e
 
     def get(self,key):
+        json_str = self.redis_handler.get(key)
+        if not json_str:
+            raise KeyError
         try:
-            return json.loads(self.redis_handler.get(key))['Data']
+            return json.loads(json_str)['Data']
         except Exception as e:
-            raise e
+            raise
 
     def delete(self,key):
         try:
@@ -184,7 +201,7 @@ class RedisManager(object):
     
     def has_key(self,key):
         try:
-            if len(self.redis_handler.exists(key)) > 0:
+            if self.redis_handler.exists(key):
                 return True 
             else:
                 return False

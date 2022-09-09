@@ -42,6 +42,9 @@ add_service_files(
   StringMessage.srv
   StatusQuery.srv
   RecordDataConfigQuery.srv
+  StartTask.srv
+  StopTask.srv
+  TaskInfo.srv
 )
 
 ## Generate added messages and services with any dependencies listed here
