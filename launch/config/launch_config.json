@@ -929,6 +929,19 @@
             "type": "MAP"
         },
         {
+            "name": "radar_fusion.launch",
+            "package": "perception_radar",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-105"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
             "name": "drivers_innolidar.launch",
             "package": "launch",
             "machine": {
