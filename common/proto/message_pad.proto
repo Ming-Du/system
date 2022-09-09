@@ -460,6 +460,4 @@ message PlanningActionMsg
 //message definition for MsgTypeSpecialVehicleTaskCmd
 //refer to special_vehicle_task_cmd.proto for details
 
-//message definition for MsgTypeSpecialVehicleTaskCmd
-//refer to special_vehicle_task_cmd.proto for details
 
