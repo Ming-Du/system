@@ -8,3 +8,6 @@ launch.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
 mogo_msg.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
 mogo_report_msg.json /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
 autopilot_completion /usr/share/bash-completion/completions/
+master_api.py /opt/ros/melodic/lib/python2.7/dist-packages/rosmaster/
+redis_manager.py /opt/ros/melodic/lib/python2.7/dist-packages/rosmaster/
+rosmaster.json /opt/ros/melodic/etc/ros/
