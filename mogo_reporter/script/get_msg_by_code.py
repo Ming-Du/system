@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import os
 import sys
@@ -16,8 +17,8 @@ def yaml_to_dict(yaml_path):
         yaml的 dict 格式
     """
     data_dict = dict()
-    with open(yaml_path, encoding="utf-8") as f:
-        data_dict = yaml.load(f, Loader=yaml.FullLoader)
+    with open(yaml_path) as f:
+        data_dict = yaml.load(f)
     return data_dict
 
 
