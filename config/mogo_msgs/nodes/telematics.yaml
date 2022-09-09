@@ -1,0 +1,14 @@
+info:
+  - code: ITELEMATICS_AUTOPILOT_CMD_FORWARDED
+    msg: 自动驾驶命令已转发
+
+  - code: ITELEMATICS_AICLOUD_AUTH_OK
+    msg: aicloud连接认证成功
+
+error:
+  - code: ETELEMATICS_AICLOUD_AUTH_ERROR
+    msg: telematics连接云端失败
+    result: 
+      - RESULT_AUTOPILOT_INFERIOR
+    action: 
+      - ACTION_CONTACT_TECH_SUPPORT

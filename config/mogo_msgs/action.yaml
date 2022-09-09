@@ -1,0 +1,23 @@
+- code: ACTION_CONTACT_TECH_SUPPORT
+  desc: 联系技术支持
+
+- code: ACTION_CONTACT_MAINTENANCE
+  desc: 联系运维
+
+- code: ACTION_CONTACT_HARDWARE_ENGINEER
+  desc: 联系硬件
+
+- code: ACTION_REBOOT_PAD
+  desc: 重启Pad
+
+- code: ACTION_REBOOT_VEHICLE
+  desc: 重启车辆
+
+- code: ACTION_CHECK_GEAR
+  desc: 检查车辆档位等影响自动驾驶的因素
+
+- code: ACTION_CHECK_NETWORK
+  desc: 检查网络连接和路由器等影响通信的因素
+
+- code: ACTION_TRY_AGAIN_LATER
+  desc: 请稍后重试

@@ -1,0 +1,25 @@
+- code: RESULT_AUTOPILOT_SYSTEM_UNSTARTED
+  desc: 自动驾驶系统启动失败
+  detail: 自动驾驶系统启动过程中出错,pad可能无法连接,云端监控可能无法上报
+
+- code: RESULT_AUTOPILOT_DISABLE
+  desc: 无法启动自动驾驶
+  detail: 无法启动自动驾驶
+
+- code: RESULT_AUTOPILOT_INFERIOR
+  desc: 自动驾驶效果受影响
+  detail: 自动驾驶部分功能受严重影响，演示模式可以考虑强行启动，非演示模式下建议停止自动驾驶，联系人员排查问题。
+          例如定位偏移,camera无数据,算法非常严重的丢帧,属于自动驾驶可以启动,但是效果受影响。
+
+- code: RESULT_REMOTEPILOT_DISABLE
+  desc: 无法启动远程驾驶
+  detail: 无法启动远程驾驶
+
+- code: RESULT_REMOTEPILOT_INFERIOR
+  desc: 远程驾驶效果受影响
+  detail: 远程驾驶部分功能受影响。例如网络高延迟
+
+- code: RESULT_SHOW_WARNING
+  desc: 存在不确定因素
+  detail: 一般为过渡状态,存在不确定因素,有可能对自动驾驶有微弱影响,需要在pad端显示为黄色告警。
+          如果偶尔上报该result可忽略,如果频繁上报需联系人员进行排查。 目前仅有RTK无法确认状态事件
