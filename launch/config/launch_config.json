@@ -667,25 +667,6 @@
             "type": "MAP"
         },
         {
-            "name": "perception_radar.launch",
-            "package": "perception_radar",
-            "machine": {
-                "df": {
-                    "2x": [],
-                    "6x": [
-                        "rosslave-105"
-                    ]
-                },
-                "hq": {
-                    "2x": [],
-                    "6x": [
-                        "rosslave-105"
-                    ]
-                }
-            },
-            "type": "MAP"
-        },
-        {
             "name": "perception_fusion.launch",
             "package": "launch",
             "machine": {
@@ -930,7 +911,8 @@
         },
         {
             "name": "radar_fusion.launch",
-            "package": "perception_radar",
+            "package":"config",
+            "path": "vehicle/perception/radar",
             "machine": {
                 "jinlv": {
                     "2x": [],
