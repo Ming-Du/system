@@ -551,8 +551,8 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                         break
                     strStopName = "traj_{0}.csv".format(lLineId)
                     intCacheModifyNameStop = g_CacheUtil.dictTrajectoryAgentRecord[strStopName]['modify_time']
-                    print "++++++++++++++++++++++++++++++intCacheModifyNameStop:{0},intLocationTimeStamp:{1}".format(
-                        intCacheModifyNameStop, intLocationTimeStamp)
+                    rospy.logdebug ("++++++++++++++++++++++++++++++intCacheModifyNameStop:{0},intLocationTimeStamp:{1}".format(
+                        intCacheModifyNameStop, intLocationTimeStamp))
                     while True:
                         if intLocationTimeStamp == intCacheModifyNameStop:
                             # compare md5
@@ -635,8 +635,8 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
                     rospy.loginfo("=====ISYS_INIT_TRAJECTORY_WARNING")
                     break
                 if (intDownCompleteTrajStatus == 4) and (intDownCompleteStopStatus == 4):
-                    print "########## traj same with cloud ,not need  update "
-                    print "============================================================================================="
+                    rospy.logdebug("########## traj same with cloud ,not need  update ")
+                    #print "============================================================================================="
                     # SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(),level='info')
                     intProcessRet = 0
                     rospy.loginfo("=====ISYS_INIT_TRAJECTORY_SUCCESS")
