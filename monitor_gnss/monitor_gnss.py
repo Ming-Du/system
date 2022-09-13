@@ -47,11 +47,10 @@ globalWriteInterval = 50
 def folder_check():
     PATH='/home/mogo/data/log/filebeat_upload/'
     if os.path.isdir(PATH) and access(PATH, R_OK):
-        print "folder exists and is readable"
+        pass
     else:
-        print "folder not ready,now create path"
+        rospy.logwarn("folder not ready,now create path")
         os.makedirs(PATH)
-        print os.path.isdir(PATH)
         os.chmod(PATH,0777)
 
 
@@ -67,15 +66,9 @@ def task_localization(pb_msg):
     instanceLocInfoUnit.sec =  (location.header.stamp.sec)
     instanceLocInfoUnit.nsec = (location.header.stamp.nsec)
 
-    # print "get name:%s,longitude:%f,latitude:%f x: %f, y: %f,sec: %d , nsec:%d " % (thread_name, instanceLocInfoUnit.MarkMapPosition_longitude,instanceLocInfoUnit.MarkMapPosition_latitude,
-    #                                                                                 instanceLocInfoUnit.MarkMapPosition_x,instanceLocInfoUnit.MarkMapPosition_y,
-    #                                                                                 instanceLocInfoUnit.sec,
-    #                                                                                 instanceLocInfoUnit.nsec)
+
 
     dictPostionLog={}
-    #dictPostionLog["sec"]=instanceLocInfoUnit.sec
-    #dictPostionLog["nsec"]=instanceLocInfoUnit.nsec
-    # dictInfoLog["car_info"]=globalCommonPara.dictCarInfo
     dictPostionLog["pilotMode"]=int(globalCollectVehicleInfo.int_pilot_mode)
     dictPostionLog["takeover_reason_code"] = int(globalCollectVehicleInfo.int_error_code)
     dictPostionLog["takeover_reason_message"]=str(globalCollectVehicleInfo.str_err_msg)
@@ -86,25 +79,26 @@ def task_localization(pb_msg):
     CurrentMicroSec = instanceLocInfoUnit.sec*1000 + instanceLocInfoUnit.nsec/1000000
     dictPostionLog["msec"] = CurrentMicroSec
 
-    print "before while"
+
     global globalListPostion
     global globalLastMicroSec
-    print '=========c:%d---g:%d---len:%d' %(CurrentMicroSec,globalLastMicroSec,len(globalListPostion))
+
     while True:
         if globalLastMicroSec == 0:
-            print "enter first update globalLastMicroSec"
+
+            rospy.logdebug_throttle(5,"enter first update globalLastMicroSec")
             globalListPostion.append(dictPostionLog)
             ## update last micro sec
             globalLastMicroSec = CurrentMicroSec
             break
         if (CurrentMicroSec  - globalLastMicroSec >  globalWriteInterval ) or  (CurrentMicroSec  - globalLastMicroSec == globalWriteInterval ):
-            print "enter second globalLastMicroSec"
+            rospy.logdebug_throttle(5, "enter first update globalLastMicroSec")
             globalListPostion.append(dictPostionLog)
             ### update  last micro sec
             globalLastMicroSec = CurrentMicroSec
             break
         break
-    #print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+
     if (len(globalListPostion)  >  (1000/globalWriteInterval) )  or   ( len(globalListPostion) == (1000/globalWriteInterval) ):
         tree = lambda: collections.defaultdict(tree)
         dictLogInfo = tree()
@@ -116,39 +110,36 @@ def task_localization(pb_msg):
         dictLogInfo["car_info"]=globalCommonPara.dictCarInfo
         dictLogInfo["positions"]=globalListPostion
         strJsonLineContent = json.dumps(dictLogInfo)
-        # print strJsonLineContent
-        #print "bbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+
         try:
             folder_check()
             with open('/home/mogo/data/log/filebeat_upload/location.log', 'a+') as f:
-                #print "dddddddddddddddddddddddd"
+
                 f.write(strJsonLineContent)
                 f.write("\n")
-                #global globalListPostion
-                #print "eeeeeeeeeeeeeeeeeeeeee"
-                globalListPostion=[]
-                #print "cccccccccccccccccccccccccccc"
-                print "#########################=================================write finished, now clean globalListPostion"
+
+
+
+
+
         except IOError:
-            print "operate file failed"
+            rospy.logwarn("operate file failed")
             exit(-1)
 
 
 
 def localizationCallback(msg):
-    #print(msg.name)
-    #print(msg.size)
     if msg.size > 0:
         globalLocationPool.submit(task_localization, msg.data)
 
 
 
 def autopilotModeCallback(msg):
-    #print "msg.size()=%d" %(msg.size)
+
     pbStatus=common_vehicle_state_pb2.VehicleState()
     pbStatus.ParseFromString(msg.data)
-    #print "vStatus.pilot_mode=%d" %(pbStatus.pilot_mode)
-    #print (type(pbStatus.pilot_mode))
+
+
 
     global globalCollectVehicleInfo
     globalCollectVehicleInfo = CollectVehicleInfo()
@@ -220,13 +211,13 @@ def main():
     # add listener
     global globalWriteInterval
     strFullParaName = "%s/monitor_gnss_interval" %(rospy.get_name())
-    print "strFullParaName:%s" %(strFullParaName)
+    rospy.loginfo("strFullParaName:%s" %(strFullParaName))
     temp  = rospy.get_param(strFullParaName)
     if temp  >= 1000 or temp <= 0 :
         globalWriteInterval =  1000
     else:
         globalWriteInterval =  temp
-    print "=============================set globalWriteInterval:%d" %(globalWriteInterval)
+    rospy.loginfo("=============================set globalWriteInterval:%d" %(globalWriteInterval))
     addLocalizationListener()
     ## wait msg
     rospy.spin()
@@ -236,5 +227,5 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt as e:
-        print("monitor.py is failed !")
+        rospy.logwarn("monitor.py is failed !")
         exit(0)
