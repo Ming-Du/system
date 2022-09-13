@@ -270,26 +270,6 @@ class Log_handler():
         self.input_paths.sort()
 
     def load_one_log(self, one):
-        global g_pilot_mode_list
-  
-        if not g_test_mode:
-            if not g_pilot_mode_list:
-                return
-
-            # 仅自动驾驶时间段内的日志进行全链路解析
-            log_time = one.get('stamp', 0)/Constants.unit_stamp_sec
-            if log_time < g_pilot_mode_list[0][0] and log_time > g_pilot_mode_list[-1][1]:
-                if log_time > g_pilot_mode_list[0][1] + 10:  ## delay 10s  the log must handled
-                    g_pilot_mode_list.pop(0)
-                return
-
-            autopilot_time_flag = False
-            for statr_t, end_t in g_pilot_mode_list:
-                if log_time >= statr_t and log_time <= end_t:
-                    autopilot_time_flag = True
-                    break
-            if not autopilot_time_flag:
-                return
 
         if one.get('node', 'unknow') in all_link_node_list:
             # node 在解析配置字典里，进行数据更新
@@ -298,13 +278,24 @@ class Log_handler():
 
     ''' handel file one by one '''
     def load_one_log_by_time(self, ros_time_paths, remote_paths):
-        global g_test_mode
+        global g_pilot_mode_list
+  
+        if not g_test_mode:
+            if not g_pilot_mode_list:
+                return
 
-        #print('ros_time={},remote={}'.format(ros_time_paths, remote_paths))
-        #print('start_time={},split_time={}'.format(self.time_start_value,self.time_split_value))
+            # 仅自动驾驶时间段内的日志进行全链路解析 
+            if self.time_start_value > g_pilot_mode_list[-1][1] or self.time_split_value < g_pilot_mode_list[0][0]:
+                return
 
-        handle_time = int(self.time_start_value%100000) if not g_test_mode else 0
-        end_time = int(self.time_split_value%100000) if not g_test_mode else 99999
+            handle_time = g_pilot_mode_list[0][0] if g_pilot_mode_list[0][0] > self.time_start_value else self.time_start_value
+            handle_time = int(handle_time % 100000)
+            end_time = g_pilot_mode_list[-1][1] if g_pilot_mode_list[-1][1] < self.time_split_value else self.time_split_value
+            end_time = int(end_time % 100000)
+        else:
+            handle_time = 0
+            end_time = 99999
+
         remote_log_src=['102','103','104','105','106','107']
 
         while handle_time < end_time:
@@ -353,7 +344,10 @@ class Log_handler():
                     except Exception as e:
                         print("the log {} in file {} is unexpect style! {}".format(line, path, e))
                         continue
-    
+
+        if not g_test_mode:
+            while g_pilot_mode_list and self.time_start_value > g_pilot_mode_list[0][1]:
+                g_pilot_mode_list.pop(0)
 
     @get_time_used
     def load_logs(self):
@@ -566,8 +560,9 @@ class Log_handler():
 
         print("total_command={}, match_two_paths={}, match_one_paths={} no_path={}".format(
             len(target_handle_complate), match_two_num, match_one_num, no_match_num))
-        if len(target_handle_complate) == no_match_num:
-            self.last_timestamp += 5 * Constants.unit_stamp_sec  
+            
+        if self.last_timestamp < self.time_start_value * Constants.unit_stamp_sec:
+            self.last_timestamp += self.time_start_value * Constants.unit_stamp_sec
 
         for topic_name in all_link_topic_list.keys():
             all_link_topic_temp = dict()

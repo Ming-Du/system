@@ -36,6 +36,7 @@ def run_once():
 
     # 将截取数据发出去
     files = os.listdir(tmp_dir)
+    files.sort()  # 每秒写文件需要排序发送
     for file_name in files:
         tmp_file_path = os.path.join(tmp_dir, file_name)
         with open(tmp_file_path, "rb") as fp:
