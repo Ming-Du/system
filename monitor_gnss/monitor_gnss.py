@@ -184,6 +184,30 @@ def autopilotModeCallback(msg):
     globalCollectVehicleInfo.b_location_missing  =  pbStatus.location_missing
     globalCollectVehicleInfo.b_trajectory_missing = pbStatus.trajectory_missing
     globalCollectVehicleInfo.b_chassis_status_missing = pbStatus.chassis_status_missing
+    globalCollectVehicleInfo.brake_light_status=pbStatus.brake_light_status
+    globalCollectVehicleInfo.pilot_mode_condition_met=pbStatus.pilot_mode_condition_met
+    globalCollectVehicleInfo.steeringSpd=pbStatus.steeringSpds
+    globalCollectVehicleInfo.leftFrontWheelAngle=pbStatus.leftFrontWheelAngle
+    globalCollectVehicleInfo.rightFrontWheelAngle=pbStatus.rightFrontWheelAngle
+    globalCollectVehicleInfo.steering=pbStatus.steering
+    globalCollectVehicleInfo.speed=pbStatus.speed
+    globalCollectVehicleInfo.accel=pbStatus.accel
+    globalCollectVehicleInfo.throttle=pbStatus.throttle
+    globalCollectVehicleInfo.brake=pbStatus.brake
+    globalCollectVehicleInfo.gear=pbStatus.gear
+    globalCollectVehicleInfo.light=pbStatus.light
+    globalCollectVehicleInfo.horn=pbStatus.horn
+    globalCollectVehicleInfo.highbeam=pbStatus.highbeam
+    globalCollectVehicleInfo.lowbeam=pbStatus.lowbeam
+    globalCollectVehicleInfo.foglight=pbStatus.foglight
+    globalCollectVehicleInfo.clearance_lamps=pbStatus.clearance_lamps
+    globalCollectVehicleInfo.warn_light=pbStatus.warn_light
+    globalCollectVehicleInfo.parking_brake=pbStatus.parking_brake
+    globalCollectVehicleInfo.longitude_driving_mode=pbStatus.longitude_driving_mode
+    globalCollectVehicleInfo.eps_steering_mode=pbStatus.eps_steering_mode
+    globalCollectVehicleInfo.steering_sign=pbStatus.steering_sign
+
+
 
     # 1、steer_inference
     # 方向盘干预
