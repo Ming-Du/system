@@ -63,9 +63,23 @@ def task_localization(pb_msg):
     instanceLocInfoUnit.MarkMapPosition_y = location.position.y
     instanceLocInfoUnit.MarkMapPosition_longitude = location.longitude
     instanceLocInfoUnit.MarkMapPosition_latitude = location.latitude
+    instanceLocInfoUnit.roll=location.roll
+    instanceLocInfoUnit.pitch=location.pitch
+    instanceLocInfoUnit.yaw=location.yaw
+    instanceLocInfoUnit.roll_v=location.roll_v
+    instanceLocInfoUnit.pitch_v=location.pitch_v
+    instanceLocInfoUnit.yaw_v=location.yaw_v
+    instanceLocInfoUnit.lateral_v=location.lateral_v
+    instanceLocInfoUnit.longitudinal_v=location.longitudinal_v
+    instanceLocInfoUnit.vertical_v=location.vertical_v
+    instanceLocInfoUnit.lateral_a=location.lateral_a
+    instanceLocInfoUnit.longitudinal_a=location.longitudinal_a
+    instanceLocInfoUnit.vertical_a=location.vertical_a
+    instanceLocInfoUnit.horizontal_v=location.horizontal_v
+    instanceLocInfoUnit.utm_zone=location.utm_zone
+    instanceLocInfoUnit.gnss_sys_dtime=location.gnss_sys_dtime
     instanceLocInfoUnit.sec =  (location.header.stamp.sec)
     instanceLocInfoUnit.nsec = (location.header.stamp.nsec)
-
 
 
     dictPostionLog={}
@@ -76,6 +90,25 @@ def task_localization(pb_msg):
     dictPostionLog["position_y"]=instanceLocInfoUnit.MarkMapPosition_y
     dictPostionLog["location_longitude"]=instanceLocInfoUnit.MarkMapPosition_longitude
     dictPostionLog["location_latitude"]= instanceLocInfoUnit.MarkMapPosition_latitude
+
+    dictPostionLog["roll"] = instanceLocInfoUnit.roll
+    dictPostionLog["pitch"] = instanceLocInfoUnit.pitch
+    dictPostionLog["yaw"] = instanceLocInfoUnit.yaw
+    dictPostionLog["roll_v"] = instanceLocInfoUnit.roll_v
+    dictPostionLog["pitch_v"] = instanceLocInfoUnit.pitch_v
+    dictPostionLog["yaw_v"] = instanceLocInfoUnit.yaw_v
+    dictPostionLog["lateral_v"] = instanceLocInfoUnit.lateral_v
+    dictPostionLog["longitudinal_v"] = instanceLocInfoUnit.longitudinal_v
+    dictPostionLog["vertical_v"] = instanceLocInfoUnit.vertical_v
+    dictPostionLog["lateral_a"] = instanceLocInfoUnit.lateral_a
+    dictPostionLog["longitudinal_a"] = instanceLocInfoUnit.longitudinal_a
+
+    dictPostionLog["vertical_a"] = instanceLocInfoUnit.vertical_a
+    dictPostionLog["horizontal_v"] = instanceLocInfoUnit.horizontal_v
+    dictPostionLog["utm_zone"] = instanceLocInfoUnit.utm_zone
+    dictPostionLog["gnss_sys_dtime"] = instanceLocInfoUnit.gnss_sys_dtime
+
+
     CurrentMicroSec = instanceLocInfoUnit.sec*1000 + instanceLocInfoUnit.nsec/1000000
     dictPostionLog["msec"] = CurrentMicroSec
 
