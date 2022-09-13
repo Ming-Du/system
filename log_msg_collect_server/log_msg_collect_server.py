@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 import os
 import socket
@@ -128,18 +128,17 @@ def LoadOneMsgLog(path):
             contents = fp.read()
             lines = contents.split("\n")
     except Exception as e:
-        print "exception happend"
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        print("exception happend when open fp")
+        print('str(Exception):\t', str(Exception))
+        print('repr(e):\t', repr(e))
+        print('traceback.format_exc():\n%s' % (traceback.format_exc()))
     if len(lines) > 0:
         for line in lines:
             idx = idx + 1
-            print "line json is: idx {0}".format(idx)
+            print("line json is: idx {0}".format(idx))
             if len(line) > 0:
                 one_log_dict = {}
-                print "lineContent:{0}".format(line)
+                print("lineContent:{0}".format(line))
                 try:
                     one_log_dict = json.loads(line)
                     #convert json to protobuf
@@ -162,17 +161,11 @@ def LoadOneMsgLog(path):
                     else:
                         print("there have unexpected level")
                 except Exception as e:
-                    print "exception happend"
-                    print 'str(Exception):\t', str(Exception)
-                    print 'str(e):\t\t', str(e)
-                    print 'repr(e):\t', repr(e)
-                    print 'traceback.format_exc():\n%s' % (traceback.format_exc())
-            #mogo_report_msg_test = common_mogo_report_msg.MogoReportMessage()
-            #mogo_report_msg_test.ParseFromString(binary_log_msg.data)
-            #for one_msg in mogo_report_msg_test.actions:
-            #    print(one_msg)
-            #for one_msg in mogo_report_msg_test.result:
-            #    print(one_msg)
+                    print("exception happend when build msg")
+                    print('str(Exception):\t', str(Exception))
+                    print('repr(e):\t', repr(e))
+                    print('traceback.format_exc():\n%s' % (traceback.format_exc())) 
+
             time.sleep(0.1)
 
 
