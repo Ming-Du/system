@@ -98,7 +98,7 @@ namespace mogo_msg
     ECAM_GRAB_FATAL = 1050
   };
 
-  std::string getReportMsgCode_Name(ReportMsgCode value)
+  inline std::string getReportMsgCode_Name(ReportMsgCode value)
   {
     switch (value)
     {
