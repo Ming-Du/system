@@ -73,26 +73,47 @@ def task_localization(pb_msg):
     location.ParseFromString(pb_msg)
     instanceLocInfoUnit = LocInfo()
     instanceLocInfoUnit.MarkMapPosition_x = location.position.x
+    rospy.logdebug("instanceLocInfoUnit.MarkMapPosition_x:{0}".format(instanceLocInfoUnit.MarkMapPosition_x))
     instanceLocInfoUnit.MarkMapPosition_y = location.position.y
+    rospy.logdebug("instanceLocInfoUnit.MarkMapPosition_y:{0}".format(instanceLocInfoUnit.MarkMapPosition_y))
     instanceLocInfoUnit.MarkMapPosition_longitude = location.longitude
+    rospy.logdebug("instanceLocInfoUnit.MarkMapPosition_longitude:{0}".format(instanceLocInfoUnit.MarkMapPosition_longitude))
     instanceLocInfoUnit.MarkMapPosition_latitude = location.latitude
+    rospy.logdebug("instanceLocInfoUnit.MarkMapPosition_latitude:{0}".format(instanceLocInfoUnit.MarkMapPosition_latitude))
     instanceLocInfoUnit.roll=location.roll
+    rospy.logdebug("instanceLocInfoUnit.roll".format(instanceLocInfoUnit.roll))
     instanceLocInfoUnit.pitch=location.pitch
+    rospy.logdebug("instanceLocInfoUnit.pitch:{0}".format(instanceLocInfoUnit.pitch))
     instanceLocInfoUnit.yaw=location.yaw
+    rospy.logdebug("ineLocInfoUnit.yaw:{0}".format(instanceLocInfoUnit.yaw))
     instanceLocInfoUnit.roll_v=location.roll_v
+    rospy.logdebug("instanceLocInfoUnit.roll_v:{0}".format(instanceLocInfoUnit.roll_v))
     instanceLocInfoUnit.pitch_v=location.pitch_v
+    rospy.logdebug("instanceLocInfoUnit.pitch_v:{0}".format(instanceLocInfoUnit.pitch_v))
     instanceLocInfoUnit.yaw_v=location.yaw_v
+    rospy.logdebug("instanceLocInfoUnit.yaw_v:{0}".format(instanceLocInfoUnit.yaw_v))
     instanceLocInfoUnit.lateral_v=location.lateral_v
+    rospy.logdebug("instanceLocInfoUnit.lateral_v:{0}".format(instanceLocInfoUnit.lateral_v))
     instanceLocInfoUnit.longitudinal_v=location.longitudinal_v
+    rospy.logdebug("instanceLocInfoUnit.longitudinal_v:{0}".format(instanceLocInfoUnit.longitudinal_v))
     instanceLocInfoUnit.vertical_v=location.vertical_v
+    rospy.logdebug("instanceLocInfoUnit.vertical_v:{0}".format(instanceLocInfoUnit.vertical_v))
     instanceLocInfoUnit.lateral_a=location.lateral_a
+    rospy.logdebug("instanceLocInfoUnit.lateral_a:{0}".format(instanceLocInfoUnit.lateral_a))
     instanceLocInfoUnit.longitudinal_a=location.longitudinal_a
+    rospy.logdebug("instanceLocInfoUnit.longitudinal_a:{0}".format(instanceLocInfoUnit.longitudinal_a))
     instanceLocInfoUnit.vertical_a=location.vertical_a
+    rospy.logdebug("instanceLocInfoUnit.vertical_a:{0}".format(instanceLocInfoUnit.vertical_a))
     instanceLocInfoUnit.horizontal_v=location.horizontal_v
+    rospy.logdebug("instanceLocInfoUnit.horizontal_v:{0}".format(instanceLocInfoUnit.horizontal_v))
     instanceLocInfoUnit.utm_zone=location.utm_zone
+    rospy.logdebug("instanceLocInfoUnit.utm_zone:{0}".format(instanceLocInfoUnit.utm_zone))
     instanceLocInfoUnit.gnss_sys_dtime=location.gnss_sys_dtime
+    rospy.logdebug("instanceLocInfoUnit.gnss_sys_dtime:{0}".format(instanceLocInfoUnit.gnss_sys_dtime))
     instanceLocInfoUnit.sec =  (location.header.stamp.sec)
+    rospy.logdebug("instanceLocInfoUnit.sec:{0}".format(instanceLocInfoUnit.sec))
     instanceLocInfoUnit.nsec = (location.header.stamp.nsec)
+    rospy.logdebug("instanceLocInfoUnit.nsec:{0}".format(instanceLocInfoUnit.nsec))
 
 
     dictPostionLog={}
@@ -160,12 +181,13 @@ def task_localization(pb_msg):
         try:
             folder_check()
             with open('/home/mogo/data/log/filebeat_upload/location.log', 'a+') as f:
-
                 f.write(strJsonLineContent)
                 f.write("\n")
-        except IOError:
-            rospy.logwarn("operate file failed")
-            exit(-1)
+        except Exception as e:
+            rospy.logwarn("exception happend")
+            rospy.logwarn('repr(e):\t', repr(e))
+            rospy.logwarn('e.message:\t', e.message)
+            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
 
 
 
@@ -178,35 +200,65 @@ def task_vehicle(pb_msg):
     pbStatus.ParseFromString(pb_msg)
     instanceVehicleInfo = CollectVehicleInfo()
     instanceVehicleInfo.int_pilot_mode = pbStatus.pilot_mode
+    rospy.logdebug("instanceVehicleInfo.int_pilot_mode:{0}".format(instanceVehicleInfo.int_pilot_mode))
     instanceVehicleInfo.b_steer_inference = pbStatus.steer_inference
+    rospy.logdebug("instanceVehicleInfo.b_steer_inference:{0}".format(instanceVehicleInfo.b_steer_inference))
     instanceVehicleInfo.b_brake_inference = pbStatus.brake_inference
+    rospy.logdebug("itanceVehicleInfo.b_brake_inference:{0}".format(instanceVehicleInfo.b_brake_inference))
     instanceVehicleInfo.b_accel_inference = pbStatus.accel_inference
+    rospy.logdebug("instanceVehicleInfo.b_accel_inference:{0}".format(instanceVehicleInfo.b_accel_inference ))
     instanceVehicleInfo.b_gear_switch_inference = pbStatus.gear_switch_inference
+    rospy.logdebug("instanceVehicleInfo.b_gear_switch_inference:{0}".format(instanceVehicleInfo.b_gear_switch_inference))
     instanceVehicleInfo.b_location_missing = pbStatus.location_missing
+    rospy.logdebug("instanceVehicleInfo.b_location_missing:{0}".format(instanceVehicleInfo.b_location_missing))
     instanceVehicleInfo.b_trajectory_missing = pbStatus.trajectory_missing
+    rospy.logdebug("instanceVehicleInfo.b_trajectory_missing:{0}".format(instanceVehicleInfo.b_trajectory_missing))
     instanceVehicleInfo.b_chassis_status_missing = pbStatus.chassis_status_missing
+    rospy.logdebug("instanceVehicleInfo.b_chassis_status_missing:{0}".format(instanceVehicleInfo.b_chassis_status_missing ))
     instanceVehicleInfo.brake_light_status = pbStatus.brake_light_status
+    rospy.logdebug("instanceVehicleInfo.brake_light_status:{0}".format(instanceVehicleInfo.brake_light_status))
     instanceVehicleInfo.pilot_mode_condition_met = pbStatus.pilot_mode_condition_met
+    rospy.logdebug("instanceVehicleInfo.pilot_mode_condition_met:{0}".format(instanceVehicleInfo.pilot_mode_condition_met))
     instanceVehicleInfo.steeringSpd = pbStatus.steeringSpds
+    rospy.logdebug("instanceVehicleInfo.steeringSpd:{0}".format(instanceVehicleInfo.steeringSpd))
     instanceVehicleInfo.leftFrontWheelAngle = pbStatus.leftFrontWheelAngle
+    rospy.logdebug("instanceVehicleInfo.leftFrontWheelAngle:{0}".format(instanceVehicleInfo.leftFrontWheelAngle))
     instanceVehicleInfo.rightFrontWheelAngle = pbStatus.rightFrontWheelAngle
+    rospy.logdebug("instanceVehicleInfo.rightFrontWheelAngle:{0}".format(instanceVehicleInfo.rightFrontWheelAngle))
     instanceVehicleInfo.steering = pbStatus.steering
+    rospy.logdebug("instanceVehicleInfo.steering:{0}".format(instanceVehicleInfo.steering ))
     instanceVehicleInfo.speed = pbStatus.speed
+    rospy.logdebug("instanceVehicleInfo.speed:{0}".format(instanceVehicleInfo.speed))
     instanceVehicleInfo.accel = pbStatus.accel
+    rospy.logdebug("instanceVehicleInfo.accel:{0}".format(instanceVehicleInfo.accel))
     instanceVehicleInfo.throttle = pbStatus.throttle
+    rospy.logdebug("instanceVehicleInfo.throttle:{0}".format(instanceVehicleInfo.throttle))
     instanceVehicleInfo.brake = pbStatus.brake
+    rospy.logdebug("instanceVehicleInfo.brake:{0}".format(instanceVehicleInfo.brake))
     instanceVehicleInfo.gear = pbStatus.gear
+    rospy.logdebug("instanceVehicleInfo.gear:{0}".format(instanceVehicleInfo.gear))
     instanceVehicleInfo.light = pbStatus.light
+    rospy.logdebug("instanceVehicleInfo.light:{0}".format(instanceVehicleInfo.light))
     instanceVehicleInfo.horn = pbStatus.horn
+    rospy.logdebug("instanceVehicleInfo.horn:{0}".format(instanceVehicleInfo.horn))
     instanceVehicleInfo.highbeam = pbStatus.highbeam
+    rospy.logdebug("instanceVehicleInfo.highbeam:{0}".format(instanceVehicleInfo.highbeam))
     instanceVehicleInfo.lowbeam = pbStatus.lowbeam
+    rospy.logdebug("instanceVehicleInfo.lowbeam:{0}".format(instanceVehicleInfo.lowbeam))
     instanceVehicleInfo.foglight = pbStatus.foglight
+    rospy.logdebug("instanceVehicleInfo.foglight:{0}".format(instanceVehicleInfo.foglight))
     instanceVehicleInfo.clearance_lamps = pbStatus.clearance_lamps
+    rospy.logdebug("instanceVehicleInfo.clearance_lamps:{0}".format(instanceVehicleInfo.clearance_lamps))
     instanceVehicleInfo.warn_light = pbStatus.warn_light
+    rospy.logdebug("instanceVehicleInfo.warn_light:{0}".format(instanceVehicleInfo.warn_light))
     instanceVehicleInfo.parking_brake = pbStatus.parking_brake
+    rospy.logdebug("instanceVehicleInfo.parking_brake:{0}".format(instanceVehicleInfo.parking_brake))
     instanceVehicleInfo.longitude_driving_mode = pbStatus.longitude_driving_mode
+    rospy.logdebug("instanceVehicleInfo.longitude_driving_mode:{0}".format(instanceVehicleInfo.longitude_driving_mode))
     instanceVehicleInfo.eps_steering_mode = pbStatus.eps_steering_mode
+    rospy.logdebug("instanceVehicleInfo.eps_steering_mode:{0}".format(instanceVehicleInfo.eps_steering_mode))
     instanceVehicleInfo.steering_sign = pbStatus.steering_sign
+    rospy.logdebug("instanceVehicleInfo.steering_sign:{0}".format(instanceVehicleInfo.steering_sign))
 
     dictVehicleLog = {}
     dictVehicleLog['int_pilot_mode'] = instanceVehicleInfo.pilot_mode
