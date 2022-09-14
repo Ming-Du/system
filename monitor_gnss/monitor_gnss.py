@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import threading
+import traceback
 from random import random
 
 import rospy
@@ -38,11 +39,17 @@ from entity.CollectVehicleInfo import   CollectVehicleInfo
 
 
 globalLocationPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_Location')
+globalVihiclePool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_vehicle')
 globalCollectVehicleInfo  = CollectVehicleInfo()
 globalCommonPara = CommonPara()
 globalLastMicroSec = 0
 globalListPostion = []
 globalWriteInterval = 50
+
+
+globalLastMicroSec_vehicle_status = 0
+globalListPostion_vehicle_status = []
+globalWriteInterval_vehicle_status = 50
 
 def folder_check():
     PATH='/home/mogo/data/log/filebeat_upload/'
@@ -150,11 +157,6 @@ def task_localization(pb_msg):
 
                 f.write(strJsonLineContent)
                 f.write("\n")
-
-
-
-
-
         except IOError:
             rospy.logwarn("operate file failed")
             exit(-1)
@@ -165,6 +167,123 @@ def localizationCallback(msg):
     if msg.size > 0:
         globalLocationPool.submit(task_localization, msg.data)
 
+def task_vehicle(pb_msg):
+    pbStatus = common_vehicle_state_pb2.VehicleState()
+    pbStatus.ParseFromString(pb_msg)
+    instanceVehicleInfo = CollectVehicleInfo()
+    instanceVehicleInfo.int_pilot_mode = pbStatus.pilot_mode
+    instanceVehicleInfo.b_steer_inference = pbStatus.steer_inference
+    instanceVehicleInfo.b_brake_inference = pbStatus.brake_inference
+    instanceVehicleInfo.b_accel_inference = pbStatus.accel_inference
+    instanceVehicleInfo.b_gear_switch_inference = pbStatus.gear_switch_inference
+    instanceVehicleInfo.b_location_missing = pbStatus.location_missing
+    instanceVehicleInfo.b_trajectory_missing = pbStatus.trajectory_missing
+    instanceVehicleInfo.b_chassis_status_missing = pbStatus.chassis_status_missing
+    instanceVehicleInfo.brake_light_status = pbStatus.brake_light_status
+    instanceVehicleInfo.pilot_mode_condition_met = pbStatus.pilot_mode_condition_met
+    instanceVehicleInfo.steeringSpd = pbStatus.steeringSpds
+    instanceVehicleInfo.leftFrontWheelAngle = pbStatus.leftFrontWheelAngle
+    instanceVehicleInfo.rightFrontWheelAngle = pbStatus.rightFrontWheelAngle
+    instanceVehicleInfo.steering = pbStatus.steering
+    instanceVehicleInfo.speed = pbStatus.speed
+    instanceVehicleInfo.accel = pbStatus.accel
+    instanceVehicleInfo.throttle = pbStatus.throttle
+    instanceVehicleInfo.brake = pbStatus.brake
+    instanceVehicleInfo.gear = pbStatus.gear
+    instanceVehicleInfo.light = pbStatus.light
+    instanceVehicleInfo.horn = pbStatus.horn
+    instanceVehicleInfo.highbeam = pbStatus.highbeam
+    instanceVehicleInfo.lowbeam = pbStatus.lowbeam
+    instanceVehicleInfo.foglight = pbStatus.foglight
+    instanceVehicleInfo.clearance_lamps = pbStatus.clearance_lamps
+    instanceVehicleInfo.warn_light = pbStatus.warn_light
+    instanceVehicleInfo.parking_brake = pbStatus.parking_brake
+    instanceVehicleInfo.longitude_driving_mode = pbStatus.longitude_driving_mode
+    instanceVehicleInfo.eps_steering_mode = pbStatus.eps_steering_mode
+    instanceVehicleInfo.steering_sign = pbStatus.steering_sign
+
+    dictVehicleLog = {}
+    dictVehicleLog['int_pilot_mode'] = instanceVehicleInfo.pilot_mode
+    dictVehicleLog['b_steer_inference'] = instanceVehicleInfo.steer_inference
+    dictVehicleLog['b_brake_inference'] = instanceVehicleInfo.brake_inference
+    dictVehicleLog['b_accel_inference'] = instanceVehicleInfo.accel_inference
+    dictVehicleLog['b_gear_switch_inference'] = instanceVehicleInfo.gear_switch_inference
+    dictVehicleLog['b_location_missing'] = instanceVehicleInfo.location_missing
+    dictVehicleLog['b_trajectory_missing'] = instanceVehicleInfo.trajectory_missing
+    dictVehicleLog['b_chassis_status_missing'] = instanceVehicleInfo.chassis_status_missing
+    dictVehicleLog['brake_light_status'] = instanceVehicleInfo.brake_light_status
+    dictVehicleLog['pilot_mode_condition_met'] = instanceVehicleInfo.pilot_mode_condition_met
+    dictVehicleLog['steeringSpd'] = instanceVehicleInfo.steeringSpds
+    dictVehicleLog['leftFrontWheelAngle'] = instanceVehicleInfo.leftFrontWheelAngle
+    dictVehicleLog['rightFrontWheelAngle'] = instanceVehicleInfo.rightFrontWheelAngle
+    dictVehicleLog['steering'] = instanceVehicleInfo.steering
+    dictVehicleLog['speed'] = instanceVehicleInfo.speed
+    dictVehicleLog['accel'] = instanceVehicleInfo.accel
+    dictVehicleLog['throttle'] = instanceVehicleInfo.throttle
+    dictVehicleLog['brake'] = instanceVehicleInfo.brake
+    dictVehicleLog['gear'] = instanceVehicleInfo.gear
+    dictVehicleLog['light'] = instanceVehicleInfo.light
+    dictVehicleLog['horn'] = instanceVehicleInfo.horn
+    dictVehicleLog['highbeam'] = instanceVehicleInfo.highbeam
+    dictVehicleLog['lowbeam'] = instanceVehicleInfo.lowbeam
+    dictVehicleLog['foglight'] = instanceVehicleInfo.foglight
+    dictVehicleLog['clearance_lamps'] = instanceVehicleInfo.clearance_lamps
+    dictVehicleLog['warn_light'] = instanceVehicleInfo.warn_light
+    dictVehicleLog['parking_brake'] = instanceVehicleInfo.parking_brake
+    dictVehicleLog['longitude_driving_mode'] = instanceVehicleInfo.longitude_driving_mode
+    dictVehicleLog['eps_steering_mode'] = instanceVehicleInfo.eps_steering_mode
+    dictVehicleLog['steering_sign'] = instanceVehicleInfo.steering_sign
+    sec = (pbStatus.header.stamp.sec)
+    nsec = (pbStatus.header.stamp.nsec)
+
+    CurrentMicroSec = sec*1000 + nsec/1000000
+    dictVehicleLog['sec'] = sec
+    dictVehicleLog['nsec'] = nsec
+    dictVehicleLog["msec"] = CurrentMicroSec
+
+    global globalListPostion_vehicle_status
+    global globalLastMicroSec_vehicle_status
+
+    while True:
+        if globalLastMicroSec_vehicle_status == 0:
+            rospy.logdebug_throttle(5, "enter first update globalLastMicroSec")
+            globalListPostion_vehicle_status.append(dictVehicleLog)
+            ## update last micro sec
+            globalLastMicroSec_vehicle_status = CurrentMicroSec
+            break
+        if (CurrentMicroSec - globalLastMicroSec_vehicle_status > globalWriteInterval_vehicle_status) or (
+                CurrentMicroSec - globalLastMicroSec_vehicle_status == globalWriteInterval_vehicle_status):
+            rospy.logdebug_throttle(5, "enter first update globalLastMicroSec")
+            globalListPostion_vehicle_status.append(dictVehicleLog)
+            ### update  last micro sec
+            globalLastMicroSec_vehicle_status = CurrentMicroSec
+            break
+        break
+
+    if (len(globalListPostion_vehicle_status) > (1000 / globalWriteInterval_vehicle_status)) or (
+            len(globalListPostion_vehicle_status) == (1000 / globalWriteInterval_vehicle_status)):
+        tree = lambda: collections.defaultdict(tree)
+        dictLogInfo = tree()
+        dictLogInfo["log_type"] = "vehicle_status"
+        curSec = rospy.rostime.Time.now().secs
+        curNsec = rospy.rostime.Time.now().nsecs
+        dictLogInfo["timestamp"]['sec'] = curSec
+        dictLogInfo["timestamp"]["nsec"] = curNsec
+        dictLogInfo["car_info"] = globalCommonPara.dictCarInfo
+        dictLogInfo["content"] = globalListPostion_vehicle_status
+        strJsonLineContent = json.dumps(dictLogInfo)
+
+        try:
+            folder_check()
+            with open('/home/mogo/data/log/filebeat_upload/vehicle_status.log', 'a+') as f:
+                f.write(strJsonLineContent)
+                f.write("\n")
+
+        except Exception as e:
+            rospy.logwarn("operate file failed")
+            rospy.logwarn('repr(e):\t', repr(e))
+            rospy.logwarn('e.message:\t', e.message)
+            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
 
 
 def autopilotModeCallback(msg):
@@ -184,28 +303,9 @@ def autopilotModeCallback(msg):
     globalCollectVehicleInfo.b_location_missing  =  pbStatus.location_missing
     globalCollectVehicleInfo.b_trajectory_missing = pbStatus.trajectory_missing
     globalCollectVehicleInfo.b_chassis_status_missing = pbStatus.chassis_status_missing
-    globalCollectVehicleInfo.brake_light_status=pbStatus.brake_light_status
-    globalCollectVehicleInfo.pilot_mode_condition_met=pbStatus.pilot_mode_condition_met
-    globalCollectVehicleInfo.steeringSpd=pbStatus.steeringSpds
-    globalCollectVehicleInfo.leftFrontWheelAngle=pbStatus.leftFrontWheelAngle
-    globalCollectVehicleInfo.rightFrontWheelAngle=pbStatus.rightFrontWheelAngle
-    globalCollectVehicleInfo.steering=pbStatus.steering
-    globalCollectVehicleInfo.speed=pbStatus.speed
-    globalCollectVehicleInfo.accel=pbStatus.accel
-    globalCollectVehicleInfo.throttle=pbStatus.throttle
-    globalCollectVehicleInfo.brake=pbStatus.brake
-    globalCollectVehicleInfo.gear=pbStatus.gear
-    globalCollectVehicleInfo.light=pbStatus.light
-    globalCollectVehicleInfo.horn=pbStatus.horn
-    globalCollectVehicleInfo.highbeam=pbStatus.highbeam
-    globalCollectVehicleInfo.lowbeam=pbStatus.lowbeam
-    globalCollectVehicleInfo.foglight=pbStatus.foglight
-    globalCollectVehicleInfo.clearance_lamps=pbStatus.clearance_lamps
-    globalCollectVehicleInfo.warn_light=pbStatus.warn_light
-    globalCollectVehicleInfo.parking_brake=pbStatus.parking_brake
-    globalCollectVehicleInfo.longitude_driving_mode=pbStatus.longitude_driving_mode
-    globalCollectVehicleInfo.eps_steering_mode=pbStatus.eps_steering_mode
-    globalCollectVehicleInfo.steering_sign=pbStatus.steering_sign
+
+    if msg.size > 0:
+        globalVihiclePool.submit(task_vehicle,msg.data)
 
 
 
@@ -257,9 +357,13 @@ def autopilotModeCallback(msg):
             break
         break
 
+def decisionStateCallback(msg):
+    pass
+
 def addLocalizationListener():
     rospy.Subscriber('/localization/global', BinaryData, localizationCallback)
     rospy.Subscriber('/chassis/vehicle_state', BinaryData, autopilotModeCallback)
+    rospy.Subscriber('/planning/decision_state',BinaryData,decisionStateCallback)
 
 def main():
     # initial node
