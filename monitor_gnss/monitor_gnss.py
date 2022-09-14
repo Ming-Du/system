@@ -30,7 +30,7 @@ import proto.localization_pb2 as common_localization
 import proto.vehicle_state_pb2 as common_vehicle_state_pb2
 from  entity.LocInfo import  LocInfo
 from entity.CommonPara import  CommonPara
-from proto.message_pad_pb2 as common_message_pad
+import proto.message_pad_pb2 as common_message_pad
 
 from threading import Thread
 import threading
