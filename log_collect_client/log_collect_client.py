@@ -9,9 +9,11 @@ work_dir = "/home/mogo/data/log"
 src_dir = os.path.join(work_dir, "ROS_STAT", "EXPORT")
 tmp_dir = os.path.join(work_dir, "ROS_STAT_TMP")
 bak_dir = os.path.join(work_dir, "ROS_STAT", '{}'.format(datetime.date.today()))
+once_save_fd = open(bak_dir+"/local_bak_{}".format(int(time.time())), 'ab+')
 
 # scp -l Kb/s
 def run_once():
+    global once_save_fd
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # 连不上会抛异常
     try:
@@ -41,17 +43,24 @@ def run_once():
         tmp_file_path = os.path.join(tmp_dir, file_name)
         with open(tmp_file_path, "rb") as fp:
             sock.sendfile(fp)
-        bak_file_path = os.path.join(bak_dir, file_name)
-        os.rename(tmp_file_path, bak_file_path)
+            # 280开始零散文件合并备份保存，5秒备份一次
+            # os.sendfile(once_save_fd, fp, 0, 10000)
+            once_save_fd.write(fp.read()) 
+         
+        #bak_file_path = os.path.join(bak_dir, file_name)
+        #os.rename(tmp_file_path, bak_file_path)
 
     sock.close()
-    #os.system("rm -f {0}/*".format(tmp_dir))
+    os.system("rm -f {0}/*".format(tmp_dir))
 
 def run():
+    global once_save_fd
     while True:
         start = time.time()
         try:
+            once_save_fd = open(bak_dir+"/local_bak_{}".format(int(start)), 'ab+')
             run_once()
+            once_save_fd.close()
         except Exception as e:
             print("[{}] have error: {}".format(time.time(), e))
         end = time.time()

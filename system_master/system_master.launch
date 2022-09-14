@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-  <node name="system_master" pkg="system_master" type="system_master.py" output="screen">
-  </node>
-</launch>

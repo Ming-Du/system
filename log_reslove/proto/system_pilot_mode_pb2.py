@@ -19,16 +19,16 @@ import header_pb2 as header__pb2
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='system_pilot_mode.proto',
-  package='',
+  package='system_master',
   syntax='proto2',
-  serialized_pb=_b('\n\x17system_pilot_mode.proto\x1a\x0cheader.proto\"\x8e\x03\n\x0fSYSVehicleState\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x1e\n\npilot_mode\x18\x02 \x02(\x0e\x32\n.PilotMode\x12\x1e\n\x0fsteer_inference\x18\x03 \x01(\x08:\x05\x66\x61lse\x12\x1e\n\x0f\x62rake_inference\x18\x04 \x01(\x08:\x05\x66\x61lse\x12\x1e\n\x0f\x61\x63\x63\x65l_inference\x18\x05 \x01(\x08:\x05\x66\x61lse\x12$\n\x15gear_switch_inference\x18\x06 \x01(\x08:\x05\x66\x61lse\x12\x1f\n\x10location_missing\x18\x07 \x01(\x08:\x05\x66\x61lse\x12!\n\x12trajectory_missing\x18\x08 \x01(\x08:\x05\x66\x61lse\x12%\n\x16\x63hassis_status_missing\x18\t \x01(\x08:\x05\x66\x61lse\x12!\n\x12\x62rake_light_status\x18\n \x01(\x08:\x05\x66\x61lse\x12\'\n\x18pilot_mode_condition_met\x18\x0b \x01(\x08:\x05\x66\x61lse*H\n\tPilotMode\x12\x0f\n\x0bMODE_MANUAL\x10\x00\x12\x13\n\x0fMODE_AUTO_DRIVE\x10\x01\x12\x15\n\x11MODE_REMOTE_DRIVE\x10\x02')
+  serialized_pb=_b('\n\x17system_pilot_mode.proto\x12\rsystem_master\x1a\x0cheader.proto\"\x9c\x03\n\x0fSYSVehicleState\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12,\n\npilot_mode\x18\x02 \x02(\x0e\x32\x18.system_master.PilotMode\x12\x1e\n\x0fsteer_inference\x18\x03 \x01(\x08:\x05\x66\x61lse\x12\x1e\n\x0f\x62rake_inference\x18\x04 \x01(\x08:\x05\x66\x61lse\x12\x1e\n\x0f\x61\x63\x63\x65l_inference\x18\x05 \x01(\x08:\x05\x66\x61lse\x12$\n\x15gear_switch_inference\x18\x06 \x01(\x08:\x05\x66\x61lse\x12\x1f\n\x10location_missing\x18\x07 \x01(\x08:\x05\x66\x61lse\x12!\n\x12trajectory_missing\x18\x08 \x01(\x08:\x05\x66\x61lse\x12%\n\x16\x63hassis_status_missing\x18\t \x01(\x08:\x05\x66\x61lse\x12!\n\x12\x62rake_light_status\x18\n \x01(\x08:\x05\x66\x61lse\x12\'\n\x18pilot_mode_condition_met\x18\x0b \x01(\x08:\x05\x66\x61lse*H\n\tPilotMode\x12\x0f\n\x0bMODE_MANUAL\x10\x00\x12\x13\n\x0fMODE_AUTO_DRIVE\x10\x01\x12\x15\n\x11MODE_REMOTE_DRIVE\x10\x02')
   ,
   dependencies=[header__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _PILOTMODE = _descriptor.EnumDescriptor(
   name='PilotMode',
-  full_name='PilotMode',
+  full_name='system_master.PilotMode',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -47,8 +47,8 @@ _PILOTMODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=442,
-  serialized_end=514,
+  serialized_start=471,
+  serialized_end=543,
 )
 _sym_db.RegisterEnumDescriptor(_PILOTMODE)
 
@@ -61,83 +61,83 @@ MODE_REMOTE_DRIVE = 2
 
 _SYSVEHICLESTATE = _descriptor.Descriptor(
   name='SYSVehicleState',
-  full_name='SYSVehicleState',
+  full_name='system_master.SYSVehicleState',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='header', full_name='SYSVehicleState.header', index=0,
+      name='header', full_name='system_master.SYSVehicleState.header', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='pilot_mode', full_name='SYSVehicleState.pilot_mode', index=1,
+      name='pilot_mode', full_name='system_master.SYSVehicleState.pilot_mode', index=1,
       number=2, type=14, cpp_type=8, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='steer_inference', full_name='SYSVehicleState.steer_inference', index=2,
+      name='steer_inference', full_name='system_master.SYSVehicleState.steer_inference', index=2,
       number=3, type=8, cpp_type=7, label=1,
       has_default_value=True, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='brake_inference', full_name='SYSVehicleState.brake_inference', index=3,
+      name='brake_inference', full_name='system_master.SYSVehicleState.brake_inference', index=3,
       number=4, type=8, cpp_type=7, label=1,
       has_default_value=True, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='accel_inference', full_name='SYSVehicleState.accel_inference', index=4,
+      name='accel_inference', full_name='system_master.SYSVehicleState.accel_inference', index=4,
       number=5, type=8, cpp_type=7, label=1,
       has_default_value=True, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='gear_switch_inference', full_name='SYSVehicleState.gear_switch_inference', index=5,
+      name='gear_switch_inference', full_name='system_master.SYSVehicleState.gear_switch_inference', index=5,
       number=6, type=8, cpp_type=7, label=1,
       has_default_value=True, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='location_missing', full_name='SYSVehicleState.location_missing', index=6,
+      name='location_missing', full_name='system_master.SYSVehicleState.location_missing', index=6,
       number=7, type=8, cpp_type=7, label=1,
       has_default_value=True, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='trajectory_missing', full_name='SYSVehicleState.trajectory_missing', index=7,
+      name='trajectory_missing', full_name='system_master.SYSVehicleState.trajectory_missing', index=7,
       number=8, type=8, cpp_type=7, label=1,
       has_default_value=True, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='chassis_status_missing', full_name='SYSVehicleState.chassis_status_missing', index=8,
+      name='chassis_status_missing', full_name='system_master.SYSVehicleState.chassis_status_missing', index=8,
       number=9, type=8, cpp_type=7, label=1,
       has_default_value=True, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='brake_light_status', full_name='SYSVehicleState.brake_light_status', index=9,
+      name='brake_light_status', full_name='system_master.SYSVehicleState.brake_light_status', index=9,
       number=10, type=8, cpp_type=7, label=1,
       has_default_value=True, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='pilot_mode_condition_met', full_name='SYSVehicleState.pilot_mode_condition_met', index=10,
+      name='pilot_mode_condition_met', full_name='system_master.SYSVehicleState.pilot_mode_condition_met', index=10,
       number=11, type=8, cpp_type=7, label=1,
       has_default_value=True, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
@@ -155,8 +155,8 @@ _SYSVEHICLESTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=42,
-  serialized_end=440,
+  serialized_start=57,
+  serialized_end=469,
 )
 
 _SYSVEHICLESTATE.fields_by_name['header'].message_type = header__pb2._HEADER
@@ -167,7 +167,7 @@ DESCRIPTOR.enum_types_by_name['PilotMode'] = _PILOTMODE
 SYSVehicleState = _reflection.GeneratedProtocolMessageType('SYSVehicleState', (_message.Message,), dict(
   DESCRIPTOR = _SYSVEHICLESTATE,
   __module__ = 'system_pilot_mode_pb2'
-  # @@protoc_insertion_point(class_scope:SYSVehicleState)
+  # @@protoc_insertion_point(class_scope:system_master.SYSVehicleState)
   ))
 _sym_db.RegisterMessage(SYSVehicleState)
 

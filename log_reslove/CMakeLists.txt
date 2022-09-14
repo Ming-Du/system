@@ -14,20 +14,24 @@ include_directories(
   ${catkin_INCLUDE_DIRS} 
 )
 
-###### pen pb2.py files   ######## 
+###### gen *_pb2.py files   ######## 
 string(REGEX REPLACE  "(.*)/(.*)/(.*)" "\\1" project_src_path ${PROJECT_SOURCE_DIR})
 
 set(proto_dir ${project_src_path}/system/common/proto)
 set(proto_gen_dir ${PROJECT_SOURCE_DIR}/proto)
 set(proto_gen_python_files "")
-file(GLOB proto_files "${proto_dir}/*.proto")
+set(proto_files "")
 
-foreach(proto_file ${proto_files})
-        get_filename_component(proto_name ${proto_file} NAME_WE)
-        list(APPEND proto_gen_python_files
-                ${proto_gen_dir}/${proto_name}_pb2.py
-        )
-endforeach(proto_file ${proto_files})
+file(STRINGS ${PROJECT_SOURCE_DIR}/proto/__init__.py import_list)
+
+foreach(words ${import_list})
+        string(STRIP ${words} word)
+        string(REGEX REPLACE "^import.(.*)_pb2" "\\1" proto_name ${word})
+        if(NOT (${proto_name} STREQUAL ${word}))
+                list(APPEND proto_gen_python_files ${proto_gen_dir}/${proto_name}_pb2.py)
+                list(APPEND proto_files ${proto_dir}/${proto_name}.proto)
+        endif()
+endforeach(words ${import_list})
 
 add_custom_command(
         OUTPUT ${proto_gen_python_files}
@@ -49,11 +53,7 @@ install(FILES
 
 catkin_install_python(PROGRAMS
 	log_reslove.py
-	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
-
-catkin_install_python(PROGRAMS
-	config.py
+        config.py
 	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
