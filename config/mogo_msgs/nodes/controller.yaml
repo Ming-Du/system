@@ -1,3 +1,7 @@
+info:
+  - code: IMAP_ENTRY_AUTOPILOT
+    msg: 控制进入自动驾驶成功
+
 error:
   - code: EMAP_EXIT_AUTOPILOT_FOR_PLANNING
     msg: 因planning掉帧强退自动驾驶
