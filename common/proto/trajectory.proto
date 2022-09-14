@@ -39,6 +39,7 @@ message Trajectory {
   optional LaneChange lane_change = 5;
   optional chassis.LightSwitch light = 6 [default = LIGHT_NONE];
   optional bool stop = 7;
+  optional bool horn = 8 [default = false]; // add horn signal in bus280
 }
 
 

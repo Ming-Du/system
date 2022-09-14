@@ -23,6 +23,7 @@ message PlanningConfig {
     optional bool  flag_lane_change = 13;
     optional double dis_stop = 14;
     optional bool  flag_global_lane_change = 15;
+    optional bool  flag_horn_enable = 16;
     // spdplan para
     optional double vc_kp = 43;
     optional double vc_ki = 44;
