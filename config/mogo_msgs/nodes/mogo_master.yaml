@@ -131,9 +131,15 @@ error:
     result: 
       - RESULT_SHOW_WARNING
 
-  - code: EHW_CAN
-    msg: 无法与底盘通信，获取不到地盘状态，无法进入自动驾驶
+  - code: ESYS_CAN_MSG_LOST
+    msg: master接收底盘消息超时
     result: 
       - RESULT_AUTOPILOT_DISABLE
+      - RESULT_AUTOPILOT_INFERIOR
     action: 
-      - ACTION_REBOOT_VEHICLE
+      - ACTION_CONTACT_TECH_SUPPORT
+
+  - code: ESYS_REBOOT_WARNING
+    msg: 命令重启不完全提示
+    action: 
+      - ACTION_CONTACT_TECH_SUPPORT
