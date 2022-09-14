@@ -493,6 +493,8 @@ def main():
     rospy.init_node('monitor_gnss', anonymous=True)
     # add listener
     global globalWriteInterval
+    global globalWriteInterval_vehicle_status
+    global globalWriteInterval_decision_status
     strFullParaName = "%s/monitor_gnss_interval" %(rospy.get_name())
     rospy.loginfo("strFullParaName:%s" %(strFullParaName))
     temp  = rospy.get_param(strFullParaName)
@@ -500,7 +502,27 @@ def main():
         globalWriteInterval =  1000
     else:
         globalWriteInterval =  temp
-    rospy.loginfo("=============================set globalWriteInterval:%d" %(globalWriteInterval))
+
+    strFullParaName = "%s/monitor_gnss_interval_vehicle" % (rospy.get_name())
+    rospy.loginfo("strFullParaName:%s" % (strFullParaName))
+    temp = rospy.get_param(strFullParaName)
+    if temp >= 1000 or temp <= 0:
+        globalWriteInterval_vehicle_status = 1000
+    else:
+        globalWriteInterval_vehicle_status = temp
+
+    strFullParaName = "%s/monitor_gnss_interval_decision_status" % (rospy.get_name())
+    rospy.loginfo("strFullParaName:%s" % (strFullParaName))
+    temp = rospy.get_param(strFullParaName)
+    if temp >= 1000 or temp <= 0:
+        globalWriteInterval_decision_status = 1000
+    else:
+        globalWriteInterval_decision_status = temp
+
+
+
+    rospy.loginfo("set globalWriteInterval:{0},globalWriteInterval_vehicle_status:{1},globalWriteInterval_decision_status:{2}".format(globalWriteInterval,globalWriteInterval_vehicle_status,
+                                                                                       globalWriteInterval_decision_status))
     addLocalizationListener()
     ## wait msg
     rospy.spin()
