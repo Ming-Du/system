@@ -30,7 +30,7 @@ class Constants():
     tmp_dir = os.path.join(work_dir, "ROS_STAT_TMP")
     bak_dir = os.path.join(work_dir, "ROS_STAT", '{}'.format(datetime.date.today()))
     output_file = os.path.join(output_dir, "topic_stat")
-    output_file_from_sensor = os.path.join(output_dir, "link_stat_form_sensor")
+    output_file_from_sensor = os.path.join(output_dir, "link_stat_start_sensor")
     g_time_split_threshold = 30   # second
     g_type_of_pub = 0
     g_type_of_sub = 1
@@ -122,10 +122,10 @@ class Node_base(object):
                     if not self.last_log_stamp:
                         log_print("first time receive log msg of node:{}".format(one['node']))
                     else:
-                        log_print("maybe have some file seq error, time={}".format(one['stamp']))
+                        log_print("warning: maybe have some file seq error, node={},time={}".format(one['node'], one['stamp']))
                     self.sub_msg_dict.clear()
                     self.beg_msg_dict.clear()
-                    self.last_log_stamp = one['stamp']
+                self.last_log_stamp = one['stamp']
                     
                 if one['type'] == Constants.g_type_of_pub:
                     # 该节点发送的 pub消息
@@ -522,25 +522,27 @@ class Log_handler():
                 data['wrong'] = '[uuid:{}] not in all_topic_list of [{}]'.format(callback, sub_topic_name)
                 return
 
-            if callback_size > 1:
+            if len(topic['send_node'].sub_topic_list) > 1:
+                # 有多个sub就加入split_path, 不再按callback_size区分
                 topic_entity['next_topic'] = topic
                 pdata["split_path"].append(topic_entity['topic'])
                 
 
             # get time used of the node between A topic recv_sub to B topic pub
             call_pub_time = topic['info']['pub_stamp'] - topic_entity['info']['call_stamp']
-            u_spend = topic['info']['pub_utime'] - topic_entity['info']['sub_utime']
-            s_spend = topic['info']['pub_stime'] - topic_entity['info']['sub_stime']
-            w_spend = topic['info']['pub_wtime'] - topic_entity['info']['sub_wtime']
-            idle_spend = call_pub_time - u_spend - s_spend - w_spend
-            if idle_spend < 0:
+            if call_pub_time < 0:
                 data['succ'] = False
-                data['wrong'] = 'The time handle has error! node:{}, topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
+                data['wrong'] = 'Error: The call_pub_time < 0! node:{}, pub_topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
                 return
             if call_pub_time > 1.5 * Constants.unit_stamp_sec:
                 log_print('warning: call_pub_time={}, topic={}, thread={} pub_uuid={}, sub_uuid={}'.format(
                     call_pub_time, topic['topic'], topic['thread'], topic['uuid'], topic_entity['uuid']))
                 # import pdb; pdb.set_trace()
+
+            u_spend = topic['info']['pub_utime'] - topic_entity['info']['sub_utime']
+            s_spend = topic['info']['pub_stime'] - topic_entity['info']['sub_stime']
+            w_spend = topic['info']['pub_wtime'] - topic_entity['info']['sub_wtime']
+            idle_spend = call_pub_time - u_spend - s_spend - w_spend
 
             u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/call_pub_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]     
             pdata["use_time"] += call_pub_time
@@ -687,18 +689,19 @@ class Log_handler():
             topic = all_link_topic_list[topic_name][pub_uuid]
             ## 计算该节点sub 到 pub 的时间
             call_pub_time = topic['info']['pub_stamp'] - topic_entity['info']['call_stamp']
-            u_spend = topic['info']['pub_utime'] - topic_entity['info']['sub_utime']
-            s_spend = topic['info']['pub_stime'] - topic_entity['info']['sub_stime']
-            w_spend = topic['info']['pub_wtime'] - topic_entity['info']['sub_wtime']
-            idle_spend = call_pub_time - u_spend - s_spend - w_spend
-            if idle_spend < 0:
+            if call_pub_time < 0:
                 data['succ'] = False
-                data['wrong'] = 'The time handle has error! node:{}, topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
+                data['wrong'] = 'Error: The call_pub_time < 0!! node:{}, pub_topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
                 return
             if call_pub_time > 1 * Constants.unit_stamp_sec:
                 log_print('Warning, recently call_pub_time={}, topic={}, thread={} pub_uuid={}, sub_uuid={}'.format(
                     call_pub_time, topic['topic'], topic['thread'], topic['uuid'], topic_entity['uuid']))
                 # import pdb; pdb.set_trace()
+
+            u_spend = topic['info']['pub_utime'] - topic_entity['info']['sub_utime']
+            s_spend = topic['info']['pub_stime'] - topic_entity['info']['sub_stime']
+            w_spend = topic['info']['pub_wtime'] - topic_entity['info']['sub_wtime']
+            idle_spend = call_pub_time - u_spend - s_spend - w_spend
 
             u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/call_pub_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]     
             data["use_time"] += call_pub_time

@@ -1,13 +1,11 @@
 #!/usr/bin/python3
 
 node_config = {}
-node_config["/DongFeng_E70_can_adapter"] = {}
-node_config["/DongFeng_E70_can_adapter"]["sub"] = ["/chassis/command"]
-node_config["/DongFeng_E70_can_adapter"]["pub"] = ""
 
 node_config["/jinlv_can_adapter"] = {}
 node_config["/jinlv_can_adapter"]["sub"] = ["/chassis/command"]
 node_config["/jinlv_can_adapter"]["pub"] = ""
+node_config["/jinlv_can_adapter"]["man_end"] = "can_end"
 
 node_config["/controller"] = {}
 node_config["/controller"]["sub"] = ["/planning/trajectory"]
