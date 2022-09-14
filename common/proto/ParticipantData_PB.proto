@@ -13,7 +13,7 @@ import "VehicleSize_PB.proto";
 import "VehicleClassification_PB.proto";
 message ParticipantData_PB{
 
-    required ParticipantType_PB ptcType = 1;
+    required int64 ptcType = 1;
     required int32 ptcId = 2;//不同参与者的ptcId在RSU中需要是唯一的,
     required SourceType_PB source = 3;
     optional String_PB id = 4; // 车的临时id,跟BSM消息一致
