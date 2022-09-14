@@ -1,3 +1,6 @@
+import traceback
+
+import rospy
 class CommonPara:
     dictCarInfo = None
 
@@ -23,9 +26,11 @@ class CommonPara:
             dictCarInfo["car_plate"] = plate
             dictCarInfo["car_type"] = brand
         except Exception as e:
-            print("read carInfo failed!")
+            rospy.logwarn("read carInfo failed!")
+            rospy.logwarn('repr(e):\t', repr(e))
+            rospy.logwarn('e.message:\t', e.message)
+            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
             return False
-        #print(dictCarInfo)
         return dictCarInfo
 
     def initPara(self):

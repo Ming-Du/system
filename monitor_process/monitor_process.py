@@ -75,25 +75,19 @@ def getHostName():
     try:
         strCmd = "ifconfig  %s   | grep inet |  grep netmask | awk '{print $2}'" % globalNetCardName
         (status, output) = commands.getstatusoutput(strCmd)
-        print "status:%d,output:%s" % (status, output)
+        rospy.logdebug("status:%d,output:%s" % (status, output))
         strIp = output
 
         strCmd2 = "cat /etc/hosts |  grep '%s' | awk '{print $2}' | head -n 1" % (strIp)
         (status, output) = commands.getstatusoutput(strCmd2)
         if status == 0 and len(output) > 0:
             strHostName = output
-        print "status:%d,output:%s" % (status, strHostName)
+        rospy.logdebug("status:%d,output:%s" % (status, strHostName))
     except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():';
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn("exception happend")
+        rospy.logwarn('repr(e):\t', repr(e))
+        rospy.logwarn('e.message:\t', e.message)
+        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
     return strHostName
 
 
@@ -113,68 +107,63 @@ def readNodeList():
                 break
             break
 
-        print "=========== strFileName:{0}, ret:{1},strErrorMsg:{2}".format(strFileListName, ret, strErrorMsg)
+        rospy.loginfo("=========== strFileName:{0}, ret:{1},strErrorMsg:{2}".format(strFileListName, ret, strErrorMsg))
 
         if not os.path.exists(strFileListName):
-            print "file :%s not exists ,checkt host name and net_card_name" % (strFileListName)
+            rospy.logerr("file :%s not exists ,checkt host name and net_card_name" % (strFileListName))
             sys.exit(-1)
 
         with open(strFileListName, 'r') as f:
             contents = f.read()
             lines = contents.split('\n')
-            print "lines:{0}".format(lines)
+
             for idx in range(len(lines)):
                 if len(lines[idx]) > 0:
                     linesLaunchFile.append(lines[idx])
         # linesLaunchFile.append("/home/mogo/data/radar_408_front_308_rear.launch")
         for idx in range(len(linesLaunchFile)):
             strCmd = "roslaunch --nodes {0}".format(linesLaunchFile[idx])
-            print  "strCmd :{0}".format(strCmd)
+            rospy.logdebug("strCmd :{0}".format(strCmd))
             (status, output) = commands.getstatusoutput(strCmd)
             if status == 0:
                 multy_list = output.split('\n')
-                print "multy_list: {0}".format(multy_list)
+                rospy.logdebug("multy_list: {0}".format(multy_list))
                 for input_idx in range(len(multy_list)):
                     if len(multy_list[input_idx]) > 0:
                         listAllNode.append(multy_list[input_idx])
     except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():'
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
-    print "start______________linesNodeName"
-    print listAllNode
-    print "end----------------linesNodeName"
-    return listAllNode
+        rospy.logwarn("exception happend")
+        rospy.logwarn('repr(e):\t', repr(e))
+        rospy.logwarn('e.message:\t', e.message)
+        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+
+
+
+
+
 
 
 def node_status_check(listNodeList, strUuid):
     try:
-        print "==========enter node_status_check"
+
         tree = lambda: collections.defaultdict(tree)
-        print "22"
+
         node_state_dict = tree()
-        print "44"
+
         pinged = []
         unpinged = []
         verbose = False
         skip_cache = False
-        print "33"
-        print "11"
-        print "listNodeList:{0}".format(listNodeList)
+
+
+        rospy.logdebug("listNodeList:{0}".format(listNodeList))
         for node in listNodeList:
             if rosnode.rosnode_ping(node, max_count=1, verbose=verbose, skip_cache=skip_cache):
                 pinged.append(node)
             else:
                 unpinged.append(node)
-        print "=========================pinged:{0}".format(pinged)
-        print "==========================unpinged:{0}".format(unpinged)
+        rospy.logdebug("=========================pinged:{0}".format(pinged))
+        rospy.logdebug("==========================unpinged:{0}".format(unpinged))
 
         for elem_name in pinged:
             rospy.loginfo(elem_name + " on")
@@ -192,23 +181,17 @@ def node_status_check(listNodeList, strUuid):
         node_state_dict['header']['mac'] = globalDictIpInfo['mac']
         nodemsg = json.dumps(node_state_dict)
     except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():'
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
-    print "=================================current node_health_status:%s" % nodemsg
+        rospy.logwarn("exception happend")
+        rospy.logwarn('repr(e):\t', repr(e))
+        rospy.logwarn('e.message:\t', e.message)
+        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+
     if len(nodemsg) > 0:
         rosSendMsg = BinaryData()
         rosSendMsg.size = len(nodemsg)
         rosSendMsg.data = nodemsg
         pub_node.publish(rosSendMsg)
-        print "send node health success"
+        rospy.logdebug_throttle(1,"send node health success")
 
 
 def node_watch(strUuid):
@@ -217,11 +200,11 @@ def node_watch(strUuid):
 
 def mem_watch(strUuid):
     (status, memory_out) = commands.getstatusoutput("cat /proc/meminfo")
-    print status
-    # print type(memory_out)
-    # print memory_out
+
+
+
     listFormatMemory = memory_out.split('\n', -1)
-    # print listFormatMemory
+
     dictMemInfo = collections.OrderedDict()
     for idx in range(len(listFormatMemory)):
         if len(listFormatMemory[idx]) > 0:
@@ -247,13 +230,13 @@ def mem_watch(strUuid):
         dictMemOut['data']['SwapFree'] = dictMemInfo['SwapFree']
 
         strMemOut = json.dumps(dictMemOut)
-        print strMemOut
+        rospy.logdebug(strMemOut)
         if len(strMemOut) > 0:
             rosSendMsg = BinaryData()
             rosSendMsg.size = len(strMemOut)
             rosSendMsg.data = strMemOut
             pub_memory.publish(rosSendMsg)
-            print "send memory info success"
+            rospy.logdebug_throttle(1,"send memory info success")
 
 
 def cpu_watch(strUuid):
@@ -265,15 +248,15 @@ def cpu_watch(strUuid):
     floatUsedCpu = 0.0
     while True:
         if status == 0:
-            print cpuInfoOut
+
             floatIdleCpu = float(cpuInfoOut)
             floatUsedCpu = 100.0 - floatIdleCpu
             break
         if status != 0:
-            print "get cpu used error"
+            rospy.logwarn("get cpu used error")
             break
         break
-    print "floatUsedCpu:%f" % floatUsedCpu
+    rospy.logdebug(2,"floatUsedCpu:%f" % floatUsedCpu)
     tree = lambda: collections.defaultdict(tree)
     dictCpuInfo = tree()
     # dictCpuInfo['header']['timestamp']['sec'] = rospy.Time.now().secs
@@ -285,13 +268,13 @@ def cpu_watch(strUuid):
     dictCpuInfo['data']['used_cpu'] = int(floatUsedCpu)
 
     strCpuInfo = json.dumps(dictCpuInfo)
-    print strCpuInfo
+
     if len(strCpuInfo) > 0:
         rosSendMsg = BinaryData()
         rosSendMsg.size = len(strCpuInfo)
         rosSendMsg.data = strCpuInfo
         pub_cpu.publish(rosSendMsg)
-        print "send cpu_status success"
+        rospy.logdebug_throttle(1,"send cpu_status success")
 
 
 def ControlStatusCmdReportCallBack():
@@ -323,7 +306,7 @@ def main():
     # add listener
     global globalNetCardName
     strFullParaName = "%s/net_card_name" % (rospy.get_name())
-    print "strFullParaName:%s" % strFullParaName
+    rospy.loginfo("strFullParaName:%s" % strFullParaName)
     temp = rospy.get_param(strFullParaName)
     if len(temp) == 0:
         globalNetCardName = "ens33"
@@ -335,8 +318,8 @@ def main():
     globalDictIpInfo = tempNetToos.envInit(globalNetCardName)
     global globalListNode
     globalListNode = readNodeList()
-    print "=============================set globalCollectInterval:%d" % (globalCollectInterval)
-    print globalListNode
+    rospy.logdebug("=============================set globalCollectInterval:%d" % (globalCollectInterval))
+
 
     sys_report_thread = SysInfoWatchThread()
     sys_report_thread.start()
@@ -347,5 +330,5 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt as e:
-        print("monitor.py is failed !")
+        rospy.logwarn("monitor.py is failed !")
         exit(0)

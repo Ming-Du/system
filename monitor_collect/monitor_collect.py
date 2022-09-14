@@ -100,23 +100,23 @@ globalListWaitWriteBuffer  = []
 def folder_check():
     PATH = '/home/mogo/data/log/filebeat_upload/'
     if os.path.isdir(PATH) and access(PATH, R_OK):
-        print "folder exists and is readable"
+        pass
     else:
-        print "folder not ready,now create path"
+        rospy.logwarn("folder not ready,now create path")
         os.makedirs(PATH)
-        print os.path.isdir(PATH)
+
         os.chmod(PATH, 0777)
 
 
 def task_topic_hz(msg):
-    print "++++++++++++++++++++++++"
+
     global global_hz_time_write_interval
     global globalDictHzRecord
     global globalDictHzFlag
     global globalListWaitWriteBuffer
     dictHzRecord = tree()
     try:
-        #rospy.loginfo("node: %s, topic: %s, type: %d, start: %d, hz: %f, max_delay: %d, stop:%d ",msg.node, msg.topic, msg.type, msg.start, msg.hz, msg.max_delay,msg.stop)
+        rospy.loginfo_throttle(5,"node: %s, topic: %s, type: %d, start: %d, hz: %f, max_delay: %d, stop:%d ",msg.node, msg.topic, msg.type, msg.start, msg.hz, msg.max_delay,msg.stop)
         strType = ""
         if msg.type == 0:
             strType = "pub"
@@ -126,9 +126,9 @@ def task_topic_hz(msg):
 
         ##  process node info write cover
         strConflictKey = "{0}_{1}".format(msg.node,msg.topic)
-        print "strConflictKey:{0}".format(strConflictKey)
+        rospy.loginfo_throttle(5, "strConflictKey:{0}".format(strConflictKey))
         if  globalDictHzFlag.has_key(strConflictKey) and len(globalDictHzRecord)> 0:
-            print "same node info  will  cover , first  move to  buffer"
+            rospy.loginfo_throttle(5, "same node info  will  cover , first  move to  buffer")
             ###  has node key, need write buffer
             ### fillup  upload time and carinfo
             globalDictHzRecord["log_type"] = "topic_hz"
@@ -138,16 +138,16 @@ def task_topic_hz(msg):
             globalDictHzRecord['carinfo']['car_plate'] = globalCommonPara.dictCarInfo['car_plate']
             ### flush to buffer
             strBufferContent = json.dumps(globalDictHzRecord)
-            print "+++++++++++++++++++push strBufferContent:{0}".format(strBufferContent)
+            rospy.logdebug_throttle(5, "+++++++++++++++++++push strBufferContent:{0}".format(strBufferContent))
             ### save buffer to list
             globalListWaitWriteBuffer.append(strBufferContent)
-            print "------------globalListWaitWriteBuffer size:{0}".format(len(globalListWaitWriteBuffer))
+            rospy.logdebug_throttle(5,"------------globalListWaitWriteBuffer size:{0}".format(len(globalListWaitWriteBuffer)))
             ### after write buffer , need  clean flag
             globalDictHzFlag = {}
-            print "after write buffer ,  globalDictHzFlag:{0}".format(globalDictHzFlag)
+            rospy.logdebug_throttle(5, "after write buffer , globalDictHzFlag:{0}".format(globalDictHzFlag))
             ### after clean flag , clear globalDictHzRecord
             globalDictHzRecord = tree()
-            print "after writer buffer, globalDictHzRecord:{0}".format(globalDictHzRecord)
+            rospy.logdebug_throttle(5, "after writer buffer, globalDictHzRecord:{0}".format(globalDictHzRecord))
 
         ## normal  write data
         ### hzFlag add key msg.node
@@ -156,20 +156,20 @@ def task_topic_hz(msg):
         globalDictHzRecord[msg.node][msg.topic][strType]['max_delay'] = msg.max_delay
         globalDictHzRecord[msg.node][msg.topic][strType]['stime']= msg.start
         globalDictHzRecord[msg.node][msg.topic][strType]['etime'] = msg.stop
-        print "=================== after write globalDictHzRecord:{0} ".format(globalDictHzRecord)
+        rospy.logdebug_throttle(5,"=================== after write globalDictHzRecord:{0} ".format(globalDictHzRecord))
         ### message sum
         #global_hz_time_write_interval = global_hz_time_write_interval + 1
     except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():'
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn_throttle(2, "exception happend")
+        rospy.logwarn_throttle(2, e.message)
+        rospy.logwarn_throttle(2, str(e))
+        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
+        rospy.logwarn_throttle(2, 'str(e):\t\t', str(e))
+        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
+        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
+        rospy.logwarn_throttle(2, 'traceback.print_exc():')
+        rospy.logwarn_throttle(2, traceback.print_exc())
+        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
 
 
 
@@ -181,41 +181,41 @@ def task_topic_msg(msg):
         pbRecvMsg.ParseFromString(msg.data)
         pbSend = common_monitor_msg_pb2.MonitorMsg()
         pbSend.reportmsg.timestamp.sec = pbRecvMsg.timestamp.sec
-        print "timestamp.sec:%d" % (pbRecvMsg.timestamp.sec)
+
         dictMsgInfoRecord['reportmsg']['timestamp']['sec'] = pbRecvMsg.timestamp.sec
 
         pbSend.reportmsg.timestamp.nsec = pbRecvMsg.timestamp.nsec
-        print "timestamp.nsec:%d" % (pbRecvMsg.timestamp.nsec)
+
         dictMsgInfoRecord['reportmsg']['timestamp']['nsec'] = pbRecvMsg.timestamp.nsec
         dictMsgInfoRecord['reportmsg']['timestamp'][
             'msec'] = (pbRecvMsg.timestamp.sec * 1000) + (pbRecvMsg.timestamp.nsec / 1000000)
         pbSend.reportmsg.src = pbRecvMsg.src
-        print "pbRecvMsg.src:%s" % (pbRecvMsg.src)
+        rospy.logdebug("pbRecvMsg.src:%s" % (pbRecvMsg.src))
         dictMsgInfoRecord['reportmsg']['src'] = pbRecvMsg.src
         pbSend.reportmsg.level = pbRecvMsg.level
-        print "pbRecvMsg.level%s" % (pbRecvMsg.level)
+        rospy.logdebug("pbRecvMsg.level%s" % (pbRecvMsg.level))
         dictMsgInfoRecord['reportmsg']['level'] = pbRecvMsg.level
         pbSend.reportmsg.msg = pbRecvMsg.msg
-        #print "pbRecvMsg.msg:%s" % (pbRecvMsg.msg)
+
         dictMsgInfoRecord['reportmsg']['msg'] = pbRecvMsg.msg
         pbSend.reportmsg.code = pbRecvMsg.code
-        print "pbRecvMsg.code:%s" % (pbRecvMsg.code)
+        rospy.logdebug("pbRecvMsg.code:%s" % (pbRecvMsg.code))
         dictMsgInfoRecord['reportmsg']['code'] = pbRecvMsg.code
         listTempResult = []
         listTempAction = []
         for elemResult in pbRecvMsg.result:
             listTempResult.append(elemResult)
-            print "elemResult:%s" % (elemResult)
+            rospy.logdebug_throttle(1,"elemResult:%s" % (elemResult))
             pbSend.reportmsg.result.append(str(elemResult))
         for elemAction in pbRecvMsg.actions:
             listTempAction.append(elemAction)
-            print "elemAction:%s" % (elemAction)
+            rospy.logdebug_throttle(1, "elemAction:%s" % (elemAction))
             pbSend.reportmsg.actions.append(str(elemAction))
         dictMsgInfoRecord['reportmsg']['result'] = listTempResult
         dictMsgInfoRecord['reportmsg']['actions'] = listTempAction
 
-        print  listTempAction
-        print  listTempResult
+
+
         pbSend.carinfo.car_plate = globalCommonPara.dictCarInfo["car_plate"]
         dictMsgInfoRecord['carinfo']['car_plate'] = globalCommonPara.dictCarInfo["car_plate"]
         pbSend.carinfo.car_type = globalCommonPara.dictCarInfo["car_type"]
@@ -230,24 +230,23 @@ def task_topic_msg(msg):
                 dictMsgInfoRecord['log_type'] = "msg_record"
                 break
             break
-        print "code_version:%s" % (pbSend.carinfo.code_version)
+        rospy.logdebug_throttle(1, "code_version:%s" % (pbSend.carinfo.code_version))
 
         strBuffer = pbSend.SerializeToString()
         rosMessage = BinaryData()
         rosMessage.data = strBuffer
         rosMessage.size = len(strBuffer)
     except Exception as e:
-        print "Exception happend "
-        print   "exception happend"
-        print   e.message
-        print   str(e)
-        print   'str(Exception):\t', str(Exception)
-        print   'str(e):\t\t', str(e)
-        print   'repr(e):\t', repr(e)
-        print   'e.message:\t', e.message
-        print   'traceback.print_exc():'
-        traceback.print_exc()
-        print   'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn_throttle(2, "exception happend")
+        rospy.logwarn_throttle(2, e.message)
+        rospy.logwarn_throttle(2, str(e))
+        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
+        rospy.logwarn_throttle(2, 'str(e):\t\t', str(e))
+        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
+        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
+        rospy.logwarn_throttle(2, 'traceback.print_exc():')
+        rospy.logwarn_throttle(2, traceback.print_exc())
+        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
 
     strJson = json.dumps(dictMsgInfoRecord)
     ## send telematics
@@ -261,47 +260,38 @@ def task_topic_msg(msg):
                 with open('/home/mogo/data/log/filebeat_upload/msg_record.log', 'ab+') as f:
                     f.write(strJson)
                     f.write('\n')
-                    print "finish write info to local disk"
+
                 break
             if pbSend.reportmsg.level == "error":
                 with open('/home/mogo/data/log/filebeat_upload/msg_record.log', 'ab+') as f:
                     f.write(strJson)
                     f.write('\n')
-                    print "finish write error to local disk"
+
                 break
             break
-    except IOError:
-        print  "operate file failed"
-        exit(-1)
-    # while True:
-    #     if pbSend.reportmsg.level == "info":
-    #         print "enter info"
-    #         try:
-    #             globalPubToTelematicsInfo.publish(msg)
-    #         except  Exception as e:
-    #             print " globalPubToTelematicsInfo.publish happend exception"
-    #
-    #         print "finish send info log "
-    #         break
-    #     if pbSend.reportmsg.level == "error":
-    #         print "enter error"
-    #         try:
-    #             globalPubToTelematicsError.publish(msg)
-    #         except Exception as e:
-    #             print "globalPubToTelematicsError.publish happend exception"
-    #         print "finish send error log "
-    #         break
-    #     break
+    except Exception as e:
+        rospy.logwarn_throttle(2, "exception happend")
+        rospy.logwarn_throttle(2, e.message)
+        rospy.logwarn_throttle(2, str(e))
+        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
+        rospy.logwarn_throttle(2, 'str(e):\t\t', str(e))
+        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
+        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
+        rospy.logwarn_throttle(2, 'traceback.print_exc():')
+        rospy.logwarn_throttle(2, traceback.print_exc())
+        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
+
+
 
 
 def topicHzRecvCallback(msg):
-    print "--------------------------------------------------recv from channel  /autopilot_info/topic_hz "
-    rospy.loginfo("node: %s, topic: %s, type: %d, start: %d, hz: %f, max_delay: %d",msg.node, msg.topic, msg.type, msg.start, msg.hz, msg.max_delay)
+
+    rospy.loginfo_throttle(2, "recv from topic_hz")
     globalTopicHzPool.submit(task_topic_hz, msg)
 
 
 def topicMsgCallback(msg):
-    print "--------------------------------------------------recv from channel /autopilot_info/report_msg_info or /topilot_info/report_msg_error "
+    rospy.loginfo_throttle(2, "recv from channel /autopilot_info/report_msg_info or /topilot_info/report_msg_error ")
     if msg.size > 0:
         globalTopicMsgPool.submit(task_topic_msg, msg)
 
@@ -326,15 +316,23 @@ def task_cpu_info(msg):
         with open('/home/mogo/data/log/filebeat_upload/cpu_info.log', 'a+') as f:
             f.write(strJsonSaveToFile)
             f.write("\n")
-            print "#########################=================================write finished cpu_info.log"
-    except IOError:
-        print "operate file  cpu_info.log failed"
-        exit(-1)
-    pass
+    except Exception as e:
+        rospy.logwarn_throttle(2, "operate file  cpu_info.log failed")
+        rospy.logwarn_throttle(2, e.message)
+        rospy.logwarn_throttle(2, str(e))
+        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
+        rospy.logwarn_throttle(2, 'str(e):\t\t', str(e))
+        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
+        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
+        rospy.logwarn_throttle(2, 'traceback.print_exc():')
+        rospy.logwarn_throttle(2, traceback.print_exc())
+        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
+
+
 
 
 def topicCpuStatusCallback(msg):
-    print "--------------------------------------------------recv from channel /monitor_process/sysinfo/cpu/status "
+    rospy.logdebug_throttle(1, "recv from channel /monitor_process/sysinfo/cpu/status ")
     if msg.size > 0:
         globalCpuInfoPool.submit(task_cpu_info, msg)
 
@@ -351,17 +349,17 @@ def task_node_health(msg):
     strMac = dictTempInfo['header']['mac']
     strIp = dictTempInfo['header']['ip']
     globalDictHostMacInfo[strMac] = 1
-    print "recv node status from mac:{0},ip: {1}".format(strMac, strIp)
-    print "#################################################################   dictTempInfo['data']"
-    print dictTempInfo['data']
-    print len(dictTempInfo['data'])
-    print "#################################################################   dictTempInfo['data']"
+    rospy.logdebug_throttle(10,"recv node status from mac:{0},ip: {1}".format(strMac, strIp))
+
+
+
+
     dictSaveToFile["timestamp"]["sec"] = rospy.Time.now().secs
     if len(dictTempInfo['data']) > 0:
         for key, value in dictTempInfo['data'].items():
             globalDictTableNodeHealth[key] = value
             globalDictTableNodeHealthTimeout[key] = dictSaveToFile["timestamp"]["sec"]
-    print "########################################   now task_node_health len : %d " % len(globalDictHostMacInfo)
+
     dictSaveToFile["log_type"] = "node_health"
     dictSaveToFile["carinfo"] = globalCommonPara.dictCarInfo
 
@@ -374,22 +372,30 @@ def task_node_health(msg):
     rosSendMsg = BinaryData()
     rosSendMsg.data = strJsonSaveToFile
     rosSendMsg.size = len(rosSendMsg.data)
-    print "strJsonSaveToFile: %s" % strJsonSaveToFile
+    rospy.logdebug_throttle(1,"strJsonSaveToFile: %s" % strJsonSaveToFile)
     try:
         folder_check()
         with open('/home/mogo/data/log/filebeat_upload/node_health.log', 'a+') as f:
             f.write(strJsonSaveToFile)
             f.write("\n")
             globalPubOperatorToolNodeHealth.publish(rosSendMsg)
-            print "#########################=================================write finished node_health.log"
-    except IOError:
-        print "operate file node_health.log failed"
-        exit(-1)
+    except Exception as e:
+        rospy.logwarn_throttle(2, "operate file node_health.log failed")
+        rospy.logwarn_throttle(2, e.message)
+        rospy.logwarn_throttle(2, str(e))
+        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
+        rospy.logwarn_throttle(2, 'str(e):\t\t', str(e))
+        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
+        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
+        rospy.logwarn_throttle(2, 'traceback.print_exc():')
+        rospy.logwarn_throttle(2, traceback.print_exc())
+        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
+        #exit(-1)
     pass
 
 
 def topicNodeStatusCallback(msg):
-    print "--------------------------------------------------recv from channel /monitor_process/sysinfo/nodes/status"
+    rospy.logdebug_throttle(1, "recv from channel /monitor_process/sysinfo/nodes/status")
     if msg.size > 0:
         globalNodeHealthPool.submit(task_node_health, msg)
 
@@ -414,25 +420,33 @@ def task_memory_info(msg):
         with open('/home/mogo/data/log/filebeat_upload/memory_info.log', 'a+') as f:
             f.write(strJsonSaveToFile)
             f.write("\n")
-            print "#########################=================================write finished memory_info.log"
-    except IOError:
-        print "operate file memory_info.log  failed"
-        exit(-1)
+    except Exception as e:
+        rospy.logwarn_throttle(2, "operate file memory_info.log  failed")
+        rospy.logwarn_throttle(2, e.message)
+        rospy.logwarn_throttle(2, str(e))
+        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
+        rospy.logwarn_throttle(2, 'str(e):\t\t', str(e))
+        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
+        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
+        rospy.logwarn_throttle(2, 'traceback.print_exc():')
+        rospy.logwarn_throttle(2, traceback.print_exc())
+        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
+        #exit(-1)
     pass
 
 
 def topicMemoryStatusCallback(msg):
-    print "--------------------------------------------------recv from channel /monitor_process/sysinfo/memory/status "
+    rospy.logdebug_throttle(1,"recv from channel /monitor_process/sysinfo/memory/status")
     if msg.size > 0:
         globalMemInfoPool.submit(task_memory_info, msg)
 
 
 def autopilotModeCallback(msg):
-    # print "msg.size()=%d" %(msg.size)
+
     pbStatus = common_vehicle_state_pb2.VehicleState()
     pbStatus.ParseFromString(msg.data)
-    # print "vStatus.pilot_mode=%d" %(pbStatus.pilot_mode)
-    # print (type(pbStatus.pilot_mode))
+
+
 
     global globalCollectVehicleInfo
     globalCollectVehicleInfo = CollectVehicleInfo()
@@ -504,19 +518,6 @@ def addLocalizationListener():
     rospy.Subscriber('/chassis/vehicle_state', BinaryData, autopilotModeCallback)
 
 
-# def threadSendControlCmd(strThreadName, intDelay):
-#     while True:
-#         rosControlMsg = BinaryData()
-#         strUuid = str(uuid.uuid1())
-#         # print type(strUuid)
-#         # print strUuid
-#         rosControlMsg.data = strUuid
-#         rosControlMsg.size = len(rosControlMsg.data)
-#         rospy.Time.now().secs
-#         print "+++++++++++++++++++++++++++++++++=%d.%d  threadSendControlCmd publish ControlCmd .......Request_Uuid:%s " % (
-#             rospy.Time.now().secs, rospy.Time.now().nsecs, strUuid)
-#         globalPubToMonitorProcessControlCmd.publish(rosControlMsg)
-#         time.sleep(intDelay)
 
 
 def threadTimeoutRestNodeStatus(strThreadName, intDelay):
@@ -527,7 +528,7 @@ def threadTimeoutRestNodeStatus(strThreadName, intDelay):
         for key, value in globalDictTableNodeHealthTimeout.items():
             if (intCurrentSec - value) > intDelay:
                 globalDictTableNodeHealth[key] = "off"
-                rospy.logerr("node has timeout: " + key)
+                rospy.logwarn_throttle(2,"node has timeout: " + key)
         time.sleep(intDelay)
 
 
@@ -535,7 +536,7 @@ def startThreadControlCmd(intTimeVal):
     try:
         thread.start_new_thread(threadTimeoutRestNodeStatus, ("ControlCmd", int(intTimeVal),))
     except:
-        print "Error: unable to start thread"
+        rospy.logwarn("Error: unable to start thread")
 
 def flushTopicHzWriterBuffer():
     global globalListWaitWriteBuffer
@@ -546,24 +547,19 @@ def flushTopicHzWriterBuffer():
                 for line in globalListWaitWriteBuffer:
                     f.write(line)
                     f.write('\n')
-            print  "================================flushTopicHzWriterBuffer write  local disk finished "
+            rospy.logdebug_throttle(2, "================================flushTopicHzWriterBuffer write  local disk finished ")
             globalListWaitWriteBuffer = []
-            print "flushTopicHzWriterBuffer: after flush to  file , globalListWaitWriteBuffer :{0}".format(globalListWaitWriteBuffer)
+            rospy.logdebug_throttle(2, "flushTopicHzWriterBuffer: after flush to  file , globalListWaitWriteBuffer :{0}".format(globalListWaitWriteBuffer))
     except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():'
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn_throttle(2, "exception happend")
+        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
+        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
+        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
+        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
 
 def threadFlushTopicHz(intTimeVal):
     while True:
-        print "start check WaitWriteBuffer"
+
         flushTopicHzWriterBuffer()
         time.sleep(30)
 
@@ -572,16 +568,11 @@ def startThreadFlushWaitWriteBufferCmd(intTimeVal):
     try:
         thread.start_new_thread(threadFlushTopicHz, (int(intTimeVal),))
     except Exception as e:
-        print "exception happend"
-        print  e.message
-        print   str(e)
-        print   'str(Exception):\t', str(Exception)
-        print   'str(e):\t\t', str(e)
-        print   'repr(e):\t', repr(e)
-        print   'e.message:\t', e.message
-        print   'traceback.print_exc():'
-        traceback.print_exc()
-        print  'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn_throttle(2, "exception happend")
+        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
+        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
+        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
+        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
 
 def main():
     global listSubScriptHzItem
@@ -593,14 +584,7 @@ def main():
 
     global globalDelayTimeInterval
     globalDelayTimeInterval = 10
-    # strFullParaName = "%s/detect_interval" % (rospy.get_name())
-    # print "strFullParaName:%s" % strFullParaName
-    # temp = rospy.get_param(strFullParaName)
-    # if temp <= 0:
-    #     globalDelayTimeInterval = 5
-    # else:
-    #     globalDelayTimeInterval = temp
-    # print "=============================set globalDelayTimeInterval:%d" % globalDelayTimeInterval
+
     # add listener
     addLocalizationListener()
     startThreadControlCmd(globalDelayTimeInterval)
@@ -613,5 +597,5 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt as e:
-        print("monitor.py is failed !")
+        rospy.logwarn("monitor.py is failed !")
         exit(0)

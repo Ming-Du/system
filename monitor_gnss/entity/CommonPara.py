@@ -1,3 +1,4 @@
+import rospy
 class CommonPara:
     dictCarInfo = None
 
@@ -23,9 +24,8 @@ class CommonPara:
             dictCarInfo["car_plate"] = plate
             dictCarInfo["car_type"] = brand
         except Exception as e:
-            print("read carInfo failed!")
+            rospy.logwarn("read carInfo failed!")
             return False
-        #print(dictCarInfo)
         return dictCarInfo
 
     def initPara(self):
