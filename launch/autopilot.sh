@@ -340,6 +340,10 @@ start_core() {
         LoggingINFO "starting roscore finished,rosmaster pid:$rosmaster_pid"
         taskset -a -cp 1-7 $rosmaster_pid && chrt -a -p -r 20 $rosmaster_pid 2>/dev/null
         core_stat=1 && write_action
+        rosparam set /sensor/camera/sensing120/drivers_camera_sensing120/undist 1
+        rosparam set /sensor/camera/sensing120_back/drivers_camera_sensing120_back/undist 1
+        rosparam set /sensor/camera/sensing120_left/drivers_camera_sensing120_left/undist 1
+        rosparam set /sensor/camera/sensing120_right/drivers_camera_sensing120_right/undist 1
     else
         LoggingERR "starting roscore failed:\n$(cat $ROS_LOG_DIR/roscore.log)" "EMAP_NODE"
         return 1
@@ -600,7 +604,8 @@ done
 [[ -z "$opt_launch_file" && ! -z "$opt_pkg" ]] && LoggingERR "'--pkg' must be used with '--launch-file' together" && exit 1
 [[ ! -z "$opt_launch_file" && ! -z "$opt_onenode" ]] && LoggingERR "'--launch-file' cannot use with '--start-node'" && exit 1
 [[ ! -d $LOG_DIR ]] && mkdir -p $LOG_DIR
-[[ ! -d $BAG_DIR ]] && mkdir -p $BAG_DIR && chown -R mogo:mogo $BAG_DIR
+[[ ! -d $BAG_DIR ]] && mkdir -p $BAG_DIR
+chown -R mogo:mogo $BAG_DIR
 [[ ! -d $MOGO_LOG_DIR ]] && mkdir -p $MOGO_LOG_DIR
 [[ ! -d ${ABS_PATH/}config ]] && mkdir -p ${ABS_PATH}/config
 
