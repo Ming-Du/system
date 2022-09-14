@@ -41,6 +41,7 @@ from entity.CollectVehicleInfo import   CollectVehicleInfo
 
 globalLocationPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_Location')
 globalVihiclePool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_vehicle')
+globalPlanningDecisionStatePool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_planningDecisionState')
 globalCollectVehicleInfo  = CollectVehicleInfo()
 globalCommonPara = CommonPara()
 globalLastMicroSec = 0
@@ -478,7 +479,7 @@ pass
 
 def decisionStateCallback(msg):
     if msg.size > 0:
-        globalLocationPool.submit(task_decisionState,msg.data)
+        globalPlanningDecisionStatePool.submit(task_decisionState,msg.data)
 
 
 def addLocalizationListener():
