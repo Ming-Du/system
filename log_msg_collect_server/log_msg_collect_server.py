@@ -129,9 +129,7 @@ def LoadOneMsgLog(path):
             lines = contents.split("\n")
     except Exception as e:
         rospy.loginfo("exception happend when open fp")
-        rospy.loginfo('str(Exception):\t', str(Exception))
-        rospy.loginfo('repr(e):\t', repr(e))
-        rospy.loginfo('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.loginfo('traceback.format_exc():\n{}'.format(traceback.format_exc()))
     if len(lines) > 0:
         for line in lines:
             idx = idx + 1
@@ -162,9 +160,7 @@ def LoadOneMsgLog(path):
                         rospy.loginfo("there have unexpected level")
                 except Exception as e:
                     rospy.loginfo("exception happend when build msg")
-                    rospy.loginfo('str(Exception):\t', str(Exception))
-                    rospy.loginfo('repr(e):\t', repr(e))
-                    rospy.loginfo('traceback.format_exc():\n%s' % (traceback.format_exc())) 
+                    rospy.loginfo('traceback.format_exc():\n{}'.format(traceback.format_exc())) 
 
             time.sleep(0.1)
 
