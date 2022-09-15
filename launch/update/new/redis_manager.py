@@ -106,9 +106,14 @@ class RedisManager(object):
             try:
                 self.redis_handler.ping()
                 self.ready = True
+                self.lock.release()
                 return True
-            except (ConnectionError, TimeoutError) as e:
+            except ConnectionError as e:
                 logerror('Connet redis server[%s:%s] failed:%s'%(self.rhost,self.rport,e))
+                self.lock.release()
+                return False
+            except TimeoutError as e:
+                logerror('Connet redis server[%s:%s] timeout:%s'%(self.rhost,self.rport,e))
                 continue
             except Exception as e:
                 logerror(e)

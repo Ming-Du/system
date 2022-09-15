@@ -99,7 +99,8 @@ set_bashrc() {
 add_config() {
     [[ -z "$1" ]] && return
     local level=${2:-ERROR}
-    ROSCONSOLE_CONFIG_FILE="$ABS_PATH/config/$(echo ${1##*/} | cut -d. -f1)_${level}_console.config"
+    local launch_name=$(echo ${1##*/} | cut -d. -f1)
+    ROSCONSOLE_CONFIG_FILE="$ABS_PATH/config/${launch_name}_${level}_console.config"
     echo >$ROSCONSOLE_CONFIG_FILE
     pkg_str=$(xmllint --xpath "//@pkg" $1 2>/dev/null | sed 's/\"//g')
     for value in $pkg_str; do
@@ -109,9 +110,9 @@ add_config() {
         Aconsole=C${pkg_name}
         InfoAppender=I_${pkg_name}
         ErrorAppender=E_${pkg_name}
-        ErrorFile=${pkg_name}_ERROR.log
-        INFOFile=${pkg_name}_INFO.log
-        echo "log4j.logger.ros.${pkg_name}=${level},${InfoAppender},${ErrorAppender}
+        ErrorFile=${launch_name}_ERROR.log
+        INFOFile=${launch_name}_INFO.log
+        echo "log4j.logger.ros=${level},${InfoAppender},${ErrorAppender}
 log4j.appender.${InfoAppender}=org.apache.log4j.DailyRollingFileAppender
 log4j.appender.${InfoAppender}.Threshold=INFO
 log4j.appender.${InfoAppender}.ImmediateFlush=true
