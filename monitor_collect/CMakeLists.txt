@@ -15,7 +15,7 @@ include_directories(
 
 
 install(
-    FILES monitor_collect.py  simu_telematics.py simu_hz.py
+    FILES monitor_collect.py
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/
   )
 install(
