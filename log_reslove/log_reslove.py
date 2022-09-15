@@ -197,12 +197,16 @@ class Node_base(object):
                                     if tag_uuid == uuid:
                                         self.update_end_tag_info(uuid, topic_name, one)
                                         break
+                        else:
+                            # 多线程进行uuid匹配  add by liyl 20220915
+                            for topic_name in self.sub_topic_list:
+                                if tag_uuid in all_link_topic_list[topic_name]:
+                                    self.update_end_tag_info(tag_uuid, topic_name, one)
+                                    break
 
         except Exception as e:
             log_print('update node info error! {}'.format(e))
-            log_print('str(Exception):\t', str(Exception))
-            log_print('repr(e):\t', repr(e))
-            log_print('traceback.format_exc():\n%s' % (traceback.format_exc())) 
+            log_print('traceback.format_exc():\n{}'.format(traceback.format_exc()))
 
     def create_topic_info(self, uuid, one):
         """
@@ -216,7 +220,6 @@ class Node_base(object):
         topic_entity = all_link_topic_list[one['topic']][uuid] = dict()
         topic_entity['uuid'] = uuid  # one['ident'] # header_stamp or feature
         topic_entity['topic'] = one['topic']
-        topic_entity['thread'] = one['thread']
         topic_entity['send_node'] = None  # node_entity
         topic_entity['recv_node'] = None  # node_entity
         topic_entity['next_topic'] = None  # topic entity for one pub depend more sub
@@ -234,6 +237,7 @@ class Node_base(object):
                 topic_entity['info']['pub_stime'] = one['stime']
                 topic_entity['info']['pub_utime'] = one['utime']
                 topic_entity['info']['pub_wtime'] = one['wtime']
+                topic_entity['info']['pub_thread'] = one['thread']
 
         if one['type'] == Constants.g_type_of_sub:
             if one['node'] in all_link_node_list:
@@ -243,6 +247,7 @@ class Node_base(object):
                 topic_entity['info']['sub_stime'] = one['stime']
                 topic_entity['info']['sub_utime'] = one['utime']
                 topic_entity['info']['sub_wtime'] = one['wtime']
+                topic_entity['info']['sub_thread'] = one['thread']
 
         if topic_entity.get('send_node', None) and topic_entity.get('recv_node',None):
             topic_entity['finish_flag'] = True
@@ -453,16 +458,19 @@ class Log_handler():
                     beg_end_time = end_info['stamp'] - topic['info']['call_stamp']
                     if beg_end_time > Constants.unit_stamp_sec * 1:  # if beg_end_time > 0.5s  log_print
                         log_print("print beg_end time error, topic info: {}".format(topic))
-                    u_spend = end_info["utime"] - topic['info']['sub_utime'] 
-                    s_spend = end_info["stime"] - topic['info']['sub_stime'] 
-                    w_spend = end_info["wtime"] - topic['info']['sub_wtime']
-                    idle_spend = beg_end_time - u_spend - s_spend - w_spend    
-                    u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
                     # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
                     data["path"].append({"type": "beg_end", "node": topic['recv_node'].name, "use_time": beg_end_time})
-                    data["path"].append({"type": "beg_end_cpu", "node": topic['recv_node'].name, 
-                    "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
-                    "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
+                    if end_info['thread'] == topic['info']['sub_thread']:
+                        #计算beg_end_cpu时候 要保证同一线程，20220915增加
+                        u_spend = end_info["utime"] - topic['info']['sub_utime'] 
+                        s_spend = end_info["stime"] - topic['info']['sub_stime'] 
+                        w_spend = end_info["wtime"] - topic['info']['sub_wtime']
+                        idle_spend = beg_end_time - u_spend - s_spend - w_spend    
+                        u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
+
+                        data["path"].append({"type": "beg_end_cpu", "node": topic['recv_node'].name, 
+                        "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
+                        "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
 
         # get time used of the topic between put to sub_recv
         pub_recv_time = topic['info']['recv_stamp'] - topic['info']['pub_stamp']
@@ -479,16 +487,20 @@ class Log_handler():
                     beg_end_time = topic['info']['pub_stamp'] - beg_info["stamp"]
                     if beg_end_time > Constants.unit_stamp_sec * 1:  # if beg_end_time > 0.5s  log_print
                         log_print("print beg_end time error, topic info: {}".format(topic))
-                    u_spend = topic['info']['pub_utime'] - beg_info["utime"]
-                    s_spend = topic['info']['pub_stime'] - beg_info["stime"]
-                    w_spend = topic['info']['pub_wtime'] - beg_info["wtime"]
-                    idle_spend = beg_end_time - u_spend - s_spend - w_spend    
-                    u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
                     # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
                     data["path"].append({"type": "beg_end", "node": topic['send_node'].name, "use_time": beg_end_time})
-                    data["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
-                    "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
-                    "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
+
+                    if beg_info['thread'] == topic['info']['pub_thread']:
+                        #计算beg_end_cpu时候 要保证同一线程，20220915增加
+                        u_spend = topic['info']['pub_utime'] - beg_info["utime"]
+                        s_spend = topic['info']['pub_stime'] - beg_info["stime"]
+                        w_spend = topic['info']['pub_wtime'] - beg_info["wtime"]
+                        idle_spend = beg_end_time - u_spend - s_spend - w_spend    
+                        u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
+                        
+                        data["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
+                        "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
+                        "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
 
             data['succ'] = True
             return
@@ -558,16 +570,19 @@ class Log_handler():
                     beg_end_time = topic['info']['pub_stamp'] - beg_info["stamp"]
                     if beg_end_time > Constants.unit_stamp_sec * 1:  # if beg_end_time > 0.5s  log_print
                         log_print("warning beg_end topic info: {}".format(topic))
-                    u_spend = topic['info']['pub_utime'] - beg_info["utime"]
-                    s_spend = topic['info']['pub_stime'] - beg_info["stime"]
-                    w_spend = topic['info']['pub_wtime'] - beg_info["wtime"]
-                    idle_spend = beg_end_time - u_spend - s_spend - w_spend    
-                    u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
                     # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
                     data["path"].append({"type": "beg_end", "node": topic['send_node'].name, "use_time": beg_end_time})
-                    data["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
-                    "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
-                    "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
+                    if beg_info['thread'] == topic['info']['pub_thread']:
+                        #计算beg_end_cpu时候 要保证同一线程，20220915增加
+                        u_spend = topic['info']['pub_utime'] - beg_info["utime"]
+                        s_spend = topic['info']['pub_stime'] - beg_info["stime"]
+                        w_spend = topic['info']['pub_wtime'] - beg_info["wtime"]
+                        idle_spend = beg_end_time - u_spend - s_spend - w_spend    
+                        u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
+                        
+                        data["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
+                        "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
+                        "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
             
             self.get_topic_info(topic_entity, pdata, record)
 
@@ -653,13 +668,39 @@ class Log_handler():
         return 
 
     def get_sensor_node_info(self, topic, data):
-
+        topic_entity = None
         while topic:
             if not topic['finish_flag']:
                 data['succ'] = False
                 data['wrong'] = '{} not match success in log'.format(topic['topic'])
                 return 
             
+            ## 如果有前置topic，计算该节点sub 到 pub 的时间
+            if topic_entity:
+                call_pub_time = topic['info']['pub_stamp'] - topic_entity['info']['call_stamp']
+                if call_pub_time < 0:
+                    data['succ'] = False
+                    data['wrong'] = 'Error: The call_pub_time < 0!! node:{}, pub_topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
+                    return
+                if call_pub_time > 1 * Constants.unit_stamp_sec:
+                    log_print('Warning, recently call_pub_time={}, topic={}, thread={} pub_uuid={}, sub_uuid={}'.format(
+                        call_pub_time, topic['topic'], topic['thread'], topic['uuid'], topic_entity['uuid']))
+                    # import pdb; pdb.set_trace()
+                data["path"].append({"type": "call_pub", "node": topic_entity['recv_node'].name, "use_time": call_pub_time})
+
+                # 计算call pub 时间需要 保证同一线程
+                u_spend = topic['info']['pub_utime'] - topic_entity['info']['sub_utime']
+                s_spend = topic['info']['pub_stime'] - topic_entity['info']['sub_stime']
+                w_spend = topic['info']['pub_wtime'] - topic_entity['info']['sub_wtime']
+                idle_spend = call_pub_time - u_spend - s_spend - w_spend
+
+                u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/call_pub_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]     
+                data["use_time"] += call_pub_time
+                
+                data["path"].append({"type": "call_pub_cpu", "node": topic_entity['recv_node'].name, 
+                "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
+                "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent}) 
+
             # get time used of the topic between put to sub_recv
             pub_recv_time = topic['info']['recv_stamp'] - topic['info']['pub_stamp']
             recv_call_time = topic['info']['call_stamp'] - topic['info']['recv_stamp']
@@ -687,28 +728,7 @@ class Log_handler():
                 break
             topic_entity = topic
             topic = all_link_topic_list[topic_name][pub_uuid]
-            ## 计算该节点sub 到 pub 的时间
-            call_pub_time = topic['info']['pub_stamp'] - topic_entity['info']['call_stamp']
-            if call_pub_time < 0:
-                data['succ'] = False
-                data['wrong'] = 'Error: The call_pub_time < 0!! node:{}, pub_topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
-                return
-            if call_pub_time > 1 * Constants.unit_stamp_sec:
-                log_print('Warning, recently call_pub_time={}, topic={}, thread={} pub_uuid={}, sub_uuid={}'.format(
-                    call_pub_time, topic['topic'], topic['thread'], topic['uuid'], topic_entity['uuid']))
-                # import pdb; pdb.set_trace()
-
-            u_spend = topic['info']['pub_utime'] - topic_entity['info']['sub_utime']
-            s_spend = topic['info']['pub_stime'] - topic_entity['info']['sub_stime']
-            w_spend = topic['info']['pub_wtime'] - topic_entity['info']['sub_wtime']
-            idle_spend = call_pub_time - u_spend - s_spend - w_spend
-
-            u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/call_pub_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]     
-            data["use_time"] += call_pub_time
-            data["path"].append({"type": "call_pub", "node": topic_entity['recv_node'].name, "use_time": call_pub_time})
-            data["path"].append({"type": "call_pub_cpu", "node": topic_entity['recv_node'].name, 
-            "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
-            "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent}) 
+            
         
     @get_time_used
     def analyze_log_from_sensor(self):
@@ -733,9 +753,7 @@ class Log_handler():
                     try:
                         self.get_sensor_node_info(topic, data)
                     except Exception as e:
-                        log_print('str(Exception):\t', str(Exception))
-                        log_print('repr(e):\t', repr(e))
-                        log_print('traceback.format_exc():\n%s' % (traceback.format_exc()))
+                        log_print('traceback.format_exc():\n{}'.format(traceback.format_exc()))
 
                     if not data.get('succ', False):
                         wrong_count += 1
@@ -882,9 +900,7 @@ class Log_handler():
             self.once_save_fd.close()
         except Exception as e:
             log_print("run once error, {}".format(e))
-            log_print('str(Exception):\t', str(Exception))
-            log_print('repr(e):\t', repr(e))
-            log_print('traceback.format_exc():\n%s' % (traceback.format_exc()))  
+            log_print('traceback.format_exc():\n{}'.format(traceback.format_exc()))
 
 
     def run(self):

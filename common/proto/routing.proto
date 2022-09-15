@@ -30,5 +30,8 @@ message RoutingRequest {
   // 老路径/home/mogo/data/vehicle_monitor/MapEngine_data/track_record_data/
   // 新路径/home/mogo/data/vehicle_monitor/MapEngine_data/track_record_data_dpqp/
   optional bool dpqp = 14 [default = true];
+  optional bool exist_xy_flag = 15 [default = false];
+  optional geometry.Point start_point = 16;
+  optional geometry.Point end_point = 17;
 }
 
