@@ -184,6 +184,7 @@ def task_localization(pb_msg):
             with open('/home/mogo/data/log/filebeat_upload/location.log', 'a+') as f:
                 f.write(strJsonLineContent)
                 f.write("\n")
+            globalListPostion = []
         except Exception as e:
             rospy.logwarn("exception happend")
             rospy.logwarn('repr(e):\t', repr(e))
@@ -199,99 +200,106 @@ def localizationCallback(msg):
 def task_vehicle(pb_msg):
     pbStatus = common_vehicle_state_pb2.VehicleState()
     pbStatus.ParseFromString(pb_msg)
-    instanceVehicleInfo = CollectVehicleInfo()
-    instanceVehicleInfo.int_pilot_mode = pbStatus.pilot_mode
-    rospy.logdebug("instanceVehicleInfo.int_pilot_mode:{0}".format(instanceVehicleInfo.int_pilot_mode))
-    instanceVehicleInfo.b_steer_inference = pbStatus.steer_inference
-    rospy.logdebug("instanceVehicleInfo.b_steer_inference:{0}".format(instanceVehicleInfo.b_steer_inference))
-    instanceVehicleInfo.b_brake_inference = pbStatus.brake_inference
-    rospy.logdebug("itanceVehicleInfo.b_brake_inference:{0}".format(instanceVehicleInfo.b_brake_inference))
-    instanceVehicleInfo.b_accel_inference = pbStatus.accel_inference
-    rospy.logdebug("instanceVehicleInfo.b_accel_inference:{0}".format(instanceVehicleInfo.b_accel_inference ))
-    instanceVehicleInfo.b_gear_switch_inference = pbStatus.gear_switch_inference
-    rospy.logdebug("instanceVehicleInfo.b_gear_switch_inference:{0}".format(instanceVehicleInfo.b_gear_switch_inference))
-    instanceVehicleInfo.b_location_missing = pbStatus.location_missing
-    rospy.logdebug("instanceVehicleInfo.b_location_missing:{0}".format(instanceVehicleInfo.b_location_missing))
-    instanceVehicleInfo.b_trajectory_missing = pbStatus.trajectory_missing
-    rospy.logdebug("instanceVehicleInfo.b_trajectory_missing:{0}".format(instanceVehicleInfo.b_trajectory_missing))
-    instanceVehicleInfo.b_chassis_status_missing = pbStatus.chassis_status_missing
-    rospy.logdebug("instanceVehicleInfo.b_chassis_status_missing:{0}".format(instanceVehicleInfo.b_chassis_status_missing ))
-    instanceVehicleInfo.brake_light_status = pbStatus.brake_light_status
-    rospy.logdebug("instanceVehicleInfo.brake_light_status:{0}".format(instanceVehicleInfo.brake_light_status))
-    instanceVehicleInfo.pilot_mode_condition_met = pbStatus.pilot_mode_condition_met
-    rospy.logdebug("instanceVehicleInfo.pilot_mode_condition_met:{0}".format(instanceVehicleInfo.pilot_mode_condition_met))
-    instanceVehicleInfo.steeringSpd = pbStatus.steeringSpds
-    rospy.logdebug("instanceVehicleInfo.steeringSpd:{0}".format(instanceVehicleInfo.steeringSpd))
-    instanceVehicleInfo.leftFrontWheelAngle = pbStatus.leftFrontWheelAngle
-    rospy.logdebug("instanceVehicleInfo.leftFrontWheelAngle:{0}".format(instanceVehicleInfo.leftFrontWheelAngle))
-    instanceVehicleInfo.rightFrontWheelAngle = pbStatus.rightFrontWheelAngle
-    rospy.logdebug("instanceVehicleInfo.rightFrontWheelAngle:{0}".format(instanceVehicleInfo.rightFrontWheelAngle))
-    instanceVehicleInfo.steering = pbStatus.steering
-    rospy.logdebug("instanceVehicleInfo.steering:{0}".format(instanceVehicleInfo.steering ))
-    instanceVehicleInfo.speed = pbStatus.speed
-    rospy.logdebug("instanceVehicleInfo.speed:{0}".format(instanceVehicleInfo.speed))
-    instanceVehicleInfo.accel = pbStatus.accel
-    rospy.logdebug("instanceVehicleInfo.accel:{0}".format(instanceVehicleInfo.accel))
-    instanceVehicleInfo.throttle = pbStatus.throttle
-    rospy.logdebug("instanceVehicleInfo.throttle:{0}".format(instanceVehicleInfo.throttle))
-    instanceVehicleInfo.brake = pbStatus.brake
-    rospy.logdebug("instanceVehicleInfo.brake:{0}".format(instanceVehicleInfo.brake))
-    instanceVehicleInfo.gear = pbStatus.gear
-    rospy.logdebug("instanceVehicleInfo.gear:{0}".format(instanceVehicleInfo.gear))
-    instanceVehicleInfo.light = pbStatus.light
-    rospy.logdebug("instanceVehicleInfo.light:{0}".format(instanceVehicleInfo.light))
-    instanceVehicleInfo.horn = pbStatus.horn
-    rospy.logdebug("instanceVehicleInfo.horn:{0}".format(instanceVehicleInfo.horn))
-    instanceVehicleInfo.highbeam = pbStatus.highbeam
-    rospy.logdebug("instanceVehicleInfo.highbeam:{0}".format(instanceVehicleInfo.highbeam))
-    instanceVehicleInfo.lowbeam = pbStatus.lowbeam
-    rospy.logdebug("instanceVehicleInfo.lowbeam:{0}".format(instanceVehicleInfo.lowbeam))
-    instanceVehicleInfo.foglight = pbStatus.foglight
-    rospy.logdebug("instanceVehicleInfo.foglight:{0}".format(instanceVehicleInfo.foglight))
-    instanceVehicleInfo.clearance_lamps = pbStatus.clearance_lamps
-    rospy.logdebug("instanceVehicleInfo.clearance_lamps:{0}".format(instanceVehicleInfo.clearance_lamps))
-    instanceVehicleInfo.warn_light = pbStatus.warn_light
-    rospy.logdebug("instanceVehicleInfo.warn_light:{0}".format(instanceVehicleInfo.warn_light))
-    instanceVehicleInfo.parking_brake = pbStatus.parking_brake
-    rospy.logdebug("instanceVehicleInfo.parking_brake:{0}".format(instanceVehicleInfo.parking_brake))
-    instanceVehicleInfo.longitude_driving_mode = pbStatus.longitude_driving_mode
-    rospy.logdebug("instanceVehicleInfo.longitude_driving_mode:{0}".format(instanceVehicleInfo.longitude_driving_mode))
-    instanceVehicleInfo.eps_steering_mode = pbStatus.eps_steering_mode
-    rospy.logdebug("instanceVehicleInfo.eps_steering_mode:{0}".format(instanceVehicleInfo.eps_steering_mode))
-    instanceVehicleInfo.steering_sign = pbStatus.steering_sign
-    rospy.logdebug("instanceVehicleInfo.steering_sign:{0}".format(instanceVehicleInfo.steering_sign))
-
+    # instanceVehicleInfo = CollectVehicleInfo()
+    # instanceVehicleInfo.int_pilot_mode = pbStatus.pilot_mode
+    #rospy.logdebug("instanceVehicleInfo.int_pilot_mode:{0}".format(instanceVehicleInfo.int_pilot_mode))
+    # instanceVehicleInfo.b_steer_inference = pbStatus.steer_inference
+    # rospy.logdebug("instanceVehicleInfo.b_steer_inference:{0}".format(instanceVehicleInfo.b_steer_inference))
+    # instanceVehicleInfo.b_brake_inference = pbStatus.brake_inference
+    # rospy.logdebug("itanceVehicleInfo.b_brake_inference:{0}".format(instanceVehicleInfo.b_brake_inference))
+    # instanceVehicleInfo.b_accel_inference = pbStatus.accel_inference
+    # rospy.logdebug("instanceVehicleInfo.b_accel_inference:{0}".format(instanceVehicleInfo.b_accel_inference ))
+    # instanceVehicleInfo.b_gear_switch_inference = pbStatus.gear_switch_inference
+    # rospy.logdebug("instanceVehicleInfo.b_gear_switch_inference:{0}".format(instanceVehicleInfo.b_gear_switch_inference))
+    # instanceVehicleInfo.b_location_missing = pbStatus.location_missing
+    # rospy.logdebug("instanceVehicleInfo.b_location_missing:{0}".format(instanceVehicleInfo.b_location_missing))
+    # instanceVehicleInfo.b_trajectory_missing = pbStatus.trajectory_missing
+    # rospy.logdebug("instanceVehicleInfo.b_trajectory_missing:{0}".format(instanceVehicleInfo.b_trajectory_missing))
+    # instanceVehicleInfo.b_chassis_status_missing = pbStatus.chassis_status_missing
+    # rospy.logdebug("instanceVehicleInfo.b_chassis_status_missing:{0}".format(instanceVehicleInfo.b_chassis_status_missing ))
+    # instanceVehicleInfo.brake_light_status = pbStatus.brake_light_status
+    # rospy.logdebug("instanceVehicleInfo.brake_light_status:{0}".format(instanceVehicleInfo.brake_light_status))
+    # #instanceVehicleInfo.pilot_mode_condition_met = pbStatus.pilot_mode_condition_met
+    # #rospy.logdebug("instanceVehicleInfo.pilot_mode_condition_met:{0}".format(instanceVehicleInfo.pilot_mode_condition_met))
+    # instanceVehicleInfo.steeringSpd = pbStatus.steeringSpds
+    # rospy.logdebug("instanceVehicleInfo.steeringSpd:{0}".format(instanceVehicleInfo.steeringSpd))
+    # instanceVehicleInfo.leftFrontWheelAngle = pbStatus.leftFrontWheelAngle
+    # rospy.logdebug("instanceVehicleInfo.leftFrontWheelAngle:{0}".format(instanceVehicleInfo.leftFrontWheelAngle))
+    # instanceVehicleInfo.rightFrontWheelAngle = pbStatus.rightFrontWheelAngle
+    # rospy.logdebug("instanceVehicleInfo.rightFrontWheelAngle:{0}".format(instanceVehicleInfo.rightFrontWheelAngle))
+    # instanceVehicleInfo.steering = pbStatus.steering
+    # rospy.logdebug("instanceVehicleInfo.steering:{0}".format(instanceVehicleInfo.steering ))
+    # instanceVehicleInfo.speed = pbStatus.speed
+    # rospy.logdebug("instanceVehicleInfo.speed:{0}".format(instanceVehicleInfo.speed))
+    # instanceVehicleInfo.accel = pbStatus.accel
+    # rospy.logdebug("instanceVehicleInfo.accel:{0}".format(instanceVehicleInfo.accel))
+    # instanceVehicleInfo.throttle = pbStatus.throttle
+    # rospy.logdebug("instanceVehicleInfo.throttle:{0}".format(instanceVehicleInfo.throttle))
+    # instanceVehicleInfo.brake = pbStatus.brake
+    # rospy.logdebug("instanceVehicleInfo.brake:{0}".format(instanceVehicleInfo.brake))
+    # instanceVehicleInfo.gear = pbStatus.gear
+    # rospy.logdebug("instanceVehicleInfo.gear:{0}".format(instanceVehicleInfo.gear))
+    # instanceVehicleInfo.light = pbStatus.light
+    # rospy.logdebug("instanceVehicleInfo.light:{0}".format(instanceVehicleInfo.light))
+    # instanceVehicleInfo.horn = pbStatus.horn
+    # rospy.logdebug("instanceVehicleInfo.horn:{0}".format(instanceVehicleInfo.horn))
+    # instanceVehicleInfo.highbeam = pbStatus.highbeam
+    # rospy.logdebug("instanceVehicleInfo.highbeam:{0}".format(instanceVehicleInfo.highbeam))
+    # instanceVehicleInfo.lowbeam = pbStatus.lowbeam
+    # rospy.logdebug("instanceVehicleInfo.lowbeam:{0}".format(instanceVehicleInfo.lowbeam))
+    # instanceVehicleInfo.foglight = pbStatus.foglight
+    # rospy.logdebug("instanceVehicleInfo.foglight:{0}".format(instanceVehicleInfo.foglight))
+    # instanceVehicleInfo.clearance_lamps = pbStatus.clearance_lamps
+    # rospy.logdebug("instanceVehicleInfo.clearance_lamps:{0}".format(instanceVehicleInfo.clearance_lamps))
+    # instanceVehicleInfo.warn_light = pbStatus.warn_light
+    # rospy.logdebug("instanceVehicleInfo.warn_light:{0}".format(instanceVehicleInfo.warn_light))
+    # instanceVehicleInfo.parking_brake = pbStatus.parking_brake
+    # rospy.logdebug("instanceVehicleInfo.parking_brake:{0}".format(instanceVehicleInfo.parking_brake))
+    # instanceVehicleInfo.longitude_driving_mode = pbStatus.longitude_driving_mode
+    # rospy.logdebug("instanceVehicleInfo.longitude_driving_mode:{0}".format(instanceVehicleInfo.longitude_driving_mode))
+    # instanceVehicleInfo.eps_steering_mode = pbStatus.eps_steering_mode
+    # rospy.logdebug("instanceVehicleInfo.eps_steering_mode:{0}".format(instanceVehicleInfo.eps_steering_mode))
+    # instanceVehicleInfo.steering_sign = pbStatus.steering_sign
+    # rospy.logdebug("instanceVehicleInfo.steering_sign:{0}".format(instanceVehicleInfo.steering_sign))
     dictVehicleLog = {}
-    dictVehicleLog['int_pilot_mode'] = instanceVehicleInfo.pilot_mode
-    dictVehicleLog['b_steer_inference'] = instanceVehicleInfo.steer_inference
-    dictVehicleLog['b_brake_inference'] = instanceVehicleInfo.brake_inference
-    dictVehicleLog['b_accel_inference'] = instanceVehicleInfo.accel_inference
-    dictVehicleLog['b_gear_switch_inference'] = instanceVehicleInfo.gear_switch_inference
-    dictVehicleLog['b_location_missing'] = instanceVehicleInfo.location_missing
-    dictVehicleLog['b_trajectory_missing'] = instanceVehicleInfo.trajectory_missing
-    dictVehicleLog['b_chassis_status_missing'] = instanceVehicleInfo.chassis_status_missing
-    dictVehicleLog['brake_light_status'] = instanceVehicleInfo.brake_light_status
-    dictVehicleLog['pilot_mode_condition_met'] = instanceVehicleInfo.pilot_mode_condition_met
-    dictVehicleLog['steeringSpd'] = instanceVehicleInfo.steeringSpds
-    dictVehicleLog['leftFrontWheelAngle'] = instanceVehicleInfo.leftFrontWheelAngle
-    dictVehicleLog['rightFrontWheelAngle'] = instanceVehicleInfo.rightFrontWheelAngle
-    dictVehicleLog['steering'] = instanceVehicleInfo.steering
-    dictVehicleLog['speed'] = instanceVehicleInfo.speed
-    dictVehicleLog['accel'] = instanceVehicleInfo.accel
-    dictVehicleLog['throttle'] = instanceVehicleInfo.throttle
-    dictVehicleLog['brake'] = instanceVehicleInfo.brake
-    dictVehicleLog['gear'] = instanceVehicleInfo.gear
-    dictVehicleLog['light'] = instanceVehicleInfo.light
-    dictVehicleLog['horn'] = instanceVehicleInfo.horn
-    dictVehicleLog['highbeam'] = instanceVehicleInfo.highbeam
-    dictVehicleLog['lowbeam'] = instanceVehicleInfo.lowbeam
-    dictVehicleLog['foglight'] = instanceVehicleInfo.foglight
-    dictVehicleLog['clearance_lamps'] = instanceVehicleInfo.clearance_lamps
-    dictVehicleLog['warn_light'] = instanceVehicleInfo.warn_light
-    dictVehicleLog['parking_brake'] = instanceVehicleInfo.parking_brake
-    dictVehicleLog['longitude_driving_mode'] = instanceVehicleInfo.longitude_driving_mode
-    dictVehicleLog['eps_steering_mode'] = instanceVehicleInfo.eps_steering_mode
-    dictVehicleLog['steering_sign'] = instanceVehicleInfo.steering_sign
+    try:
+        dictVehicleLog['int_pilot_mode'] = pbStatus.pilot_mode
+        dictVehicleLog['b_steer_inference'] = pbStatus.steer_inference
+        dictVehicleLog['b_brake_inference'] = pbStatus.brake_inference
+        dictVehicleLog['b_accel_inference'] = pbStatus.accel_inference
+        dictVehicleLog['b_gear_switch_inference'] = pbStatus.gear_switch_inference
+        dictVehicleLog['b_location_missing'] = pbStatus.location_missing
+        dictVehicleLog['b_trajectory_missing'] = pbStatus.trajectory_missing
+        dictVehicleLog['b_chassis_status_missing'] = pbStatus.chassis_status_missing
+        dictVehicleLog['brake_light_status'] = pbStatus.brake_light_status
+        dictVehicleLog['steeringSpd'] = float(pbStatus.steeringSpd)
+        dictVehicleLog['leftFrontWheelAngle'] = float(pbStatus.leftFrontWheelAngle)
+        dictVehicleLog['rightFrontWheelAngle'] = float(pbStatus.rightFrontWheelAngle)
+        dictVehicleLog['pilot_mode_condition_met']=float(pbStatus.pilot_mode_condition_met)
+        dictVehicleLog['steering'] = pbStatus.steering
+        dictVehicleLog['speed'] = pbStatus.speed
+        dictVehicleLog['accel'] = pbStatus.accel
+        dictVehicleLog['throttle'] = pbStatus.throttle
+        dictVehicleLog['brake'] = pbStatus.brake
+        dictVehicleLog['gear'] = pbStatus.gear
+        dictVehicleLog['light'] = pbStatus.light
+        dictVehicleLog['horn'] = pbStatus.horn
+        dictVehicleLog['highbeam'] = pbStatus.highbeam
+        dictVehicleLog['lowbeam'] = pbStatus.lowbeam
+        dictVehicleLog['foglight'] = pbStatus.foglight
+        dictVehicleLog['clearance_lamps'] = pbStatus.clearance_lamps
+        dictVehicleLog['warn_light'] = pbStatus.warn_light
+        dictVehicleLog['parking_brake'] = pbStatus.parking_brake
+        dictVehicleLog['longitude_driving_mode'] = pbStatus.longitude_driving_mode
+        dictVehicleLog['eps_steering_mode'] = pbStatus.eps_steering_mode
+        dictVehicleLog['steering_sign'] = pbStatus.steering_sign
+    except Exception as e:
+        rospy.logwarn('repr(e):\t', repr(e))
+        rospy.logwarn('e.message:\t', e.message)
+        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+    
+    sec = 0
+    nsec = 0
     sec = (pbStatus.header.stamp.sec)
     nsec = (pbStatus.header.stamp.nsec)
 
@@ -337,9 +345,9 @@ def task_vehicle(pb_msg):
             with open('/home/mogo/data/log/filebeat_upload/vehicle_status.log', 'a+') as f:
                 f.write(strJsonLineContent)
                 f.write("\n")
+            globalListPostion_vehicle_status = []
 
         except Exception as e:
-            rospy.logwarn("operate file failed")
             rospy.logwarn('repr(e):\t', repr(e))
             rospy.logwarn('e.message:\t', e.message)
             rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
@@ -423,9 +431,11 @@ def task_decisionState(pb_msg):
     dictDecisionState['driving_state']=pbStatus.action_msg.driving_state
     dictDecisionState['driving_action']=pbStatus.action_msg.driving_action
     dictDecisionState['destination_acc']=pbStatus.destination_acc
+    rospy.logdebug("dictDecisionState:{0}".format(dictDecisionState))
 
-    sec = (pbStatus.header.stamp.sec)
-    nsec = (pbStatus.header.stamp.nsec)
+    sec = rospy.rostime.Time.now().secs
+    nsec = rospy.rostime.Time.now().nsecs
+    rospy.logdebug("sec:{0},nsec:{1}".format(sec,nsec))
 
     CurrentMicroSec = sec * 1000 + nsec / 1000000
     dictDecisionState['sec'] = sec
@@ -469,9 +479,8 @@ def task_decisionState(pb_msg):
             with open('/home/mogo/data/log/filebeat_upload/decision_status.log', 'a+') as f:
                 f.write(strJsonLineContent)
                 f.write("\n")
-
+            globalListPostion_decision_status = []
         except Exception as e:
-            rospy.logwarn("operate file failed")
             rospy.logwarn('repr(e):\t', repr(e))
             rospy.logwarn('e.message:\t', e.message)
             rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
