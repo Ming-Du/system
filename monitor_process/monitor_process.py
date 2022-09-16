@@ -106,7 +106,7 @@ def readNodeList():
                 break
             break
 
-        rospy.loginfo("=========== strFileName:{0}, ret:{1},strErrorMsg:{2}".format(strFileListName, ret, strErrorMsg))
+        #rospy.loginfo("=========== strFileName:{0}, ret:{1},strErrorMsg:{2}".format(strFileListName, ret, strErrorMsg))
 
         if not os.path.exists(strFileListName):
             rospy.logerr("file :%s not exists ,checkt host name and net_card_name" % (strFileListName))
