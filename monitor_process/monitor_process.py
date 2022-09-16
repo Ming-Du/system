@@ -84,10 +84,9 @@ def getHostName():
             strHostName = output
         rospy.logdebug("status:%d,output:%s" % (status, strHostName))
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return strHostName
 
 
@@ -180,10 +179,9 @@ def node_status_check(listNodeList, strUuid):
         node_state_dict['header']['mac'] = globalDictIpInfo['mac']
         nodemsg = json.dumps(node_state_dict)
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     if len(nodemsg) > 0:
         rosSendMsg = BinaryData()
