@@ -132,10 +132,9 @@ def readNodeList():
                     if len(multy_list[input_idx]) > 0:
                         listAllNode.append(multy_list[input_idx])
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' %(traceback.format_exc()))
 
 
 
