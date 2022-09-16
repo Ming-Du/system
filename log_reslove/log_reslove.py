@@ -343,6 +343,8 @@ class Log_handler():
             handle_time = 0
             end_time = 99999
 
+        # 仅保留自驾过程的日志，非自驾时间不保存（部分原始日志已保存），减少日志文件数
+        self.once_save_fd = open(Constants.bak_dir+"/all_log_bak_{}.log".format(int(time.time())),'w+')
         remote_log_src=['102','103','104','105','106','107']
 
         while handle_time < end_time:
@@ -394,6 +396,7 @@ class Log_handler():
                         log_print("the log {} in file {} is unexpect style! {}".format(line, path, e))
                         continue
 
+        self.once_save_fd.close()
         if not g_test_mode:
             while g_pilot_mode_list and self.time_start_value > g_pilot_mode_list[0][1]:
                 g_pilot_mode_list.pop(0)
@@ -457,7 +460,8 @@ class Log_handler():
                 if end_info:
                     beg_end_time = end_info['stamp'] - topic['info']['call_stamp']
                     if beg_end_time > Constants.unit_stamp_sec * 1:  # if beg_end_time > 0.5s  log_print
-                        log_print("print beg_end time error, topic info: {}".format(topic))
+                        log_print("warning: beg_end time too large, node={}, thread={}, ident={}".format(
+                            end_info.get('node','none'), end_info.get('thread','none'), end_info.get('ident','node')))
                     # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
                     data["path"].append({"type": "beg_end", "node": topic['recv_node'].name, "use_time": beg_end_time})
                     if end_info['thread'] == topic['info']['sub_thread']:
@@ -486,7 +490,8 @@ class Log_handler():
                 if beg_info:
                     beg_end_time = topic['info']['pub_stamp'] - beg_info["stamp"]
                     if beg_end_time > Constants.unit_stamp_sec * 1:  # if beg_end_time > 0.5s  log_print
-                        log_print("print beg_end time error, topic info: {}".format(topic))
+                        log_print("warning: beg_end time too large, node={}, thread={}, ident={}".format(
+                            beg_info.get('node','none'), beg_info.get('thread','none'), beg_info.get('ident','none')))
                     # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
                     data["path"].append({"type": "beg_end", "node": topic['send_node'].name, "use_time": beg_end_time})
 
@@ -546,9 +551,9 @@ class Log_handler():
                 data['succ'] = False
                 data['wrong'] = 'Error: The call_pub_time < 0! node:{}, pub_topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
                 return
-            if call_pub_time > 1.5 * Constants.unit_stamp_sec:
-                log_print('warning: call_pub_time={}, topic={}, thread={} pub_uuid={}, sub_uuid={}'.format(
-                    call_pub_time, topic['topic'], topic['thread'], topic['uuid'], topic_entity['uuid']))
+            if call_pub_time > 1.0 * Constants.unit_stamp_sec:
+                log_print('warning: call_pub_time={}, pub_topic={}, pub_uuid={}, node={}, sub_topic={}, sub_uuid={}'.format(
+                    call_pub_time, topic['topic'], topic['uuid'], topic['send_node'].name, topic_entity['topic'], topic_entity['uuid']))
                 # import pdb; pdb.set_trace()
 
             u_spend = topic['info']['pub_utime'] - topic_entity['info']['sub_utime']
@@ -569,7 +574,8 @@ class Log_handler():
                 if beg_info:
                     beg_end_time = topic['info']['pub_stamp'] - beg_info["stamp"]
                     if beg_end_time > Constants.unit_stamp_sec * 1:  # if beg_end_time > 0.5s  log_print
-                        log_print("warning beg_end topic info: {}".format(topic))
+                        log_print("warning: beg_end time too large, node={}, thread={}, ident={}".format(
+                            beg_info.get('node','none'), beg_info.get('thread','none'), beg_info.get('ident','none')))
                     # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
                     data["path"].append({"type": "beg_end", "node": topic['send_node'].name, "use_time": beg_end_time})
                     if beg_info['thread'] == topic['info']['pub_thread']:
@@ -683,8 +689,8 @@ class Log_handler():
                     data['wrong'] = 'Error: The call_pub_time < 0!! node:{}, pub_topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
                     return
                 if call_pub_time > 1 * Constants.unit_stamp_sec:
-                    log_print('Warning, recently call_pub_time={}, topic={}, thread={} pub_uuid={}, sub_uuid={}'.format(
-                        call_pub_time, topic['topic'], topic['thread'], topic['uuid'], topic_entity['uuid']))
+                    log_print('Warning: recently call_pub_time={}, pub_topic={}, pub_uuid={}, node={}, sub_topic={}, sub_uuid={}'.format(
+                        call_pub_time, topic['topic'], topic['uuid'], topic['send_node'].name, topic_entity['topic'], topic_entity['uuid']))
                     # import pdb; pdb.set_trace()
                 data["path"].append({"type": "call_pub", "node": topic_entity['recv_node'].name, "use_time": call_pub_time})
 
@@ -888,7 +894,6 @@ class Log_handler():
 
     def run_once(self):
         try:
-            self.once_save_fd = open(Constants.bak_dir+"/all_log_bak_{}".format(int(time.time())),'w+')
             self.prepare_input_files()
             self.load_logs()
             ## add by liyl 20220909 for sensor -> can_adapter
@@ -897,7 +902,6 @@ class Log_handler():
             self.analyze_key_info()
             self.save_result()
             self.clear_input_files()
-            self.once_save_fd.close()
         except Exception as e:
             log_print("run once error, {}".format(e))
             log_print('traceback.format_exc():\n{}'.format(traceback.format_exc()))
