@@ -26,10 +26,9 @@ class CommonPara:
             dictCarInfo["car_plate"] = plate
             dictCarInfo["car_type"] = brand
         except Exception as e:
-            rospy.logwarn("read carInfo failed!")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
             return False
         return dictCarInfo
 

@@ -204,10 +204,9 @@ class CommonPara:
             dictCarInfo["car_plate"] = plate
             dictCarInfo["car_type"] = brand
         except Exception as e:
-            rospy.logdebug("read carInfo failed!")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
             return False
 
         return dictCarInfo
@@ -247,10 +246,9 @@ class CacheUtils:
 
 
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
     def CheckMapFileCacheExists(self, lMapId, timestamp, strMapMd5):
@@ -263,10 +261,9 @@ class CacheUtils:
                 bExists = False
             rospy.logdebug("CheckMapFileCacheExists check file:{0}, result:{1}".format(strMapName, bExists))
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         return bExists
 
     def restoreIndex(self):
@@ -282,10 +279,9 @@ class CacheUtils:
             else:
                 rospy.logwarn("break point not exists: {0}".format(strFileName))
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def debug(self):
         rospy.logdebug("debug info: dictMapAgentRecord:{0}".format(json.dumps(self.dictMapAgentRecord)))
@@ -303,11 +299,9 @@ def SaveEventToFile(msg='', code='', results=list(), actions=list(), level=''):
         try:
             json_msg = gen_report_msg("hd_map.pb", code, "/hd_map_agent")
         except Exception as e:
-            rospy.logwarn('Error: gen report msg failed!, {}'.format(e))
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     rospy.logdebug("event json_msg:{0}".format(json_msg))
     if json_msg == {}:  # if not used pb or call function error, used local config
         cur_time = int(time.time())
@@ -327,10 +321,9 @@ def SaveEventToFile(msg='', code='', results=list(), actions=list(), level=''):
         with open("/home/mogo/data/log/msg_log/system_master_report.json", 'a+') as fp:
             fp.write(json_msg + '\n')
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
 g_CacheUtil = CacheUtils()
@@ -346,10 +339,9 @@ def checkFileMd5(strFileName):
             f.close()
         rospy.logdebug("checkFileMd5: fileName:{0}, strFileMd5Value:{1}".format(strFileName, strFileMd5Value))
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return strFileMd5Value
 
 
@@ -365,10 +357,9 @@ def getFileCurStat(strFileName):
             rospy.logdebug("current_stat:{0}".format(cur_offset))
             fp.close()
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return ret, int(cur_offset)
 
 
@@ -413,10 +404,9 @@ def downFileFromUrlWget(strUrl, strTempFileName):
 
         ret = status
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         ret = -1
     return ret, strTempFileName
 
@@ -455,10 +445,9 @@ def syncFromCloud(strUrl, strMd5, strTempFileName):
                 #     os.remove(strTempFileName)
 
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return retNum
 
 
@@ -491,10 +480,9 @@ def link_file(strDownStageLocationFileMap, strStandardLocationFileMap):
             ret = -1
 
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return ret
 
 
@@ -698,10 +686,9 @@ def processFile(lMapId, strMapUrl, strMapMd5, timestamp, strStandardLocationFile
 
 
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return intProcessRet,intDownCompleteMapStatus
 
 
@@ -768,10 +755,9 @@ def call_process(strReponse):
                     break
                 break
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     finally:
         globalTaskManager.removeTask(strTaskId)
@@ -801,10 +787,9 @@ def kill_proc_tree(pid, sig=signal.SIGKILL, include_parent=True,
         gone, alive = psutil.wait_procs(children, timeout=timeout,
                                         callback=on_terminate)
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return (gone, alive)
 
 def kill_sub_process_wget():
@@ -818,10 +803,9 @@ def kill_sub_process_wget():
             times  = times + 1
         rospy.logdebug("=== after kill , dictRunningWgetPid:{0},times: {1}".format(dictRunningWgetPid,times))
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 def topicMsgCallback(msg):
     global globalPilotMode
@@ -840,10 +824,9 @@ def topicMsgCallback(msg):
                 ## clean all  task info
                 globalTaskManager.delAllTask()
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
 def localizationCallback(msg):
@@ -872,10 +855,9 @@ def simpleHttpQuery(strIp, strPort, strApiName, dictQueryCondition):
         j = json.loads(s)
         strJsonResult = json.dumps(j, sort_keys=True, indent=4)
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return strJsonResult
 
 
@@ -892,10 +874,9 @@ def simpleHttpsQuery(strIp, strPort, strApiName, dictQueryCondition):
         j = json.loads(s)
         strJsonResult = json.dumps(j, sort_keys=True, indent=4)
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return strJsonResult
 
 
@@ -934,10 +915,9 @@ def managerDownload(strReponse):
                 # download map
                 strTaskId = "{0}_{1}".format(intPid, intTranslateUpdateTime)
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
         if not globalTaskManager.checkTaskExists(strTaskId):
@@ -964,10 +944,9 @@ def doCheckMapInfo():
                 strReponse = simpleHttpsQuery(strIp, globalStrPort, strApiName, dictQueryCondition)
                 rospy.logdebug("========================== response map info:{0}".format(strReponse))
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
         if len(strReponse) > 0:
             globalManagerProcessRequestPool.submit(managerDownload, strReponse)
@@ -995,10 +974,9 @@ def main():
         ## wait msg
         rospy.spin()
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
 def readConfig():
@@ -1014,10 +992,9 @@ def readConfig():
                 if len(dictContent) > 0:
                     globalHdMapUrlName = dictContent['url']
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     rospy.logdebug("=========config url: {0}".format(globalHdMapUrlName))
 
 

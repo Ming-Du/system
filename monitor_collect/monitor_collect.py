@@ -160,16 +160,9 @@ def task_topic_hz(msg):
         ### message sum
         #global_hz_time_write_interval = global_hz_time_write_interval + 1
     except Exception as e:
-        rospy.logwarn_throttle(2, "exception happend")
-        rospy.logwarn_throttle(2, e.message)
-        rospy.logwarn_throttle(2, str(e))
-        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
-        rospy.logwarn_throttle(2, 'str(e):\t\t', str(e))
-        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
-        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
-        rospy.logwarn_throttle(2, 'traceback.print_exc():')
-        rospy.logwarn_throttle(2, traceback.print_exc())
-        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
 
@@ -237,16 +230,9 @@ def task_topic_msg(msg):
         rosMessage.data = strBuffer
         rosMessage.size = len(strBuffer)
     except Exception as e:
-        rospy.logwarn_throttle(2, "exception happend")
-        rospy.logwarn_throttle(2, e.message)
-        rospy.logwarn_throttle(2, str(e))
-        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
-        rospy.logwarn_throttle(2, 'str(e):\t\t', str(e))
-        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
-        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
-        rospy.logwarn_throttle(2, 'traceback.print_exc():')
-        rospy.logwarn_throttle(2, traceback.print_exc())
-        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     strJson = json.dumps(dictMsgInfoRecord)
     ## send telematics
@@ -270,16 +256,9 @@ def task_topic_msg(msg):
                 break
             break
     except Exception as e:
-        rospy.logwarn_throttle(2, "exception happend")
-        rospy.logwarn_throttle(2, e.message)
-        rospy.logwarn_throttle(2, str(e))
-        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
-        rospy.logwarn_throttle(2, 'str(e):\t\t', str(e))
-        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
-        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
-        rospy.logwarn_throttle(2, 'traceback.print_exc():')
-        rospy.logwarn_throttle(2, traceback.print_exc())
-        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
 
@@ -317,16 +296,9 @@ def task_cpu_info(msg):
             f.write(strJsonSaveToFile)
             f.write("\n")
     except Exception as e:
-        rospy.logwarn_throttle(2, "operate file  cpu_info.log failed")
-        rospy.logwarn_throttle(2, e.message)
-        rospy.logwarn_throttle(2, str(e))
-        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
-        rospy.logwarn_throttle(2, 'str(e):\t\t', str(e))
-        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
-        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
-        rospy.logwarn_throttle(2, 'traceback.print_exc():')
-        rospy.logwarn_throttle(2, traceback.print_exc())
-        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
 
@@ -380,16 +352,9 @@ def task_node_health(msg):
             f.write("\n")
             globalPubOperatorToolNodeHealth.publish(rosSendMsg)
     except Exception as e:
-        rospy.logwarn_throttle(2, "operate file node_health.log failed")
-        rospy.logwarn_throttle(2, e.message)
-        rospy.logwarn_throttle(2, str(e))
-        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
-        rospy.logwarn_throttle(2, 'str(e):\t\t', str(e))
-        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
-        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
-        rospy.logwarn_throttle(2, 'traceback.print_exc():')
-        rospy.logwarn_throttle(2, traceback.print_exc())
-        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         #exit(-1)
     pass
 
@@ -421,16 +386,9 @@ def task_memory_info(msg):
             f.write(strJsonSaveToFile)
             f.write("\n")
     except Exception as e:
-        rospy.logwarn_throttle(2, "operate file memory_info.log  failed")
-        rospy.logwarn_throttle(2, e.message)
-        rospy.logwarn_throttle(2, str(e))
-        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
-        rospy.logwarn_throttle(2, 'str(e):\t\t', str(e))
-        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
-        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
-        rospy.logwarn_throttle(2, 'traceback.print_exc():')
-        rospy.logwarn_throttle(2, traceback.print_exc())
-        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         #exit(-1)
     pass
 
@@ -551,11 +509,9 @@ def flushTopicHzWriterBuffer():
             globalListWaitWriteBuffer = []
             rospy.logdebug_throttle(2, "flushTopicHzWriterBuffer: after flush to  file , globalListWaitWriteBuffer :{0}".format(globalListWaitWriteBuffer))
     except Exception as e:
-        rospy.logwarn_throttle(2, "exception happend")
-        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
-        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
-        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
-        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 def threadFlushTopicHz(intTimeVal):
     while True:
@@ -568,11 +524,9 @@ def startThreadFlushWaitWriteBufferCmd(intTimeVal):
     try:
         thread.start_new_thread(threadFlushTopicHz, (int(intTimeVal),))
     except Exception as e:
-        rospy.logwarn_throttle(2, "exception happend")
-        rospy.logwarn_throttle(2, 'str(Exception):\t', str(Exception))
-        rospy.logwarn_throttle(2, 'repr(e):\t', repr(e))
-        rospy.logwarn_throttle(2, 'e.message:\t', e.message)
-        rospy.logwarn_throttle(2, 'traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 def main():
     global listSubScriptHzItem

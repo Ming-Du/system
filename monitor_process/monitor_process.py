@@ -84,10 +84,9 @@ def getHostName():
             strHostName = output
         rospy.logdebug("status:%d,output:%s" % (status, strHostName))
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return strHostName
 
 
@@ -107,7 +106,7 @@ def readNodeList():
                 break
             break
 
-        rospy.loginfo("=========== strFileName:{0}, ret:{1},strErrorMsg:{2}".format(strFileListName, ret, strErrorMsg))
+        #rospy.loginfo("=========== strFileName:{0}, ret:{1},strErrorMsg:{2}".format(strFileListName, ret, strErrorMsg))
 
         if not os.path.exists(strFileListName):
             rospy.logerr("file :%s not exists ,checkt host name and net_card_name" % (strFileListName))
@@ -132,10 +131,9 @@ def readNodeList():
                     if len(multy_list[input_idx]) > 0:
                         listAllNode.append(multy_list[input_idx])
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' %(traceback.format_exc()))
 
 
 
@@ -181,10 +179,9 @@ def node_status_check(listNodeList, strUuid):
         node_state_dict['header']['mac'] = globalDictIpInfo['mac']
         nodemsg = json.dumps(node_state_dict)
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     if len(nodemsg) > 0:
         rosSendMsg = BinaryData()

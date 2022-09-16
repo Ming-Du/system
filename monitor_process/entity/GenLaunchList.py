@@ -38,10 +38,9 @@ class GenLaunchList:
                             break
                         break
             except Exception as e:
-                rospy.logwarn("exception happend")
-                rospy.logwarn('repr(e):\t', repr(e))
-                rospy.logwarn('e.message:\t', e.message)
-                rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+                rospy.logwarn('repr(e):{0}'.format(repr(e)))
+                rospy.logwarn('e.message:{0}'.format(e.message))
+                rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         rospy.logdebug("XiverType:{0}".format(XiverType))
         return XiverType
 
@@ -62,10 +61,9 @@ class GenLaunchList:
                     break
                 break
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         rospy.logdebug("strCarType:{0}".format(strCarType))
         return strCarType
 
@@ -81,10 +79,9 @@ class GenLaunchList:
             with open(strFileName, "r") as f:
                 strContent = f.read()
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
         try:
             dictContent = json.loads(strContent)
@@ -115,10 +112,9 @@ class GenLaunchList:
 
 
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
         for elem_node in dictNodeList:
             try:
@@ -134,10 +130,9 @@ class GenLaunchList:
                         f_list.write(lineContent)
                         f_list.write('\n')
             except Exception as e:
-                rospy.logwarn("exception happend")
-                rospy.logwarn('repr(e):\t', repr(e))
-                rospy.logwarn('e.message:\t', e.message)
-                rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+                rospy.logwarn('repr(e):{0}'.format(repr(e)))
+                rospy.logwarn('e.message:{0}'.format(e.message))
+                rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         if len(self.dictHostNameMapList) > 0:
             rospy.logdebug(json.dumps(self.dictHostNameMapList))
 
@@ -164,9 +159,8 @@ class GenLaunchList:
                 ret = 0
                 break
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         strErrorMsg = dictErrorCode[ret]
         return strFilePath, ret, strErrorMsg
