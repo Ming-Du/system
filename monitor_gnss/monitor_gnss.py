@@ -186,10 +186,9 @@ def task_localization(pb_msg):
                 f.write("\n")
             globalListPostion = []
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
 
@@ -294,9 +293,9 @@ def task_vehicle(pb_msg):
         dictVehicleLog['eps_steering_mode'] = pbStatus.eps_steering_mode
         dictVehicleLog['steering_sign'] = pbStatus.steering_sign
     except Exception as e:
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     
     sec = 0
     nsec = 0
@@ -348,9 +347,9 @@ def task_vehicle(pb_msg):
             globalListPostion_vehicle_status = []
 
         except Exception as e:
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
 def autopilotModeCallback(msg):
@@ -481,9 +480,9 @@ def task_decisionState(pb_msg):
                 f.write("\n")
             globalListPostion_decision_status = []
         except Exception as e:
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 pass
 
 def decisionStateCallback(msg):
