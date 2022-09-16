@@ -780,4 +780,6 @@ if [ -f "/home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.bac
 fi
 start_sys
 start_map
-set_pr 
+set_pr
+
+python3 /home/mogo/autopilot/share/launch/disk_manage.py >> /home/mogo/data/log/disk_manage.log 2>&1 &
