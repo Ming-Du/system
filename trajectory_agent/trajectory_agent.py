@@ -119,10 +119,9 @@ class CacheUtils:
 
 
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
     def CheckStopFileCacheExists(self, lLineId, timestamp, strStopMd5):
@@ -135,10 +134,9 @@ class CacheUtils:
                 bExists = False
             rospy.logdebug("CheckStopFileCacheExists check file:{0}, result:{1}".format(strStopName, bExists))
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
         return bExists
 
@@ -152,10 +150,9 @@ class CacheUtils:
                 bExists = False
             rospy.logdebug("CheckTrajFileCacheExists check file:{0}, result:{1}".format(strTrajName, bExists))
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
         return bExists
 
@@ -180,10 +177,9 @@ class CacheUtils:
                 rospy.logwarn("break point not exists: {0}".format(strFileName))
 
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     # def checkFileCacheChangeStatus(self, strLocationFile, lLineId, timestamp, strStopMd5):
     #     intFlag = 0
@@ -260,10 +256,9 @@ def checkFileMd5(strFileName):
             #f.close()
         rospy.logdebug("checkFileMd5: fileName:{0}, strFileMd5Value:{1}".format(strFileName, strFileMd5Value))
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     return strFileMd5Value
 
@@ -282,10 +277,10 @@ def downFileFromUrlWget(strUrl, strTempFileName):
         rospy.logdebug("status:{0}".format(status))
         ret = status
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+
         ret = -1
     return ret, strTempFileName
 
@@ -335,10 +330,9 @@ def downFileFromUrl(strUrl, strTempFileName, lLineId):
                 f.write(strOriginContent)
                 #f.close()
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         ret = -1
     if os.path.exists(strTempFileName):
         ret = 0
@@ -381,10 +375,9 @@ def syncFromCloud(strUrl, strMd5, strTempFileName, lineId):
                     rospy.logdebug("Download file failed,try times:{0}".format(try_times))
 
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return retNum
 
 
@@ -662,10 +655,9 @@ def processFile(lLineId, strTrajUrl, strTrajMd5, strStopUrl, strStopMd5, timesta
 
 
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     return intProcessRet
 
@@ -721,10 +713,9 @@ def call_process(msg):
 
 
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
 
@@ -754,10 +745,9 @@ def kill_proc_tree(pid, sig=signal.SIGKILL, include_parent=True,
         gone, alive = psutil.wait_procs(children, timeout=timeout,
                                         callback=on_terminate)
     except Exception as e:
-        rospy.logwarn("exception happend")
-        rospy.logwarn('repr(e):\t', repr(e))
-        rospy.logwarn('e.message:\t', e.message)
-        rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     return (gone, alive)
 
@@ -776,10 +766,9 @@ def stopTask():
                 rospy.logdebug("============found sub process,now kill, process  name{0}, pid: {1}".format(p.name(), p.pid))
                 kill_proc_tree(p.pid)
         except Exception as e:
-            rospy.logwarn("exception happend")
-            rospy.logwarn('repr(e):\t', repr(e))
-            rospy.logwarn('e.message:\t', e.message)
-            rospy.logwarn('traceback.format_exc():\n%s' % (traceback.format_exc()))
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     # globalStopFlag = 0
 
