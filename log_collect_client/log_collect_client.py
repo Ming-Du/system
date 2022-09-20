@@ -9,7 +9,7 @@ work_dir = "/home/mogo/data/log"
 src_dir = os.path.join(work_dir, "ROS_STAT", "EXPORT")
 tmp_dir = os.path.join(work_dir, "ROS_STAT_TMP")
 bak_dir = os.path.join(work_dir, "ROS_STAT", '{}'.format(datetime.date.today()))
-once_save_fd = open(bak_dir+"/local_bak_{}".format(int(time.time())), 'ab+')
+once_save_fd = None
 
 # scp -l Kb/s
 def run_once():
