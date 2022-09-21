@@ -126,10 +126,14 @@ def readNodeList():
             (status, output) = commands.getstatusoutput(strCmd)
             if status == 0:
                 multy_list = output.split('\n')
-                rospy.logdebug("multy_list: {0}".format(multy_list))
+                rospy.loginfo("multy_list: {0}".format(multy_list))
                 for input_idx in range(len(multy_list)):
                     if len(multy_list[input_idx]) > 0:
-                        listAllNode.append(multy_list[input_idx])
+                        if str(multy_list[input_idx]).__contains__("No handlers could") or str(multy_list[input_idx]).__contains__("redis as param server"):
+                            rospy.loginfo("ignore name:{0}".format(multy_list[input_idx]))
+                        else:
+                            rospy.loginfo("---------------------add node name:{0}".format(multy_list[input_idx]))
+                            listAllNode.append(multy_list[input_idx])
     except Exception as e:
         rospy.logwarn('repr(e):{0}'.format(repr(e)))
         rospy.logwarn('e.message:{0}'.format(e.message))
