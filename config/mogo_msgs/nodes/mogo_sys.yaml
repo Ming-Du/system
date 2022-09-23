@@ -1,3 +1,7 @@
+info:
+  - code: IMAP_PARAM_SERVER
+    msg: param版本
+    
 error:
   - code: EHW_LIDAR
     msg: 未检测到雷达
