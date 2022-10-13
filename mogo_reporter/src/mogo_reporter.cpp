@@ -12,6 +12,9 @@
 
 #include <ros/node_handle.h>
 #include <ros/package.h>
+#include <ros/time.h>
+
+#include <yaml-cpp/yaml.h>
 
 #include "common/include/pb_utils.h"
 #include "common/proto/mogo_report_msg.pb.h"
@@ -22,27 +25,29 @@
 #define MOGO_RPT_INFO_TOPIC "/autopilot_info/report_msg_info"
 #define MOGO_RPT_ERROR_TOPIC "/autopilot_info/report_msg_error"
 
+#define MOGO_MSG_CONFIG_DIR "/mogo_msgs/nodes/"
+
 namespace mogo
 {
-  struct ReportMsgInternal
+  struct ReportMsgEntity
   {
     std::string level;
     std::string code;
     std::string msg;
-    ::google::protobuf::RepeatedPtrField<::std::string> results;
-    ::google::protobuf::RepeatedPtrField<::std::string> actions;
+    std::vector<std::string> results;
+    std::vector<std::string> actions;
     double last_timestamp;
   };
 
   static std::mutex s_init_locker = {};
   static bool s_is_init = false;
-  static std::map<mogo_msg::ReportMsgCode, ReportMsgInternal> s_msg_map = {};
+  static std::map<std::string, ReportMsgEntity> s_msg_map = {};
 
   static ros::NodeHandle *s_nh;
   static ros::Publisher s_pub_info;
   static ros::Publisher s_pub_error;
 
-  static bool getFiles(const std::string &path, std::vector<std::string> &files)
+  static bool getYamlFiles(const std::string &path, std::vector<std::string> &files)
   {
     DIR *dir;
     struct dirent *ptr;
@@ -57,7 +62,7 @@ namespace mogo
       if (ptr->d_type == DT_REG)
       {
         std::string filename(ptr->d_name);
-        std::string::size_type pos_end = filename.find(".pb");
+        std::string::size_type pos_end = filename.find(".yaml");
         {
           if (pos_end == filename.npos)
           {
@@ -68,6 +73,48 @@ namespace mogo
       }
     }
     closedir(dir);
+    return true;
+  }
+
+  static bool addMessageCode(const YAML::Node &node, const std::string &level)
+  {
+    if (!node["code"].IsDefined() || node["code"].IsNull() ||
+        !node["msg"].IsDefined() || node["msg"].IsNull())
+    {
+      return false;
+    }
+
+    ReportMsgEntity report_msg;
+    report_msg.last_timestamp = 0.0;
+    report_msg.level = level;
+    report_msg.code = node["code"].as<std::string>();
+    report_msg.msg = node["msg"].as<std::string>();
+
+    const YAML::Node &result_node = node["result"];
+    if (result_node.IsDefined() && result_node.IsSequence())
+    {
+      for (std::size_t i = 0; i < result_node.size(); i++)
+      {
+        if (!result_node[i].IsNull())
+        {
+          report_msg.results.push_back(result_node[i].as<std::string>());
+        }
+      }
+    }
+
+    const YAML::Node &action_node = node["action"];
+    if (action_node.IsDefined() && action_node.IsSequence())
+    {
+      for (std::size_t i = 0; i < action_node.size(); i++)
+      {
+        if (!action_node[i].IsNull())
+        {
+          report_msg.actions.push_back(action_node[i].as<std::string>());
+        }
+      }
+    }
+
+    s_msg_map.insert(std::make_pair(report_msg.code, report_msg));
     return true;
   }
 
@@ -107,11 +154,11 @@ namespace mogo
       node_name = cfg_name;
     }
 
-    std::string config_dir = ros::package::getPath("mogo_reporter") + "/config/";
+    std::string config_dir = ros::package::getPath("config") + MOGO_MSG_CONFIG_DIR;
     std::vector<std::string> files;
     std::string config_path;
 
-    if (!getFiles(config_dir, files))
+    if (!getYamlFiles(config_dir, files))
     {
       ROS_ERROR("MessageReporter_init: fail to open config dir %s", config_dir.c_str());
       return false;
@@ -121,57 +168,76 @@ namespace mogo
     {
       if (node_name.find(it) != std::string::npos)
       {
-        config_path = config_dir + it + ".pb";
+        config_path = config_dir + it + ".yaml";
         break;
       }
     }
 
     if (config_path.empty())
     {
-      ROS_ERROR("MessageReporter_init: fail to find proto config %s from %s", node_name.c_str(), config_dir.c_str());
+      ROS_ERROR("MessageReporter_init: fail to open config dir %s", config_dir.c_str());
       return false;
     }
-    ROS_INFO("MessageReporter_init: find proto config file: %s", config_path.c_str());
 
-    mogo_msg::ReportMsgList report_msg_list;
-    if (!common::GetProtoFromFile(config_path, report_msg_list))
+    YAML::Node config;
+    try
     {
-      ROS_ERROR("MessageReporter_init: fail to get proto from %s", config_path.c_str());
+      config = YAML::LoadFile(config_path);
+    }
+    catch (std::exception &e)
+    {
+      ROS_ERROR("MessageReporter_init: fail to load config file [%s], msg: [%s]", config_path.c_str(), e.what());
       return false;
     }
-    ROS_INFO("MessageReporter_init: success to get config. infos: %d, errors: %d", report_msg_list.info_size(), report_msg_list.error_size());
 
-    auto infos = report_msg_list.mutable_info();
-    for (auto it = infos->begin(); it != infos->end(); ++it)
+    int info_num = 0;
+    int err_num = 0;
+    try
     {
-      ReportMsgInternal report_msg;
-      report_msg.level = MOGO_RPT_MSG_INFO;
-      report_msg.code = mogo_msg::ReportMsgCode_Name(it->code());
-      report_msg.msg = it->msg();
-      report_msg.results.CopyFrom(it->result());
-      report_msg.actions.CopyFrom(it->action());
-      report_msg.last_timestamp = 0.0;
-      s_msg_map.insert(std::make_pair(it->code(), report_msg));
+      const YAML::Node &info_node = config["info"];
+      if (info_node.IsDefined() && info_node.IsSequence())
+      {
+        for (std::size_t i = 0; i < info_node.size(); i++)
+        {
+          if (addMessageCode(info_node[i], MOGO_RPT_MSG_INFO))
+          {
+            info_num++;
+          }
+        }
+      }
+    }
+    catch (const std::exception &e)
+    {
+      ROS_ERROR("MessageReporter_init: fail to read info messages [%s], msg: [%s]", config_path.c_str(), e.what());
+      return false;
     }
 
-    auto errors = report_msg_list.mutable_error();
-    for (auto it = errors->begin(); it != errors->end(); ++it)
+    try
     {
-      ReportMsgInternal report_msg;
-      report_msg.level = MOGO_RPT_MSG_ERROR;
-      report_msg.code = mogo_msg::ReportMsgCode_Name(it->code());
-      report_msg.msg = it->msg();
-      report_msg.results.CopyFrom(it->result());
-      report_msg.actions.CopyFrom(it->action());
-      report_msg.last_timestamp = 0.0;
-      s_msg_map.insert(std::make_pair(it->code(), report_msg));
+      const YAML::Node &error_node = config["error"];
+      if (error_node.IsDefined() && error_node.IsSequence())
+      {
+        for (std::size_t i = 0; i < error_node.size(); i++)
+        {
+          if (addMessageCode(error_node[i], MOGO_RPT_MSG_ERROR))
+          {
+            err_num++;
+          }
+        }
+      }
+    }
+    catch (std::exception &e)
+    {
+      ROS_ERROR("MessageReporter_init: fail to load error messages [%s], msg: [%s]", config_path.c_str(), e.what());
+      return false;
     }
 
+    ROS_INFO("MessageReporter_init: success to load config from [%s]. infos: %d, errors: %d", config_path.c_str(), info_num, err_num);
     s_is_init = true;
     return true;
   }
 
-  bool MessageReporter::publish(std::string src, mogo_msg::ReportMsgCode code, const std::string &msg, double span_sec)
+  bool MessageReporter::publish_src(const std::string &src, const std::string &code, const std::string &msg, double span_sec)
   {
     if (!s_is_init)
     {
@@ -181,14 +247,14 @@ namespace mogo
     auto iter = s_msg_map.find(code);
     if (iter == s_msg_map.end())
     {
-      ROS_WARN("MessageReporter_publish: unknow code[%s], ignore", mogo_msg::ReportMsgCode_Name(code).c_str());
+      ROS_WARN("MessageReporter_publish: unknow code[%s], ignore", code.c_str());
       return false;
     }
 
     ros::Time now = ros::Time::now();
     if (span_sec > 0.0 && now.toSec() - iter->second.last_timestamp < span_sec)
     {
-      ROS_WARN("MessageReporter_publish: code[%s] is published in %0.1f sec, ignore", mogo_msg::ReportMsgCode_Name(code).c_str(), span_sec);
+      ROS_WARN("MessageReporter_publish: code[%s] is published in %0.1f sec, ignore", code.c_str(), span_sec);
       return false;
     }
 
@@ -221,8 +287,14 @@ namespace mogo
       }
     }
 
-    report_msg.mutable_actions()->CopyFrom(iter->second.actions);
-    report_msg.mutable_result()->CopyFrom(iter->second.results);
+    for (const auto &it : iter->second.results)
+    {
+      report_msg.add_result(it);
+    }
+    for (const auto &it : iter->second.actions)
+    {
+      report_msg.add_actions(it);
+    }
 
     autopilot_msgs::BinaryData ros_msg;
     ros_msg.header.stamp = now;
@@ -249,6 +321,7 @@ namespace mogo
   {
     for (auto &it : s_msg_map)
     {
+      ros::Duration(0.1).sleep();
       publish(it.first);
     }
   }

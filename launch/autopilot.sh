@@ -99,7 +99,8 @@ set_bashrc() {
 add_config() {
     [[ -z "$1" ]] && return
     local level=${2:-ERROR}
-    ROSCONSOLE_CONFIG_FILE="$ABS_PATH/config/$(echo ${1##*/} | cut -d. -f1)_${level}_console.config"
+    local launch_name=$(echo ${1##*/} | cut -d. -f1)
+    ROSCONSOLE_CONFIG_FILE="$ABS_PATH/config/${launch_name}_${level}_console.config"
     echo >$ROSCONSOLE_CONFIG_FILE
     pkg_str=$(xmllint --xpath "//@pkg" $1 2>/dev/null | sed 's/\"//g')
     for value in $pkg_str; do
@@ -109,9 +110,9 @@ add_config() {
         Aconsole=C${pkg_name}
         InfoAppender=I_${pkg_name}
         ErrorAppender=E_${pkg_name}
-        ErrorFile=${pkg_name}_ERROR.log
-        INFOFile=${pkg_name}_INFO.log
-        echo "log4j.logger.ros.${pkg_name}=${level},${InfoAppender},${ErrorAppender}
+        ErrorFile=${launch_name}_ERROR.log
+        INFOFile=${launch_name}_INFO.log
+        echo "log4j.logger.ros=${level},${InfoAppender},${ErrorAppender}
 log4j.appender.${InfoAppender}=org.apache.log4j.DailyRollingFileAppender
 log4j.appender.${InfoAppender}.Threshold=INFO
 log4j.appender.${InfoAppender}.ImmediateFlush=true
@@ -223,8 +224,9 @@ set_pr() {
             "hadmap_server" | "hadmap_engine_node") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 30 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             "perception_fusion2" | "perception_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 30 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             "rs_perception_node") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 20 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "drivers_camera_sensing60" | "drivers_camera_sensing30" | "drivers_camera_sensing120" | "drivers_robosense_node")
-                (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 10 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "xiaoba_lidars_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 15 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "c32_rear_decoder" | "c32_left_decoder" | "c32_right_decoder") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 11 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "drivers_robosense_node" | "c32_rear_driver" | "c32_left_driver" | "c32_right_driver") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 10 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             *) ;;
             esac
         done
@@ -340,6 +342,10 @@ start_core() {
         LoggingINFO "starting roscore finished,rosmaster pid:$rosmaster_pid"
         taskset -a -cp 1-7 $rosmaster_pid && chrt -a -p -r 20 $rosmaster_pid 2>/dev/null
         core_stat=1 && write_action
+        rosparam set /sensor/camera/sensing120/drivers_camera_sensing120/undist 1
+        rosparam set /sensor/camera/sensing120_back/drivers_camera_sensing120_back/undist 1
+        rosparam set /sensor/camera/sensing120_left/drivers_camera_sensing120_left/undist 1
+        rosparam set /sensor/camera/sensing120_right/drivers_camera_sensing120_right/undist 1
     else
         LoggingERR "starting roscore failed:\n$(cat $ROS_LOG_DIR/roscore.log)" "EMAP_NODE"
         return 1
@@ -600,7 +606,8 @@ done
 [[ -z "$opt_launch_file" && ! -z "$opt_pkg" ]] && LoggingERR "'--pkg' must be used with '--launch-file' together" && exit 1
 [[ ! -z "$opt_launch_file" && ! -z "$opt_onenode" ]] && LoggingERR "'--launch-file' cannot use with '--start-node'" && exit 1
 [[ ! -d $LOG_DIR ]] && mkdir -p $LOG_DIR
-[[ ! -d $BAG_DIR ]] && mkdir -p $BAG_DIR && chown -R mogo:mogo $BAG_DIR
+[[ ! -d $BAG_DIR ]] && mkdir -p $BAG_DIR
+chown -R mogo:mogo $BAG_DIR
 [[ ! -d $MOGO_LOG_DIR ]] && mkdir -p $MOGO_LOG_DIR
 [[ ! -d ${ABS_PATH/}config ]] && mkdir -p ${ABS_PATH}/config
 
@@ -774,4 +781,6 @@ if [ -f "/home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.bac
 fi
 start_sys
 start_map
-set_pr 
+set_pr
+
+python3 /home/mogo/autopilot/share/launch/disk_manage.py >> /home/mogo/data/log/disk_manage.log 2>&1 &

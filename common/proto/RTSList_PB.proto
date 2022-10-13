@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+package common;
+
+import "RTSData_PB.proto";
+message RTSList_PB {
+  //定义道路交通标志集合。
+  //至少包含1个道路交通标志信息，最多包含16个
+  repeated RTSData_PB rtsData=1;
+}

@@ -10,6 +10,29 @@ class CollectVehicleInfo:
     int_error_code = None
     str_err_msg = None
 
+    brake_light_status = None
+    pilot_mode_condition_met = None
+    steeringSpd = None
+    leftFrontWheelAngle = None
+    rightFrontWheelAngle = None
+    steering = None
+    speed = None
+    accel = None
+    throttle = None
+    brake = None
+    gear = None
+    light = None
+    horn = None
+    highbeam = None
+    lowbeam = None
+    foglight = None
+    clearance_lamps = None
+    warn_light = None
+    parking_brake = None
+    longitude_driving_mode = None
+    eps_steering_mode = None
+    steering_sign = None
+
     def __init__(self):
         self.int_pilot_mode = 0
         self.b_steer_inference = False
@@ -21,3 +44,26 @@ class CollectVehicleInfo:
         self.b_chassis_status_missing = False
         self.int_error_code = 0
         self.str_err_msg = "normal"
+
+        self.brake_light_status = 0
+        self.pilot_mode_condition_met = 0
+        self.steeringSpd = 0
+        self.leftFrontWheelAngle = 0
+        self.rightFrontWheelAngle = 0
+        self.steering = 0
+        self.speed = 0
+        self.accel = 0
+        self.throttle = 0
+        self.brake = 0
+        self.gear = 0
+        self.light = 0
+        self.horn = 0
+        self.highbeam = 0
+        self.lowbeam = 0
+        self.foglight = 0
+        self.clearance_lamps = 0
+        self.warn_light = 0
+        self.parking_brake = 0
+        self.longitude_driving_mode = 0
+        self.eps_steering_mode = 0
+        self.steering_sign = 0

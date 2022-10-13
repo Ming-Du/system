@@ -308,21 +308,9 @@
             "type": "MAP"
         },
         {
-            "name": "vidar_2camera.launch",
+            "name": "perception_3D_node_6x_bus.launch",
             "package": "perception_camera_3D",
             "machine": {
-                "df": {
-                    "2x": [],
-                    "6x": [
-                        "rosslave-105"
-                    ]
-                },
-                "hq": {
-                    "2x": [],
-                    "6x": [
-                        "rosslave-105"
-                    ]
-                },
                 "jinlv": {
                     "2x": [],
                     "6x": [
@@ -451,7 +439,9 @@
                     ]
                 },
                 "jinlv": {
-                    "2x": [],
+                    "2x": [
+                        "rosslave"    
+                    ],
                     "6x": [
                         "rosslave-106"
                     ]
@@ -677,25 +667,6 @@
             "type": "MAP"
         },
         {
-            "name": "perception_radar.launch",
-            "package": "perception_radar",
-            "machine": {
-                "df": {
-                    "2x": [],
-                    "6x": [
-                        "rosslave-105"
-                    ]
-                },
-                "hq": {
-                    "2x": [],
-                    "6x": [
-                        "rosslave-105"
-                    ]
-                }
-            },
-            "type": "MAP"
-        },
-        {
             "name": "perception_fusion.launch",
             "package": "launch",
             "machine": {
@@ -913,7 +884,7 @@
         {
             "name": "radar_308_front.launch",
             "package": "config",
-            "path": "vehicle/perception/radar",
+            "path": "vehicle/drivers/radar",
             "machine": {
                 "jinlv": {
                     "2x": [],
@@ -927,6 +898,20 @@
         {
             "name": "radar_408_front_308_rear.launch",
             "package": "config",
+            "path": "vehicle/drivers/radar",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-105"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "radar_fusion.launch",
+            "package":"config",
             "path": "vehicle/perception/radar",
             "machine": {
                 "jinlv": {

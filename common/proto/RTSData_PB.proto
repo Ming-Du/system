@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+package common;
+
+import "PositionOffsetLLV_PB.proto";
+import "RSITimeDetails_PB.proto";
+// import "SignType_PB.proto";
+import "ReferencePathList_PB.proto";
+import "ReferenceLinkList_PB.proto";
+import "String_PB.proto";
+
+message RTSData_PB {
+  //(0..255)
+  required int64 rtsId=1;
+
+  // required SignType_PB signType=2;
+  required int32  signType=2;
+
+  optional PositionOffsetLLV_PB signPos=3;
+
+  optional String_PB description=4;
+
+  optional RSITimeDetails_PB timeDetails=5;
+
+  optional String_PB priority=6;
+
+  optional ReferencePathList_PB referencePaths=7;
+
+  optional ReferenceLinkList_PB referenceLinks=8;
+
+}

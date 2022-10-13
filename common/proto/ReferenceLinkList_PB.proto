@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package common;
+
+import "ReferenceLink_PB.proto";
+message ReferenceLinkList_PB {
+  //(1-16)
+  repeated ReferenceLink_PB ReferenceLink=1;
+}

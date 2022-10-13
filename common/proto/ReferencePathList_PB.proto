@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package common;
+
+import "ReferencePath_PB.proto";
+message ReferencePathList_PB {
+  //SIZE(1..8)
+  repeated ReferencePath_PB referencePath=1;
+}

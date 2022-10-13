@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package common;
+
+import "header.proto";
+import "RTEData_PB.proto";
+
+message RSI_RTE_PB {
+	//交通事件内容
+    optional RTEData_PB rteData=1;
+	optional Header header = 2;
+}

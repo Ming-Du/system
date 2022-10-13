@@ -1,5 +1,7 @@
 <launch>
     <node name="monitor_gnss" pkg="monitor_gnss" type="monitor_gnss.py" output="screen">
     <param name="monitor_gnss_interval" type="int" value="50" />
+    <param name="monitor_gnss_interval_vehicle" type="int" value="50" />
+    <param name="monitor_gnss_interval_decision_status" type="int" value="50" />
     </node>
 </launch>

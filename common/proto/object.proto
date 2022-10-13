@@ -26,19 +26,25 @@ enum ObjectType {
   TYPE_UNKNOWN_BIG = 92;
   TYPE_UNKNOWN_STATIC = 93;
   TYPE_UNKNOWN_DYNAMIC = 94;
+  TYPE_ROADWORK_OCCUPY_0501 = 501;
+  TYPE_ROADWORK_BREAK_0502 = 502;
 }
 
-enum ObjectState {
+enum DetectState {
   STATE_DETECT = 0;
   STATE_PREDICT = 1;
 };
+  
+enum MotionState {
+  MOTION_STATIC = 0;
+  MOTION_SUSPECTED_STATIC = 1;
+  MOTION_WORM = 2;
+  MOTION_NORMAL = 3;
+};
 
-enum ObjectSource {
-  UNKNOWN = 0;
-  V2V_BSM = 1;
-  V2I_RSM = 2;
-  V2V_SSM = 3;
-  V2N_RSM = 4;
+enum NoiseState {
+  NOISE_CONFIRM = 0;
+  NOISE_SUSPECTED = 1;
 };
 
 message BBox2D {
@@ -83,6 +89,17 @@ message ObuObjectsSupplement {
   optional uint32 measurement_id = 8;
 }
 
+// Modify-baihaijiang
+enum ObjectSource {
+  UNKNOWN = 0;
+  V2V_BSM = 1;
+  V2I_RSM = 2;
+  V2V_SSM = 3;
+  V2N_RSM = 4;
+  V2N_RSI = 5;
+  V2I_SSM = 6;
+};
+
 message Object {
   optional uint32 id = 1;                // obj id, after tracked
   optional string sensor_name = 2;
@@ -118,12 +135,18 @@ message Object {
   // Modify(@liuxinyu): obu_test
   // obu supplement
   optional ObuObjectsSupplement obu_supplement = 21;
-  optional ObjectState state = 22;         // PRE, DET
+  optional DetectState detect_state = 22;         // PRE, DET
+  optional MotionState motion_state = 23;
+  optional NoiseState noise_state = 24;
  //falcon lidar supplement
-  optional LidarObjectSupplement falcon_lidar_supplement = 23;
+  optional LidarObjectSupplement falcon_lidar_supplement = 25;
   //ming.du
-  optional CameraObjectSupplement vidar_supplement = 24;
-  repeated int32 match_ids=25;
+  optional CameraObjectSupplement vidar_supplement = 26;
+  repeated int32 match_ids=27;
+  optional float type_confidence = 28;
+  optional float exist_confidence = 29;
+  optional float orientation = 30;
+
 }
 
 message VisualObject {
@@ -170,7 +193,7 @@ message TrackedObject {
   optional int32  object_category = 17 [default = 1];
   optional int32  obu_participant_type = 18 [default = 0];
   optional int32  obu_obstacle_type = 19 [default = 0];
-    // v2v_bsm = 1  v2i_rsm = 2 v2v_ssm = 3 v2n_rsm = 4
+  // v2v_bsm = 1, v2i_rsm = 2, v2v_ssm = 3, v2n_rsm = 4, v2n_rsi = 5, v2i_ssm = 6
   optional ObjectSource source = 20;
 }
 
@@ -239,7 +262,7 @@ message ObuObject {
   optional float heading = 8;             // gps head 
   optional float speed = 9;               // gps speed
   repeated geometry.Trace trace = 10;      // historical positions
-  // v2v_bsm = 1  v2i_rsm = 2 v2v_ssm = 3 v2n_rsm = 4
+  // v2v_bsm = 1, v2i_rsm = 2, v2v_ssm = 3, v2n_rsm = 4, v2n_rsi = 5, v2i_ssm = 6
   optional ObjectSource source = 11;
 }
 

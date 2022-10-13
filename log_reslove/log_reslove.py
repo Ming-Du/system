@@ -30,6 +30,7 @@ class Constants():
     tmp_dir = os.path.join(work_dir, "ROS_STAT_TMP")
     bak_dir = os.path.join(work_dir, "ROS_STAT", '{}'.format(datetime.date.today()))
     output_file = os.path.join(output_dir, "topic_stat")
+    output_file_from_sensor = os.path.join(output_dir, "link_stat_start_sensor")
     g_time_split_threshold = 30   # second
     g_type_of_pub = 0
     g_type_of_sub = 1
@@ -39,13 +40,15 @@ class Constants():
     
 
 #utils
+log_print = print if g_test_mode else rospy.loginfo
+
 def get_time_used(func):
     def wrapper(*args,**kwargs):
         start_time=time.time()
         ret = func(*args,**kwargs)
         end_time=time.time()
         if g_test_mode or 1 < end_time - start_time:
-            print('{} used time is {}'.format(func.__name__, end_time-start_time))
+            log_print('{} used time is {}'.format(func.__name__, end_time-start_time))
         return ret
     return wrapper
 
@@ -80,12 +83,17 @@ class Node_base(object):
         self.pub_topic = node_config[name].get('pub', '')
         self.beg_tag = node_config[name].get('man_beg', '')
         self.end_tag = node_config[name].get('man_end', '')
-        self.is_start_node = False if self.sub_topic_list else True  
-        self.sub_msg_dict = dict()  # { 'thread_id': { k=topic_name: v=sub_topic}}
+        self.is_start_node = False if self.sub_topic_list else True 
+        self.is_end_node = False if self.pub_topic else True 
+        self.sub_msg_dict = dict()  # { 'thread_id': { k=topic_name: v=sub_topic_uuid}}
         self.finish_dict = dict()   # { k=pub_uuid: V=sub_uuid_dict}
         self.beg_msg_dict = dict()  # { k=beg_ident: v=beg_info}
         self.end_msg_dict = dict()  # { k=end_ident: v=end_info}
-        self.beg_end_info = dict()  # { k=end_dict: v=beg_ident}
+        self.beg_end_info = dict()  # { k=ident: v=(beg_info, end_info)}
+        ## add by liyl for sensor --> chassis match
+        self.sub_pub_recent_match_dict=dict()  # {sub_topic_name: {k=sub_ident:v=pub_ident}}   need 'thread_id' match
+        self.start_pub_msg_list = dict()    # {k=pub_uuid, v=pub_info}
+        self.last_log_stamp = 0
     
     def update_node_info(self, one):
         """
@@ -108,13 +116,32 @@ class Node_base(object):
                         self.update_topic_info( topic_uuid, one)
                 else:
                     return
+
+                if self.last_log_stamp > one['stamp'] or self.last_log_stamp + 1.5 *Constants.unit_stamp_sec < one['stamp']:
+                    # 日志事件不是按序到达，可能存在顺序问题，清除掉之前的sub（丢弃文件尾），重新进行记录
+                    if not self.last_log_stamp:
+                        log_print("first time receive log msg of node:{}".format(one['node']))
+                    else:
+                        log_print("warning: maybe have some file seq error, node={},time={}".format(one['node'], one['stamp']))
+                    self.sub_msg_dict.clear()
+                    self.beg_msg_dict.clear()
+                self.last_log_stamp = one['stamp']
                     
                 if one['type'] == Constants.g_type_of_pub:
                     # 该节点发送的 pub消息
+
                     if one['thread'] in self.sub_msg_dict and self.sub_msg_dict[one['thread']]:
                         self.finish_dict[topic_uuid] = copy.deepcopy(self.sub_msg_dict[one['thread']])
+                        for sub_t_name, sub_t_uuid in self.sub_msg_dict[one['thread']].items():
+                            if sub_t_name not in self.sub_pub_recent_match_dict:
+                                self.sub_pub_recent_match_dict[sub_t_name] = dict()
+                            if sub_t_uuid not in self.sub_pub_recent_match_dict[sub_t_name]:
+                                ## 找最近的pub进行匹配，如果已存在，说明完成了匹配
+                                self.sub_pub_recent_match_dict[sub_t_name][sub_t_uuid] = topic_uuid      
                     elif not self.is_start_node:
-                        print('wrong: The [{}] no sub msg callback before!'.format(self.name))
+                        log_print('wrong: The [{}] no sub msg callback before!'.format(self.name))
+                    else:
+                        self.start_pub_msg_list[topic_uuid] = one
                     
                     if self.beg_tag and self.end_tag:
                         ##TODO don't need handle, but need match topic and tag by time 
@@ -135,7 +162,7 @@ class Node_base(object):
                             self.sub_msg_dict[one['thread']] = dict()
                         self.sub_msg_dict[one['thread']][one['topic']] = topic_uuid
                 else:
-                    print('the type is {} should not in topic msg'.format(one['type']))
+                    log_print('the type is {} should not in topic msg'.format(one['type']))
 
             elif 'tag' in one:
                 ## 手动埋点消息处理
@@ -144,27 +171,42 @@ class Node_base(object):
                         return
                     tag_uuid = one['ident'] or one['thread']
                     self.beg_msg_dict[tag_uuid] = one
+
                 elif one['type'] == Constants.g_type_of_end:
                     if one['tag'] != self.end_tag:
                         return
                     tag_uuid = one['ident'] or one['thread']
                     self.end_msg_dict[tag_uuid] = one
                     if self.beg_tag:
-                        #TODO add beg and end match handle
+                        #add beg and end match handle
                         if tag_uuid in self.beg_msg_dict:
-                            # 生成beg end的配对关系
-                            self.beg_end_info['tag_uuid']=(self.beg_msg_dict[tag_uuid], self.end_msg_dict[tag_uuid])
+                            # 生成beg end的配对关系, 该配对必有ident
+                            self.beg_end_info[tag_uuid]=(self.beg_msg_dict[tag_uuid], self.end_msg_dict[tag_uuid])
                     else:
-                        #TODO add only sub match handle
-                        pass
+                        #add only sub match handle, 20220913 
+                        if one['thread'] in self.sub_msg_dict:
+                            if tag_uuid == one['thread']:
+                                #需要线程匹配sub，end
+                                for topic_name, uuid in self.sub_msg_dict[one['thread']].items():
+                                    # 如果有两个sub 分别进行匹配
+                                    self.update_end_tag_info(uuid, topic_name, one)
+                            elif tag_uuid not in self.sub_msg_dict[one['thread']].values():
+                                log_print('the end_tag {} of node {} no sub match'.format(tag_uuid, one['node']))
+                            else:
+                                for topic_name, uuid in self.sub_msg_dict[one['thread']].items():
+                                    if tag_uuid == uuid:
+                                        self.update_end_tag_info(uuid, topic_name, one)
+                                        break
+                        else:
+                            # 多线程进行uuid匹配  add by liyl 20220915
+                            for topic_name in self.sub_topic_list:
+                                if tag_uuid in all_link_topic_list[topic_name]:
+                                    self.update_end_tag_info(tag_uuid, topic_name, one)
+                                    break
 
         except Exception as e:
-            print('update node info error! {}'.format(e))
-            print ("exception happend")
-            print ('str(Exception):\t', str(Exception))
-            print ('str(e):\t', str(e))
-            print ('repr(e):\t', repr(e))
-            print ('traceback.format_exc():\n%s' % (traceback.format_exc()))  
+            log_print('update node info error! {}'.format(e))
+            log_print('traceback.format_exc():\n{}'.format(traceback.format_exc()))
 
     def create_topic_info(self, uuid, one):
         """
@@ -178,7 +220,6 @@ class Node_base(object):
         topic_entity = all_link_topic_list[one['topic']][uuid] = dict()
         topic_entity['uuid'] = uuid  # one['ident'] # header_stamp or feature
         topic_entity['topic'] = one['topic']
-        topic_entity['thread'] = one['thread']
         topic_entity['send_node'] = None  # node_entity
         topic_entity['recv_node'] = None  # node_entity
         topic_entity['next_topic'] = None  # topic entity for one pub depend more sub
@@ -196,6 +237,7 @@ class Node_base(object):
                 topic_entity['info']['pub_stime'] = one['stime']
                 topic_entity['info']['pub_utime'] = one['utime']
                 topic_entity['info']['pub_wtime'] = one['wtime']
+                topic_entity['info']['pub_thread'] = one['thread']
 
         if one['type'] == Constants.g_type_of_sub:
             if one['node'] in all_link_node_list:
@@ -205,6 +247,7 @@ class Node_base(object):
                 topic_entity['info']['sub_stime'] = one['stime']
                 topic_entity['info']['sub_utime'] = one['utime']
                 topic_entity['info']['sub_wtime'] = one['wtime']
+                topic_entity['info']['sub_thread'] = one['thread']
 
         if topic_entity.get('send_node', None) and topic_entity.get('recv_node',None):
             topic_entity['finish_flag'] = True
@@ -216,6 +259,10 @@ class Node_base(object):
         topic_entity = all_link_topic_list[topic_name][uuid]
         topic_entity['beg_info'] = one
 
+    def update_end_tag_info(self, uuid, topic_name, one):
+        # 增加 topic 和 end_tag的关联
+        topic_entity = all_link_topic_list[topic_name][uuid]
+        topic_entity['end_info'] = one 
 
 class Log_handler():
     """
@@ -225,13 +272,13 @@ class Log_handler():
         self.car_info = Car_Status()
         self.last_timestamp = time.time() * Constants.unit_stamp_sec
         self.handle_index = -1
-        self.test_mode = True
         self.time_split_threshold = Constants.g_time_split_threshold
         self.time_start_value = 0
         self.time_split_value = 0
         self.time_split_end = 0
         self.input_paths = list()
         self.results = dict()
+        self.once_save_fd = None
         
 
     def prepare_input_files(self):
@@ -243,7 +290,7 @@ class Log_handler():
             for file_name in files:
                 tmp_file_path = os.path.join(Constants.tmp_dir, file_name)
                 self.input_paths.append(tmp_file_path)
-            print('add by liyl handle_index={}'.format(self.handle_index))
+            log_print('mark for handle_index={}'.format(self.handle_index))
             return
 
         files = os.listdir(Constants.input_dir)
@@ -270,26 +317,6 @@ class Log_handler():
         self.input_paths.sort()
 
     def load_one_log(self, one):
-        global g_pilot_mode_list
-  
-        if not g_test_mode:
-            if not g_pilot_mode_list:
-                return
-
-            # 仅自动驾驶时间段内的日志进行全链路解析
-            log_time = one.get('stamp', 0)/Constants.unit_stamp_sec
-            if log_time < g_pilot_mode_list[0][0] and log_time > g_pilot_mode_list[-1][1]:
-                if log_time > g_pilot_mode_list[0][1] + 10:  ## delay 10s  the log must handled
-                    g_pilot_mode_list.pop(0)
-                return
-
-            autopilot_time_flag = False
-            for statr_t, end_t in g_pilot_mode_list:
-                if log_time >= statr_t and log_time <= end_t:
-                    autopilot_time_flag = True
-                    break
-            if not autopilot_time_flag:
-                return
 
         if one.get('node', 'unknow') in all_link_node_list:
             # node 在解析配置字典里，进行数据更新
@@ -298,13 +325,26 @@ class Log_handler():
 
     ''' handel file one by one '''
     def load_one_log_by_time(self, ros_time_paths, remote_paths):
-        global g_test_mode
+        global g_pilot_mode_list
+  
+        if not g_test_mode:
+            if not g_pilot_mode_list:
+                return
 
-        #print('ros_time={},remote={}'.format(ros_time_paths, remote_paths))
-        #print('start_time={},split_time={}'.format(self.time_start_value,self.time_split_value))
+            # 仅自动驾驶时间段内的日志进行全链路解析 
+            if self.time_start_value > g_pilot_mode_list[-1][1] or self.time_split_value < g_pilot_mode_list[0][0]:
+                return
 
-        handle_time = int(self.time_start_value%100000) if not g_test_mode else 0
-        end_time = int(self.time_split_value%100000) if not g_test_mode else 99999
+            handle_time = g_pilot_mode_list[0][0] if g_pilot_mode_list[0][0] > self.time_start_value else self.time_start_value
+            handle_time = int(handle_time % 100000)
+            end_time = g_pilot_mode_list[-1][1] if g_pilot_mode_list[-1][1] < self.time_split_value else self.time_split_value
+            end_time = int(end_time % 100000)
+        else:
+            handle_time = 0
+            end_time = 99999
+
+        # 仅保留自驾过程的日志，非自驾时间不保存（部分原始日志已保存），减少日志文件数
+        self.once_save_fd = open(Constants.bak_dir+"/all_log_bak_{}.log".format(int(time.time())),'w+')
         remote_log_src=['102','103','104','105','106','107']
 
         while handle_time < end_time:
@@ -312,9 +352,10 @@ class Log_handler():
                 path_key='{}_{}.log'.format(src, handle_time)
                 for file_name in remote_paths:            
                     if path_key in file_name:
-                        # print(file_name)
+                        # log_print(file_name)
                         with open(file_name, 'r') as fp:
                             contents = fp.read()
+                            self.once_save_fd.write(contents) # add by liyl 20220913 for log_save
                             lines = contents.split("\n")
                             for line in lines:
                                 start = line.find("#key-log#", 0, 128)
@@ -324,7 +365,7 @@ class Log_handler():
                                     one = json.loads(line[start+9:])
                                     self.load_one_log(one)
                                 except Exception as e:
-                                    print("the log {} in file {} is unexpect style! {}".format(line[start+9:], file_name, e))
+                                    log_print("the log {} in file {} is unexpect style! {}".format(line[start+9:], file_name, e))
                                     continue
                             
             handle_time += 1
@@ -332,6 +373,7 @@ class Log_handler():
         for path in ros_time_paths:
             with open(path, 'r') as fp:
                 contents = fp.read()
+                self.once_save_fd.write(contents) # add by liyl 20220913 for log_save
                 lines = contents.split("\n")
 
             for line in lines:
@@ -351,9 +393,13 @@ class Log_handler():
                         else:
                             break
                     except Exception as e:
-                        print("the log {} in file {} is unexpect style! {}".format(line, path, e))
+                        log_print("the log {} in file {} is unexpect style! {}".format(line, path, e))
                         continue
-    
+
+        self.once_save_fd.close()
+        if not g_test_mode:
+            while g_pilot_mode_list and self.time_start_value > g_pilot_mode_list[0][1]:
+                g_pilot_mode_list.pop(0)
 
     @get_time_used
     def load_logs(self):
@@ -367,12 +413,12 @@ class Log_handler():
                 if st_mtime <  stat.st_mtime:
                     st_mtime = stat.st_mtime
             if st_atime < int(time.time()) - 60:
-                self.g_time_start_value = int(time.time()) - 5
+                self.time_start_value = int(time.time()) - 5
             else:
-                self.g_time_start_value = st_atime - 3  # before min access time 2 sec
+                self.time_start_value = st_atime - 3  # before min access time 2 sec
             self.time_split_end = st_mtime + 2
             if st_mtime - st_atime > self.time_split_threshold:   # log 1.7M/s  30s about 50M
-                print('log save {} secs, more than {}, handle a part!'.format(st_mtime-st_atime, self.time_split_threshold) )
+                log_print('log save {} secs, more than {}, handle a part!'.format(st_mtime-st_atime, self.time_split_threshold) )
                 self.time_split_value = st_atime + self.time_split_threshold
                 self.handle_index = 0
             else:
@@ -406,6 +452,29 @@ class Log_handler():
             data['succ'] = False
             data['wrong'] = '{} not match success'.format(topic['topic'])
             return
+        
+        if topic['recv_node'].is_end_node:
+            # 目前只有结束节点 can_adapter 有end节点 
+            if topic['recv_node'].end_tag:
+                end_info = topic.get('end_info', {})
+                if end_info:
+                    beg_end_time = end_info['stamp'] - topic['info']['call_stamp']
+                    if beg_end_time > Constants.unit_stamp_sec * 1:  # if beg_end_time > 0.5s  log_print
+                        log_print("warning: beg_end time too large, node={}, thread={}, ident={}".format(
+                            end_info.get('node','none'), end_info.get('thread','none'), end_info.get('ident','node')))
+                    # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
+                    data["path"].append({"type": "beg_end", "node": topic['recv_node'].name, "use_time": beg_end_time})
+                    if end_info['thread'] == topic['info']['sub_thread']:
+                        #计算beg_end_cpu时候 要保证同一线程，20220915增加
+                        u_spend = end_info["utime"] - topic['info']['sub_utime'] 
+                        s_spend = end_info["stime"] - topic['info']['sub_stime'] 
+                        w_spend = end_info["wtime"] - topic['info']['sub_wtime']
+                        idle_spend = beg_end_time - u_spend - s_spend - w_spend    
+                        u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
+
+                        data["path"].append({"type": "beg_end_cpu", "node": topic['recv_node'].name, 
+                        "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
+                        "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
 
         # get time used of the topic between put to sub_recv
         pub_recv_time = topic['info']['recv_stamp'] - topic['info']['pub_stamp']
@@ -415,23 +484,28 @@ class Log_handler():
         data["path"].append({"type":"recv_call", "node":topic['recv_node'].name, "use_time":recv_call_time})
 
         if topic['send_node'].is_start_node:
-            # 节点只有pub，数据源头，如果有beg，计算beg-end用时
+            # 开始的sensor节点只有pub，数据源头，如果有beg，计算beg-end用时
             if topic['send_node'].beg_tag:
                 beg_info = topic.get('beg_info', {})
                 if beg_info:
                     beg_end_time = topic['info']['pub_stamp'] - beg_info["stamp"]
-                    if beg_end_time > Constants.unit_stamp_sec * 1:  # if beg_end_time > 0.5s  print
-                        print("add by liyl topic info: {}".format(topic))
-                    u_spend = topic['info']['pub_utime'] - beg_info["utime"]
-                    s_spend = topic['info']['pub_stime'] - beg_info["stime"]
-                    w_spend = topic['info']['pub_wtime'] - beg_info["wtime"]
-                    idle_spend = beg_end_time - u_spend - s_spend - w_spend    
-                    u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
+                    if beg_end_time > Constants.unit_stamp_sec * 1:  # if beg_end_time > 0.5s  log_print
+                        log_print("warning: beg_end time too large, node={}, thread={}, ident={}".format(
+                            beg_info.get('node','none'), beg_info.get('thread','none'), beg_info.get('ident','none')))
                     # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
                     data["path"].append({"type": "beg_end", "node": topic['send_node'].name, "use_time": beg_end_time})
-                    data["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
-                    "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
-                    "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
+
+                    if beg_info['thread'] == topic['info']['pub_thread']:
+                        #计算beg_end_cpu时候 要保证同一线程，20220915增加
+                        u_spend = topic['info']['pub_utime'] - beg_info["utime"]
+                        s_spend = topic['info']['pub_stime'] - beg_info["stime"]
+                        w_spend = topic['info']['pub_wtime'] - beg_info["wtime"]
+                        idle_spend = beg_end_time - u_spend - s_spend - w_spend    
+                        u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
+                        
+                        data["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
+                        "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
+                        "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
 
             data['succ'] = True
             return
@@ -465,25 +539,27 @@ class Log_handler():
                 data['wrong'] = '[uuid:{}] not in all_topic_list of [{}]'.format(callback, sub_topic_name)
                 return
 
-            if callback_size > 1:
+            if len(topic['send_node'].sub_topic_list) > 1:
+                # 有多个sub就加入split_path, 不再按callback_size区分
                 topic_entity['next_topic'] = topic
                 pdata["split_path"].append(topic_entity['topic'])
                 
 
             # get time used of the node between A topic recv_sub to B topic pub
             call_pub_time = topic['info']['pub_stamp'] - topic_entity['info']['call_stamp']
+            if call_pub_time < 0:
+                data['succ'] = False
+                data['wrong'] = 'Error: The call_pub_time < 0! node:{}, pub_topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
+                return
+            if call_pub_time > 1.0 * Constants.unit_stamp_sec:
+                log_print('warning: call_pub_time={}, pub_topic={}, pub_uuid={}, node={}, sub_topic={}, sub_uuid={}'.format(
+                    call_pub_time, topic['topic'], topic['uuid'], topic['send_node'].name, topic_entity['topic'], topic_entity['uuid']))
+                # import pdb; pdb.set_trace()
+
             u_spend = topic['info']['pub_utime'] - topic_entity['info']['sub_utime']
             s_spend = topic['info']['pub_stime'] - topic_entity['info']['sub_stime']
             w_spend = topic['info']['pub_wtime'] - topic_entity['info']['sub_wtime']
             idle_spend = call_pub_time - u_spend - s_spend - w_spend
-            if idle_spend < 0:
-                data['succ'] = False
-                data['wrong'] = 'The time handle has error! node:{}, topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
-                return
-            if call_pub_time > 1.5 * Constants.unit_stamp_sec:
-                print('add by liyl 20220815 call_pub_time={}, topic={}, thread={} pub_uuid={}, sub_uuid={}'.format(
-                    call_pub_time, topic['topic'], topic['thread'], topic['uuid'], topic_entity['uuid']))
-                # import pdb; pdb.set_trace()
 
             u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/call_pub_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]     
             pdata["use_time"] += call_pub_time
@@ -497,18 +573,22 @@ class Log_handler():
                 beg_info = topic.get('beg_info', {})
                 if beg_info:
                     beg_end_time = topic['info']['pub_stamp'] - beg_info["stamp"]
-                    if beg_end_time > Constants.unit_stamp_sec * 1:  # if beg_end_time > 0.5s  print
-                        print("add by liyl topic info: {}".format(topic))
-                    u_spend = topic['info']['pub_utime'] - beg_info["utime"]
-                    s_spend = topic['info']['pub_stime'] - beg_info["stime"]
-                    w_spend = topic['info']['pub_wtime'] - beg_info["wtime"]
-                    idle_spend = beg_end_time - u_spend - s_spend - w_spend    
-                    u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
+                    if beg_end_time > Constants.unit_stamp_sec * 1:  # if beg_end_time > 0.5s  log_print
+                        log_print("warning: beg_end time too large, node={}, thread={}, ident={}".format(
+                            beg_info.get('node','none'), beg_info.get('thread','none'), beg_info.get('ident','none')))
                     # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
                     data["path"].append({"type": "beg_end", "node": topic['send_node'].name, "use_time": beg_end_time})
-                    data["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
-                    "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
-                    "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
+                    if beg_info['thread'] == topic['info']['pub_thread']:
+                        #计算beg_end_cpu时候 要保证同一线程，20220915增加
+                        u_spend = topic['info']['pub_utime'] - beg_info["utime"]
+                        s_spend = topic['info']['pub_stime'] - beg_info["stime"]
+                        w_spend = topic['info']['pub_wtime'] - beg_info["wtime"]
+                        idle_spend = beg_end_time - u_spend - s_spend - w_spend    
+                        u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
+                        
+                        data["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
+                        "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
+                        "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
             
             self.get_topic_info(topic_entity, pdata, record)
 
@@ -535,7 +615,8 @@ class Log_handler():
             for data in record:
                 if not data.get('succ', False):
                     wrong_count += 1
-                    print(data.get('wrong', 'unknow reason'))
+                    if g_test_mode:
+                        log_print(data.get('wrong', 'unknow reason'))
                     continue
                 
                 data["split_path_str"] = "_".join([x for x in data['split_path']])
@@ -564,10 +645,11 @@ class Log_handler():
             
             del all_link_topic_list[target][uuid_time]
 
-        print("total_command={}, match_two_paths={}, match_one_paths={} no_path={}".format(
-            len(target_handle_complate), match_two_num, match_one_num, no_match_num))
-        if len(target_handle_complate) == no_match_num:
-            self.last_timestamp += 5 * Constants.unit_stamp_sec  
+        log_print("{} total_num={}, match_two_paths={}, match_one_paths={} no_path={}".format(
+            target, len(target_handle_complate), match_two_num, match_one_num, no_match_num))
+            
+        if self.last_timestamp < self.time_start_value * Constants.unit_stamp_sec:
+            self.last_timestamp = self.time_start_value * Constants.unit_stamp_sec
 
         for topic_name in all_link_topic_list.keys():
             all_link_topic_temp = dict()
@@ -578,6 +660,8 @@ class Log_handler():
                     del topic['send_node'].finish_dict[topic['uuid']]
                     if topic['uuid'] in topic['send_node'].beg_msg_dict:
                         del topic['send_node'].beg_msg_dict[topic['uuid']]
+                    if topic['uuid'] in topic['send_node'].sub_pub_recent_match_dict.get(topic['topic'],{}):
+                        del topic['send_node'].sub_pub_recent_match_dict[topic['topic']][topic['uuid']]
                     ## TODO：man_end增加后，需要清理 end_msg_dict
             all_link_topic_list[topic_name] = all_link_topic_temp
         
@@ -588,6 +672,120 @@ class Log_handler():
 
         self.results = result
         return 
+
+    def get_sensor_node_info(self, topic, data):
+        topic_entity = None
+        while topic:
+            if not topic['finish_flag']:
+                data['succ'] = False
+                data['wrong'] = '{} not match success in log'.format(topic['topic'])
+                return 
+            
+            ## 如果有前置topic，计算该节点sub 到 pub 的时间
+            if topic_entity:
+                call_pub_time = topic['info']['pub_stamp'] - topic_entity['info']['call_stamp']
+                if call_pub_time < 0:
+                    data['succ'] = False
+                    data['wrong'] = 'Error: The call_pub_time < 0!! node:{}, pub_topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
+                    return
+                if call_pub_time > 1 * Constants.unit_stamp_sec:
+                    log_print('Warning: recently call_pub_time={}, pub_topic={}, pub_uuid={}, node={}, sub_topic={}, sub_uuid={}'.format(
+                        call_pub_time, topic['topic'], topic['uuid'], topic['send_node'].name, topic_entity['topic'], topic_entity['uuid']))
+                    # import pdb; pdb.set_trace()
+                data["path"].append({"type": "call_pub", "node": topic_entity['recv_node'].name, "use_time": call_pub_time})
+
+                # 计算call pub 时间需要 保证同一线程
+                u_spend = topic['info']['pub_utime'] - topic_entity['info']['sub_utime']
+                s_spend = topic['info']['pub_stime'] - topic_entity['info']['sub_stime']
+                w_spend = topic['info']['pub_wtime'] - topic_entity['info']['sub_wtime']
+                idle_spend = call_pub_time - u_spend - s_spend - w_spend
+
+                u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/call_pub_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]     
+                data["use_time"] += call_pub_time
+                
+                data["path"].append({"type": "call_pub_cpu", "node": topic_entity['recv_node'].name, 
+                "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
+                "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent}) 
+
+            # get time used of the topic between put to sub_recv
+            pub_recv_time = topic['info']['recv_stamp'] - topic['info']['pub_stamp']
+            recv_call_time = topic['info']['call_stamp'] - topic['info']['recv_stamp']
+            data["use_time"] += pub_recv_time + recv_call_time
+            data["path"].append({"type":"pub_recv", "node":topic['recv_node'].name, "use_time":pub_recv_time})
+            data["path"].append({"type":"recv_call", "node":topic['recv_node'].name, "use_time":recv_call_time})
+            
+            next_node = topic['recv_node']
+            if next_node.is_end_node:
+                # 查找到end，结束
+                data['succ'] = True
+                break
+            
+            if topic['topic'] not in next_node.sub_pub_recent_match_dict or \
+                topic['uuid'] not in next_node.sub_pub_recent_match_dict[topic['topic']]:
+                data['succ'] = False
+                data['wrong'] = 'The node not sub uuid in match list! node={}, topic_name:{}, sub_uuid:{}'.format(next_node.name, topic['topic'], topic['uuid'])
+                break
+            pub_uuid = next_node.sub_pub_recent_match_dict[topic['topic']][topic['uuid']]
+            topic_name = next_node.pub_topic
+
+            if pub_uuid not in all_link_topic_list[topic_name]:
+                data['succ'] = False
+                data['wrong'] = 'The pub uuid not in all link topic list! node:{}, pub_uuid:{}'.format(next_node.name, pub_uuid)
+                break
+            topic_entity = topic
+            topic = all_link_topic_list[topic_name][pub_uuid]
+            
+        
+    @get_time_used
+    def analyze_log_from_sensor(self):
+        # add liyl 20220909  analyze log for sensor to  can_adapter
+        result = dict()
+        for name, node_entity in all_link_node_list.items():
+            if node_entity.is_start_node:
+                result[name] = list()
+                last_match_time = 0
+                wrong_count = 0
+                for uuid, info in node_entity.start_pub_msg_list.items():
+                    ## 找到起始的uuid，通过topic遍历, 一直查找到 end_node (can_adapter)
+                    if uuid not in all_link_topic_list[info['topic']]:
+                        continue
+                    topic = all_link_topic_list[info['topic']][uuid]
+                    if not topic:
+                        continue
+
+                    data = dict()
+                    data["use_time"] = 0
+                    data["path"] = []
+                    try:
+                        self.get_sensor_node_info(topic, data)
+                    except Exception as e:
+                        log_print('traceback.format_exc():\n{}'.format(traceback.format_exc()))
+
+                    if not data.get('succ', False):
+                        wrong_count += 1
+                        if g_test_mode:
+                            log_print(data.get('wrong', 'unknow reason'))
+                        continue
+                    
+                    result[name].append(data)
+                    if last_match_time < info['stamp']:
+                        last_match_time = info['stamp']
+
+                #去除开始节点已经计算过的uuid
+                tmp_list = dict()
+                for uuid, info in node_entity.start_pub_msg_list.items():
+                    if last_match_time < info['stamp']:
+                        tmp_list[uuid] = info
+                
+                log_print("sensor:{} total_pub_num={}, match_num={}, error_num={} left_num={}".format(
+                    name, len(node_entity.start_pub_msg_list), len(result[name]), wrong_count, len(tmp_list)))
+                node_entity.start_pub_msg_list = tmp_list
+
+                if self.last_timestamp < last_match_time:
+                    self.last_timestamp = last_match_time
+
+        ## 去除已经计算过的sub_pub_recent_match_dict 在 analyze_key_info 中处理               
+        self.results = result
 
     @staticmethod
     def get_usetime_pt(result, key="use_time"):
@@ -614,17 +812,15 @@ class Log_handler():
 
 
     @get_time_used
-    def save_result(self):
+    def save_result(self, from_sensor_flag=False):
         for split_path_str in self.results:
             result = self.results[split_path_str]
+            if not len(result):
+                continue
 
             save_data = {}
             result.sort(key=lambda s: s["use_time"], reverse=False)
             (save_data["p50"], save_data["p90"], save_data["p99"]) = self.get_usetime_pt(result)
-
-            #size = len(result)
-            #size99 = int(size*0.99)
-            #print(result[size99])
 
             save_data["pub_recv"] = {}
             save_data["recv_call"] = {}
@@ -672,11 +868,16 @@ class Log_handler():
             save_data["count"] = len(result)
             save_data["timestamp"] = int(self.last_timestamp/1000000)
             self.car_info.set_car_info(save_data)
-            #print(json.dumps(save_data, sort_keys=True, indent=4))
-            with open(Constants.output_file, "a+") as fp:
-                fp.write("{0}\n".format(json.dumps(save_data)))
+            #log_print(json.dumps(save_data, sort_keys=True, indent=4))
+            if from_sensor_flag:
+                with open(Constants.output_file_from_sensor, "a+") as fp:
+                    fp.write("{0}\n".format(json.dumps(save_data)))
+            else:
+                with open(Constants.output_file, "a+") as fp:
+                    fp.write("{0}\n".format(json.dumps(save_data)))
         
         self.results=dict()
+
 
     def clear_input_files(self):
         if self.handle_index >= 0:
@@ -684,8 +885,9 @@ class Log_handler():
 
         for file_path in self.input_paths:
             # 备份处理后的文件，到备份目录，防止remote文件重复，增加全量时间戳
-            os.rename(file_path, '{}/{}_{}'.format(Constants.bak_dir, os.path.basename(file_path), int(time.time())))
-            #os.remove(file_path)
+            # os.rename(file_path, '{}/{}_{}'.format(Constants.bak_dir, os.path.basename(file_path), int(time.time())))
+            # 备份处理后的零散文件，直接删除
+            os.remove(file_path)
 
         self.input_paths=list()
 
@@ -694,25 +896,28 @@ class Log_handler():
         try:
             self.prepare_input_files()
             self.load_logs()
+            ## add by liyl 20220909 for sensor -> can_adapter
+            self.analyze_log_from_sensor()
+            self.save_result(from_sensor_flag=True)
             self.analyze_key_info()
             self.save_result()
             self.clear_input_files()
         except Exception as e:
-            print("run once error, {}".format(e))
-            print ("exception happend")
-            print ('str(Exception):\t', str(Exception))
-            print ('str(e):\t', str(e))
-            print ('repr(e):\t', repr(e))
-            print ('traceback.format_exc():\n%s' % (traceback.format_exc()))  
+            log_print("run once error, {}".format(e))
+            log_print('traceback.format_exc():\n{}'.format(traceback.format_exc()))
+
 
     def run(self):
-        print("开始分析")
+        log_print("开始分析")
         # dxc 读系统信息
         while True:
             start = time.time()
             self.run_once()
             end = time.time()
-            print('run_once used time {}'.format(end-start))
+            log_print('run_once used time {}'.format(end-start))
+            if g_test_mode:
+                log_print("结束分析")
+                break
 
             sleep_time = 2 - (end - start)
             if sleep_time > 0.3:
@@ -735,6 +940,7 @@ class Car_Status(object):
         self.pilot_mode = 0
         if not g_test_mode:
             rospy.init_node('log_reslove')
+            rospy.loginfo('log_reslove start init, create node and pilot sub thread!')
             self.veh_state_thread = NodeThread("/system_master/SysVehicleState", BinaryData, self.recv_vstatus)
             self.get_car_info()
             self.veh_state_thread.start()
@@ -746,7 +952,7 @@ class Car_Status(object):
 
             self.code_version = contents[1][len("Version:"):]
         except Exception as e:
-            print('get code_version failed: {}'.format(e))
+            log_print('get code_version failed: {}'.format(e))
 
         try:
             with open("/home/mogo/data/vehicle_monitor/vehicle_config.txt") as fp:
@@ -759,7 +965,7 @@ class Car_Status(object):
             self.type = brand.strip().strip("\"")
 
         except Exception as e:
-            print('get vehicle_config failed: {}'.format(e))
+            log_print('get vehicle_config failed: {}'.format(e))
 
     def set_car_info(self, data):
         data["code_version"] = self.code_version 
@@ -774,9 +980,9 @@ class Car_Status(object):
         
         if self.pilot_mode != g_vehicle_state.pilot_mode:
             cur_time = int(time.time())
-            print('autopilot mode changed to {}! cur_time:{}'.format(g_vehicle_state.pilot_mode, cur_time))
+            log_print('autopilot mode changed to {}! cur_time:{}'.format(g_vehicle_state.pilot_mode, cur_time))
             if self.pilot_mode != 1: 
-                print("start autopilot at time: {}".format(cur_time))
+                log_print("start autopilot at time: {}".format(cur_time))
                 if g_pilot_mode_list:
                     if cur_time == g_pilot_mode_list[-1][1]:
                         g_pilot_mode_list[-1][1] = cur_time+1
@@ -785,7 +991,7 @@ class Car_Status(object):
                 else:
                     g_pilot_mode_list.append([cur_time, cur_time+1])
             else:
-                print("stop autopilot at time: {}".format(cur_time))
+                log_print("stop autopilot at time: {}".format(cur_time))
                 g_pilot_mode_list[-1][1] = cur_time+1
         elif self.pilot_mode == 1 and g_pilot_mode_list:
             g_pilot_mode_list[-1][1] = int(time.time())+1

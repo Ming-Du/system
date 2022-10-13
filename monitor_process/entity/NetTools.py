@@ -1,5 +1,6 @@
 import collections
 import commands
+import rospy
 
 
 class NetTools:
@@ -17,11 +18,11 @@ class NetTools:
                 strIpResult = strTempResult
                 break
             if status != 0:
-                print "get Ip failed"
+                rospy.logwarn("get Ip failed")
                 break
             break
-        print strIpResult
-        print type(strIpResult)
+
+
         if len(strIpResult) > 0:
             self.dictNetInfo["ip"] = strIpResult
 
@@ -34,11 +35,11 @@ class NetTools:
                 strMacResult = strTempResult
                 break
             if status != 0:
-                print "get Ip failed"
+                rospy.logwarn("get Ip failed")
                 break
             break
-        print strGetMacCmd
-        print type(strGetMacCmd)
+
+        
         if len(strGetMacCmd) > 0:
             self.dictNetInfo['mac'] = strMacResult
 

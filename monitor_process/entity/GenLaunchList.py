@@ -3,6 +3,7 @@ import json
 import traceback
 from entity.CommonPara import CommonPara
 import os
+import rospy
 
 
 class GenLaunchList:
@@ -22,7 +23,7 @@ class GenLaunchList:
             try:
                 (status, output) = commands.getstatusoutput(strCmdCheckMultiXiver)
                 if status == 0:
-                    print "output:{0}".format(output)
+                    rospy.logdebug("output:{0}".format(output))
                     while True:
                         if int(output) == 1:
                             XiverType = "2x"
@@ -37,24 +38,17 @@ class GenLaunchList:
                             break
                         break
             except Exception as e:
-                print "exception happend"
-                print e.message
-                print str(e)
-                print 'str(Exception):\t', str(Exception)
-                print 'str(e):\t\t', str(e)
-                print 'repr(e):\t', repr(e)
-                print 'e.message:\t', e.message
-                print 'traceback.print_exc():'
-                traceback.print_exc()
-                print 'traceback.format_exc():\n%s' % (traceback.format_exc())
-        print "=============== XiverType:{0}".format(XiverType)
+                rospy.logwarn('repr(e):{0}'.format(repr(e)))
+                rospy.logwarn('e.message:{0}'.format(e.message))
+                rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+        rospy.logdebug("XiverType:{0}".format(XiverType))
         return XiverType
 
     def getCarType(self):
         strCarType = "jinlv"
         try:
             while True:
-                print self.globalCommonPara.dictCarInfo
+
                 strCarType = self.globalCommonPara.dictCarInfo['car_type']
                 if str(self.globalCommonPara.dictCarInfo['car_type']) == "DF":
                     strCarType = "df"
@@ -67,17 +61,10 @@ class GenLaunchList:
                     break
                 break
         except Exception as e:
-            print "exception happend"
-            print e.message
-            print str(e)
-            print 'str(Exception):\t', str(Exception)
-            print 'str(e):\t\t', str(e)
-            print 'repr(e):\t', repr(e)
-            print 'e.message:\t', e.message
-            print 'traceback.print_exc():'
-            traceback.print_exc()
-            print 'traceback.format_exc():\n%s' % (traceback.format_exc())
-        print "=============== strCarType:{0}".format(strCarType)
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+        rospy.logdebug("strCarType:{0}".format(strCarType))
         return strCarType
 
     def initData(self):
@@ -92,16 +79,9 @@ class GenLaunchList:
             with open(strFileName, "r") as f:
                 strContent = f.read()
         except Exception as e:
-            print "exception happend"
-            print e.message
-            print str(e)
-            print 'str(Exception):\t', str(Exception)
-            print 'str(e):\t\t', str(e)
-            print 'repr(e):\t', repr(e)
-            print 'e.message:\t', e.message
-            print 'traceback.print_exc():'
-            traceback.print_exc()
-            print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
         try:
             dictContent = json.loads(strContent)
@@ -132,44 +112,29 @@ class GenLaunchList:
 
 
         except Exception as e:
-            print "exception happend"
-            print e.message
-            print str(e)
-            print 'str(Exception):\t', str(Exception)
-            print 'str(e):\t\t', str(e)
-            print 'repr(e):\t', repr(e)
-            print 'e.message:\t', e.message
-            print 'traceback.print_exc():'
-            traceback.print_exc()
-            print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
         for elem_node in dictNodeList:
-            print "========================="
             try:
-                print elem_node['package']
-                print elem_node['name']
+
+
                 lineContent = "{0} {1}".format(elem_node['package'], elem_node['name'])
                 list_xiver = elem_node['machine'][strCarType][strXiverType]
                 for elem_machine in list_xiver:
-                    print elem_machine
+
                     strListFileName = "{0}{1}.list".format(self.strTempLaunchListFolder, elem_machine)
                     self.dictHostNameMapList[elem_machine] = strListFileName
                     with open(strListFileName, "a+") as f_list:
                         f_list.write(lineContent)
                         f_list.write('\n')
             except Exception as e:
-                print "exception happend"
-                print e.message
-                print str(e)
-                print 'str(Exception):\t', str(Exception)
-                print 'str(e):\t\t', str(e)
-                print 'repr(e):\t', repr(e)
-                print 'e.message:\t', e.message
-                print 'traceback.print_exc():'
-                traceback.print_exc()
-                print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+                rospy.logwarn('repr(e):{0}'.format(repr(e)))
+                rospy.logwarn('e.message:{0}'.format(e.message))
+                rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         if len(self.dictHostNameMapList) > 0:
-            print json.dumps(self.dictHostNameMapList)
+            rospy.logdebug(json.dumps(self.dictHostNameMapList))
 
     def getLaunchFilePath(self, strMachineName):
         strFilePath = ""
@@ -194,21 +159,8 @@ class GenLaunchList:
                 ret = 0
                 break
         except Exception as e:
-            print "exception happend"
-            print e.message
-            print str(e)
-            print 'str(Exception):\t', str(Exception)
-            print 'str(e):\t\t', str(e)
-            print 'repr(e):\t', repr(e)
-            print 'e.message:\t', e.message
-            print 'traceback.print_exc():'
-            traceback.print_exc()
-            print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         strErrorMsg = dictErrorCode[ret]
         return strFilePath, ret, strErrorMsg
-
-
-# instanceGenLaunchList = GenLaunchList()
-# instanceGenLaunchList.initData()
-# strFileName, ret, strErrorMsg = instanceGenLaunchList.getLaunchFilePath("rosmaster")
-# print "=========== strFileName:{0}, ret:{1},strErrorMsg:{2}".format(strFileName,ret,strErrorMsg)

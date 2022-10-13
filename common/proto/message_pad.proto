@@ -82,7 +82,7 @@ message Trajectory
 // message definition for MsgTypeTrackedObjects
 message SubSource
 {
-    uint32 source = 1; //[default = 0] v2v_bsm = 1 v2i_rsm = 2 v2v_ssm = 3 v2n_rsm = 4
+    uint32 source = 1; //[default = 0] v2v_bsm = 1 v2i_rsm = 2 v2v_ssm = 3 v2n_rsm = 4 v2n_rsi = 5
     string id = 2; //HEX_string
 }
 
@@ -96,7 +96,8 @@ message TrackedObject
 {
     uint32 type = 1; //物体类型, 0:Background, 1:Person, 2:Bicycle, 3:Car, 4:MotorCycle, 
                      //5:TrafficSign, 6:Bus, 7:CellPhone, 8:Truck, 9:Bottle, 10:TrafficLight,
-                     //11:Rider, 12:TriangleRoadblock, 13:WarningTriangle, 100:Unknown
+                     //11:Rider, 12:TriangleRoadblock, 13:WarningTriangle, 100:Unknown,
+                     //501:RoadWork_occupy_0501, 502:RoadWork_break_0502
     double longitude = 2; //经度
     double latitude = 3; //纬度
     double altitude = 4; //海拔
@@ -110,6 +111,7 @@ message TrackedObject
     uint32 drawLevel = 12; //危险等级 1 绿,2 黄,3 红
     double driverTime = 13; //驱动感知时间, abandoned
     repeated TrackedSource tracked_source = 14;
+    repeated Location polygon = 15;
 }
 
 message TrackedObjects
@@ -457,4 +459,5 @@ message PlanningActionMsg
 
 //message definition for MsgTypeSpecialVehicleTaskCmd
 //refer to special_vehicle_task_cmd.proto for details
+
 

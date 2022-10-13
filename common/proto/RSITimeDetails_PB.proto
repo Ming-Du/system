@@ -1,0 +1,12 @@
+syntax = "proto2";
+package common;
+
+import "TimeConfidence_PB.proto";
+message RSITimeDetails_PB{
+    //数值用来表示当前年份，已经过去的总分钟数（UTC时间）。
+    //其分辨率为1分钟。该数值配合DSecond数值，则可以表示以毫秒记的全年已过去的总时间。
+    //(0..527040)
+    optional int64 startTime=1;
+    optional int64 endTime=2;
+    optional TimeConfidence_PB endTimeConfidence=3;
+}

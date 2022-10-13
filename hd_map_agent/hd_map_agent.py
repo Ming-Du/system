@@ -14,16 +14,15 @@ while True:
     if not os.path.exists(strFlagFile):
         strCmd = "sudo apt-get update  &&  sudo apt-get  install -y python-requests  && sudo apt-get install -y python-psutil "
         status, output = commands.getstatusoutput(strCmd)
-        print "===================================================================status:{0},output:{1}".format(status,
-                                                                                                                output)
+
         if status == 0:
             strTouchCmd = "touch  {0}".format(strFlagFile)
             os.system(strTouchCmd)
             if os.path.exists(strFlagFile):
                 break
-    print "===================== install package recycle times:{0}".format(times)
+
     time.sleep(5)
-print "success break while"
+
 
 import subprocess
 
@@ -124,27 +123,27 @@ class TaskManager:
         pass
 
     def addTask(self, strTaskId):
-        print "--------------- enter addTask"
+
         ret = True
         self.dictTaskInfo[strTaskId] = 1
         self.debugTaskInfo()
         return ret
 
     def addHandle(self, strTaskId, curlHandler):
-        print "--------------- enter addHandle"
+
         ret = True
         self.dictHandler[strTaskId] = curlHandler
         self.debugTaskInfo()
         return ret
 
     def removeTask(self, strTaskId):
-        print "--------------- enter removeTask"
+
         if self.dictTaskInfo.has_key(strTaskId):
             del self.dictTaskInfo[strTaskId]
         self.debugTaskInfo()
 
     def removeHandler(self, strTaskId):
-        print "--------------- enter removeHandler"
+
         if self.dictHandler.has_key(strTaskId):
             del self.dictHandler[strTaskId]
         self.debugTaskInfo()
@@ -152,29 +151,29 @@ class TaskManager:
     def checkTaskExists(self, strTaskId):
         ret = True
         if self.dictTaskInfo.has_key(strTaskId):
-            print "strTask is exists: {0},globalPilotMode:{1},dictRunningWgetPid:{2}".format(strTaskId,globalPilotMode,dictRunningWgetPid)
+            rospy.logdebug("strTask is exists: {0},globalPilotMode:{1},dictRunningWgetPid:{2}".format(strTaskId,globalPilotMode,dictRunningWgetPid))
             ret = True
         else:
-            print "strTask not exists :{0},gbalPilotMode:{1},dictRunningWgetPid:{2}".format(strTaskId,globalPilotMode,dictRunningWgetPid)
+            rospy.logdebug("strTask not exists :{0},gbalPilotMode:{1},dictRunningWgetPid:{2}".format(strTaskId,globalPilotMode,dictRunningWgetPid))
             ret = False
         return ret
 
     def checkHandlerExists(self, strTaskId):
         ret = True
         if self.dictHandler.has_key(strTaskId):
-            print "strTask is exists: {0}".format(strTaskId)
+            rospy.logdebug("strTask is exists: {0}".format(strTaskId))
             ret = True
         else:
-            print "strTask not exists :{0}".format(strTaskId)
+            rospy.logdebug("strTask not exists :{0}".format(strTaskId))
             ret = False
         return ret
 
     def debugTaskInfo(self):
-        print "current TaskInfo:{0}".format(json.dumps(self.dictTaskInfo))
-        print "current HandleInfo:{0}".format(json.dumps(self.dictHandler))
+        rospy.logdebug("current TaskInfo:{0}".format(json.dumps(self.dictTaskInfo)))
+        rospy.logdebug("current HandleInfo:{0}".format(json.dumps(self.dictHandler)))
 
     def delAllTask(self):
-        print  "--------------- enter delAllTask"
+        rospy.logdebug("--------------- enter delAllTask")
         self.dictTaskInfo = {}
         self.debugTaskInfo()
 
@@ -201,13 +200,15 @@ class CommonPara:
 
             brand = contents2[1].split(":")[-1]
             brand = brand.strip().strip("\"")
-            # plate = "HYDF2229"
+
             dictCarInfo["car_plate"] = plate
             dictCarInfo["car_type"] = brand
         except Exception as e:
-            print("read carInfo failed!")
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
             return False
-        # print(dictCarInfo)
+
         return dictCarInfo
 
     def initPara(self):
@@ -224,40 +225,31 @@ class CacheUtils:
         self.restoreIndex()
 
     def WriteFileCacheInfo(self, lMapId, strMapUrl, strMapMd5, timestampMap, intModifyTime_Map):
-        print "process WriteFileCacheInfo: lMapId:{0}, strMapUrl:{1}, strMapMd5:{2},timestampMap:{3},intModifyTime_Map:{4}".format(
-            lMapId, strMapUrl, strMapMd5, timestampMap, intModifyTime_Map)
+        rospy.logdebug("process WriteFileCacheInfo: lMapId:{0}, strMapUrl:{1}, strMapMd5:{2},timestampMap:{3},intModifyTime_Map:{4}".format(
+            lMapId, strMapUrl, strMapMd5, timestampMap, intModifyTime_Map))
         try:
             mapDict = {}
             # stopDict = {}
             strMapName = "{0}".format(lMapId)
-            print "strMapName:{0}".format(strMapName)
+            rospy.loginfo("strMapName:{0}".format(strMapName))
             mapDict['url'] = strMapUrl
             mapDict['timestamp'] = timestampMap
             mapDict['md5'] = strMapMd5
             mapDict['modify_time'] = intModifyTime_Map
             self.dictMapAgentRecord[strMapName] = mapDict
 
-            print "=======================current dictMapAgentRecord:{0}".format(
-                json.dumps(self.dictMapAgentRecord))
+            rospy.logdebug("=======================current dictMapAgentRecord:{0}".format(
+                json.dumps(self.dictMapAgentRecord)))
 
-            # with open(self.strDictSaveTime, 'w') as f:
-            #     json.dump(self.dictMapAgentRecord, f)
-            #     print "flush file"
-            #     f.close()
+
             json.dump(self.dictMapAgentRecord, open(self.strDictSaveTime, 'w'))
 
 
         except Exception as e:
-            print "exception happend"
-            print e.message
-            print str(e)
-            print 'str(Exception):\t', str(Exception)
-            print 'str(e):\t\t', str(e)
-            print 'repr(e):\t', repr(e)
-            print 'e.message:\t', e.message
-            print 'traceback.print_exc():'
-            traceback.print_exc()
-            print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+
 
     def CheckMapFileCacheExists(self, lMapId, timestamp, strMapMd5):
         bExists = True
@@ -267,18 +259,11 @@ class CacheUtils:
                 bExists = True
             else:
                 bExists = False
-            print "CheckMapFileCacheExists check file:{0}, result:{1}".format(strMapName, bExists)
+            rospy.logdebug("CheckMapFileCacheExists check file:{0}, result:{1}".format(strMapName, bExists))
         except Exception as e:
-            print "exception happend"
-            print e.message
-            print str(e)
-            print 'str(Exception):\t', str(Exception)
-            print 'str(e):\t\t', str(e)
-            print 'repr(e):\t', repr(e)
-            print 'e.message:\t', e.message
-            print 'traceback.print_exc():'
-            traceback.print_exc()
-            print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         return bExists
 
     def restoreIndex(self):
@@ -286,34 +271,20 @@ class CacheUtils:
             strFileName = self.strDictSaveTime
             if os.path.exists(strFileName):
                 self.dictMapAgentRecord = json.load(open(strFileName, 'r'))
-                # with open(strFileName) as f:
-                #     line = f.readline()
-                #     self.dictMapAgentRecord = json.loads(line)
-                #     print "restore index:{0}".format(line)
-                #     print type(line)
-                #     # self.dictCurrentIndex = json.loads(line)
-                #     # print "load success file"
-                #     f.close()
+
                 if len(self.dictMapAgentRecord) > 0:
-                    print "restore success"
-                    print "content:{0}".format(json.dumps(self.dictMapAgentRecord))
-                    # print "dict:{0}".format(self.dictMapAgentRecord)
+                    rospy.loginfo("restore success")
+                    rospy.loginfo("content:{0}".format(json.dumps(self.dictMapAgentRecord)))
+
             else:
-                print "break point not exists: {0}".format(strFileName)
+                rospy.logwarn("break point not exists: {0}".format(strFileName))
         except Exception as e:
-            print "exception happend"
-            print e.message
-            print str(e)
-            print 'str(Exception):\t', str(Exception)
-            print 'str(e):\t\t', str(e)
-            print 'repr(e):\t', repr(e)
-            print 'e.message:\t', e.message
-            print 'traceback.print_exc():'
-            traceback.print_exc()
-            print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def debug(self):
-        print "debug info: dictMapAgentRecord:{0}".format(json.dumps(self.dictMapAgentRecord))
+        rospy.logdebug("debug info: dictMapAgentRecord:{0}".format(json.dumps(self.dictMapAgentRecord)))
 
 
 globalCommonPara = CommonPara()
@@ -322,14 +293,16 @@ globalTaskManager = TaskManager()
 
 
 def SaveEventToFile(msg='', code='', results=list(), actions=list(), level=''):
-    print "enter SaveEventToFile"
+    rospy.logdebug("enter SaveEventToFile")
     json_msg = {}
     if 1:
         try:
             json_msg = gen_report_msg("hd_map.pb", code, "/hd_map_agent")
         except Exception as e:
-            print('Error: gen report msg failed!, {}'.format(e))
-    print "++++++++++++++++++ event json_msg:{0}".format(json_msg)
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+    rospy.logdebug("event json_msg:{0}".format(json_msg))
     if json_msg == {}:  # if not used pb or call function error, used local config
         cur_time = int(time.time())
         msg_dict = {
@@ -346,10 +319,11 @@ def SaveEventToFile(msg='', code='', results=list(), actions=list(), level=''):
         json_msg = json.dumps(msg_dict)
     try:
         with open("/home/mogo/data/log/msg_log/system_master_report.json", 'a+') as fp:
-            # print("write mogo report event: {}".format(json_msg))
             fp.write(json_msg + '\n')
     except Exception as e:
-        print('Error: save report msg to file, {}'.format(e))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
 g_CacheUtil = CacheUtils()
@@ -363,18 +337,11 @@ def checkFileMd5(strFileName):
         with open(strFileName, 'rb') as f:
             strFileMd5Value = str(hashlib.md5(f.read()).hexdigest())
             f.close()
-        print "checkFileMd5: fileName:{0}, strFileMd5Value:{1}".format(strFileName, strFileMd5Value)
+        rospy.logdebug("checkFileMd5: fileName:{0}, strFileMd5Value:{1}".format(strFileName, strFileMd5Value))
     except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():'
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return strFileMd5Value
 
 
@@ -387,63 +354,16 @@ def getFileCurStat(strFileName):
         with open(strFileName) as fp:
             fp.seek(0, os.SEEK_END)
             cur_offset = fp.tell()
-            print "current_stat:{0}".format(cur_offset)
+            rospy.logdebug("current_stat:{0}".format(cur_offset))
             fp.close()
     except Exception as e:
-        print   "exception happend"
-        print   e.message
-        print   str(e)
-        print   'str(Exception):\t', str(Exception)
-        print   'str(e):\t\t', str(e)
-        print   'repr(e):\t', repr(e)
-        print   'e.message:\t', e.message
-        print   'traceback.print_exc():'
-        traceback.print_exc()
-        print   'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return ret, int(cur_offset)
 
 
-# def downFileFromUrl(strUrl, strTempFileName):
-#     ret = 0
-#     retFileStat = 0
-#     intFromOffset = 0
-#     retFileStat ,intFromOffset = getFileCurStat(strTempFileName)
-#     data = None
-#     intErrno = 0
-#     # 20*1024*1024
-#     down_speed = 5 * 1024 * 1024
-#     try:
-#         html = StringIO.StringIO()
-#         c = pycurl.Curl()
-#         if  os.path.exists(strTempFileName) and retFileStat == 0  and intFromOffset  > 0:
-#             c.setopt(pycurl.CURLOPT_RESUME_FROM_LARGE,intFromOffset)
-#         c.setopt(pycurl.WRITEFUNCTION, html.write)
-#         c.setopt(pycurl.FOLLOWLOCATION, 1)
-#         c.setopt(pycurl.MAXREDIRS, 5)
-#         c.setopt(pycurl.CONNECTTIMEOUT, 60)
-#         c.setopt(pycurl.TIMEOUT, 300)
-#         f = open(strTempFileName, 'wb')
-#         c.setopt(c.WRITEDATA, f)
-#         c.setopt(pycurl.URL, strUrl)
-#         c.setopt(pycurl.FOLLOWLOCATION, 1)
-#         c.setopt(c.NOPROGRESS, 1)
-#         c.setopt(c.MAX_RECV_SPEED_LARGE, down_speed * 8)
-#         c.perform()
-#         print "downFileFromUrl status:{0}".format(c.getinfo(pycurl.HTTP_CODE), c.getinfo(pycurl.EFFECTIVE_URL))
-#
-#     except Exception as e:
-#         print "exception happend"
-#         print e.message
-#         print str(e)
-#         print 'str(Exception):\t', str(Exception)
-#         print 'str(e):\t\t', str(e)
-#         print 'repr(e):\t', repr(e)
-#         print 'e.message:\t', e.message
-#         print 'traceback.print_exc():'
-#         traceback.print_exc()
-#         print 'traceback.format_exc():\n%s' % (traceback.format_exc())
-#         ret = -1
-#     return ret, strTempFileName
+
 
 
 def downFileFromUrlWget(strUrl, strTempFileName):
@@ -453,49 +373,40 @@ def downFileFromUrlWget(strUrl, strTempFileName):
     #strWgetCmd = " --limit-rate=4m   --connect-timeout=5 --dns-timeout=5  -c    '{0}'  -O   '{1}' ".format(strUrl, strTempFileName)
     global dictRunningWgetPid
     try:
-        #print   "execute sub cmd : {0}".format(strWgetCmd)
-        #status, output = commands.getstatusoutput(strWgetCmd)
         pid = os.fork()
         while True:
             ##current process wget, abort create process wget
             if len(dictRunningWgetPid) > 0:
-                print "len(dictRunningWgetPid) > 0 "
+                rospy.logdebug("len(dictRunningWgetPid) > 0 ")
                 break
             if pid < 0:
-                print "====pid < 0  , create  process failed"
+                rospy.logdebug("====pid < 0  , create  process failed")
                 status = -1
                 break
             if pid > 0:
-                print "parent process "
+                rospy.logdebug("parent process ")
                 dictRunningWgetPid[pid] = 0
-                print "====register sub process_pid:{0}".format(dictRunningWgetPid)
+                rospy.logdebug("====register sub process_pid:{0}".format(dictRunningWgetPid))
                 os.waitpid(pid , 0)
                 ## after finish wget  ,clear dictRunningWgetPid
                 if dictRunningWgetPid.has_key(pid):
                     del dictRunningWgetPid[pid]
-                print "====after finish wget dictRunningWgetPid:{0}".format(dictRunningWgetPid)
+                rospy.logdebug("====after finish wget dictRunningWgetPid:{0}".format(dictRunningWgetPid))
                 status = 0
                 break
             if pid == 0:
-                print "====sub process"
+                rospy.logdebug("====sub process")
                 os.execl("/usr/bin/wget", "/usr/bin/wget", "--limit-rate=4M","--connect-timeout=5","--dns-timeout=5", "-c", strUrl, "-O" , strTempFileName)
                 break
             break
 
 
-        print   "status:{0}".format(status)
+
         ret = status
     except Exception as e:
-        print "exception happend"
-        print   e.message
-        print   str(e)
-        print   'str(Exception):\t', str(Exception)
-        print   'str(e):\t\t', str(e)
-        print   'repr(e):\t', repr(e)
-        print   'e.message:\t', e.message
-        print   'traceback.print_exc():'
-        traceback.print_exc()
-        print   'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         ret = -1
     return ret, strTempFileName
 
@@ -510,8 +421,8 @@ def syncFromCloud(strUrl, strMd5, strTempFileName):
                 break
             try_times = try_times + 1
             if try_times > global_MaxTryTimes:
-                print "Exit  Download  , Download file try times:{0} more than global_MaxTryTimes:{1}".format(try_times,
-                                                                                                              global_MaxTryTimes)
+                rospy.logdebug("Exit  Download  , Download file try times:{0} more than global_MaxTryTimes:{1}".format(try_times,
+                                                                                                              global_MaxTryTimes))
                 retNum = -1
                 break
 
@@ -521,29 +432,22 @@ def syncFromCloud(strUrl, strMd5, strTempFileName):
                 if retDownload == 0:
                     ## check md5 Success
                     if checkFileMd5(strTempFileName) == strMd5:
-                        print "md5 check success:filename:{0}".format(strTempFileName)
+                        rospy.logdebug("md5 check success:filename:{0}".format(strTempFileName))
                         retNum = 0
                         break
                     ##  check md5 failed
                     if checkFileMd5(strTempFileName) != strMd5:
-                        print "md5 check failed:filename:{0}".format(strTempFileName)
+                        rospy.logdebug("md5 check failed:filename:{0}".format(strTempFileName))
                 ## download file failed
                 if retDownload != 0:
-                    print "Download file failed,try times:{0}".format(try_times)
+                    rospy.logwarn("Download file failed,try times:{0}".format(try_times))
                 # if os.path.exists(strTempFileName):
                 #     os.remove(strTempFileName)
 
     except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():'
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return retNum
 
 
@@ -554,57 +458,50 @@ def link_file(strDownStageLocationFileMap, strStandardLocationFileMap):
             while True:
                 if (os.path.exists(strStandardLocationFileMap)) and (
                         os.readlink(strStandardLocationFileMap) == strDownStageLocationFileMap):
-                    print   "############ link file:{0}  and target_file:{1} name normal".format(
-                        strStandardLocationFileMap, strDownStageLocationFileMap)
+                    rospy.logdebug("############ link file:{0}  and target_file:{1} name normal".format(
+                        strStandardLocationFileMap, strDownStageLocationFileMap))
                     break
                 if (os.path.exists(strStandardLocationFileMap)) and (
                         os.readlink(strStandardLocationFileMap) != strDownStageLocationFileMap):
-                    print   "############ link file:{0}  and target_file:{1} name abnormal".format(
-                        strStandardLocationFileMap, strDownStageLocationFileMap)
+                    rospy.logdebug("############ link file:{0}  and target_file:{1} name abnormal".format(
+                        strStandardLocationFileMap, strDownStageLocationFileMap))
                     os.remove(strStandardLocationFileMap)
                     os.symlink(strDownStageLocationFileMap, strStandardLocationFileMap)
                     ret = 1
                     break
                 if not os.path.exists(strStandardLocationFileMap):
-                    print "link file: {0} not exists ,now create ".format(strStandardLocationFileMap)
+                    rospy.logdebug("link file: {0} not exists ,now create ".format(strStandardLocationFileMap))
                     os.symlink(strDownStageLocationFileMap, strStandardLocationFileMap)
                     ret = 1
                     break
                 break
         else:
-            print  "src file:{0} not exists, link failed".format(strDownStageLocationFileMap)
+            rospy.logwarn("src file:{0} not exists, link failed".format(strDownStageLocationFileMap))
             ret = -1
 
     except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():'
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return ret
 
 
 def processFile(lMapId, strMapUrl, strMapMd5, timestamp, strStandardLocationFileMap):
-    print "--------------------------processFile: lMapId:{0}, strMapUrl:{1}, strMapMd5:{2}, timestamp:{3}".format(
-        lMapId, strMapUrl, strMapMd5, timestamp)
+    rospy.logdebug("--------------------------processFile: lMapId:{0}, strMapUrl:{1}, strMapMd5:{2}, timestamp:{3}".format(
+        lMapId, strMapUrl, strMapMd5, timestamp))
 
     intProcessRet = 0
 
     if int(lMapId) < 0 or int(lMapId) == 0:
-        print "processFile recv para error line_id"
+        rospy.logdebug("processFile recv para error line_id")
         intProcessRet = 1
 
     if len(strMapUrl.strip()) == 0:
-        print "processFile recv para error strMapUrl"
+        rospy.logdebug("processFile recv para error strMapUrl")
         intProcessRet = 1
 
     if len(strMapMd5.strip()) == 0:
-        print "processFile recv para error strMapMd5"
+        rospy.logdebug("processFile recv para error strMapMd5")
         intProcessRet = 1
 
     global g_CacheUtil
@@ -625,55 +522,46 @@ def processFile(lMapId, strMapUrl, strMapMd5, timestamp, strStandardLocationFile
         try:
             ## check temp Download folder exists
             if os.path.isdir(globalStrTempDownFolder) and os.access(globalStrTempDownFolder, os.R_OK):
-                print "folder exists and is readable"
+                pass
             else:
-                print "folder not ready,now create path"
+                rospy.logwarn("folder not ready,now create path")
                 os.makedirs(globalStrTempDownFolder)
-                print os.path.isdir(globalStrTempDownFolder)
                 os.chmod(globalStrTempDownFolder, 0777)
 
             if os.path.isdir(globalStrStageDownFolder) and os.access(globalStrStageDownFolder, os.R_OK):
-                print
-                "folder exists and is readable"
+                pass
             else:
-                print
-                "folder not ready,now create path"
+                rospy.logwarn("folder not ready,now create path")
                 os.makedirs(globalStrStageDownFolder)
-                print os.path.isdir(globalStrStageDownFolder)
                 os.chmod(globalStrStageDownFolder, 0777)
 
-            print "strStandardLocationFileMap:{0}".format(strStandardLocationFileMap)
+            rospy.logdebug("strStandardLocationFileMap:{0}".format(strStandardLocationFileMap))
             listDirs = strStandardLocationFileMap.split('/')
-            print "listDirs:{0}".format(listDirs)
+            rospy.logdebug("listDirs:{0}".format(listDirs))
 
             strStandardLocationFolder = ""
             if len(listDirs) > 3:
                 sublist = listDirs[1:-1]
-                print  "sublist:{0}".format(sublist)
+                rospy.logdebug("sublist:{0}".format(sublist))
                 strStandardLocationFolder = "/" + "/".join(sublist)
-                print  "strStandardLocationFolder:{0}".format(strStandardLocationFolder)
+                rospy.logdebug("strStandardLocationFolder:{0}".format(strStandardLocationFolder))
 
             if len(strStandardLocationFolder) > 1:
                 if os.path.isdir(strStandardLocationFolder) and os.access(strStandardLocationFolder, os.R_OK):
-                    print   "folder:{0} exists and is readable".format(strStandardLocationFolder)
+                    pass
                 else:
-                    print   "folder:{0} not ready,now create path".format(strStandardLocationFolder)
+                    rospy.logwarn("folder:{0} not ready,now create path".format(strStandardLocationFolder))
                     os.makedirs(strStandardLocationFolder)
-                    print  os.path.isdir(strStandardLocationFolder)
                     os.chmod(strStandardLocationFolder, 0777)
 
             ### check Downfile
             while True:
-                # if os.path.exists(strDownTempLocationFileMap):
-                #     os.remove(strDownTempLocationFileMap)
-
-                print "--------------------before not os.path.exists(strDownStageLocationFileMap)"
                 if not os.path.exists(strDownStageLocationFileMap):
-                    print "########## enter switch not os.path.exists(strDownStageLocationFileMap)"
+                    rospy.logdebug("########## enter switch not os.path.exists(strDownStageLocationFileMap)")
                     ## down to temp  location
                     intCheckStatus = 0
                     intCheckStatus = syncFromCloud(strMapUrl, strMapMd5, strDownTempLocationFileMap)
-                    print "=============intCheckStatus:{0}".format(intCheckStatus)
+                    rospy.logdebug("=============intCheckStatus:{0}".format(intCheckStatus))
                     if intCheckStatus == 0:
                         intDownCompleteMapStatus = 1
                     if intCheckStatus != 0:
@@ -682,31 +570,29 @@ def processFile(lMapId, strMapUrl, strMapMd5, timestamp, strStandardLocationFile
                             intDownCompleteMapStatus = 3
                     break
 
-                print "--------------------------before switch (g_CacheUtil.CheckMapFileCacheExists(lMapId, timestamp, strMapMd5) == True) and (os.path.exists(strDownStageLocationFileMap)"
-                print g_CacheUtil.debug()
-                print "input map_id:{0}".format(lMapId)
-                print "strDownStageLocationFileMap:{0}".format(strDownStageLocationFileMap)
+                rospy.logdebug("input map_id:{0}".format(lMapId))
+                rospy.logdebug("strDownStageLocationFileMap:{0}".format(strDownStageLocationFileMap))
                 if (g_CacheUtil.CheckMapFileCacheExists(lMapId, timestamp, strMapMd5) == True) and (
                         os.path.exists(strHistoryDownStageLocationFileMap)):
-                    print "===enter switch (g_CacheUtil.CheckMapFileCacheExists(lMapId, timestamp, strMapMd5) == True) and (os.path.exists(strHistoryDownStageLocationFileMap))"
+                    rospy.logdebug("===enter switch (g_CacheUtil.CheckMapFileCacheExists(lMapId, timestamp, strMapMd5) == True) and (os.path.exists(strHistoryDownStageLocationFileMap))")
                     intLocationTimeStamp = int(os.path.getmtime(strHistoryDownStageLocationFileMap))
 
                     strMapName = "{0}".format(lMapId)
                     intCacheModifyNameMap = g_CacheUtil.dictMapAgentRecord[strMapName]['modify_time']
-                    print "## +++++++++++++++++++++++++++++intCacheModifyNameMap:{0},intLocationTimeStamp:{1}".format(
-                        intCacheModifyNameMap, intLocationTimeStamp)
+                    rospy.logdebug("## +++++++++++++++++++++++++++++intCacheModifyNameMap:{0},intLocationTimeStamp:{1}".format(
+                        intCacheModifyNameMap, intLocationTimeStamp))
                     while True:
                         ## local cache  file same with  hd_map_file
                         if intLocationTimeStamp == intCacheModifyNameMap:
                             # compare timestamp
                             if g_CacheUtil.dictMapAgentRecord[strMapName]['timestamp'] == timestamp:
-                                print "====== enter g_CacheUtil.dictMapAgentRecord[strMapName]['timestamp'] == timestamp"
+                                rospy.logdebug("====== enter g_CacheUtil.dictMapAgentRecord[strMapName]['timestamp'] == timestamp")
                                 ### direct use
                                 intDownCompleteMapStatus = 4
                                 break
 
                             if g_CacheUtil.dictMapAgentRecord[strMapName]['timestamp'] != timestamp:
-                                print "======= enter g_CacheUtil.dictMapAgentRecord[strMapName]['timestamp'] != timestamp"
+                                rospy.logdebug("======= enter g_CacheUtil.dictMapAgentRecord[strMapName]['timestamp'] != timestamp")
                                 ##  download file
                                 intCheckStatus = 0
                                 intCheckStatus = syncFromCloud(strMapUrl, strMapMd5, strDownTempLocationFileMap)
@@ -720,12 +606,12 @@ def processFile(lMapId, strMapUrl, strMapMd5, timestamp, strStandardLocationFile
                         ## local cache  file not same with  hd_map_file
                         if intLocationTimeStamp > intCacheModifyNameMap:
                             ## local  happend change , compare   new timestamp  and local modify_time
-                            print "########## map intLocationTimeStamp > intCacheModifyNameMap"
+                            rospy.logdebug("########## map intLocationTimeStamp > intCacheModifyNameMap")
                             if intLocationTimeStamp > timestamp:
-                                print "===enter switch intLocationTimeStamp > timestamp====="
+                                rospy.logdebug("===enter switch intLocationTimeStamp > timestamp=====")
                                 intDownCompleteMapStatus = 3
                             else:
-                                print "===enter switch intLocationTimeStamp <=  timestamp====="
+                                rospy.logdebug("===enter switch intLocationTimeStamp <=  timestamp=====")
                                 ###  use cloud hd_map
                                 intCheckStatus = 0
                                 intCheckStatus = syncFromCloud(strMapUrl, strMapMd5, strDownTempLocationFileMap)
@@ -743,56 +629,56 @@ def processFile(lMapId, strMapUrl, strMapMd5, timestamp, strStandardLocationFile
                         #     break
                         break
                     break
-                print "strDownStageLocationFileMap:{0}".format(strDownStageLocationFileMap)
+                rospy.logdebug("strDownStageLocationFileMap:{0}".format(strDownStageLocationFileMap))
                 if os.path.exists(strDownStageLocationFileMap):
-                    print "====enter switch  os.path.exists(strDownStageLocationFileMap)"
+                    rospy.logdebug("====enter switch  os.path.exists(strDownStageLocationFileMap)")
                     # intDownCompleteStopStatus = 3
                     intDownCompleteMapStatus = 3
                     break
                 break
 
             ## start replace  file
-            print "-------------status intDownCompleteMapStatus:{0}".format(intDownCompleteMapStatus)
+            rospy.logdebug( "-------------status intDownCompleteMapStatus:{0}".format(intDownCompleteMapStatus))
             while True:
                 if intDownCompleteMapStatus == 1:
-                    print "##########(intDownCompleteMapStatus  == 1)"
-                    print "++++++++++=copy file str:{0},dst:{1}".format(strDownTempLocationFileMap,
-                                                                        strDownStageLocationFileMap)
+                    rospy.logdebug("##########(intDownCompleteMapStatus  == 1)")
+                    rospy.logdebug( "++++++++++=copy file str:{0},dst:{1}".format(strDownTempLocationFileMap,
+                                                                        strDownStageLocationFileMap))
 
                     shutil.copyfile(strDownTempLocationFileMap, strDownStageLocationFileMap)
                     intLocationStampMap = int(os.path.getmtime(strDownStageLocationFileMap))
 
                     g_CacheUtil.WriteFileCacheInfo(lMapId, strMapUrl, strMapMd5, timestamp, intLocationStampMap)
                     # SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(), level='info')
-                    print "=====DOWNLOAD_SUCCESS"
+                    rospy.logdebug("=====DOWNLOAD_SUCCESS")
                     if link_file(strDownStageLocationFileMap, strStandardLocationFileMap) == 1:
-                        print "============== happend relink , transter to pad"
+                        rospy.logdebug("============== happend relink , transter to pad")
                         SaveEventToFile(msg='', code='ISYS_CONFIG_UPDATE_HADMAP', results=list(), actions=list(),level='info')
 
                     intProcessRet = 0
                     break
                 if intDownCompleteMapStatus == 2:
-                    print "##########intDownCompleteMapStatus == False   or  intDownCompleteStopStatus == False happend"
+                    rospy.logdebug("##########intDownCompleteMapStatus == False   or  intDownCompleteStopStatus == False happend")
                     # SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_FAILURE', results=list(), actions=list(),level='info')
                     intProcessRet = 1
-                    print  "=====DOWNLOAD_FAILURE"
+                    rospy.logdebug("=====DOWNLOAD_FAILURE")
                     break
                 if intDownCompleteMapStatus == 3:
-                    print "##########remote map not exists,now user local map"
+                    rospy.logdebug("##########remote map not exists,now user local map")
                     # SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_WARNING', results=list(), actions=list(),level='warn')
                     intProcessRet = 2
-                    print "=====LOCAL_HD_MAP_FIRST_WARNING"
+                    rospy.logdebug("=====LOCAL_HD_MAP_FIRST_WARNING")
                     if link_file(strDownStageLocationFileMap, strStandardLocationFileMap) == 1:
-                        print "============== happend relink , transter to pad"
+                        rospy.logdebug("============== happend relink , transter to pad")
                         SaveEventToFile(msg='', code='ISYS_CONFIG_UPDATE_HADMAP', results=list(), actions=list(),level='info')
                     break
                 if intDownCompleteMapStatus == 4:
-                    print "########## map same with cloud ,not need  update "
+                    rospy.logdebug("########## map same with cloud ,not need  update ")
                     # SaveEventToFile(msg='', code='ISYS_INIT_TRAJECTORY_SUCCESS', results=list(), actions=list(),level='info')
                     intProcessRet = 0
-                    print "===== LOCAL_SAME_AS_CLOUD_NOT_NEED_UPDATE"
+                    rospy.logdebug("===== LOCAL_SAME_AS_CLOUD_NOT_NEED_UPDATE")
                     if link_file(strDownStageLocationFileMap, strStandardLocationFileMap) == 1:
-                        print "============== happend relink , transter to pad"
+                        rospy.logdebug("============== happend relink , transter to pad")
                         #SaveEventToFile(msg='', code='ISYS_CONFIG_UPDATE_HADMAP', results=list(), actions=list(),level='info')
                     break
                 break
@@ -800,16 +686,9 @@ def processFile(lMapId, strMapUrl, strMapMd5, timestamp, strStandardLocationFile
 
 
         except Exception as e:
-            print "exception happend"
-            print e.message
-            print str(e)
-            print 'str(Exception):\t', str(Exception)
-            print 'str(e):\t\t', str(e)
-            print 'repr(e):\t', repr(e)
-            print 'e.message:\t', e.message
-            print 'traceback.print_exc():'
-            traceback.print_exc()
-            print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return intProcessRet,intDownCompleteMapStatus
 
 
@@ -818,7 +697,7 @@ def ControlCmd(strJsonControlCmd):
 
 
 def call_process(strReponse):
-    print "-----------------------call_process recv task-----------------"
+    rospy.logdebug("-----------------------call_process recv task-----------------")
     global globalTaskManager
     try:
         dictResult = None
@@ -838,24 +717,22 @@ def call_process(strReponse):
             strTime = "2022-06-30T06:14:52.000+00:00"
             listSubTime = strUpdateTime.split('+')
 
-            print   "listSubTime:{0}".format(listSubTime)
+            rospy.logdebug("listSubTime:{0}".format(listSubTime))
             strSimpleTime = ""
             if len(listSubTime) == 2:
                 if len(listSubTime[0]) > 0:
                     listSubSubTime = listSubTime[0].split('.000')
                     if len(listSubSubTime) == 2 and len(listSubSubTime[0]) > 0:
                         strSimpleTime = listSubSubTime[0]
-            print   "-------------- strSimpleTime:{0}".format(strSimpleTime)
+            rospy.logdebug("-------------- strSimpleTime:{0}".format(strSimpleTime))
             timeArray = time.strptime(strSimpleTime, "%Y-%m-%dT%H:%M:%S")
             intTranslateUpdateTime = int(time.mktime(timeArray))
-            print "call_process: recv  lMapId:{0}, strMapUrl:{1}, strMapMd5:{2},timestamp:{3},strVersion:{4}".format(
-                intPid, strCosPath, strMd5, intTranslateUpdateTime, strMapVersion)
+            rospy.logdebug("call_process: recv  lMapId:{0}, strMapUrl:{1}, strMapMd5:{2},timestamp:{3},strVersion:{4}".format(
+                intPid, strCosPath, strMd5, intTranslateUpdateTime, strMapVersion))
             # download map
             strTaskId = "{0}_{1}".format(intPid, intTranslateUpdateTime)
             while True:
                 if 1:
-                    # globalTaskManager.addTask(strTaskId)
-                    # print "-----   task_id:{0} ".format(strTaskId)
                     intResultProcess,intDownCompleteMapStatus = processFile(intPid, strCosPath, strMd5, intTranslateUpdateTime, strPath)
                     if (intResultProcess == 0) and (intDownCompleteMapStatus == 1):
                         strIp = globalHdMapUrlName
@@ -865,29 +742,23 @@ def call_process(strReponse):
                         dictQueryCondition = {'vehicleConfSn': globalCommonPara.dictCarInfo['car_plate'],
                                               'mapId': intMapId,
                                               'pid': intPid}
-                        print "=========== request sync info : {0}".format(dictQueryCondition)
+                        rospy.logdebug("=========== request sync info : {0}".format(dictQueryCondition))
                         strSyncResponse = simpleHttpsQuery(strIp, strPort, strApiName, dictQueryCondition)
-                        print "=========== response sync info: {0}".format(strSyncResponse)
+                        rospy.logdebug("=========== response sync info: {0}".format(strSyncResponse))
                         #SaveEventToFile(msg='', code='ISYS_CONFIG_UPDATE_HADMAP', results=list(), actions=list(),level='info')
 
                         if len(strSyncResponse) > 0:
                             dictResponse = json.loads(strSyncResponse)
                             intSyncResponseErrorCode = int(dictResponse['errcode'])
                             intSyncResponseMsg = str(dictResponse['msg'])
-                            # print "strSyncResponse:{0}".format(strSyncResponse)
+
                     break
                 break
     except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():'
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+
     finally:
         globalTaskManager.removeTask(strTaskId)
 
@@ -902,7 +773,6 @@ def kill_proc_tree(pid, sig=signal.SIGKILL, include_parent=True,
     alive = None
     #assert pid != os.getpid(), "won't kill myself"
     if pid == os.getpid():
-        print "won't kill myself"
         return
     try:
         parent = psutil.Process(pid)
@@ -917,16 +787,9 @@ def kill_proc_tree(pid, sig=signal.SIGKILL, include_parent=True,
         gone, alive = psutil.wait_procs(children, timeout=timeout,
                                         callback=on_terminate)
     except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():'
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return (gone, alive)
 
 def kill_sub_process_wget():
@@ -936,48 +799,34 @@ def kill_sub_process_wget():
         for (key,value ) in dictRunningWgetPid.items():
             strKillCmd = "kill -9 {0}".format(key)
             status, output = commands.getstatusoutput(strKillCmd)
-            print "kill status: {0},output:{1},strCmd:{2}".format(status,output,strKillCmd)
+            rospy.logdebug("kill status: {0},output:{1},strCmd:{2}".format(status,output,strKillCmd))
             times  = times + 1
-        print "=== after kill , dictRunningWgetPid:{0},times: {1}".format(dictRunningWgetPid,times)
+        rospy.logdebug("=== after kill , dictRunningWgetPid:{0},times: {1}".format(dictRunningWgetPid,times))
     except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():'
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 def topicMsgCallback(msg):
     global globalPilotMode
-    #print "--------------------------------------------------recv from channel /chassis/vehicle_state  "
+
     pbStatus = common_vehicle_state_pb2.VehicleState()
     pbStatus.ParseFromString(msg.data)
     globalPilotMode = pbStatus.pilot_mode
-    # print "=--------------/chassis/vehicle_state:recv  globalPilotMode:{0}".format(globalPilotMode)
+
     if globalPilotMode == 1 or globalPilotMode == 2:
-        # print "=========================globalPilotMode: {0}, start kill sub process".format(globalPilotMode)
+
         ## stop all sub wget task
-        # print   "============pids:{0}".format(pids)
+
         try:
             if len(globalTaskManager.dictTaskInfo) > 0:
                 kill_sub_process_wget()
                 ## clean all  task info
                 globalTaskManager.delAllTask()
         except Exception as e:
-            print   "exception happend"
-            print   e.message
-            print   str(e)
-            print   'str(Exception):\t', str(Exception)
-            print   'str(e):\t\t', str(e)
-            print   'repr(e):\t', repr(e)
-            print   'e.message:\t', e.message
-            print   'traceback.print_exc():'
-            traceback.print_exc()
-            print   'traceback.format_exc():\n%s' % (traceback.format_exc())
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
 def localizationCallback(msg):
@@ -987,7 +836,7 @@ def localizationCallback(msg):
     location.ParseFromString(msg.data)
     globalMapPosition_longitude = location.longitude
     globalMapPosition_latitude = location.latitude
-    # print "=====================globalMapPosition_longitude:{0}, globalMapPosition_latitude:{1}".format(globalMapPosition_longitude,globalMapPosition_latitude)
+    rospy.logdebug_throttle(2, "globalMapPosition_longitude:{0}, globalMapPosition_latitude:{1}".format(globalMapPosition_longitude,globalMapPosition_latitude))
 
 
 def addLocalizationListener():
@@ -1006,16 +855,9 @@ def simpleHttpQuery(strIp, strPort, strApiName, dictQueryCondition):
         j = json.loads(s)
         strJsonResult = json.dumps(j, sort_keys=True, indent=4)
     except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():';
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return strJsonResult
 
 
@@ -1025,29 +867,22 @@ def simpleHttpsQuery(strIp, strPort, strApiName, dictQueryCondition):
     dictHeader['Content-Type'] = "application/json"
     try:
         url = "https://{0}{1}".format(strIp, strApiName)
-        print "simpleHttpsQuery url:{0}".format(url)
+        rospy.logdebug("simpleHttpsQuery url:{0}".format(url))
         ret = requests.post(url, headers=dictHeader, data=json.dumps(dictQueryCondition), timeout=3, verify=False)
         s = ret.content.decode('utf8')
-        print "simpleHttpsQuery s:{0}".format(s)
+        rospy.logdebug("simpleHttpsQuery s:{0}".format(s))
         j = json.loads(s)
         strJsonResult = json.dumps(j, sort_keys=True, indent=4)
     except Exception as e:
-        print "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():';
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return strJsonResult
 
 
 def managerDownload(strReponse):
     global globalTaskManager
-    print "-----------------------managerDownload recv task-----------------"
+    rospy.logdebug("-----------------------managerDownload recv task-----------------")
     if len(strReponse) > 0:
         try:
             dictResult = None
@@ -1065,31 +900,25 @@ def managerDownload(strReponse):
 
                 strTime = "2022-06-30T06:14:52.000+00:00"
                 listSubTime = strUpdateTime.split('+')
-                print "listSubTime:{0}".format(listSubTime)
+                rospy.logdebug("listSubTime:{0}".format(listSubTime))
                 strSimpleTime = ""
                 if len(listSubTime) == 2:
                     if len(listSubTime[0]) > 0:
                         listSubSubTime = listSubTime[0].split('.000')
                         if len(listSubSubTime) == 2 and len(listSubSubTime[0]) > 0:
                             strSimpleTime = listSubSubTime[0]
-                print "-------------- strSimpleTime:{0}".format(strSimpleTime)
+                rospy.logdebug("-------------- strSimpleTime:{0}".format(strSimpleTime))
                 timeArray = time.strptime(strSimpleTime, "%Y-%m-%dT%H:%M:%S")
                 intTranslateUpdateTime = int(time.mktime(timeArray))
-                print "call_process: recv  lMapId:{0}, strMapUrl:{1}, strMapMd5:{2},timestamp:{3},strVersion:{4}".format(
-                    intPid, strCosPath, strMd5, intTranslateUpdateTime, strMapVersion)
+                rospy.logdebug("call_process: recv  lMapId:{0}, strMapUrl:{1}, strMapMd5:{2},timestamp:{3},strVersion:{4}".format(
+                    intPid, strCosPath, strMd5, intTranslateUpdateTime, strMapVersion))
                 # download map
                 strTaskId = "{0}_{1}".format(intPid, intTranslateUpdateTime)
         except Exception as e:
-            print "exception happend"
-            print e.message
-            print str(e)
-            print 'str(Exception):\t', str(Exception)
-            print 'str(e):\t\t', str(e)
-            print 'repr(e):\t', repr(e)
-            print 'e.message:\t', e.message
-            print 'traceback.print_exc():';
-            traceback.print_exc()
-            print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+
 
         if not globalTaskManager.checkTaskExists(strTaskId):
             ## autopilot status cannot down hd map
@@ -1108,23 +937,17 @@ def doCheckMapInfo():
             strCarSn = dictCarInfo['car_plate']
             dictQueryCondition = {'vehicleConfSn': strCarSn, 'lng': globalMapPosition_longitude,
                                   'lat': globalMapPosition_latitude}
-            print  "========================== query map info:{0}".format(json.dumps(dictQueryCondition))
+            rospy.logdebug("========================== query map info:{0}".format(json.dumps(dictQueryCondition)))
             if (globalMapPosition_longitude == -0.1) or (globalMapPosition_latitude == -0.1) :
-                print "error globalMapPosition_longitude and globalMapPosition_latitude,ignore"
+                rospy.logwarn("error globalMapPosition_longitude and globalMapPosition_latitude,ignore")
             else:
                 strReponse = simpleHttpsQuery(strIp, globalStrPort, strApiName, dictQueryCondition)
-                print  "========================== response map info:{0}".format(strReponse)
+                rospy.logdebug("========================== response map info:{0}".format(strReponse))
         except Exception as e:
-            print "exception happend"
-            print e.message
-            print str(e)
-            print 'str(Exception):\t', str(Exception)
-            print 'str(e):\t\t', str(e)
-            print 'repr(e):\t', repr(e)
-            print 'e.message:\t', e.message
-            print 'traceback.print_exc():';
-            traceback.print_exc()
-            print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+
         if len(strReponse) > 0:
             globalManagerProcessRequestPool.submit(managerDownload, strReponse)
             # call_process(strReponse)
@@ -1151,16 +974,10 @@ def main():
         ## wait msg
         rospy.spin()
     except Exception as e:
-        print  "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():';
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+
 
 def readConfig():
     global globalHdMapUrlName
@@ -1175,17 +992,10 @@ def readConfig():
                 if len(dictContent) > 0:
                     globalHdMapUrlName = dictContent['url']
     except Exception as e:
-        print  "exception happend"
-        print e.message
-        print str(e)
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'e.message:\t', e.message
-        print 'traceback.print_exc():';
-        traceback.print_exc()
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
-    print "=========config url: {0}".format(globalHdMapUrlName)
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+    rospy.logdebug("=========config url: {0}".format(globalHdMapUrlName))
 
 
 
@@ -1196,5 +1006,5 @@ if __name__ == "__main__":
         readConfig()
         main()
     except KeyboardInterrupt as e:
-        print("monitor.py is failed !")
+        rospy.logwarn("monitor.py is failed !")
         exit(0)

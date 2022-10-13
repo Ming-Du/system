@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+package common;
+
+
+message ReferenceLanes_PB {
+  enum ReferenceLanesType{
+    ReferenceLanesType_reserved = 0;
+    ReferenceLanesType_lane1 = 1;
+    ReferenceLanesType_lane2 = 2;
+    ReferenceLanesType_lane3 = 3;
+    ReferenceLanesType_lane4 = 4;
+    ReferenceLanesType_lane5 = 5;
+    ReferenceLanesType_lane6 = 6;
+    ReferenceLanesType_lane7 = 7;
+    ReferenceLanesType_lane8 = 8;
+    ReferenceLanesType_lane9 = 9;
+    ReferenceLanesType_lane10 = 10;
+    ReferenceLanesType_lane11 = 11;
+    ReferenceLanesType_lane12 = 12;
+    ReferenceLanesType_lane13 = 13;
+    ReferenceLanesType_lane14 = 14;
+    ReferenceLanesType_lane15 = 15;
+  };
+  required ReferenceLanesType lane = 1;
+}

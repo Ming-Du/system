@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 import os
 import socket
@@ -91,7 +91,7 @@ def LoadMsglogs(input_paths):
                 LoadOneMsgLog(path)
                 os.remove(path)
         except Exception as e:
-            print ('loadMsglogs has error: {}'.format(e))
+            rospy.loginfo ('loadMsglogs has error: {}'.format(e))
 
 def buildOneLogMsg(one_log_dict):
     #common_mogo_report_msg MogoReportMessage
@@ -116,7 +116,7 @@ def buildOneLogMsg(one_log_dict):
             mogo_report_msg.actions.append("")
 
     except Exception as e:
-        print ("{} error: {}".format("buildOneLogMsg", e))
+        rospy.loginfo ("{} error: {}".format("buildOneLogMsg", e))
     return mogo_report_msg
 
 
@@ -128,18 +128,15 @@ def LoadOneMsgLog(path):
             contents = fp.read()
             lines = contents.split("\n")
     except Exception as e:
-        print "exception happend"
-        print 'str(Exception):\t', str(Exception)
-        print 'str(e):\t\t', str(e)
-        print 'repr(e):\t', repr(e)
-        print 'traceback.format_exc():\n%s' % (traceback.format_exc())
+        rospy.loginfo("exception happend when open fp")
+        rospy.loginfo('traceback.format_exc():\n{}'.format(traceback.format_exc()))
     if len(lines) > 0:
         for line in lines:
             idx = idx + 1
-            print "line json is: idx {0}".format(idx)
+            rospy.loginfo("line json is: idx {0}".format(idx))
             if len(line) > 0:
                 one_log_dict = {}
-                print "lineContent:{0}".format(line)
+                rospy.loginfo("lineContent:{0}".format(line))
                 try:
                     one_log_dict = json.loads(line)
                     #convert json to protobuf
@@ -154,25 +151,17 @@ def LoadOneMsgLog(path):
                     binary_log_msg.name = "mogo_msg.MogoReportMessage"
                     binary_log_msg.size = len(log_pub_msg_str)
                     binary_log_msg.data = log_pub_msg_str
-                    #print(log_pub_msg_str)
+                    #rospy.loginfo(log_pub_msg_str)
                     if one_log_dict.get("level",'') == "info":
                         set_msg_log_pub_info.publish(binary_log_msg)
                     elif one_log_dict.get("level",'') == "error":
                         set_msg_log_pub_error.publish(binary_log_msg)
                     else:
-                        print("there have unexpected level")
+                        rospy.loginfo("there have unexpected level")
                 except Exception as e:
-                    print "exception happend"
-                    print 'str(Exception):\t', str(Exception)
-                    print 'str(e):\t\t', str(e)
-                    print 'repr(e):\t', repr(e)
-                    print 'traceback.format_exc():\n%s' % (traceback.format_exc())
-            #mogo_report_msg_test = common_mogo_report_msg.MogoReportMessage()
-            #mogo_report_msg_test.ParseFromString(binary_log_msg.data)
-            #for one_msg in mogo_report_msg_test.actions:
-            #    print(one_msg)
-            #for one_msg in mogo_report_msg_test.result:
-            #    print(one_msg)
+                    rospy.loginfo("exception happend when build msg")
+                    rospy.loginfo('traceback.format_exc():\n{}'.format(traceback.format_exc())) 
+
             time.sleep(0.1)
 
 

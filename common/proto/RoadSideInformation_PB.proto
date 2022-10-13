@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package common;
+import "String_PB.proto";
+import "Position3D_PB.proto";
+import "RTEList_PB.proto";
+import "RTSList_PB.proto";
+
+message RoadSideInformation_PB {
+    //发送方为自己发送的同类消息，依次进行编号。编号数值为0～127，循环使用。
+    //该数据字段用于接收方对来自同一发送方的同一类消息，进行连续收包的监控和丢包的统计。
+    required 	int64  msgCnt=1;
+    //数值用来表示当前年份，已经过去的总分钟数（UTC时间）。
+    //其分辨率为1分钟。该数值配合DSecond数值，则可以表示以毫秒记的全年已过去的总时间。
+    optional int64 moy=2;
+    //RSU_ID
+    required  String_PB	 id=3;
+    //RSU 对应坐标
+    required  Position3D_PB	 refPos=4;
+    //交通事件内容
+    optional RTEList_PB rtes=5;
+    //交通标志内容
+    optional RTSList_PB rtss=6;
+}
+
