@@ -42,6 +42,7 @@ add_service_files(
   StringMessage.srv
   StatusQuery.srv
   RecordDataConfigQuery.srv
+  RecordDataConfigQueryV2.srv
   StartTask.srv
   StopTask.srv
   TaskInfo.srv

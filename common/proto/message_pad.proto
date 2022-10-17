@@ -1,9 +1,10 @@
 syntax = "proto3";
 package mogo.telematics.pad;
 
-enum ProtocolVersion{
+enum ProtocolVersion
+{
     Defaultver = 0;
-    CurrentVersion = 7; //每次修改proto文件增加1
+    CurrentVersion = 8; //每次修改proto文件增加1
 }
 
 enum MessageType
@@ -49,6 +50,7 @@ enum MessageType
     MsgTypeOperatorCmdReq = 0x10116; //操控指令
     MsgTypeSubscribeDataReq = 0x10117; //数据订阅、取消订阅请求
     MsgTypeSpecialVehicleTaskCmd = 0x10118; //特种车辆命令
+    MsgTypeSetParamReq = 0x10119; //设置参数命令
 }
 
 message Header
@@ -221,7 +223,8 @@ message Location
     double heading = 4;
 }
 
-message RouteInfo{
+message RouteInfo
+{
     Location startLocation = 1;  
     string startName = 2;
     Location endLocation = 3;
@@ -284,6 +287,7 @@ message RecordData
     bool isRecord = 4; //采集指令, true: 采集, false: 停止采集
     bool sustain = 5; //是否持续采集
     uint32 bduration = 6; //前溯时长
+    repeated string topics = 7; //topic列表
 }
 
 // message definition for MsgTypeRecordResult
@@ -355,7 +359,8 @@ message ArrivalNotification
 }
 
 // message definition for MsgTypeSystemCmdReq
-enum SystemCmdType {
+enum SystemCmdType
+{
     SYSTEMCMD_NONE = 0;
     SYSTEMCMD_REBOOT = 1;
 }
@@ -382,7 +387,8 @@ message SetRainModeReq
 // message definition for MsgTypeRecordDataConfigReq
 message RecordDataConfigReq
 {
-    uint32 reqType = 1; // 0: all, 其他保留
+    uint32 reqType = 1; // 0: all,  1:获取当前所有topic列表, 2:配置需要预加载的topic组合
+    repeated string topicsNeedToCache = 2;
 }
 
 // message definition for MsgTypeRecordDataConfigResp
@@ -390,11 +396,13 @@ message RecordDataType
 {
     uint32 id = 1; //采集类型id
     string desc = 2; //采集类型描述
+    repeated string topics = 3; //采集类型必须采集的topic列表
 }
 
 message RecordDataConfig
 {
     repeated RecordDataType recordTypes = 1;
+    repeated string allTopics = 2; //当前所有topic列表
 }
 
 // message definition for MsgTypeSubscribeDataReq
@@ -406,7 +414,8 @@ message SubscribeDataReq
 }
 
 // message definition for MsgTypeOperatorCmdReq
-enum OperatorCmdType {
+enum OperatorCmdType
+{
     OPERATOR_CMD_NONE = 0;
     OPERATOR_CMD_CHANGE_LANE = 1;
     OPERATOR_CMD_SET_ACCELERATED_SPEED = 2;
@@ -422,7 +431,8 @@ message OperatorCmdReq
 }
 
 //message definition for MsgTypePlanningDecisionState
-enum DrivingState{
+enum DrivingState
+{
     NO_AUTODRIVING = 0; //不在自动驾驶状态
     LANKE_KEEP = 1; //车道保持状态
     TRAFFIC_LIGHT = 2; //红绿灯通行状态： driving_action：1 表示停止动作；driving_action:2 表示通行动作
@@ -437,7 +447,8 @@ enum DrivingState{
     UN_PROTECTED_INTERSECTION = 11; //路口预测响应状态： driving_action：1 表示触发了预测响应；
 }
 
-enum DrivingAction{
+enum DrivingAction
+{
     DRIVING_Action_STATE_NONE = 0;
     DRIVING_ACTION_STATE_ONE = 1;
     DRIVING_ACTION_STATE_TWO = 2;
@@ -460,4 +471,15 @@ message PlanningActionMsg
 //message definition for MsgTypeSpecialVehicleTaskCmd
 //refer to special_vehicle_task_cmd.proto for details
 
+//message definition for MsgTypeSetParamReq
+message SetOneParam
+{
+    uint32 type = 1; // 0:default 1:绕障类功能开关(bool) 2:变道绕障的目标障碍物速度阈值(double, m/s)
+    string value = 2; // 转成字符串的值
+}
+
+message SetParamReq
+{
+    repeated SetOneParam reqs = 1;
+}
 
