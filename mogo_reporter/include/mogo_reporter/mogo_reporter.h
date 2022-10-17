@@ -2,7 +2,6 @@
 
 #include <string>
 #include <ros/this_node.h>
-#include "mogo_reporter_codes.h"
 
 #define MOGO_REPORTER_SPAN_SEC 3.0
 
@@ -21,17 +20,9 @@ namespace mogo
 
     bool init(const std::string &cfg_name = "");
 
-    bool publish(mogo_msg::ReportMsgCode code, const std::string &msg = "", double span_sec = MOGO_REPORTER_SPAN_SEC)
-    {
-      return publish_src(ros::this_node::getName(), mogo_msg::getReportMsgCode_Name(code), msg, span_sec);
-    }
     bool publish(const std::string &code, const std::string &msg = "", double span_sec = MOGO_REPORTER_SPAN_SEC)
     {
       return publish_src(ros::this_node::getName(), code, msg, span_sec);
-    }
-    bool publish_src(const std::string &src, mogo_msg::ReportMsgCode code, const std::string &msg = "", double span_sec = MOGO_REPORTER_SPAN_SEC)
-    {
-      return publish_src(ros::this_node::getName(), mogo_msg::getReportMsgCode_Name(code), msg, span_sec);
     }
     bool publish_src(const std::string &src, const std::string &code, const std::string &msg = "", double span_sec = MOGO_REPORTER_SPAN_SEC);
 
