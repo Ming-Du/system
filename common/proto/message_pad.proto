@@ -388,7 +388,8 @@ message SetRainModeReq
 message RecordDataConfigReq
 {
     uint32 reqType = 1; // 0: all,  1:获取当前所有topic列表, 2:配置需要预加载的topic组合
-    repeated string topicsNeedToCache = 2;
+    uint32 recordType = 2; // 0:不需要修改内置类型的topic组合, 1:需要修改内置类型的topic组合
+    repeated string topicsNeedToCache = 3;
 }
 
 // message definition for MsgTypeRecordDataConfigResp
