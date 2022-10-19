@@ -1,6 +1,26 @@
 syntax = "proto2";
 package chassis;
 
+message AccelToPedalParam{
+    optional float a0 = 1 [default = 0.7818];
+    optional float a1 = 2 [default = 150.1];
+    optional float a2 = 3 [default = -333.8];
+    optional float a3 = 4 [default = 439.7];
+    optional float a4 = 5 [default = -254.3];
+    optional float a5 = 6 [default = 56.78];
+    optional float a6 = 7 [default = -1.923];
+}
+
+message AccelToPressureParam {
+    optional float a0 = 1 [default = -0.5669];
+    optional float a1 = 2 [default = 10.96];
+    optional float a2 = 3 [default = 0.0];
+    optional float a3 = 4 [default = 0.0];
+    optional float a4 = 5 [default = 0.0];
+    optional float a5 = 6 [default = 0.0];
+    optional float a6 = 7 [default = 0.1];
+}
+
 message VehicleConfig {
     optional string vin = 1;
     optional string plate = 2;
@@ -44,4 +64,7 @@ message VehicleConfig {
 
     optional bool new_jinlv = 27 [default = false];//新车型采用新标定数据
     optional bool is_rec_frontwheelData = 28 [default = false];//默认不接收前轮转角传感器（目前只有Ｄ65432D小巴配置了前轮转角传感）,在素珠机上输入　cansend can1 000#0100 激活前轮转角传感器
+
+    optional AccelToPedalParam accel_to_pedal_param = 29;
+    optional AccelToPressureParam accel_to_pressure_param = 30;
 }
