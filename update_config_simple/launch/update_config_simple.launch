@@ -1,0 +1,4 @@
+<launch>
+    <node name="update_config_simple" pkg="update_config_simple" type="update_config_simple.py" output="screen">
+   </node>
+</launch>
