@@ -51,6 +51,7 @@ enum MessageType
     MsgTypeSubscribeDataReq = 0x10117; //数据订阅、取消订阅请求
     MsgTypeSpecialVehicleTaskCmd = 0x10118; //特种车辆命令
     MsgTypeSetParamReq = 0x10119; //设置参数命令
+    MsgTypeTripInfoEvent = 0x1011a; //行程信息
 }
 
 message Header
@@ -483,4 +484,15 @@ message SetParamReq
 {
     repeated SetOneParam reqs = 1;
 }
+
+//message definition for MsgTypeTripInfoEvent
+message TripInfoEvent
+{
+    uint32 type = 1; //事件类型, 1:行程开始, 2:出站, 3:进站, 4:城市占道施工预警
+    string lineName = 2; //路线名, for type 1
+    string stopName = 3; //站点名, for type 2, 3
+    bool isLastStop = 4; //是否最终站, for type 2, 3
+}
+
+
 
