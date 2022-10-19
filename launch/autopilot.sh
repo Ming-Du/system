@@ -271,6 +271,7 @@ add_privilege_monitor_gnss() {
     chmod -R 777 /autocar-code/install/share/hd_map_agent  >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/share/trajectory_agent  >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/lib/drivers_innolidar  >/dev/null 2>&1
+    chmod -R 777 /autocar-code/install/share/update_config_simple  >/dev/null 2>&1
 }
 
 _update() {
@@ -736,7 +737,8 @@ for pid in $pids; do [[ "$pid" != "$self_pid" ]] && LoggingINFO "clean exist $(b
 add_privilege_monitor_gnss
 start_core
 LoggingINFO "update config...."
-timeout 300 roslaunch --wait update_config update_config.launch >$ROS_LOG_DIR/update_config.launch.log 2>&1
+rm -rf  /home/mogo/data/config_end
+timeout 300 roslaunch --wait update_config_simple  update_config_simple.launch >$ROS_LOG_DIR/update_config.launch.log 2>&1
 LoggingINFO "update config finished"
 if [ -f "/home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup" ];then
  \cp -d /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite
