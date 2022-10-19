@@ -1,0 +1,6 @@
+info:
+  - code: ISYS_CONFIG_UPDATE_AI_MODEL
+    msg: 需要重启升级AI模型
+  
+  - code: ISYS_CONFIG_UPDATE_SLAM_MAP
+    msg: 需要重启升级SLAM地图
