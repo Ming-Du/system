@@ -10,6 +10,7 @@ class FileUtils:
         pass
 
     def linkFileSimple(self, strDownStageLocationFileMap, strStandardLocationFileMap):
+        rospy.loginfo("linkFileSimple:link_name:{0},target_name:{1}".format(strStandardLocationFileMap,strDownStageLocationFileMap))
         ret = 0
         try:
             if os.path.exists(strDownStageLocationFileMap):
@@ -44,6 +45,7 @@ class FileUtils:
         return ret
 
     def linkFileAccordConfig(self, strLinkConfigPath):
+        rospy.loginfo("now link config name:{0}".format(strLinkConfigPath))
         listContent = None
         try:
             while True:
@@ -65,8 +67,8 @@ class FileUtils:
                     if len(listContent[idx]) > 0:
                         listUnit = str(listContent[idx]).split(':')
                         if listUnit is not None:
-                            strSrcPath = listUnit[0]
-                            strLinkPath = listUnit[1]
+                            strSrcPath = listUnit[0].strip()
+                            strLinkPath = listUnit[1].strip()
                             self.linkFileSimple(strSrcPath, strLinkPath)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))

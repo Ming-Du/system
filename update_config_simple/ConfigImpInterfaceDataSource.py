@@ -264,9 +264,15 @@ class ConfigImpInterfaceDataSource(InterfaceDataSource):
                 shutil.copyfile(refJob.listJobCollect[idx].strFullFileTempName,
                                 refJob.listJobCollect[idx].strFullFileName)
                 strCurrentFile = refJob.listJobCollect[idx].strFullFileName
-                if strCurrentFile == "/home/mogo/data/vehicle_monitor/slinks.cfg":
-                    instanceFileUtils = FileUtils()
-                    instanceFileUtils.linkFileAccordConfig(strCurrentFile)
+            strSnLinkConfig = ""
+            if self.mCommonPara.dictCarInfo.has_key('car_plate') and len(self.mCommonPara.dictCarInfo['car_plate']) > 0:
+                strSnLinkConfig = "/home/mogo/data/vehicle_monitor/{0}/slinks.cfg".format(self.mCommonPara.dictCarInfo['car_plate'])
+            strCommonLinkConfig = "/home/mogo/data/vehicle_monitor/slinks.cfg"
+            rospy.loginfo("strSnLinkConfig:{0}".format(strSnLinkConfig))
+            rospy.loginfo("strCommonLinkConfig:{0}".format(strCommonLinkConfig))
+            instanceFileUtils = FileUtils()
+            instanceFileUtils.linkFileAccordConfig(strCommonLinkConfig)
+            instanceFileUtils.linkFileAccordConfig(strSnLinkConfig)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
