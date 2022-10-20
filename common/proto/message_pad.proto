@@ -488,10 +488,10 @@ message SetParamReq
 //message definition for MsgTypeTripInfoEvent
 message TripInfoEvent
 {
-    uint32 type = 1; //事件类型, 1:行程开始, 2:出站, 3:进站, 4:城市占道施工预警
-    string lineName = 2; //路线名, for type 1
-    string stopName = 3; //站点名, for type 2, 3
-    bool isLastStop = 4; //是否最终站, for type 2, 3
+    uint32 type = 1; //事件类型, 1:行程开始, 2:行程结束, 3:出站, 4:进站, 5:城市占道施工预警
+    string lineName = 2; //路线名, for type 1, 2
+    string stopName = 3; //站点名, for type 3, 4
+    bool isLastStop = 4; //是否最终站, for type 3, 4
 }
 
 
