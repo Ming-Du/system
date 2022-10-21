@@ -19,6 +19,8 @@ globalSimpleThreadExecutePool = ThreadPoolExecutor(max_workers=1, thread_name_pr
 instanceCommonUtilsCompare = CommonUtilsCompare()
 dictRunningWgetPid = {}
 
+globalAutopilotStatus = 0
+
 
 def downFileFromUrlWget(strUrl, strTempFileName):
     ret = 0
@@ -47,7 +49,7 @@ def downFileFromUrlWget(strUrl, strTempFileName):
                 break
             if pid == 0:
                 rospy.logdebug("====sub process")
-                os.execl("/usr/bin/wget", "/usr/bin/wget", "--connect-timeout=5", "--dns-timeout=5",
+                os.execl("/usr/bin/wget", "/usr/bin/wget","-c","--limit-rate=10M","--connect-timeout=5", "--dns-timeout=5",
                          "-c", strUrl, "-O", strTempFileName)
                 break
             break
@@ -161,17 +163,28 @@ class CommonSimpleSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulin
 
     def action_autopilot_status_change(self, intPilotMode):
         rospy.loginfo("action_autopilot_status_change recv mode:{0}".format(intPilotMode))
+        global globalAutopilotStatus
         try:
             while True:
                 if int(intPilotMode) == 0:
+                    globalAutopilotStatus = 0
+                    for k, v in dictRunningWgetPid.items():
+                        strCommandCmd = "/bin/kill -CONT  {0}".format(k)
+                        os.system(strCommandCmd)
                     break
                 if int(intPilotMode) == 1:
+                    globalAutopilotStatus = 1
                     for k, v in dictRunningWgetPid.items():
-                        os.kill(k, signal.SIGKILL)
+                        strCommandCmd = "/bin/kill -STOP {0}".format(k)
+                        rospy.loginfo("strCommandCmd:{0}".format(strCommandCmd))
+                        os.system(strCommandCmd)
                     break
                 if int(intPilotMode) == 2:
+                    globalAutopilotStatus = 2
                     for k, v in dictRunningWgetPid.items():
-                        os.kill(k, signal.SIGKILL)
+                        strCommandCmd = "/bin/kill -STOP {0}".format(k)
+                        rospy.loginfo("strCommandCmd:{0}".format(strCommandCmd))
+                        os.system(strCommandCmd)
                     break
                 break
         except Exception as e:

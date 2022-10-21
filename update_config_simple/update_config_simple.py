@@ -75,7 +75,9 @@ instanceTrigger = CommonTriggerImpInterfaceTrigger()
 latitude = -0.01
 longitude = -0.01
 #simu value
-globalDictParameter = {'latitude': 39.916527, 'longitude': 116.397128}
+globalDictParameter = {}
+globalDictParameter['latitude'] = -0.01
+globalDictParameter['longitude'] = -0.01
 
 def topic_trajectory_agent_cmd_transaction(msg):
     print "------------- recv from /trajectory_agent/cmd/transaction-------------- "
@@ -103,10 +105,6 @@ def topic_localization_global(msg):
     global latitude
     global longitude
     global globalDictParameter
-    latitude = -0.01
-    longitude = -0.01
-    globalDictParameter['latitude'] = -0.01
-    globalDictParameter['longitude'] = -0.01
     try:
         location = common_localization.Localization()
         location.ParseFromString(msg.data)
@@ -175,10 +173,10 @@ def init_module():
 
         # cross
         instanceTrigger.addNotifyDataSourceModule(instanceConfig)
-        # instanceTrigger.addNotifyDataSourceModule(instanceHdmapAgent)
-        # instanceTrigger.addNotifyDataSourceModule(instanceAiModle)
-        # instanceTrigger.addNotifyDataSourceModule(instanceSlamMap)
-        # instanceTrigger.addNotifyTaskSchedulerPool(instanceSimpleScheduler)
+        instanceTrigger.addNotifyDataSourceModule(instanceHdmapAgent)
+        instanceTrigger.addNotifyDataSourceModule(instanceAiModle)
+        instanceTrigger.addNotifyDataSourceModule(instanceSlamMap)
+        instanceTrigger.addNotifyTaskSchedulerPool(instanceSimpleScheduler)
         addLocalizationListener()
         instanceTrigger.process_startup(globalDictParameter)
         instanceTrigger.start_loop_internal_timer(globalDictParameter)

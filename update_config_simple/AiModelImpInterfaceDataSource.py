@@ -97,6 +97,7 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
     mStrConfigFileName = None
     mCommonPara = None
     mIntTimeval = None
+    mFiles  = None
 
     def __init__(self):
         try:
@@ -106,7 +107,8 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
             self.mStrConfigFileName = "/home/mogo/data/AiModelCache.json"
             self.mCommonPara = CommonPara()
             self.mCommonPara.initPara()
-            self.mIntTimeval = 6*60
+            self.mIntTimeval = 432000
+            self.mFiles = {}
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -132,6 +134,8 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
                     self.strUrlList = dictConfig['url_list']
                 if dictConfig.has_key("url_sync"):
                     self.strUrlSync = dictConfig['url_sync']
+                if dictConfig.has_key("timeval"):
+                    self.mIntTimeval = int(dictConfig['timeval'])
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -252,13 +256,28 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def process_startup(self, dictParameter):
-        pass
-        # try:
-        #     self.process_cycle(dictParameter)
-        # except Exception as e:
-        #     rospy.logwarn('repr(e):{0}'.format(repr(e)))
-        #     rospy.logwarn('e.message:{0}'.format(e.message))
-        #     rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+        try:
+            instanceHttpUtils = CommonHttpUtils()
+            dictPostPara = {}
+            dictPostPara['vehicleConfSn'] = self.mCommonPara.dictCarInfo['car_plate']
+            # dictPostPara['mac'] = self.mCommonPara.dictCarInfo['mac']
+            intHttpCode, strRespContent = instanceHttpUtils.sendSimpleHttpRequestWithHeader(self.strUrlList,
+                                                                                            dictPostPara)
+            listJobItem = []
+            instanceJob = Job()
+            refJob = [instanceJob]
+            intError = 0
+            if intHttpCode == 200:
+                intError = self.readHttpList(strRespContent, refJob)
+            rospy.logdebug("================ refJob[0].listJobCollect:{0}".format(refJob[0].listJobCollect))
+            if intError == 0 and len(refJob[0].listJobCollect) > 0:
+                intError = self.getNeedUpdateFile(refJob)
+            if intError == 0:
+                self.pushSimpleJobScheduler(self, refJob)
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def getNeedUpdateFile(self, refJob):
         intError = 0
@@ -278,7 +297,22 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
             refJob[0].enumJobType = EnumJobType.JOB_TYPE_DELAY
             refJob[0].handlerDataSource = self
             rospy.logdebug("=======================    pushJobScheduler,listCollect: {0} ".format(refJob[0].listJobCollect))
-            self.mScheduler.add_job_to_queue(refDataSource, refJob)
+            intFileRepeat = 0
+            for idx in range(len(refJob[0].listJobCollectUpdate)):
+                strKey = "{0}".format(refJob[0].listJobCollectUpdate[idx].strFullFileTempName)
+                rospy.loginfo("strkey:{0}".format(strKey))
+                if self.mFiles.has_key(strKey):
+                    rospy.loginfo("!!!!! repeat task happend ,now ignore")
+                    intFileRepeat = 1
+                    break
+                else:
+                    self.mFiles[strKey] = 0
+            if intFileRepeat == 0:
+                rospy.loginfo("##### push AI task")
+                self.mScheduler.add_job_to_queue(refDataSource, refJob)
+            else:
+                rospy.loginfo("##ignore  repleat  AI task")
+
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -321,8 +355,17 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
             for idx in range(len(refJob.listJobCollect)):
                 if os.path.exists(refJob.listJobCollect[idx].strFullFileTempName):
                     shutil.copyfile(refJob.listJobCollect[idx].strFullFileTempName, refJob.listJobCollect[idx].strFullFileName)
+
+            strSnLinkConfig = ""
+            if self.mCommonPara.dictCarInfo.has_key('car_plate') and len(self.mCommonPara.dictCarInfo['car_plate']) > 0:
+                strSnLinkConfig = "/home/mogo/data/vehicle_monitor/{0}/slinks.cfg".format(
+                    self.mCommonPara.dictCarInfo['car_plate'])
+            strCommonLinkConfig = "/home/mogo/data/vehicle_monitor/slinks.cfg"
+            rospy.loginfo("strSnLinkConfig:{0}".format(strSnLinkConfig))
+            rospy.loginfo("strCommonLinkConfig:{0}".format(strCommonLinkConfig))
             instanceFileUtils = FileUtils()
-            instanceFileUtils.linkFileAccordConfig("/home/mogo/data/vehicle_monitor/slinks.cfg")
+            instanceFileUtils.linkFileAccordConfig(strCommonLinkConfig)
+            instanceFileUtils.linkFileAccordConfig(strSnLinkConfig)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -344,8 +387,13 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def notify_pad(self, refJob):
-        rospy.logdebug("----enter  AiModelImpInterfaceDataSource notify_pad--- ")
-        pass
+        if len(refJob.listJobCollectUpdate) > 0:
+            for idx in (range(len(refJob.listJobCollectUpdate))):
+                strKey = "{0}".format(refJob.listJobCollectUpdate[idx].strFullFileTempName)
+                rospy.loginfo("strkey:{0}".format(strKey))
+                if self.mFiles.has_key(strKey):
+                    del self.mFiles[strKey]
+                    rospy.loginfo("notify_pad......,clear files key:{0}".format(strKey))
 
     def notify_cloud(self, refJob):
         rospy.logdebug("-----enter AiModelImpInterfaceDataSource notify_cloud---")
@@ -362,7 +410,7 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def write_event(self, refJob):
-        rospy.logdebug("---enter  AiModelImpInterfaceDataSource write_event------")
+        rospy.loginfo("---enter  AiModelImpInterfaceDataSource write_event------")
         self.SaveEventToFile(msg='', code='ISYS_CONFIG_UPDATE_AI_MODEL', results=list(), actions=list(), level='info')
 
     def getTimeval(self):
@@ -377,7 +425,7 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
         json_msg = {}
         if 1:
             try:
-                json_msg = gen_report_msg("hd_map.pb", code, "/hd_map_agent")
+                json_msg = gen_report_msg("update_config_simple.yaml", code, "/update_config_simple")
             except Exception as e:
                 rospy.logwarn('repr(e):{0}'.format(repr(e)))
                 rospy.logwarn('e.message:{0}'.format(e.message))
@@ -389,7 +437,7 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
                 "timestamp": {
                     "sec": cur_time,
                     "nsec": int((time.time() - cur_time) * 1000000000)},
-                "src": "/hd_map_agent",
+                "src": "/update_config_simple",
                 "code": code,
                 "level": level,
                 "result": results,
@@ -400,6 +448,16 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
         try:
             with open("/home/mogo/data/log/msg_log/system_master_report.json", 'a+') as fp:
                 fp.write(json_msg + '\n')
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+
+    def pushSimpleJobScheduler(self, refDataSource, refJob):
+        try:
+            refJob[0].enumJobType = EnumJobType.JOB_TYPE_DELAY
+            refJob[0].handlerDataSource = self
+            self.mScheduler.add_task(refDataSource, refJob)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
