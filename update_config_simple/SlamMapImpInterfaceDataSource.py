@@ -26,9 +26,11 @@ instanceCacheUtils = CacheUtils("/home/mogo/data/SlamMapCache.json")
 instanceReadConfigFile = CommonUtilsReadFile()
 instanceCommonHttpUtils = CommonHttpUtils()
 import sys
+
 sys.path.append(os.path.dirname(__file__) + '/../mogo_reporter/script/')
 sys.path.append('../mogo_reporter/script/')
 from get_msg_by_code import gen_report_msg
+
 
 def simpleHttpsQuery(strIp, strPort, strApiName, dictQueryCondition):
     strJsonResult = ""
@@ -92,6 +94,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
     mStrConfigFileName = None
     mCommonPara = None
     mIntTimeval = None
+    mFiles = None
 
     def __init__(self):
         try:
@@ -101,7 +104,8 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
             self.mStrConfigFileName = "/home/mogo/data/SlamMapCache.json"
             self.mCommonPara = CommonPara()
             self.mCommonPara.initPara()
-            self.mIntTimeval = 2*60
+            self.mIntTimeval = 432000
+            self.mFiles = {}
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -128,14 +132,32 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
                     self.strUrlList = dictConfig['url_list']
                 if dictConfig.has_key("url_sync"):
                     self.strUrlSync = dictConfig['url_sync']
+                if dictConfig.has_key("timeval"):
+                    self.mIntTimeval = int(dictConfig['timeval'])
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         return intError
 
+    def createFolder(self, strFolderPath):
+        try:
+            if not os.path.exists(strFolderPath):
+                os.makedirs(strFolderPath)
+                os.chmod(strFolderPath, 0777)
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+
     def init_module(self):
         self.setCacheUtils(instanceCacheUtils)
+        strMapPath = "/home/mogo/data/vehicle_monitor/LidarSLAM_data/map/"
+        self.createFolder(strMapPath)
+        strkeyFramePath = "/home/mogo/data/vehicle_monitor/LidarSLAM_data/key_frames"
+        self.createFolder(strkeyFramePath)
+        strTrajPath = "/home/mogo/data/vehicle_monitor/LidarSLAM_data/trajectory"
+        self.createFolder(strTrajPath)
 
     def destroy_module(self):
         pass
@@ -221,21 +243,26 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
 
     def process_cycle(self, dictParameter):
         try:
-            instanceHttpUtils = CommonHttpUtils()
-            dictPostPara = {}
-            dictPostPara['vehicleConfSn'] = self.mCommonPara.dictCarInfo['car_plate']
-            intHttpCode, strRespContent = instanceHttpUtils.sendSimpleHttpRequestWithHeader(self.strUrlList,
-                                                                                            dictPostPara)
-            instanceJob = Job()
-            refJob = [instanceJob]
-            intError = 0
-            if intHttpCode == 200:
-                listJobItem = self.readHttpList(strRespContent, refJob)
-            if len(refJob[0].listJobCollect) > 0:
-                intError = self.getNeedUpdateFile(refJob)
-            if intError == 0 and len(refJob[0].listJobCollect) > 0:
-                print "process_cycle === ref[0].listJobCollect:{0}".format(refJob[0].listJobCollect)
-                self.pushJobScheduler(self, refJob)
+            if dictParameter["longitude"] == -0.01 or dictParameter["latitude"] == -0.01:
+                rospy.loginfo(" slam cannot recv  lat and on ")
+            else:
+                instanceHttpUtils = CommonHttpUtils()
+                dictPostPara = {}
+                dictPostPara['vehicleConfSn'] = self.mCommonPara.dictCarInfo['car_plate']
+                dictPostPara['lng'] = dictParameter["longitude"]
+                dictPostPara['lat'] = dictParameter["latitude"]
+                intHttpCode, strRespContent = instanceHttpUtils.sendSimpleHttpRequestWithHeader(self.strUrlList,
+                                                                                                dictPostPara)
+                instanceJob = Job()
+                refJob = [instanceJob]
+                intError = 0
+                if intHttpCode == 200:
+                    listJobItem = self.readHttpList(strRespContent, refJob)
+                if len(refJob[0].listJobCollect) > 0:
+                    intError = self.getNeedUpdateFile(refJob)
+                if intError == 0 and len(refJob[0].listJobCollect) > 0:
+                    print "process_cycle === ref[0].listJobCollect:{0}".format(refJob[0].listJobCollect)
+                    self.pushJobScheduler(self, refJob)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -267,7 +294,23 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
         try:
             refJob[0].enumJobType = EnumJobType.JOB_TYPE_DELAY
             refJob[0].handlerDataSource = self
-            self.mScheduler.add_job_to_queue(refDataSource, refJob)
+            intFileRepeat = 0
+            for idx in range(len(refJob[0].listJobCollectUpdate)):
+                strKey = "{0}".format(refJob[0].listJobCollectUpdate[idx].strFullFileTempName)
+                rospy.loginfo("=========================== strkey:{0}".format(strKey))
+                if self.mFiles.has_key(strKey):
+                    rospy.loginfo("!!!!! repeat task happend ,now ignore")
+                    intFileRepeat = 1
+                    break
+                else:
+                    self.mFiles[strKey] = 0
+            print "==================  self.mFiles:{0}".format(self.mFiles)
+            rospy.loginfo("...........................intFileRepeat:{0}".format(intFileRepeat))
+            if intFileRepeat == 0:
+                rospy.loginfo("##### push slam task")
+                self.mScheduler.add_job_to_queue(refDataSource, refJob)
+            else:
+                rospy.loginfo("##ignore  repleat  slam task")
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -316,7 +359,8 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
                 strUrl = refJob.listJobCollect[idx].strUrl
                 strMd5 = refJob.listJobCollect[idx].strMd5
                 intPublishTimestamp = refJob.listJobCollect[idx].intPublishTimeStamp
-                self.mCacheUtils.writeFileCacheInfo(refJob.listJobCollect[idx].strFullFileName, strUrl, strMd5, intPublishTimestamp,
+                self.mCacheUtils.writeFileCacheInfo(refJob.listJobCollect[idx].strFullFileName, strUrl, strMd5,
+                                                    intPublishTimestamp,
                                                     intLocalModifyTimeStamp)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
@@ -325,6 +369,13 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
 
     def notify_pad(self, refJob):
         rospy.logdebug("----------enter slam notify_pad-----")
+        if len(refJob.listJobCollectUpdate) > 0:
+            for idx in (range(len(refJob.listJobCollectUpdate))):
+                strKey = "{0}".format(refJob.listJobCollectUpdate[idx].strFullFileTempName)
+                rospy.loginfo("strkey:{0}".format(strKey))
+                if self.mFiles.has_key(strKey):
+                    del self.mFiles[strKey]
+                    rospy.loginfo("notify_pad......,clear files key:{0}".format(strKey))
 
     def notify_cloud(self, refJob):
         rospy.logdebug("----enter slam notify_cloud-----")
@@ -355,7 +406,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
         json_msg = {}
         if 1:
             try:
-                json_msg = gen_report_msg("hd_map.pb", code, "/hd_map_agent")
+                json_msg = gen_report_msg("update_config_simple.yaml", code, "/update_config_simple")
             except Exception as e:
                 rospy.logwarn('repr(e):{0}'.format(repr(e)))
                 rospy.logwarn('e.message:{0}'.format(e.message))

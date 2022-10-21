@@ -87,6 +87,7 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
     mIntTimeval = None
     mIntMapId = None
     mIntPid = None
+    mFiles = None
 
     def __init__(self):
         try:
@@ -96,9 +97,10 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
             self.mStrConfigFileName = "/home/mogo/data/HdMapAgentCache.json"
             self.mCommonPara = CommonPara()
             self.mCommonPara.initPara()
-            self.mIntTimeval = 3*60
+            self.mIntTimeval = 432000
             self.mIntMapId = -1
             self.mIntPid = -1
+            self.mFiles = {}
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -127,6 +129,8 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
                     self.strUrlList = dictConfig['url_list']
                 if dictConfig.has_key("url_sync"):
                     self.strUrlSync = dictConfig['url_sync']
+                if dictConfig.has_key("timeval"):
+                    self.mIntTimeval = int(dictConfig['timeval'])
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -212,13 +216,14 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
                     jobItem.strFullFileStageName = "/home/mogo/data/down_map_agent_stage/map_{0}_{1}".format(
                         self.mIntPid,
                         intTranslateUpdateTime)
-                    jobItem.strFullFileName = strBackupLinkPath
+                    jobItem.strFullFileName = jobItem.strFullFileStageName
                     strFullFileTempName = "{0}.temp".format(jobItem.strFullFileName)
                     jobItem.strFullFileTempName = strFullFileTempName
                     jobItem.strUrl = strCosPath
                     jobItem.strMd5 = strMd5
                     jobItem.intReplyId = self.mIntPid
                     jobItem.intPublishTimeStamp = intTranslateUpdateTime
+                    jobItem.strLinkPath = strBackupLinkPath
                     refJob[0].listJobCollect.append(jobItem)
             except Exception as e:
                 rospy.logwarn('repr(e):{0}'.format(repr(e)))
@@ -234,21 +239,24 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
 
     def process_cycle(self, dictParameter):
         try:
-            instanceHttpUtils = CommonHttpUtils()
-            dictPostPara = {'vehicleConfSn': self.mCommonPara.dictCarInfo['car_plate'],
-                            'lng': dictParameter["longitude"],
-                            'lat': dictParameter["latitude"]}
-            intHttpCode, strRespContent = instanceHttpUtils.sendSimpleHttpRequestWithHeader(self.strUrlList,
-                                                                                            dictPostPara)
-            instanceJob = Job()
-            refJob = [instanceJob]
-            intError = 0
-            if intHttpCode == 200:
-                intError = self.readHttpList(strRespContent, refJob)
-            if len(refJob[0].listJobCollect) > 0:
-                intError = self.getNeedUpdateFile(refJob)
-            if intError == 0:
-                self.pushJobScheduler(self, refJob)
+            if dictParameter["longitude"] == -0.01 or dictParameter["latitude"] == -0.01:
+                rospy.loginfo("cannot recv  lat and on ")
+            else:
+                instanceHttpUtils = CommonHttpUtils()
+                dictPostPara = {'vehicleConfSn': self.mCommonPara.dictCarInfo['car_plate'],
+                                'lng': dictParameter["longitude"],
+                                'lat': dictParameter["latitude"]}
+                intHttpCode, strRespContent = instanceHttpUtils.sendSimpleHttpRequestWithHeader(self.strUrlList,
+                                                                                                dictPostPara)
+                instanceJob = Job()
+                refJob = [instanceJob]
+                intError = 0
+                if intHttpCode == 200:
+                    intError = self.readHttpList(strRespContent, refJob)
+                if len(refJob[0].listJobCollect) > 0:
+                    intError = self.getNeedUpdateFile(refJob)
+                if intError == 0:
+                    self.pushJobScheduler(self, refJob)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -280,7 +288,15 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
         try:
             refJob[0].enumJobType = EnumJobType.JOB_TYPE_DELAY
             refJob[0].handlerDataSource = self
-            self.mScheduler.add_job_to_queue(refDataSource, refJob)
+            if len(refJob[0].listJobCollectUpdate) > 0:
+                for idx in (range(len(refJob[0].listJobCollectUpdate))):
+                    strKey = "{0}_{1}".format(refJob[0].listJobCollectUpdate[idx].strFullFileTempName, refJob[0].listJobCollectUpdate[idx].intPublishTimeStamp)
+                    rospy.loginfo("strkey:{0}".format(strKey))
+                    if self.mFiles.has_key(strKey):
+                        rospy.loginfo("!!!!! repeat task happend ,now ignore")
+                    else:
+                        self.mFiles[strKey] = 0
+                        self.mScheduler.add_job_to_queue(refDataSource, refJob)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -316,7 +332,7 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
     def install_dst_path(self, refJob):
         try:
             for idx in range(len(refJob.listJobCollect)):
-                link_file(refJob.listJobCollect[idx].strFullFileStageName, refJob.listJobCollect[idx].strFullFileName)
+                link_file(refJob.listJobCollect[idx].strFullFileStageName, refJob.listJobCollect[idx].strLinkPath)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -337,7 +353,14 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def notify_pad(self, refJob):
-        pass
+        if len(refJob.listJobCollectUpdate) > 0:
+            for idx in (range(len(refJob.listJobCollectUpdate))):
+                strKey = "{0}_{1}".format(refJob.listJobCollectUpdate[idx].strFullFileTempName,
+                                          refJob.listJobCollectUpdate[idx].intPublishTimeStamp)
+                rospy.loginfo("strkey:{0}".format(strKey))
+                if self.mFiles.has_key(strKey):
+                    del self.mFiles[strKey]
+                    rospy.loginfo("notify_pad......,clear files key:{0}".format(strKey))
 
     def notify_cloud(self, refJob):
         rospy.logdebug(" ===== notify_cloud====  typeof(refJob):{0}".format(refJob))
@@ -364,7 +387,7 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
         json_msg = {}
         if 1:
             try:
-                json_msg = gen_report_msg("hd_map.pb", code, "/hd_map_agent")
+                json_msg = gen_report_msg("hd_map.yaml", code, "/update_config_simple")
             except Exception as e:
                 rospy.logwarn('repr(e):{0}'.format(repr(e)))
                 rospy.logwarn('e.message:{0}'.format(e.message))

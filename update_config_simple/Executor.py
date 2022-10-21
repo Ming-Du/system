@@ -96,7 +96,7 @@ class Executor:
                     break
                 if pid == 0:
                     rospy.logdebug("====sub process")
-                    os.execl("/usr/bin/wget", "/usr/bin/wget", "--limit-rate=4M", "--connect-timeout=5",
+                    os.execl("/usr/bin/wget", "/usr/bin/wget", "--limit-rate=10M", "--connect-timeout=5",
                              "--dns-timeout=5", "-c", strUrl, "-O", strTempFileName)
                     break
                 break

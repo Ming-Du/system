@@ -1,0 +1,5 @@
+{
+"url_list":"https://mdev-qa.zhidaohulian.com:443/config/ai/list",
+"url_sync":"https://mdev-qa.zhidaohulian.com:443/config/ai/sync",
+"timeval":432000
+}
