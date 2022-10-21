@@ -1163,37 +1163,6 @@
             },
             "type": "SYS"
         },
-        {
-            "name": "hd_map_agent.launch",
-            "package": "hd_map_agent",
-            "machine": {
-                "df": {
-                    "2x": [
-                        "rosslave"
-                    ],
-                    "6x": [
-                        "rosslave-107"
-                    ]
-                },
-                "hq": {
-                    "2x": [
-                        "rosslave"
-                    ],
-                    "6x": [
-                        "rosslave-107"
-                    ]
-                },
-                "jinlv": {
-                    "2x": [
-                        "rosslave"
-                    ],
-                    "6x": [
-                        "rosslave-107"
-                    ]
-                }
-            },
-            "type": "SYS"
-        },
 		 {
             "name": "update_config_simple.launch",
             "package": "update_config_simple",
