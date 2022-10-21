@@ -1193,6 +1193,55 @@
                 }
             },
             "type": "SYS"
+        },
+		 {
+            "name": "update_config_simple.launch",
+            "package": "update_config_simple",
+            "machine": {
+                "df": {
+                    "2x": [
+                        "rosmaster",
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosmaster",
+                        "rosslave-103",
+                        "rosslave-104",
+                        "rosslave-105",
+                        "rosslave-106",
+                        "rosslave-107"
+                    ]
+                },
+                "hq": {
+                    "2x": [
+                        "rosmaster",
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosmaster",
+                        "rosslave-103",
+                        "rosslave-104",
+                        "rosslave-105",
+                        "rosslave-106",
+                        "rosslave-107"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [
+                        "rosmaster",
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosmaster",
+                        "rosslave-103",
+                        "rosslave-104",
+                        "rosslave-105",
+                        "rosslave-106",
+                        "rosslave-107"
+                    ]
+                }
+            },
+            "type": "SYS"
         }
     ]
 }
