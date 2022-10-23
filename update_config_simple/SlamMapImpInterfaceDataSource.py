@@ -123,7 +123,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
     def configure(self):
         intError = 0
         try:
-            strConfigFilePath = "/home/mogo/data/SlamMapConfig.json"
+            strConfigFilePath = "/home/mogo/data/vehicle_monitor/SlamMapConfig.json"
             intError = 0
             dictConfig = {}
             intError, dictConfig = instanceReadConfigFile.readJsonConfig(strConfigFilePath)

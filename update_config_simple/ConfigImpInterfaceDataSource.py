@@ -64,7 +64,7 @@ class ConfigImpInterfaceDataSource(InterfaceDataSource):
         pass
 
     def configure(self):
-        strConfigFilePath = "/home/mogo/data/UpdateConfig.json"
+        strConfigFilePath = "/home/mogo/data/vehicle_monitor/UpdateConfig.json"
         intError = 0
         try:
             dictConfig = {}
