@@ -119,7 +119,7 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
         pass
 
     def configure(self):
-        strConfigFilePath = "/home/mogo/data/HdMapAgentConfig.json"
+        strConfigFilePath = "/home/mogo/data/vehicle_monitor/HdMapAgentConfig.json"
         intError = 0
         dictConfig = {}
         try:

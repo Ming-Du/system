@@ -126,7 +126,7 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
     def configure(self):
         intError = 0
         try:
-            strConfigFilePath = "/home/mogo/data/AiModelConfig.json"
+            strConfigFilePath = "/home/mogo/data/vehicle_monitor/AiModelConfig.json"
             dictConfig = {}
             intError, dictConfig = instanceReadConfigFile.readJsonConfig(strConfigFilePath)
             if intError == 0 and len(dictConfig) > 0:
