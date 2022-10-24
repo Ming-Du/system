@@ -80,7 +80,7 @@ globalDictParameter['latitude'] = -0.01
 globalDictParameter['longitude'] = -0.01
 
 def topic_trajectory_agent_cmd_transaction(msg):
-    print "------------- recv from /trajectory_agent/cmd/transaction-------------- "
+    rospy.logdebug("------------- recv from /trajectory_agent/cmd/transaction-------------- ")
     instanceTrigger.processTopicInfo("/trajectory_agent/cmd/transaction", msg)
 
 
@@ -121,8 +121,8 @@ def topic_localization_global(msg):
 
 def addLocalizationListener():
     try:
-        rospy.Subscriber("/trajectory_agent/cmd/transaction", BinaryData, topic_trajectory_agent_cmd_transaction)
-        rospy.Subscriber("/trajectory_agent/cmd/checktrajstate", BinaryData, topic_trajectory_agent_cmd_checktrajstate)
+        #rospy.Subscriber("/trajectory_agent/cmd/transaction", BinaryData, topic_trajectory_agent_cmd_transaction)
+        #rospy.Subscriber("/trajectory_agent/cmd/checktrajstate", BinaryData, topic_trajectory_agent_cmd_checktrajstate)
         rospy.Subscriber("/chassis/vehicle_state", BinaryData, topic_chassis_vehicle_state)
         rospy.Subscriber('/localization/global', BinaryData, topic_localization_global)
     except Exception as e:
@@ -195,5 +195,5 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt as e:
-        print("monitor.py is failed !")
+        rospy.loginfo("update_config_simple.py is failed !")
         exit(0)

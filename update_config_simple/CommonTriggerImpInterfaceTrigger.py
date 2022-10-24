@@ -113,13 +113,13 @@ class CommonTriggerImpInterfaceTrigger(InterfaceTrigger):
         try:
             handler = None
             strTrajectoryKey = "trajectory"
-            print "==processTopicInfo===== now self.mMapDataSource:{0}".format(self.mMapDataSource)
+            rospy.logdebug("==processTopicInfo===== now self.mMapDataSource:{0}".format(self.mMapDataSource))
             while True:
                 if strTopicName == "/trajectory_agent/cmd/transaction" or strTopicName == "/trajectory_agent/cmd/checktrajstate":
-                    print "============= self.mMapDataSource:{0}".format(self.mMapDataSource)
+                    rospy.logdebug("============= self.mMapDataSource:{0}".format(self.mMapDataSource))
                     if self.mMapDataSource.has_key(strTrajectoryKey):
                         handler = self.mMapDataSource["trajectory"]
-                        print "====handler:{0}".format(handler)
+                        rospy.logdebug("====handler:{0}".format(handler))
                         handler.process_topic(strTopicName, pbTopicInfo)
                     break
                 break
@@ -134,7 +134,7 @@ class CommonTriggerImpInterfaceTrigger(InterfaceTrigger):
             for idx in range(0,len(self.mMapDataSource)):
                 intTimeVal = self.mMapDataSource[idx].getTimeval()
                 schedule.every(intTimeVal).seconds.do(self.mMapDataSource[idx].process_cycle, dictParameter)
-            print("scheduler***** self.mMapDataSource:{0}".format(self.mMapDataSource))
+            rospy.loginfo("scheduler***** self.mMapDataSource:{0}".format(self.mMapDataSource))
             while True:
                 schedule.run_pending()
                 time.sleep(1)
@@ -146,7 +146,7 @@ class CommonTriggerImpInterfaceTrigger(InterfaceTrigger):
     def sub_process(self, dictParameter):
         strFlagEndFile = "/home/mogo/data/config_end"
         if not os.path.exists(strFlagEndFile):
-            print("self.mMapDataSource: {0}".format(self.mMapDataSource))
+            rospy.loginfo("self.mMapDataSource: {0}".format(self.mMapDataSource))
             try:
                 if 1:
                     for idx in range(0, len(self.mMapDataSource)):

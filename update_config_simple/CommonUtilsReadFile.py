@@ -27,7 +27,7 @@ class CommonUtilsReadFile:
                     try:
                         strFileContent = fileObject.read()
                     except Exception as e:
-                        print(str(e))
+                        rospy.logwarn(str(e))
                     finally:
                         fileObject.close()
                     if len(strFileContent) > 0:

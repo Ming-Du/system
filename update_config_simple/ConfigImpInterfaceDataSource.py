@@ -128,7 +128,7 @@ class ConfigImpInterfaceDataSource(InterfaceDataSource):
             for idx in range(0, intLenData):
                 jobItem = None
                 try:
-                    print "-----  readHttpNewList push idx:{0}".format(idx)
+                    rospy.loginfo("-----  readHttpNewList push idx:{0}".format(idx))
                     strFullFileName = str(dictResult['data'][idx]['filepath'])
                     strMd5 = str(dictResult['data'][idx]['md5'])
                     strUrl = str(dictResult['data'][idx]['content'])
@@ -136,7 +136,7 @@ class ConfigImpInterfaceDataSource(InterfaceDataSource):
                     intReplyId = dictResult['data'][idx]['id']
                     jobItem = JobItem()
                     jobItem.strFullFileName = strFullFileName
-                    print "push idx:{0},strFullFileName:{1}".format(idx, jobItem.strFullFileName)
+                    rospy.loginfo("push idx:{0},strFullFileName:{1}".format(idx, jobItem.strFullFileName))
                     strFullFileTempName = "{0}.temp".format(jobItem.strFullFileName)
                     jobItem.strFullFileTempName = strFullFileTempName
                     jobItem.strUrl = strUrl
@@ -169,15 +169,15 @@ class ConfigImpInterfaceDataSource(InterfaceDataSource):
                                                                                             dictPostPara)
             if intHttpCode == 200:
                 errcode = self.readHttpNewList(strRespContent, refJob)
-                print "process_startup errcode:{0}".format(errcode)
+                rospy.loginfo("process_startup errcode:{0}".format(errcode))
 
             if errcode == 0 and len(refJob[0].listJobCollect) > 0:
                 # instanceJob.listJobCollect = listJobItem
-                print "---------len(refJob[0].listJobCollec):{0}".format(len(refJob[0].listJobCollect))
+                rospy.loginfo("---------len(refJob[0].listJobCollec):{0}".format(len(refJob[0].listJobCollect)))
 
             intError = self.getNeedUpdateFile(refJob)
             refJob[0].handlerDataSource = self
-            print "#######  process_startup ----intError:{0}".format(intError)
+            rospy.logwarn("#######  process_startup ----intError:{0}".format(intError))
             if intError == 0:
                 self.pushSimpleJobScheduler(self, refJob)
         except Exception as e:
@@ -289,6 +289,8 @@ class ConfigImpInterfaceDataSource(InterfaceDataSource):
                 self.mCacheUtils.writeFileCacheInfo(refJob.listJobCollect[idx].strFullFileName, strUrl, strMd5,
                                                     intPublishTimestamp,
                                                     intLocalModifyTimeStamp)
+                if os.path.exists(refJob.listJobCollect[idx].strFullFileTempName):
+                    os.remove(refJob.listJobCollect[idx].strFullFileTempName)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))

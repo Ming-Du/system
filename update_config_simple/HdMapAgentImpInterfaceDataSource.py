@@ -26,6 +26,7 @@ from EnumDataSourceType import EnumDataSourceType
 from EnumJobType import EnumJobType
 
 from CacheUtils import CacheUtils
+from CommonEventUtils import CommonEventUtils
 
 sys.path.append(os.path.dirname(__file__) + '/../mogo_reporter/script/')
 sys.path.append('../mogo_reporter/script/')
@@ -39,40 +40,40 @@ instanceCacheUtils = CacheUtils("/home/mogo/data/HdMapCache.json")
 
 def link_file(strDownStageLocationFileMap, strStandardLocationFileMap):
     if strDownStageLocationFileMap is not None:
-        print "strDownStageLocationFileMap:{0}".format(strDownStageLocationFileMap)
+        rospy.loginfo("strDownStageLocationFileMap:{0}".format(strDownStageLocationFileMap))
     if strStandardLocationFileMap is not None:
-        print "strStandardLocationFileMap:{0}".format(strStandardLocationFileMap)
+        rospy.loginfo("strStandardLocationFileMap:{0}".format(strStandardLocationFileMap))
     ret = 0
     try:
         if os.path.exists(strDownStageLocationFileMap):
             while True:
                 if (os.path.exists(strStandardLocationFileMap)) and (
                         os.readlink(strStandardLocationFileMap) == strDownStageLocationFileMap):
-                    print("############ link file:{0}  and target_file:{1} name normal".format(
+                    rospy.loginfo("############ link file:{0}  and target_file:{1} name normal".format(
                         strStandardLocationFileMap, strDownStageLocationFileMap))
                     break
                 if (os.path.exists(strStandardLocationFileMap)) and (
                         os.readlink(strStandardLocationFileMap) != strDownStageLocationFileMap):
-                    print("############ link file:{0}  and target_file:{1} name abnormal".format(
+                    rospy.loginfo("############ link file:{0}  and target_file:{1} name abnormal".format(
                         strStandardLocationFileMap, strDownStageLocationFileMap))
                     os.remove(strStandardLocationFileMap)
                     os.symlink(strDownStageLocationFileMap, strStandardLocationFileMap)
                     ret = 1
                     break
                 if not os.path.exists(strStandardLocationFileMap):
-                    print("link file: {0} not exists ,now create ".format(strStandardLocationFileMap))
+                    rospy.loginfo("link file: {0} not exists ,now create ".format(strStandardLocationFileMap))
                     os.symlink(strDownStageLocationFileMap, strStandardLocationFileMap)
                     ret = 1
                     break
                 break
         else:
-            print("src file:{0} not exists, link failed".format(strDownStageLocationFileMap))
+            rospy.loginfo("src file:{0} not exists, link failed".format(strDownStageLocationFileMap))
             ret = -1
 
     except Exception as e:
-        print('repr(e):{0}'.format(repr(e)))
-        print('e.message:{0}'.format(e.message))
-        print('traceback.format_exc():%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return ret
 
 
@@ -146,7 +147,7 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
     def readHttpList(self, strRespContent, refJob):
         intError = -1
 
-        print("strRespContent:{0}".format(strRespContent))
+        rospy.loginfo("strRespContent:{0}".format(strRespContent))
         intLenData = 0
         dictResult = {}
 
@@ -166,8 +167,8 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
             try:
                 dictResult = json.loads(strRespContent)
             except Exception as e:
-                print(str(e))
-                print('traceback.format_exc():{0}'.format((traceback.format_exc())))
+                rospy.logwarn(str(e))
+                rospy.logwarn('traceback.format_exc():{0}'.format((traceback.format_exc())))
             if len(dictResult) == 0:
                 intError = -1
                 break
@@ -198,17 +199,17 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
                     strTime = "2022-06-30T06:14:52.000+00:00"
                     listSubTime = strUpdateTime.split('+')
 
-                    print("listSubTime:{0}".format(listSubTime))
+                    rospy.loginfo("listSubTime:{0}".format(listSubTime))
                     strSimpleTime = ""
                     if len(listSubTime) == 2:
                         if len(listSubTime[0]) > 0:
                             listSubSubTime = listSubTime[0].split('.000')
                             if len(listSubSubTime) == 2 and len(listSubSubTime[0]) > 0:
                                 strSimpleTime = listSubSubTime[0]
-                    print("-------------- strSimpleTime:{0}".format(strSimpleTime))
+                    rospy.loginfo("-------------- strSimpleTime:{0}".format(strSimpleTime))
                     timeArray = time.strptime(strSimpleTime, "%Y-%m-%dT%H:%M:%S")
                     intTranslateUpdateTime = int(time.mktime(timeArray))
-                    print(
+                    rospy.loginfo(
                         "call_process: recv  lMapId:{0}, strMapUrl:{1}, strMapMd5:{2},timestamp:{3},strVersion:{4}".format(
                             self.mIntPid, strCosPath, strMd5, intTranslateUpdateTime, strMapVersion))
                     # download map
@@ -347,6 +348,8 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
                 intPublishTimestamp = refJob.listJobCollect[idx].intPublishTimeStamp
                 self.mCacheUtils.writeFileCacheInfo(refJob.listJobCollect[idx].strFullFileName, strUrl, strMd5, intPublishTimestamp,
                                                 intLocalModifyTimeStamp)
+                if os.path.exists(refJob.listJobCollect[idx].strFullFileTempName):
+                    os.remove(refJob.listJobCollect[idx].strFullFileTempName)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -376,41 +379,8 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def write_event(self, refJob):
-        self.SaveEventToFile(msg='', code='ISYS_CONFIG_UPDATE_HADMAP', results=list(), actions=list(), level='info')
-        pass
+        instanceCommonEventUtils = CommonEventUtils()
+        instanceCommonEventUtils.SaveEventToFile("hd_map.yaml", "ISYS_CONFIG_UPDATE_HADMAP", "/update_config_simple", "")
 
     def getTimeval(self):
         return self.mIntTimeval
-
-    def SaveEventToFile(self,msg='', code='', results=list(), actions=list(), level=''):
-        rospy.logdebug("enter SaveEventToFile")
-        json_msg = {}
-        if 1:
-            try:
-                json_msg = gen_report_msg("hd_map.yaml", code, "/update_config_simple")
-            except Exception as e:
-                rospy.logwarn('repr(e):{0}'.format(repr(e)))
-                rospy.logwarn('e.message:{0}'.format(e.message))
-                rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
-        rospy.logdebug("event json_msg:{0}".format(json_msg))
-        if json_msg == {}:  # if not used pb or call function error, used local config
-            cur_time = int(time.time())
-            msg_dict = {
-                "timestamp": {
-                    "sec": cur_time,
-                    "nsec": int((time.time() - cur_time) * 1000000000)},
-                "src": "/hd_map_agent",
-                "code": code,
-                "level": level,
-                "result": results,
-                "action": actions,
-                "msg": msg
-            }
-            json_msg = json.dumps(msg_dict)
-        try:
-            with open("/home/mogo/data/log/msg_log/system_master_report.json", 'a+') as fp:
-                fp.write(json_msg + '\n')
-        except Exception as e:
-            rospy.logwarn('repr(e):{0}'.format(repr(e)))
-            rospy.logwarn('e.message:{0}'.format(e.message))
-            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))

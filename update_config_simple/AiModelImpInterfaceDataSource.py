@@ -23,6 +23,7 @@ import requests
 from FileUtils import FileUtils
 
 from EnumJobType import EnumJobType
+from CommonEventUtils import CommonEventUtils
 
 instanceCommonUtils = CommonUtilsCompare()
 instanceReadConfigFile = CommonUtilsReadFile()
@@ -381,6 +382,8 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
                 intPublishTimestamp = refJob.listJobCollect[idx].intPublishTimeStamp
                 self.mCacheUtils.writeFileCacheInfo(refJob.listJobCollect[idx].strFullFileName, strUrl, strMd5, intPublishTimestamp,
                                                     intLocalModifyTimeStamp)
+                if os.path.exists(refJob.listJobCollect[idx].strFullFileTempName):
+                    os.remove(refJob.listJobCollect[idx].strFullFileTempName)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -411,7 +414,8 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
 
     def write_event(self, refJob):
         rospy.loginfo("---enter  AiModelImpInterfaceDataSource write_event------")
-        self.SaveEventToFile(msg='', code='ISYS_CONFIG_UPDATE_AI_MODEL', results=list(), actions=list(), level='info')
+        instanceCommonEventUtils = CommonEventUtils()
+        instanceCommonEventUtils.SaveEventToFile("update_config_simple.yaml", "ISYS_CONFIG_UPDATE_AI_MODEL", "/update_config_simple", "")
 
     def getTimeval(self):
         rospy.logdebug("-----enter  AiModelImpInterfaceDataSource getTimeval-----")
@@ -419,39 +423,6 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
 
     def getModuleName(self):
          return "AiModelImpInterfaceDataSource"
-
-    def SaveEventToFile(self, msg='', code='', results=list(), actions=list(), level=''):
-        rospy.logdebug("enter SaveEventToFile")
-        json_msg = {}
-        if 1:
-            try:
-                json_msg = gen_report_msg("update_config_simple.yaml", code, "/update_config_simple")
-            except Exception as e:
-                rospy.logwarn('repr(e):{0}'.format(repr(e)))
-                rospy.logwarn('e.message:{0}'.format(e.message))
-                rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
-        rospy.logdebug("event json_msg:{0}".format(json_msg))
-        if json_msg == {}:  # if not used pb or call function error, used local config
-            cur_time = int(time.time())
-            msg_dict = {
-                "timestamp": {
-                    "sec": cur_time,
-                    "nsec": int((time.time() - cur_time) * 1000000000)},
-                "src": "/update_config_simple",
-                "code": code,
-                "level": level,
-                "result": results,
-                "action": actions,
-                "msg": msg
-            }
-            json_msg = json.dumps(msg_dict)
-        try:
-            with open("/home/mogo/data/log/msg_log/system_master_report.json", 'a+') as fp:
-                fp.write(json_msg + '\n')
-        except Exception as e:
-            rospy.logwarn('repr(e):{0}'.format(repr(e)))
-            rospy.logwarn('e.message:{0}'.format(e.message))
-            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def pushSimpleJobScheduler(self, refDataSource, refJob):
         try:

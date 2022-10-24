@@ -41,7 +41,7 @@ class CommonUtilsCompare:
             intRemotePublishTime = instanceJobItem.intPublishTimeStamp
             instanceJobItem.eVersion = instanceCacheUtils.selectVersion(strTargetFileName, strRemoteMd5,
                                                                         intRemotePublishTime)
-            print "########################### instanceJobItem.strUrl:{0}".format(instanceJobItem.strUrl)
+            rospy.loginfo("########################### instanceJobItem.strUrl:{0}".format(instanceJobItem.strUrl))
 
             strDirName = os.path.dirname(strTargetFileName)
             rospy.logdebug("=====strDirName:{0}".format(strDirName))
@@ -65,16 +65,16 @@ class CommonUtilsCompare:
         return instanceJobItem.eVersion
 
     def compareJobVersion(self, refJob, instanceCacheUtils):
-        print("compareJobVersion refJob[0].len:{0}".format(len(refJob[0].listJobCollect)))
-        print("compareJobVersion len(refJob) :{0}".format(len(refJob)))
-        print("compareJobVersion refJob[0] first url :{0}".format(len(refJob[0].listJobCollect[0].strUrl)))
-        print("===========type(refJob[0].listJobCollect[0]):{0}".format(type(refJob[0].listJobCollect[0])))
+        rospy.logdebug("compareJobVersion refJob[0].len:{0}".format(len(refJob[0].listJobCollect)))
+        rospy.logdebug("compareJobVersion len(refJob) :{0}".format(len(refJob)))
+        rospy.logdebug("compareJobVersion refJob[0] first url :{0}".format(len(refJob[0].listJobCollect[0].strUrl)))
+        rospy.logdebug("===========type(refJob[0].listJobCollect[0]):{0}".format(type(refJob[0].listJobCollect[0])))
         try:
             rospy.loginfo("*********AAAAAAAAAAAAAAAAAAAAAa*********** len(refJob[0].listJobCollect):{0}".format(
                 len(refJob[0].listJobCollect)))
             for idx in range(0, len(refJob[0].listJobCollect)):
-                print "****len:{0}".format(len(refJob[0].listJobCollect))
-                print "****process idx : {0}".format(idx)
+                rospy.logdebug("****len:{0}".format(len(refJob[0].listJobCollect)))
+                rospy.logdebug("****process idx : {0}".format(idx))
                 instanceEnumVersion = self.compareJobItemVersion(refJob[0].listJobCollect[idx], instanceCacheUtils)
                 refJob[0].listJobCollect[idx].eVersion = instanceEnumVersion
                 #remote version push to refJob[0].listJobCollectUpdate

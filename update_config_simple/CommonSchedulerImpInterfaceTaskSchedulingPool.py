@@ -19,13 +19,13 @@ globalThreadExecutePool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='
 ## collect zombile process
 def signal_handler(signum, frame):
     try:
-        print("recv signal:{0}".format(signum))
+        rospy.logdebug("recv signal:{0}".format(signum))
         pid, exit_status = os.waitpid(0, os.WNOHANG)
-        print("sub pid:{0},status:{1}".format(pid, exit_status))
+        rospy.logdebug("sub pid:{0},status:{1}".format(pid, exit_status))
         if exit_status == 0:
-            print "normal  exit"
+            rospy.logdebug("normal  exit")
         if exit_status != 0:
-            print "abnormal  exit"
+            rospy.logdebug("abnormal  exit")
     except Exception as e:
         rospy.logwarn('repr(e):{0}'.format(repr(e)))
         rospy.logwarn('e.message:{0}'.format(e.message))
@@ -120,8 +120,8 @@ class CommonSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulingPool)
             intSelectTaskKeyFromImmediately = 0
             intSelectTaskKeyFromDelay = 0
             enumJobTableType = EnumJobType.JOB_TYPE_INIT
-            print "----------------getTaskFromTable -------------self.mDictImmediately:{0},self.mDictDelay:{1}".format(
-                self.mDictImmediately, self.mDictDelay)
+            rospy.logdebug("----------------getTaskFromTable -------------self.mDictImmediately:{0},self.mDictDelay:{1}".format(
+                self.mDictImmediately, self.mDictDelay))
 
             ## select use DictImmediately or
             while True:
@@ -129,22 +129,22 @@ class CommonSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulingPool)
                 # select   DictImmediately_jobs  or DictDelay_job
                 if len(self.mDictImmediately) > 0:
                     for key in self.mDictImmediately.keys():
-                        print("key:{0}".format(int(key)))
+                        rospy.logdebug("key:{0}".format(int(key)))
                         listKey.append(int(key))
                     listKey.sort()
                     if len(listKey) > 0:
-                        print("get key from mDictImmediately task")
+                        rospy.logdebug("get key from mDictImmediately task")
                         intSelectTaskKeyFromImmediately = listKey[len(listKey) - 1]
                         enumJobTableType = EnumJobType.EnumJobType.JOB_TYPE_IMMEDIATELY
                     break
                 # mDictDelay jobs select
                 if len(self.mDictDelay) > 0:
                     for key in self.mDictDelay.keys():
-                        print("key:{0}".format(int(key)))
+                        rospy.logdebug("key:{0}".format(int(key)))
                         listKey.append(int(key))
                     listKey.sort()
                     if len(listKey) > 0:
-                        print("get key from mDictDelay task")
+                        rospy.logdebug("get key from mDictDelay task")
                         intSelectTaskKeyFromDelay = listKey[0]
                         enumJobTableType = EnumJobType.JOB_TYPE_DELAY
                     break
@@ -170,17 +170,17 @@ class CommonSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulingPool)
             # compare
             # get current Executor_job
             instanceJob, enumJobTableType = self.getTaskFromTable()
-            print "####### ++++ instanceJob:{0},enumJobTableType:{1}".format(instanceJob, enumJobTableType)
+            rospy.logdebug("####### ++++ instanceJob:{0},enumJobTableType:{1}".format(instanceJob, enumJobTableType))
             currentExecutorRunningJob = self.mExecutor.getCurrentExecutorRunningJob()
-            print "******* currentExecutorRunningJob:{0}".format(currentExecutorRunningJob)
+            rospy.logdebug("******* currentExecutorRunningJob:{0}".format(currentExecutorRunningJob))
             while True:
                 if enumJobTableType == EnumJobType.JOB_TYPE_IMMEDIATELY:
                     ## compare
                     if instanceJob is None:
-                        print "&&&&&&&&&&&&&& IMMEDIATELY  instanceJob is None"
+                        rospy.logdebug("&&&&&&&&&&&&&& IMMEDIATELY  instanceJob is None")
                         break
                     if currentExecutorRunningJob is None:
-                        print "&&&&&&&&  IMMEDIATELY currentExecutorRunningJob is None"
+                        rospy.logdebug("&&&&&&&&  IMMEDIATELY currentExecutorRunningJob is None")
                         self.mDictImmediately[instanceJob.intJobCtime] = instanceJob
                         self.mDictImmediately[instanceJob.intJobCtime].enumStatus = EnumJobStatus.JOB_STATUS_RUNNING
                         self.mExecutor.run_executor_job(instanceJob)
@@ -196,21 +196,21 @@ class CommonSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulingPool)
                         self.mDictImmediately[instanceJob.intJobCtime] = instanceJob
                         self.mDictImmediately[instanceJob.intJobCtime].enumStatus = EnumJobStatus.JOB_STATUS_RUNNING
                         self.mExecutor.run_executor_job(instanceJob)
-                        print "--------------------------------------end finish down load"
+                        rospy.logdebug("--------------------------------------end finish down load")
                         instanceJob.handlerDataSource.schedulerFinishAction(instanceJob)
                     else:
                         pass
                     break
                 if enumJobTableType == EnumJobType.JOB_TYPE_DELAY:
                     if instanceJob is None:
-                        print "&&&&&&&&&&&&&& DELAY instanceJob is None"
+                        rospy.logdebug("&&&&&&&&&&&&&& DELAY instanceJob is None")
                         break
                     if currentExecutorRunningJob is None:
-                        print "&&&&&&&&  DELAY currentExecutorRunningJob is None"
+                        rospy.logdebug("&&&&&&&&  DELAY currentExecutorRunningJob is None")
                         self.mDictDelay[instanceJob.intJobCtime] = instanceJob
                         self.mDictDelay[instanceJob.intJobCtime].enumStatus = EnumJobStatus.JOB_STATUS_RUNNING
                         self.mExecutor.run_executor_job(instanceJob)
-                        print "--------------------------------------end finish down load"
+                        rospy.logdebug("--------------------------------------end finish down load")
                         instanceJob.handlerDataSource.schedulerFinishAction(instanceJob)
                         break
                     if (instanceJob is not None) and (currentExecutorRunningJob is not None) and (
@@ -224,7 +224,7 @@ class CommonSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulingPool)
                         self.mDictDelay[instanceJob.intJobCtime] = instanceJob
                         self.mDictDelay[instanceJob.intJobCtime].enumStatus = EnumJobStatus.JOB_STATUS_RUNNING
                         self.mExecutor.run_executor_job(instanceJob)
-                        print "--------------------------------------end finish down load"
+                        rospy.logdebug("--------------------------------------end finish down load")
                         instanceJob.handlerDataSource.schedulerFinishAction(instanceJob)
                     else:
                         pass
