@@ -35,7 +35,7 @@ class CommonPara:
         try:
             strCmd = "ifconfig eth0 | grep ether | awk '{print $2}'"
             status, output = commands.getstatusoutput(strCmd)
-            print "----------------status:{0},output:{1}".format(status, output)
+            rospy.logdebug("----------------status:{0},output:{1}".format(status, output))
             if status == 0:
                 self.dictCarInfo['mac'] = str(output)
         except Exception as e:

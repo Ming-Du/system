@@ -154,7 +154,7 @@ class CommonSimpleSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulin
         rospy.loginfo("-------add_task----task process finished--------------")
 
     def add_job_to_queue(self, refDataSource, refJob):
-        print("add_job_to_queue refJob:{0}".format(refJob))
+        rospy.logdebug("add_job_to_queue refJob:{0}".format(refJob))
         if refJob is not None and len(refJob) > 0:
             rospy.loginfo("============ scheduler recv task from queue")
             rospy.loginfo("add_job_to_queue-----refJob[0].listJobCollect:{0},listJobCollectUpdate:{1},type:{2}".format(
@@ -162,7 +162,7 @@ class CommonSimpleSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulin
             self.mThreadPool.submit(self.add_task, refDataSource, refJob)
 
     def action_autopilot_status_change(self, intPilotMode):
-        rospy.loginfo("action_autopilot_status_change recv mode:{0}".format(intPilotMode))
+        rospy.logdebug("action_autopilot_status_change recv mode:{0}".format(intPilotMode))
         global globalAutopilotStatus
         try:
             while True:
@@ -213,7 +213,7 @@ class CommonSimpleSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulin
             for idx in range(len(instanceJob.listJobCollectUpdate)):
                 if len(instanceJob.listJobCollectUpdate[idx].strFullFileTempName) > 0:
                     strFolderName = os.path.dirname(instanceJob.listJobCollectUpdate[idx].strFullFileTempName)
-                    print "================== strFolderName:{0}".format(strFolderName)
+                    rospy.logdebug("================== strFolderName:{0}".format(strFolderName))
                     if os.path.exists(strFolderName):
                         pass
                     else:
@@ -248,7 +248,7 @@ class CommonSimpleSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulin
             for idx in range(len(instanceJob.listJobCollectUpdate)):
                 if len(instanceJob.listJobCollectUpdate[idx].strFullFileTempName) > 0:
                     strFolderName = os.path.dirname(instanceJob.listJobCollectUpdate[idx].strFullFileTempName)
-                    print "================== strFolderName:{0}".format(strFolderName)
+                    rospy.logdebug("================== strFolderName:{0}".format(strFolderName))
                     if os.path.exists(strFolderName):
                         pass
                     else:

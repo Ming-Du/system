@@ -29,7 +29,7 @@ class Executor:
             for idx in range(len(listTemp)):
                 if len(listTemp[idx].strFullFileTempName) > 0:
                     strFolderName = os.path.dirname(listTemp[idx].strFullFileTempName)
-                    print "================== strFolderName:{0}".format(strFolderName)
+                    rospy.loginfo("================== strFolderName:{0}".format(strFolderName))
                     if os.path.exists(strFolderName):
                         pass
                     else:

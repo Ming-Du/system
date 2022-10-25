@@ -20,6 +20,7 @@ from EnumDataSourceType import EnumDataSourceType
 import rospy
 import requests
 from EnumJobType import EnumJobType
+from CommonEventUtils import CommonEventUtils
 
 instanceCommonUtils = CommonUtilsCompare()
 instanceCacheUtils = CacheUtils("/home/mogo/data/SlamMapCache.json")
@@ -188,8 +189,8 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
             try:
                 dictResult = json.loads(strRespContent)
             except Exception as e:
-                print(str(e))
-                print('traceback.format_exc():{0}'.format((traceback.format_exc())))
+                rospy.logwarn(str(e))
+                rospy.logwarn('traceback.format_exc():{0}'.format((traceback.format_exc())))
             if len(dictResult) == 0:
                 intError = -1
                 break
@@ -261,7 +262,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
                 if len(refJob[0].listJobCollect) > 0:
                     intError = self.getNeedUpdateFile(refJob)
                 if intError == 0 and len(refJob[0].listJobCollect) > 0:
-                    print "process_cycle === ref[0].listJobCollect:{0}".format(refJob[0].listJobCollect)
+                    # print "process_cycle === ref[0].listJobCollect:{0}".format(refJob[0].listJobCollect)
                     self.pushJobScheduler(self, refJob)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
@@ -304,7 +305,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
                     break
                 else:
                     self.mFiles[strKey] = 0
-            print "==================  self.mFiles:{0}".format(self.mFiles)
+            # print "==================  self.mFiles:{0}".format(self.mFiles)
             rospy.loginfo("...........................intFileRepeat:{0}".format(intFileRepeat))
             if intFileRepeat == 0:
                 rospy.loginfo("##### push slam task")
@@ -345,7 +346,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
         rospy.logdebug("----------enter slam install_dst_path-------------------------------")
         try:
             for idx in range(len(refJob.listJobCollect)):
-                link_file(refJob.listJobCollect[idx].strFullFileTempName, refJob.listJobCollect[idx].strFullFileName)
+                shutil.copyfile(refJob.listJobCollect[idx].strFullFileTempName, refJob.listJobCollect[idx].strFullFileName)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -362,6 +363,8 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
                 self.mCacheUtils.writeFileCacheInfo(refJob.listJobCollect[idx].strFullFileName, strUrl, strMd5,
                                                     intPublishTimestamp,
                                                     intLocalModifyTimeStamp)
+                if os.path.exists(refJob.listJobCollect[idx].strFullFileTempName):
+                    os.remove(refJob.listJobCollect[idx].strFullFileTempName)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -393,43 +396,11 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
 
     def write_event(self, refJob):
         rospy.logdebug("----enter slam write_event-----")
-        self.SaveEventToFile(msg='', code='ISYS_CONFIG_UPDATE_SLAM_MAP', results=list(), actions=list(), level='info')
+        instanceCommonEventUtils = CommonEventUtils()
+        instanceCommonEventUtils.SaveEventToFile("update_config_simple.yaml", "ISYS_CONFIG_UPDATE_SLAM_MAP", "/update_config_simple","")
 
     def getTimeval(self):
         return self.mIntTimeval
 
     def getModuleName(self):
         return "SlamMapImpInterfaceDataSource"
-
-    def SaveEventToFile(self, msg='', code='', results=list(), actions=list(), level=''):
-        rospy.logdebug("enter SaveEventToFile")
-        json_msg = {}
-        if 1:
-            try:
-                json_msg = gen_report_msg("update_config_simple.yaml", code, "/update_config_simple")
-            except Exception as e:
-                rospy.logwarn('repr(e):{0}'.format(repr(e)))
-                rospy.logwarn('e.message:{0}'.format(e.message))
-                rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
-        rospy.logdebug("event json_msg:{0}".format(json_msg))
-        if json_msg == {}:  # if not used pb or call function error, used local config
-            cur_time = int(time.time())
-            msg_dict = {
-                "timestamp": {
-                    "sec": cur_time,
-                    "nsec": int((time.time() - cur_time) * 1000000000)},
-                "src": "/hd_map_agent",
-                "code": code,
-                "level": level,
-                "result": results,
-                "action": actions,
-                "msg": msg
-            }
-            json_msg = json.dumps(msg_dict)
-        try:
-            with open("/home/mogo/data/log/msg_log/system_master_report.json", 'a+') as fp:
-                fp.write(json_msg + '\n')
-        except Exception as e:
-            rospy.logwarn('repr(e):{0}'.format(repr(e)))
-            rospy.logwarn('e.message:{0}'.format(e.message))
-            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))

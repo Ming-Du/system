@@ -15,7 +15,7 @@ include_directories(
 
 
 install(
-	FILES AiModelImpInterfaceDataSource.py CacheUtils.py CommonHttpUtils.py CommonPara.py CommonSchedulerImpInterfaceTaskSchedulingPool.py CommonSimpleSchedulerImpInterfaceTaskSchedulingPool.py CommonTriggerImpInterfaceTrigger.py CommonUtilsCompare.py CommonUtilsReadFile.py ConfigImpInterfaceDataSource.py EnumDataSourceType.py EnumJobStatus.py EnumJobType.py EnumVersion.py Executor.py FileUtils.py HdMapAgentImpInterfaceDataSource.py InterfaceDataSource.py InterfaceTaskSchedulingPool.py InterfaceTrigger.py JobItem.py Job.py LogLine.py SlamMapImpInterfaceDataSource.py TrajectoryImpInterfaceDataSource.py update_config_simple.py
+	FILES AiModelImpInterfaceDataSource.py CacheUtils.py CommonHttpUtils.py CommonPara.py CommonSchedulerImpInterfaceTaskSchedulingPool.py CommonSimpleSchedulerImpInterfaceTaskSchedulingPool.py CommonTriggerImpInterfaceTrigger.py CommonUtilsCompare.py CommonUtilsReadFile.py ConfigImpInterfaceDataSource.py EnumDataSourceType.py EnumJobStatus.py EnumJobType.py EnumVersion.py Executor.py FileUtils.py HdMapAgentImpInterfaceDataSource.py InterfaceDataSource.py InterfaceTaskSchedulingPool.py InterfaceTrigger.py JobItem.py Job.py LogLine.py SlamMapImpInterfaceDataSource.py TrajectoryImpInterfaceDataSource.py update_config_simple.py   CommonEventUtils.py
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/
   )
 install(

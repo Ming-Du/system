@@ -54,7 +54,7 @@ class FileUtils:
                 if os.path.exists(strLinkConfigPath):
                     with open(strLinkConfigPath, "r") as f:
                         strContent = f.read()
-                        print "strContent:{0}".format(strContent)
+                        rospy.loginfo("strContent:{0}".format(strContent))
                         listContent = strContent.splitlines()
                     break
                 break
