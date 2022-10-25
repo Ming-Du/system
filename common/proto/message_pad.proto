@@ -489,9 +489,10 @@ message SetParamReq
 message TripInfoEvent
 {
     uint32 type = 1; //事件类型, 1:行程开始, 2:行程结束, 3:出站, 4:进站, 5:城市占道施工预警
-    string lineName = 2; //路线名, for type 1, 2
-    string stopName = 3; //站点名, for type 3, 4
-    bool isLastStop = 4; //是否最终站, for type 3, 4
+    string lineName = 2; //路线名
+    string departureStopName = 3; //出站站点名
+    string arrivalStopName = 4; //下一站到达站点名
+    bool isLastStop = 5; //下一站到达站是否最终站
 }
 
 
