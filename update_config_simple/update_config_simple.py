@@ -121,10 +121,12 @@ def topic_localization_global(msg):
 
 def addLocalizationListener():
     try:
-        #rospy.Subscriber("/trajectory_agent/cmd/transaction", BinaryData, topic_trajectory_agent_cmd_transaction)
-        #rospy.Subscriber("/trajectory_agent/cmd/checktrajstate", BinaryData, topic_trajectory_agent_cmd_checktrajstate)
-        rospy.Subscriber("/chassis/vehicle_state", BinaryData, topic_chassis_vehicle_state)
-        rospy.Subscriber('/localization/global', BinaryData, topic_localization_global)
+        strFlagEndFile = "/home/mogo/data/config_end"
+        if os.path.exists(strFlagEndFile):
+            #rospy.Subscriber("/trajectory_agent/cmd/transaction", BinaryData, topic_trajectory_agent_cmd_transaction)
+            #rospy.Subscriber("/trajectory_agent/cmd/checktrajstate", BinaryData, topic_trajectory_agent_cmd_checktrajstate)
+            rospy.Subscriber("/chassis/vehicle_state", BinaryData, topic_chassis_vehicle_state)
+            rospy.Subscriber('/localization/global', BinaryData, topic_localization_global)
     except Exception as e:
         rospy.logwarn('repr(e):{0}'.format(repr(e)))
         rospy.logwarn('e.message:{0}'.format(e.message))
