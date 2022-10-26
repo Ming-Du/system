@@ -745,9 +745,11 @@ if [ -f "/home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.bac
 fi
 start_sys
 start_map
-set_pr
 
 monitor_shell=/home/mogo/autopilot/share/launch/monitor_cpu_mem_net.sh
 chmod +x $monitor_shell
 bash $monitor_shell &
 python3 /home/mogo/autopilot/share/launch/disk_manage.py >> /home/mogo/data/log/disk_manage.log 2>&1 &
+
+set_pr
+
