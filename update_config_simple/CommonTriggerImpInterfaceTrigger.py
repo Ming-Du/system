@@ -86,7 +86,7 @@ class CommonTriggerImpInterfaceTrigger(InterfaceTrigger):
         pass
 
     def processPilotUpdate(self, intPilotMode):
-        rospy.loginfo("processPilotUpdate value:{0}".format(intPilotMode))
+        # rospy.loginfo("processPilotUpdate value:{0}".format(intPilotMode))
         try:
             self.mTrigger.action_autopilot_status_change(intPilotMode)
             while True:
