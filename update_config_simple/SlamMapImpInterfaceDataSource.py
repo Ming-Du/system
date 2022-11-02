@@ -26,6 +26,7 @@ instanceCommonUtils = CommonUtilsCompare()
 instanceCacheUtils = CacheUtils("/home/mogo/data/SlamMapCache.json")
 instanceReadConfigFile = CommonUtilsReadFile()
 instanceCommonHttpUtils = CommonHttpUtils()
+from FileUtils import FileUtils
 import sys
 
 sys.path.append(os.path.dirname(__file__) + '/../mogo_reporter/script/')
@@ -152,13 +153,18 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def init_module(self):
-        self.setCacheUtils(instanceCacheUtils)
-        strMapPath = "/home/mogo/data/vehicle_monitor/LidarSLAM_data/map/"
-        self.createFolder(strMapPath)
-        strkeyFramePath = "/home/mogo/data/vehicle_monitor/LidarSLAM_data/key_frames"
-        self.createFolder(strkeyFramePath)
-        strTrajPath = "/home/mogo/data/vehicle_monitor/LidarSLAM_data/trajectory"
-        self.createFolder(strTrajPath)
+        try:
+            self.setCacheUtils(instanceCacheUtils)
+            strMapPath = "/home/mogo/data/vehicle_monitor/LidarSLAM_data/map/"
+            self.createFolder(strMapPath)
+            strkeyFramePath = "/home/mogo/data/vehicle_monitor/LidarSLAM_data/key_frames"
+            self.createFolder(strkeyFramePath)
+            strTrajPath = "/home/mogo/data/vehicle_monitor/LidarSLAM_data/trajectory"
+            self.createFolder(strTrajPath)
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def destroy_module(self):
         pass
@@ -183,26 +189,36 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
         strUpdateTime = None
 
         while True:
-            if len(strRespContent) == 0:
-                intError = -1
-                break
+            try:
+                if len(strRespContent) == 0:
+                    intError = -1
+                    break
+            except Exception as e:
+                rospy.logwarn('repr(e):{0}'.format(repr(e)))
+                rospy.logwarn('e.message:{0}'.format(e.message))
+                rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
             try:
                 dictResult = json.loads(strRespContent)
             except Exception as e:
                 rospy.logwarn(str(e))
                 rospy.logwarn('traceback.format_exc():{0}'.format((traceback.format_exc())))
-            if len(dictResult) == 0:
-                intError = -1
-                break
-            if (dictResult.has_key('errcode')) and (dictResult['errcode'] != 0):
-                intError = -1
-                break
-            if dictResult.has_key('data'):
-                intLenData = len(dictResult['data'])
+            try:
+                if len(dictResult) == 0:
+                    intError = -1
+                    break
+                if (dictResult.has_key('errcode')) and (dictResult['errcode'] != 0):
+                    intError = -1
+                    break
+                if dictResult.has_key('data'):
+                    intLenData = len(dictResult['data'])
 
-            if intLenData == 0:
-                intError = -1
-                break
+                if intLenData == 0:
+                    intError = -1
+                    break
+            except Exception as e:
+                rospy.logwarn('repr(e):{0}'.format(repr(e)))
+                rospy.logwarn('e.message:{0}'.format(e.message))
+                rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
             dictResult = None
             try:
@@ -371,14 +387,19 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def notify_pad(self, refJob):
-        rospy.logdebug("----------enter slam notify_pad-----")
-        if len(refJob.listJobCollectUpdate) > 0:
-            for idx in (range(len(refJob.listJobCollectUpdate))):
-                strKey = "{0}".format(refJob.listJobCollectUpdate[idx].strFullFileTempName)
-                rospy.loginfo("strkey:{0}".format(strKey))
-                if self.mFiles.has_key(strKey):
-                    del self.mFiles[strKey]
-                    rospy.loginfo("notify_pad......,clear files key:{0}".format(strKey))
+        try:
+            rospy.logdebug("----------enter slam notify_pad-----")
+            if len(refJob.listJobCollectUpdate) > 0:
+                for idx in (range(len(refJob.listJobCollectUpdate))):
+                    strKey = "{0}".format(refJob.listJobCollectUpdate[idx].strFullFileTempName)
+                    rospy.loginfo("strkey:{0}".format(strKey))
+                    if self.mFiles.has_key(strKey):
+                        del self.mFiles[strKey]
+                        rospy.loginfo("notify_pad......,clear files key:{0}".format(strKey))
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def notify_cloud(self, refJob):
         rospy.logdebug("----enter slam notify_cloud-----")
@@ -395,12 +416,21 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def write_event(self, refJob):
-        rospy.logdebug("----enter slam write_event-----")
-        instanceCommonEventUtils = CommonEventUtils()
-        instanceCommonEventUtils.SaveEventToFile("update_config_simple.yaml", "ISYS_CONFIG_UPDATE_SLAM_MAP", "/update_config_simple","")
+        try:
+            rospy.logdebug("----enter slam write_event-----")
+            instanceCommonEventUtils = CommonEventUtils()
+            instanceCommonEventUtils.SaveEventToFile("update_config_simple.yaml", "ISYS_CONFIG_UPDATE_SLAM_MAP", "/update_config_simple","")
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def getTimeval(self):
         return self.mIntTimeval
 
     def getModuleName(self):
         return "SlamMapImpInterfaceDataSource"
+
+    def relink(self):
+        pass
+

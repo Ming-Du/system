@@ -29,6 +29,7 @@ instanceCommonUtils = CommonUtilsCompare()
 instanceReadConfigFile = CommonUtilsReadFile()
 instanceCacheUtils = CacheUtils("/home/mogo/data/AiModelCache.json")
 instanceCommonHttpUtils = CommonHttpUtils()
+from FileUtils import FileUtils
 import sys
 sys.path.append(os.path.dirname(__file__) + '/../mogo_reporter/script/')
 sys.path.append('../mogo_reporter/script/')
@@ -169,27 +170,37 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
         strUpdateTime = None
 
         while True:
-            if len(strRespContent) == 0:
-                intError = -1
-                break
+            try:
+                if len(strRespContent) == 0:
+                    intError = -1
+                    break
+            except Exception as e:
+                rospy.loginfo('repr(e):{0}'.format(repr(e)))
+                rospy.loginfo('e.message:{0}'.format(e.message))
+                rospy.loginfo('traceback.format_exc():%s' % (traceback.format_exc()))
             try:
                 dictResult = json.loads(strRespContent)
             except Exception as e:
                 rospy.loginfo('repr(e):{0}'.format(repr(e)))
                 rospy.loginfo('e.message:{0}'.format(e.message))
                 rospy.loginfo('traceback.format_exc():%s' % (traceback.format_exc()))
-            if len(dictResult) == 0:
-                intError = -1
-                break
-            if (dictResult.has_key('errcode')) and (dictResult['errcode'] != 0):
-                intError = -1
-                break
-            if dictResult.has_key('data'):
-                intLenData = len(dictResult['data'])
+            try:
+                if len(dictResult) == 0:
+                    intError = -1
+                    break
+                if (dictResult.has_key('errcode')) and (dictResult['errcode'] != 0):
+                    intError = -1
+                    break
+                if dictResult.has_key('data'):
+                    intLenData = len(dictResult['data'])
 
-            if intLenData == 0:
-                intError = -1
-                break
+                if intLenData == 0:
+                    intError = -1
+                    break
+            except Exception as e:
+                rospy.loginfo('repr(e):{0}'.format(repr(e)))
+                rospy.loginfo('e.message:{0}'.format(e.message))
+                rospy.loginfo('traceback.format_exc():%s' % (traceback.format_exc()))
 
             dictResult = None
             try:
@@ -390,13 +401,18 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def notify_pad(self, refJob):
-        if len(refJob.listJobCollectUpdate) > 0:
-            for idx in (range(len(refJob.listJobCollectUpdate))):
-                strKey = "{0}".format(refJob.listJobCollectUpdate[idx].strFullFileTempName)
-                rospy.loginfo("strkey:{0}".format(strKey))
-                if self.mFiles.has_key(strKey):
-                    del self.mFiles[strKey]
-                    rospy.loginfo("notify_pad......,clear files key:{0}".format(strKey))
+        try:
+            if len(refJob.listJobCollectUpdate) > 0:
+                for idx in (range(len(refJob.listJobCollectUpdate))):
+                    strKey = "{0}".format(refJob.listJobCollectUpdate[idx].strFullFileTempName)
+                    rospy.loginfo("strkey:{0}".format(strKey))
+                    if self.mFiles.has_key(strKey):
+                        del self.mFiles[strKey]
+                        rospy.loginfo("notify_pad......,clear files key:{0}".format(strKey))
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def notify_cloud(self, refJob):
         rospy.logdebug("-----enter AiModelImpInterfaceDataSource notify_cloud---")
@@ -413,9 +429,14 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def write_event(self, refJob):
-        rospy.loginfo("---enter  AiModelImpInterfaceDataSource write_event------")
-        instanceCommonEventUtils = CommonEventUtils()
-        instanceCommonEventUtils.SaveEventToFile("update_config_simple.yaml", "ISYS_CONFIG_UPDATE_AI_MODEL", "/update_config_simple", "")
+        try:
+            rospy.loginfo("---enter  AiModelImpInterfaceDataSource write_event------")
+            instanceCommonEventUtils = CommonEventUtils()
+            instanceCommonEventUtils.SaveEventToFile("update_config_simple.yaml", "ISYS_CONFIG_UPDATE_AI_MODEL", "/update_config_simple", "")
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def getTimeval(self):
         rospy.logdebug("-----enter  AiModelImpInterfaceDataSource getTimeval-----")
@@ -429,6 +450,24 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
             refJob[0].enumJobType = EnumJobType.JOB_TYPE_DELAY
             refJob[0].handlerDataSource = self
             self.mScheduler.add_task(refDataSource, refJob)
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+
+    def relink(self):
+        rospy.logdebug("---------------enter relink---------------------- ")
+        try:
+            strSnLinkConfig = ""
+            if self.mCommonPara.dictCarInfo.has_key('car_plate') and len(self.mCommonPara.dictCarInfo['car_plate']) > 0:
+                strSnLinkConfig = "/home/mogo/data/vehicle_monitor/{0}/slinks.cfg".format(
+                    self.mCommonPara.dictCarInfo['car_plate'])
+            strCommonLinkConfig = "/home/mogo/data/vehicle_monitor/slinks.cfg"
+            rospy.loginfo("strSnLinkConfig:{0}".format(strSnLinkConfig))
+            rospy.loginfo("strCommonLinkConfig:{0}".format(strCommonLinkConfig))
+            instanceFileUtils = FileUtils()
+            instanceFileUtils.linkFileAccordConfig(strCommonLinkConfig)
+            instanceFileUtils.linkFileAccordConfig(strSnLinkConfig)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
