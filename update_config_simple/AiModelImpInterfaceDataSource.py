@@ -268,29 +268,28 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def process_startup(self, dictParameter):
-        # try:
-        #     instanceHttpUtils = CommonHttpUtils()
-        #     dictPostPara = {}
-        #     dictPostPara['vehicleConfSn'] = self.mCommonPara.dictCarInfo['car_plate']
-        #     # dictPostPara['mac'] = self.mCommonPara.dictCarInfo['mac']
-        #     intHttpCode, strRespContent = instanceHttpUtils.sendSimpleHttpRequestWithHeader(self.strUrlList,
-        #                                                                                     dictPostPara)
-        #     listJobItem = []
-        #     instanceJob = Job()
-        #     refJob = [instanceJob]
-        #     intError = 0
-        #     if intHttpCode == 200:
-        #         intError = self.readHttpList(strRespContent, refJob)
-        #     rospy.logdebug("================ refJob[0].listJobCollect:{0}".format(refJob[0].listJobCollect))
-        #     if intError == 0 and len(refJob[0].listJobCollect) > 0:
-        #         intError = self.getNeedUpdateFile(refJob)
-        #     if intError == 0:
-        #         self.pushSimpleJobScheduler(self, refJob)
-        # except Exception as e:
-        #     rospy.logwarn('repr(e):{0}'.format(repr(e)))
-        #     rospy.logwarn('e.message:{0}'.format(e.message))
-        #     rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
-        pass
+        try:
+            instanceHttpUtils = CommonHttpUtils()
+            dictPostPara = {}
+            dictPostPara['vehicleConfSn'] = self.mCommonPara.dictCarInfo['car_plate']
+            # dictPostPara['mac'] = self.mCommonPara.dictCarInfo['mac']
+            intHttpCode, strRespContent = instanceHttpUtils.sendSimpleHttpRequestWithHeader(self.strUrlList,
+                                                                                            dictPostPara)
+            listJobItem = []
+            instanceJob = Job()
+            refJob = [instanceJob]
+            intError = 0
+            if intHttpCode == 200:
+                intError = self.readHttpList(strRespContent, refJob)
+            rospy.logdebug("================ refJob[0].listJobCollect:{0}".format(refJob[0].listJobCollect))
+            if intError == 0 and len(refJob[0].listJobCollect) > 0:
+                intError = self.getNeedUpdateFile(refJob)
+            if intError == 0:
+                self.pushSimpleJobScheduler(self, refJob)
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def getNeedUpdateFile(self, refJob):
         intError = 0
