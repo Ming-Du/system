@@ -231,6 +231,9 @@ class CommonSimpleSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulin
                     rospy.loginfo("------------------------ ignore: {0}".format(listTemp[idx].strFullFileTempName))
             if len(instanceJob.listJobCollectUpdate) > 0:
                 instanceJob.handlerDataSource.schedulerFinishAction(instanceJob)
+            else:
+                rospy.loginfo("enter len(instanceJob.listJobCollectUpdate) branch")
+                instanceJob.handlerDataSource.relink()
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -267,6 +270,9 @@ class CommonSimpleSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulin
                     rospy.loginfo("------------------------ ignore: {0}".format(listTemp[idx].strFullFileTempName))
             if len(instanceJob.listJobCollectUpdate) > 0:
                 instanceJob.handlerDataSource.schedulerFinishAction(instanceJob)
+            else:
+                rospy.loginfo("len(instanceJob.listJobCollectUpdate) == 0,enter install_dst_path")
+                instanceJob.handlerDataSource.relink()
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))

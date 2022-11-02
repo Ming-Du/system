@@ -161,26 +161,36 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
         strUpdateTime = None
 
         while True:
-            if len(strRespContent) == 0:
-                intError = -1
-                break
+            try:
+                if len(strRespContent) == 0:
+                    intError = -1
+                    break
+            except Exception as e:
+                rospy.logwarn('repr(e):{0}'.format(repr(e)))
+                rospy.logwarn('e.message:{0}'.format(e.message))
+                rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
             try:
                 dictResult = json.loads(strRespContent)
             except Exception as e:
                 rospy.logwarn(str(e))
                 rospy.logwarn('traceback.format_exc():{0}'.format((traceback.format_exc())))
-            if len(dictResult) == 0:
-                intError = -1
-                break
-            if (dictResult.has_key('errcode')) and (dictResult['errcode'] != 0):
-                intError = -1
-                break
-            if dictResult.has_key('data'):
-                intLenData = len(dictResult['data'])
+            try:
+                if len(dictResult) == 0:
+                    intError = -1
+                    break
+                if (dictResult.has_key('errcode')) and (dictResult['errcode'] != 0):
+                    intError = -1
+                    break
+                if dictResult.has_key('data'):
+                    intLenData = len(dictResult['data'])
 
-            if intLenData == 0:
-                intError = -1
-                break
+                if intLenData == 0:
+                    intError = -1
+                    break
+            except Exception as e:
+                rospy.logwarn('repr(e):{0}'.format(repr(e)))
+                rospy.logwarn('e.message:{0}'.format(e.message))
+                rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
             dictResult = None
             try:
@@ -356,14 +366,19 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def notify_pad(self, refJob):
-        if len(refJob.listJobCollectUpdate) > 0:
-            for idx in (range(len(refJob.listJobCollectUpdate))):
-                strKey = "{0}_{1}".format(refJob.listJobCollectUpdate[idx].strFullFileTempName,
-                                          refJob.listJobCollectUpdate[idx].intPublishTimeStamp)
-                rospy.loginfo("strkey:{0}".format(strKey))
-                if self.mFiles.has_key(strKey):
-                    del self.mFiles[strKey]
-                    rospy.loginfo("notify_pad......,clear files key:{0}".format(strKey))
+        try:
+            if len(refJob.listJobCollectUpdate) > 0:
+                for idx in (range(len(refJob.listJobCollectUpdate))):
+                    strKey = "{0}_{1}".format(refJob.listJobCollectUpdate[idx].strFullFileTempName,
+                                              refJob.listJobCollectUpdate[idx].intPublishTimeStamp)
+                    rospy.loginfo("strkey:{0}".format(strKey))
+                    if self.mFiles.has_key(strKey):
+                        del self.mFiles[strKey]
+                        rospy.loginfo("notify_pad......,clear files key:{0}".format(strKey))
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def notify_cloud(self, refJob):
         rospy.logdebug(" ===== notify_cloud====  typeof(refJob):{0}".format(refJob))
@@ -379,8 +394,17 @@ class HdMapAgentImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def write_event(self, refJob):
-        instanceCommonEventUtils = CommonEventUtils()
-        instanceCommonEventUtils.SaveEventToFile("hd_map.yaml", "ISYS_CONFIG_UPDATE_HADMAP", "/update_config_simple", "")
+        try:
+            instanceCommonEventUtils = CommonEventUtils()
+            instanceCommonEventUtils.SaveEventToFile("hd_map.yaml", "ISYS_CONFIG_UPDATE_HADMAP", "/update_config_simple", "")
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def getTimeval(self):
         return self.mIntTimeval
+
+    def relink(self):
+        pass
+

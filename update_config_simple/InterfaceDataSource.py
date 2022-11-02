@@ -68,3 +68,6 @@ class InterfaceDataSource:
 
     def setCacheUtils(self, instanceCacheUtil):
         pass
+
+    def relink(self):
+        pass
