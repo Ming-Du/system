@@ -190,7 +190,7 @@ class ConfigImpInterfaceDataSource(InterfaceDataSource):
             refJob[0].handlerDataSource = self
             rospy.logwarn("#######  process_startup ----intError:{0}".format(intError))
             if intError == 0:
-                self.pushSimpleJobScheduler(self, refJob)
+                self.pushJobScheduler(self, refJob)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -272,8 +272,10 @@ class ConfigImpInterfaceDataSource(InterfaceDataSource):
         rospy.logdebug("---------------enter install_dst_path---------------------- ")
         try:
             for idx in range(len(refJob.listJobCollect)):
-                shutil.copyfile(refJob.listJobCollect[idx].strFullFileTempName,
-                                refJob.listJobCollect[idx].strFullFileName)
+                if not os.path.exists(refJob.listJobCollect[idx].strFullFileTempName):
+                    rospy.logwarn("temp file not found:{0}".format(refJob.listJobCollect[idx].strFullFileTempName))
+                else:
+                    shutil.copyfile(refJob.listJobCollect[idx].strFullFileTempName,refJob.listJobCollect[idx].strFullFileName)
                 strCurrentFile = refJob.listJobCollect[idx].strFullFileName
             strSnLinkConfig = ""
             if self.mCommonPara.dictCarInfo.has_key('car_plate') and len(self.mCommonPara.dictCarInfo['car_plate']) > 0:
