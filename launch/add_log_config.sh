@@ -61,7 +61,7 @@ handlers=fileHandler
 
 [logger_rospyInfo]
 level=INFO
-handlers=fileHandlerRospyInfo
+handlers=fileHandlerRospyInfo,fileHandlerRospyError
 propagate=1
 qualname=rosout
 

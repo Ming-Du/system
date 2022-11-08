@@ -152,7 +152,7 @@ get_map_launch_files() {
 
 start_onenode() {
     local real_launch_file="$1"
-    . $ABS_PATH/add_log_config.sh $real_launch_file INFO
+    . $ABS_PATH/add_log_config.sh "$real_launch_file" INFO
     # LoggingINFO "launching ${real_launch_file}..."
     launch_file=$(echo $real_launch_file | awk '{print $NF}' | awk -F/ '{print $NF}')
     local child_pid
@@ -729,6 +729,7 @@ if [[ -n "$opt_onenode" || -n "$opt_launch_file" ]];then
     launch_file=$(echo $real_launch_file | awk '{print $NF}' | awk -F/ '{print $NF}')
     nohup roslaunch $launch_prefix $launch_cmd &
     [ $? -eq 0 ] && LoggingINFO "launched $launch_cmd successfully" || LoggingERR "launched $launch_cmd failed"
+    tail -f /dev/null
     trap EXIT
     exit 0
 fi
@@ -738,6 +739,7 @@ add_privilege_monitor_gnss
 start_core
 LoggingINFO "update config...."
 rm -rf  /home/mogo/data/config_end
+. $ABS_PATH/add_log_config.sh update_config_simple.launch INFO
 timeout 300 roslaunch --wait update_config_simple  update_config_simple.launch >$ROS_LOG_DIR/update_config.launch.log 2>&1
 LoggingINFO "update config finished"
 if [ -f "/home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup" ];then
