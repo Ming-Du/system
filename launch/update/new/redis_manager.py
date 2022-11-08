@@ -1,12 +1,27 @@
 import os
+import sys
 import logging
 import traceback
 import json
 from threading import RLock
 
-_logger = logging.getLogger("rosmaster.master")
+def configure_logging():
+    """
+    Setup filesystem logging for the master
+    """
+    filename = 'master.log'
+    # #988 __log command-line remapping argument
+    import rosgraph.names
+    import rosgraph.roslogging
+    mappings = rosgraph.names.load_mappings(sys.argv)
+    if '__log' in mappings:
+        logfilename_remap = mappings['__log']
+        filename = os.path.abspath(logfilename_remap)
+    _log_filename = rosgraph.roslogging.configure_logging('rosmaster', logging.DEBUG, filename=filename)
 
 def logerror(msg, *args):
+    configure_logging()
+    _logger = logging.getLogger("rosmaster.master")
     _logger.error(msg, *args)
     if args:
         print("ERROR: " + msg % args)
@@ -14,6 +29,8 @@ def logerror(msg, *args):
         print("ERROR: " + str(msg))
 
 def logwarn(msg, *args):
+    configure_logging()
+    _logger = logging.getLogger("rosmaster.master")
     _logger.warn(msg, *args)
     if args:
         print("WARN: " + msg % args)
@@ -37,7 +54,7 @@ try:
     TimeoutError = redis.TimeoutError
     WatchError = redis.WatchError
 except:
-    logwarn("redis module is invalid,to use redis as param server,you can install it manually:pip install redis")
+    pass
 
 def singleton(cls):
     _instance = {}
