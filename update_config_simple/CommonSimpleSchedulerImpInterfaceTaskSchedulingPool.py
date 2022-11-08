@@ -298,6 +298,7 @@ class CommonSimpleSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulin
                     strCmd = "/usr/bin/wget  --connect-timeout=5 --dns-timeout=5  {0} -O {1}".format(strUrl,
                                                                                                      strTempFileName)
                     retDownload, strOutput = commands.getstatusoutput(strCmd)
+                    rospy.logwarn("wget strCmd:{0}".format(strCmd))
                     if retDownload == 0:
                         if instanceCommonUtilsCompare.checkFileMd5(strTempFileName) == strMd5:
                             rospy.logdebug("md5 check success:filename:{0}".format(strTempFileName))

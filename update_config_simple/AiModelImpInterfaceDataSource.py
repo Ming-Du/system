@@ -285,7 +285,7 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
             if intError == 0 and len(refJob[0].listJobCollect) > 0:
                 intError = self.getNeedUpdateFile(refJob)
             if intError == 0:
-                self.pushSimpleJobScheduler(self, refJob)
+                self.pushBlockJobScheduler(self, refJob)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -468,6 +468,17 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
             instanceFileUtils = FileUtils()
             instanceFileUtils.linkFileAccordConfig(strCommonLinkConfig)
             instanceFileUtils.linkFileAccordConfig(strSnLinkConfig)
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+
+    def pushBlockJobScheduler(self, refDataSource, refJob):
+        try:
+            refJob[0].enumJobType = EnumJobType.JOB_TYPE_DELAY
+            refJob[0].handlerDataSource = self
+            if len(refJob) > 0:
+                self.mScheduler.run_block_executor_job(refJob[0])
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
