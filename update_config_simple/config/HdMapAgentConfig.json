@@ -1,0 +1,5 @@
+{
+"url_list":"https://mdev.zhidaohulian.com:443/config/map/list",
+"url_sync":"https://mdev.zhidaohulian.com:443/config/map/sync",
+"timeval":432000
+}

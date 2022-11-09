@@ -96,43 +96,6 @@ set_bashrc() {
         fi
     fi
 }
-add_config() {
-    [[ -z "$1" ]] && return
-    local level=${2:-ERROR}
-    local launch_name=$(echo ${1##*/} | cut -d. -f1)
-    ROSCONSOLE_CONFIG_FILE="$ABS_PATH/config/${launch_name}_${level}_console.config"
-    echo >$ROSCONSOLE_CONFIG_FILE
-    pkg_str=$(xmllint --xpath "//@pkg" $1 2>/dev/null | sed 's/\"//g')
-    for value in $pkg_str; do
-        pkg_name=${value/*=/}
-        pkg_log_dir=${ROS_LOG_DIR}/${pkg_name}
-        [[ ! -d ${pkg_log_dir} ]] && mkdir -p ${pkg_log_dir}
-        Aconsole=C${pkg_name}
-        InfoAppender=I_${pkg_name}
-        ErrorAppender=E_${pkg_name}
-        ErrorFile=${launch_name}_ERROR.log
-        INFOFile=${launch_name}_INFO.log
-        echo "log4j.logger.ros=${level},${InfoAppender},${ErrorAppender}
-log4j.appender.${InfoAppender}=org.apache.log4j.DailyRollingFileAppender
-log4j.appender.${InfoAppender}.Threshold=INFO
-log4j.appender.${InfoAppender}.ImmediateFlush=true
-log4j.appender.${InfoAppender}.Append=true
-log4j.appender.${InfoAppender}.File=${pkg_log_dir}/${INFOFile}
-log4j.appender.${InfoAppender}.DatePattern='.'yyyy-MM-dd-HH
-log4j.appender.${InfoAppender}.layout=org.apache.log4j.PatternLayout
-log4j.appender.${InfoAppender}.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH:mm:ss.SSS} %l: %m %n
-
-log4j.appender.${ErrorAppender}=org.apache.log4j.DailyRollingFileAppender
-log4j.appender.${ErrorAppender}.Threshold=ERROR
-log4j.appender.${ErrorAppender}.ImmediateFlush=true
-log4j.appender.${ErrorAppender}.Append=true
-log4j.appender.${ErrorAppender}.File=${pkg_log_dir}/${ErrorFile}
-log4j.appender.${ErrorAppender}.DatePattern='.'yyyy-MM-dd-HH
-log4j.appender.${ErrorAppender}.layout=org.apache.log4j.PatternLayout
-log4j.appender.${ErrorAppender}.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH:mm:ss.SSS} LWP:%t(%r) %l: %m %n
-" >>$ROSCONSOLE_CONFIG_FILE
-    done
-}
 
 get_launch_files() {
     local file_set
@@ -189,15 +152,15 @@ get_map_launch_files() {
 
 start_onenode() {
     local real_launch_file="$1"
-    add_config $real_launch_file INFO
-    LoggingINFO "launching ${real_launch_file}..."
+    . $ABS_PATH/add_log_config.sh "$real_launch_file" INFO
+    # LoggingINFO "launching ${real_launch_file}..."
     launch_file=$(echo $real_launch_file | awk '{print $NF}' | awk -F/ '{print $NF}')
     local child_pid
     if [ "$GuiServer" == "silence" ]; then
-        roslaunch $launch_prefix $real_launch_file >>${ROS_LOG_DIR}/${launch_file}.log 2>>${ROS_LOG_DIR}/${launch_file}.err &
+        roslaunch $launch_prefix $real_launch_file >/dev/null 2>&1 &
         child_pid=$!
     else
-        $GuiTerminal --tab -e "bash -c 'sleep 3; $BASHRC && roslaunch $launch_prefix $real_launch_file 2>${ROS_LOG_DIR}/${launch_file}.err 2>&1 | tee -i ${ROS_LOG_DIR}/${launch_file}.log';bash" $TitleOpt "${launch_file}" &
+        $GuiTerminal --tab -e "bash -c 'sleep 3; $BASHRC && roslaunch $launch_prefix $real_launch_file >/dev/null 2>&1';bash" $TitleOpt "${launch_file}" &
     fi
     [[ $2 == "MAP" ]] && map_pid_name[$child_pid]=${launch_file} || sys_pid_name[$child_pid]=${launch_file}
 }
@@ -308,6 +271,7 @@ add_privilege_monitor_gnss() {
     chmod -R 777 /autocar-code/install/share/hd_map_agent  >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/share/trajectory_agent  >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/lib/drivers_innolidar  >/dev/null 2>&1
+    chmod -R 777 /autocar-code/install/share/update_config_simple  >/dev/null 2>&1
 }
 
 _update() {
@@ -342,10 +306,6 @@ start_core() {
         LoggingINFO "starting roscore finished,rosmaster pid:$rosmaster_pid"
         taskset -a -cp 1-7 $rosmaster_pid && chrt -a -p -r 20 $rosmaster_pid 2>/dev/null
         core_stat=1 && write_action
-        rosparam set /sensor/camera/sensing120/drivers_camera_sensing120/undist 1
-        rosparam set /sensor/camera/sensing120_back/drivers_camera_sensing120_back/undist 1
-        rosparam set /sensor/camera/sensing120_left/drivers_camera_sensing120_left/undist 1
-        rosparam set /sensor/camera/sensing120_right/drivers_camera_sensing120_right/undist 1
     else
         LoggingERR "starting roscore failed:\n$(cat $ROS_LOG_DIR/roscore.log)" "EMAP_NODE"
         return 1
@@ -647,6 +607,7 @@ generate_list #生成list
 LoggingINFO "rosmachine:${ros_machine} rosmaster:${ros_master} xavier type:$xavier_type"
 LoggingINFO "cwd:$ABS_PATH    command:$0 $args"
 export ROSCONSOLE_CONFIG_FILE
+export ROS_PYTHON_LOG_CONFIG_FILE
 export ROS_HOSTNAME=${ros_machine}
 export ROS_MASTER_URI=http://${ros_master}:11311
 export OMP_NUM_THREADS=1
@@ -763,10 +724,13 @@ if [[ -n "$opt_onenode" || -n "$opt_launch_file" ]];then
         fi
     fi
     
-    add_config $real_launch_file INFO
+    . $ABS_PATH/add_log_config.sh $real_launch_file INFO
     LoggingINFO "launching ${real_launch_file}..."
     launch_file=$(echo $real_launch_file | awk '{print $NF}' | awk -F/ '{print $NF}')
-    exec roslaunch $launch_prefix $real_launch_file 2>&1 | tee -a ${ROS_LOG_DIR}/${launch_file}.log 
+    nohup roslaunch $launch_prefix $launch_cmd &
+    [ $? -eq 0 ] && LoggingINFO "launched $launch_cmd successfully" || LoggingERR "launched $launch_cmd failed"
+    tail -f /dev/null
+    trap EXIT
     exit 0
 fi
 pids=$(ps -ef | grep -w "autopilot\.sh" | grep -v grep | awk '!($3 in arr) && $2 != "'$self_pid'" && $3 != "'$self_pid'" {arr[$2]=$2};END{for(idx in arr){print arr[idx]}}')
@@ -774,13 +738,20 @@ for pid in $pids; do [[ "$pid" != "$self_pid" ]] && LoggingINFO "clean exist $(b
 add_privilege_monitor_gnss
 start_core
 LoggingINFO "update config...."
-timeout 300 roslaunch --wait update_config update_config.launch >$ROS_LOG_DIR/update_config.launch.log 2>$ROS_LOG_DIR/update_config.launch.err
+rm -rf  /home/mogo/data/config_end
+. $ABS_PATH/add_log_config.sh update_config_simple.launch INFO
+timeout 300 roslaunch --wait update_config_simple  update_config_simple.launch >$ROS_LOG_DIR/update_config.launch.log 2>&1
 LoggingINFO "update config finished"
 if [ -f "/home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup" ];then
  \cp -d /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite
 fi
 start_sys
 start_map
+
+monitor_shell=/home/mogo/autopilot/share/launch/monitor_cpu_mem_net.sh
+chmod +x $monitor_shell
+bash $monitor_shell &
+python3 /home/mogo/autopilot/share/launch/disk_manage.py >> /home/mogo/data/log/disk_manage.log 2>&1 &
+
 set_pr
 
-python3 /home/mogo/autopilot/share/launch/disk_manage.py >> /home/mogo/data/log/disk_manage.log 2>&1 &

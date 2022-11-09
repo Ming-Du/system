@@ -185,9 +185,8 @@ message LaneBoundary {
     optional LaneMarkType type = 3;
     optional LaneMarkColor color = 4;
 
-    // lane boundary geometry
-    repeated geometry.Point geom = 5;
-    repeated BoundaryPoint point = 6;
+    // 将LaneMarkType绑定到每个geom点上
+    repeated BoundaryPoint point = 5;
 }
 
 message Lane {
@@ -221,9 +220,8 @@ message Lane {
     // speed limit
     optional uint32 speed_limit = 10;
 
-    // lane reference line geometry
-    repeated geometry.Point geom = 11;
-    repeated LanePoint point = 12;
+    // 将LaneType，LaneArrow，speedlimit绑定到每个geom点上
+    repeated LanePoint point = 11;
 }
 
 message Section {

@@ -56,10 +56,10 @@ def gen_report_msg(file_name, code, src="test", org_msg=""):
                     "result": code_info.get("result", []),
                     "action": code_info.get("action", [])
                 }
-    return json.dumps(res, indent=5)
+    return json.dumps(res)
 
 
 if __name__ == '__main__':
     file_name = sys.argv[1]
     code = sys.argv[2]
-    print(gen_report_msg(file_name, code))
+    print(str(gen_report_msg(file_name, code)))
