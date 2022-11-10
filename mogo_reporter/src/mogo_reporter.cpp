@@ -25,7 +25,7 @@
 #define MOGO_RPT_INFO_TOPIC "/autopilot_info/report_msg_info"
 #define MOGO_RPT_ERROR_TOPIC "/autopilot_info/report_msg_error"
 
-#define MOGO_MSG_CONFIG_DIR "/mogo_msgs/nodes/"
+#define MOGO_MSG_CONFIG_DIR "/nodes/"
 
 namespace mogo
 {
@@ -154,7 +154,7 @@ namespace mogo
       node_name = cfg_name;
     }
 
-    std::string config_dir = ros::package::getPath("config") + MOGO_MSG_CONFIG_DIR;
+    std::string config_dir = ros::package::getPath("mogo_messages") + MOGO_MSG_CONFIG_DIR;
     std::vector<std::string> files;
     std::string config_path;
 
