@@ -372,7 +372,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
         rospy.logdebug("----enter slam write_cache_file----")
         try:
             for idx in range(len(refJob.listJobCollect)):
-                intLocalModifyTimeStamp = int(os.path.getmtime(refJob.listJobCollect[idx].strFullFileTempName))
+                intLocalModifyTimeStamp = int(os.path.getmtime(refJob.listJobCollect[idx].strFullFileName))
                 strUrl = refJob.listJobCollect[idx].strUrl
                 strMd5 = refJob.listJobCollect[idx].strMd5
                 intPublishTimestamp = refJob.listJobCollect[idx].intPublishTimeStamp
