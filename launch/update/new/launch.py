@@ -235,7 +235,7 @@ class ROSLaunchRunner(object):
     monitored.
     """
     
-    def __init__(self, run_id, config, server_uri=None, pmon=None, is_core=False, remote_runner=None, is_child=False, is_rostest=False, num_workers=NUM_WORKERS, timeout=None,
+    def __init__(self, run_id, config, server_uri=None, pmon=None, is_core=False, remote_runner=None, is_child=False, launch_one_node=None, is_rostest=False, num_workers=NUM_WORKERS, timeout=None,
                  master_logger_level=False, sigint_timeout=DEFAULT_TIMEOUT_SIGINT, sigterm_timeout=DEFAULT_TIMEOUT_SIGTERM):
         """
         @param run_id: /run_id for this launch. If the core is not
@@ -291,6 +291,7 @@ class ROSLaunchRunner(object):
         self.server_uri = server_uri
         self.is_child = is_child
         self.is_core = is_core
+        self.launch_one_node = launch_one_node
         self.is_rostest = is_rostest
         self.num_workers = num_workers
         self.timeout = timeout
@@ -380,11 +381,22 @@ class ROSLaunchRunner(object):
         local_nodes = [n for n in config.nodes if is_machine_local(n.machine)]
 
         for node in local_nodes:
-            proc, success = self.launch_node(node)
-            if success:
-                succeeded.append(str(proc))
+            if self.launch_one_node is not None:
+                resolve_name = node.namespace + node.name
+                if resolve_name == self.launch_one_node:
+                    self.logger.info("launch_nodes: only launch %s"%resolve_name)
+                    proc, success = self.launch_node(node)
+                    if success:
+                        succeeded.append(str(proc))
+                    else:
+                        failed.append(str(proc))
+                    break
             else:
-                failed.append(str(proc))
+                proc, success = self.launch_node(node)
+                if success:
+                    succeeded.append(str(proc))
+                else:
+                    failed.append(str(proc))
 
         if self.remote_runner:
             self.logger.info("launch_nodes: launching remote nodes ...")

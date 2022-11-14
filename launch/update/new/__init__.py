@@ -128,6 +128,9 @@ def _get_optparse():
     parser.add_option("--nodes",
                       dest="node_list", default=False, action="store_true",
                       help="Print list of node names in launch file")
+    parser.add_option("--launch-node",
+                      dest="launch_node", default=None, action="store",
+                      help="launch nodes specified")
     parser.add_option("--find-node",
                       dest="find_node", default=None, 
                       help="Find launch file that node is defined in", metavar="NODE_NAME")
@@ -339,7 +342,7 @@ def main(argv=sys.argv):
             if options.core:
                 options.port = options.port or DEFAULT_MASTER_PORT
             p = roslaunch_parent.ROSLaunchParent(uuid, args, roslaunch_strs=roslaunch_strs,
-                    is_core=options.core, port=options.port, local_only=options.local_only,
+                    is_core=options.core, launch_one_node=options.launch_node, port=options.port, local_only=options.local_only,
                     verbose=options.verbose, force_screen=options.force_screen,
                     force_log=options.force_log,respawn=options.respawn,
                     num_workers=options.num_workers, timeout=options.timeout,
