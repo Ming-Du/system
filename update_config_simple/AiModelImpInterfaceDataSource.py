@@ -370,9 +370,9 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
 
             strSnLinkConfig = ""
             if self.mCommonPara.dictCarInfo.has_key('car_plate') and len(self.mCommonPara.dictCarInfo['car_plate']) > 0:
-                strSnLinkConfig = "/home/mogo/data/vehicle_monitor/{0}/slinks.cfg".format(
+                strSnLinkConfig = "/home/mogo/data/vehicle_monitor/{0}/slinks_AiModel.cfg".format(
                     self.mCommonPara.dictCarInfo['car_plate'])
-            strCommonLinkConfig = "/home/mogo/data/vehicle_monitor/slinks.cfg"
+            strCommonLinkConfig = "/home/mogo/data/vehicle_monitor/slinks_AiModel.cfg"
             rospy.loginfo("strSnLinkConfig:{0}".format(strSnLinkConfig))
             rospy.loginfo("strCommonLinkConfig:{0}".format(strCommonLinkConfig))
             instanceFileUtils = FileUtils()
@@ -460,9 +460,9 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
         try:
             strSnLinkConfig = ""
             if self.mCommonPara.dictCarInfo.has_key('car_plate') and len(self.mCommonPara.dictCarInfo['car_plate']) > 0:
-                strSnLinkConfig = "/home/mogo/data/vehicle_monitor/{0}/slinks.cfg".format(
+                strSnLinkConfig = "/home/mogo/data/vehicle_monitor/{0}/slinks_AiModel.cfg".format(
                     self.mCommonPara.dictCarInfo['car_plate'])
-            strCommonLinkConfig = "/home/mogo/data/vehicle_monitor/slinks.cfg"
+            strCommonLinkConfig = "/home/mogo/data/vehicle_monitor/slinks_AiModel.cfg"
             rospy.loginfo("strSnLinkConfig:{0}".format(strSnLinkConfig))
             rospy.loginfo("strCommonLinkConfig:{0}".format(strCommonLinkConfig))
             instanceFileUtils = FileUtils()
