@@ -45,6 +45,14 @@ enum MotionState {
 enum NoiseState {
   NOISE_CONFIRM = 0;
   NOISE_SUSPECTED = 1;
+  NOISE_FLOWERBEDS = 2;
+};
+
+enum RoadType {
+  RoadType_ROAD = 0;
+  RoadType_ROADSIDE = 1;
+  RoadType_FLOWERBEDSSIDE = 2;
+  RoadType_FENCESIDE = 3;
 };
 
 message BBox2D {
@@ -108,7 +116,7 @@ message Object {
   
   optional double time_stamp = 4;        // sensing time
   optional float confidence = 5;         // probability
-  optional int32 status = 6;             // reserved
+  optional RoadType status = 6;             // reserved
 
   optional float x_distance = 7;         // longitudinal distance
   optional float y_distance = 8;         // lateral distance
