@@ -23,6 +23,7 @@ enum PilotMode {
   MODE_AUTO_DRIVE = 1;
   MODE_STEER_ONLY = 2;
   MODE_SPEED_ONLY = 3;
+  MODE_REMOTE_DRIVE = 6;
 }
 
 enum LongitudeDrivingMode {

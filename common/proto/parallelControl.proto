@@ -1,0 +1,51 @@
+syntax = "proto3";
+package parallel;
+
+enum CockpitGearPosition {
+  GEAR_NONE = 0;
+  GEAR_N = 1;
+  GEAR_R = 2;
+  GEAR_P = 3;
+  GEAR_D = 4;
+}
+
+
+enum CockpitLightSwitch {
+  LIGHT_NONE = 0;
+  LIGHT_LEFT = 1;
+  LIGHT_RIGHT = 2;
+  LIGHT_FLASH = 3;
+  LIGHT_MANUAL = 4;
+  LIGHT_AUTO = 5;
+}
+
+// 云端把 protobuf Control 发给 autocar_socket 模块，autocar_socket 把 Control.controlCMD 透传给 control 模块
+// control 模块只要解析 ParallelControlCMD 就行了
+message ParallelControlCMD {
+  CockpitGearPosition gear = 1;     // 档位模式， 1：D档 2：R档 3：P档 4：N档。bus 只有 D 档
+  bool horn = 2;             // 喇叭
+  bool parkingBrake = 3;     // 手刹
+  int32 wipers = 4;          // 雨刷  0-关雨刷 1-点动 2-低速雨刷 3-高速雨刷
+  bool highBeam = 5;         // 远光灯
+  bool lowBeam = 6;          // 近光灯
+  bool fogLight = 7;         // 雾灯
+  bool clearanceLamps = 8;   // 示廓灯
+  bool warnLight = 9;        // 报警灯
+  CockpitLightSwitch light = 10;    // 左转、右转灯
+  bool brakeLight = 11;      // 刹车灯
+  float brake = 12;          // 刹车力度  范围0~1.0，刹死为1.0，不刹车为0
+  float acc = 13;            // 油门  范围0~1.0， 不加速0，最大加速1.0。
+  float steering = 14;       // 方向盘转角 单位：degrees
+  float accel = 15;          // 加速度。负的代表刹车，正的代表加速度
+  bool door = 16;            // 开门-true；关门-false
+  bool doorLock = 17;        // 门锁
+}
+
+// 云发给车的平行驾驶控制指令
+message Control{
+  bytes controlCMD = 1;        // 控车指令，车端平行驾驶程序直接透传到topic
+  uint32 takeOver = 2;         // 1-开始接管-进入平行驾驶  0-结束接管-进入人工驾驶  3-结束接管-进入自动驾驶  64-不接管。该指令是控车指令，执行 controlCMD 控车指令
+  string sn = 3;               // 车辆唯一标识，使用了平行驾驶程序节点的mac地址
+  uint64 startTimeMillis = 4;  // 驾舱端上传时的时间戳
+  uint64 timeMillis = 5;       // 云端下发时间
+}

@@ -542,6 +542,49 @@
             },
             "type": "SYS"
         },
+            "name": "autocar_socket.launch",
+            "package": "autocar_socket",
+            "machine": {
+                "df": {
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "kaiwo": {
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "jinlv": {
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
+            "name": "push_video.launch",
+            "package": "pushvideo",
+            "machine": {
+                "df": {
+                    "6x": [
+                        "rosslave-103", "rosslave-105", "rosslave-107"
+                    ]
+                },
+                "kaiwo": {
+                    "6x": [
+                        "rosslave-103", "rosslave-105", "rosslave-107"
+                    ]
+                },
+                "jinlv": {
+                    "6x": [
+                        "rosslave-103", "rosslave-105", "rosslave-107"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
         {
             "name": "monitor_collect.launch",
             "package": "monitor_collect",
