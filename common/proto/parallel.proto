@@ -48,3 +48,24 @@ message TakeOverStatus {
     /* 失败原因，只有失败时才回传 */
     optional string content = 5;
 }
+
+message VehicleVideoConfigs{
+    optional common.Header header = 1;
+    /* 配置 json 字符串，客户端可以直接用来初始化 trro 程序 */
+    repeated VehicleVideoConfig config = 2;
+}
+
+message VehicleVideoConfig{
+    /* 配置 ID */
+    required int32 id = 1;
+    /* 用于唯一标识车辆上的域控 */
+    required string ipSuffix = 2;
+    /* 配置 json 字符串，客户端可以直接用来初始化 trro 程序 */
+    required string configJson = 3;
+}
+
+message VehicleVideoConfigsRequest{
+    optional common.Header header = 1;
+    /* 客户端唯一标识，mac 地址 */
+    required string sn = 2;
+}
