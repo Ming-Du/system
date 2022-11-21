@@ -3,7 +3,7 @@
 TOTAL_TIME=$((60 * 60 * 24)) # 设置脚本运行总时间。单位：秒
 INTERVAL=1
 NUM=$((${TOTAL_TIME} / ${INTERVAL}))
-NEED_PKGS=('iftop')
+NEED_PKGS=('iftop' 'sysstat')
 PYTHON3_MODELS=("psutil")
 HOSTSFILE=/etc/hosts
 ROS="ros"

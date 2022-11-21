@@ -8,6 +8,9 @@ import subprocess
 LOG_PATH = "/home/mogo/data/log/monitor_cpu_mem_net/"
 sys_state_lock = threading.RLock()
 iftop_lok = threading.RLock()
+# top_lok = threading.RLock()
+mpstat_lok = threading.RLock()
+pidstat_lok = threading.RLock()
 
 
 def create_dir_path(dir_path):
@@ -97,6 +100,19 @@ def get_processes_state():
     return process_state_dict
 
 
+def get_cpu_consumption_3_pid():
+    """
+    循环获取消耗cpu最高的三个进程的信息
+    Args:
+        file_path: 日志文件路径
+    Returns:
+    """
+    cmd_run = "ps -eo pid,pcpu,pmem,args --sort=-pcpu | head -n 4"
+    out = subprocess.run(cmd_run, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)
+    out_lines = str(out.stdout, encoding="utf-8")
+    return out_lines
+
+
 def get_sys_state():
     """
     获取系统状态
@@ -114,6 +130,7 @@ def get_sys_state():
         sys_state_dict.get("total_cpu_percent", ""),
         sys_state_dict.get("cpu_percent", ""),
         sys_state_dict.get("processes_state", ""))
+    sys_state_str  = sys_state_str  + get_cpu_consumption_3_pid()
     return sys_state_str
 
 
@@ -175,7 +192,101 @@ def iftop_mes_loop(file_path):
         except Exception as e:
             mes = first_line + e
         write_logs(mes, file_path, iftop_lok)
+        time.sleep(0.1)
 
+
+def get_pidstat_mes():
+    """
+        获取pidstat命令的输出信息
+        Returns:
+    """
+    cmd_run = "pidstat -u |sort -r -n -k 8|head -10"
+    out = subprocess.run(cmd_run, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)
+    out_lines = str(out.stdout, encoding="utf-8")
+    return out_lines
+
+
+def pidstat_loop(file_path):
+    """
+    循环获取pidstat信息
+    Args:
+        file_path: 日志文件路径
+    Returns:
+    """
+    while True:
+        first_line = "==========================================" \
+                     + str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')) \
+                     + "==========================================\n"
+        try:
+            pidstat_mes = first_line + "              UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command\n" + get_pidstat_mes()
+            mes = pidstat_mes
+        except Exception as e:
+            mes = first_line + e
+        write_logs(mes, file_path, pidstat_lok)
+        time.sleep(1)
+
+
+def get_mpstat_mes():
+    """
+        获取mpstat命令的输出信息
+        Returns:
+    """
+    cmd_run = "mpstat -P ALL 1 1"
+    out = subprocess.run(cmd_run, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)
+    out_lines = str(out.stdout, encoding="utf-8")
+    out_lines = out_lines[:out_lines.find('平')]
+    # print(out_lines)
+    return out_lines
+
+
+def mpstat_loop(file_path):
+    """
+    循环获取mpstat信息
+    Args:
+        file_path: 日志文件路径
+    Returns:
+    """
+    while True:
+        first_line = "==========================================" \
+                     + str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')) \
+                     + "==========================================\n"
+        try:
+            mpstat_mes = get_mpstat_mes()
+            mes = mpstat_mes
+        except Exception as e:
+            mes = first_line + e
+        write_logs(mes, file_path, mpstat_lok)
+        time.sleep(1)
+
+
+# def get_top_thread_situation():
+#     """
+#         获取top命令的输出信息
+#         Returns:
+#         """
+#     cmd_run = "iftop -t -B -P -N -n -s 1"
+#     out = subprocess.run(cmd_run, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)
+#     out_lines = str(out.stdout, encoding="utf-8")
+#     return out_lines
+
+
+# def top_loop(file_path):
+#     """
+#         循环获取top信息
+#         Args:
+#             file_path: 日志文件路径
+#         Returns:
+#         """
+#     while True:
+#         first_line = "==========================================" \
+#                      + str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')) \
+#                      + "==========================================\n"
+#         try:
+#             top_threads_situation = get_top_thread_situation()
+#             thread_situation = thread_situation
+#         except Exception as e:
+#             thread_situation = first_line + e
+#         write_logs(thread_situation, file_path, iftop_lok)
 
 def main():
     today_date = get_today_date()
@@ -183,11 +294,22 @@ def main():
     create_dir_path(log_dir_path)
     sys_state_log = log_dir_path + "/sys_state.log"
     iftop_log = log_dir_path + "/iftop.log"
+    pidstat_log = log_dir_path + "/pidstat.log"
+    mpstat_log = log_dir_path + "/mpstat.log"
+    # top_log = log_dir_path + "/top.log"
+
     t1 = threading.Thread(target=sys_state_loop, args=(sys_state_log,))
     t2 = threading.Thread(target=iftop_mes_loop, args=(iftop_log,))
+    t3 = threading.Thread(target=pidstat_loop, args=(pidstat_log,))
+    t4 = threading.Thread(target=mpstat_loop, args=(mpstat_log,))
+    # t5 = threading.Thread(target=top_loop, args=(top_log, ))
     t1.start()
     t2.start()
+    t3.start()
+    t4.start()
 
 
 if __name__ == "__main__":
     main()
+
+

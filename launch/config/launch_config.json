@@ -1254,6 +1254,45 @@
                 }
             },
             "type": "SYS"
+        },
+        {
+            "name": "led_screen_manager.launch",
+            "package": "led_screen_manager",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
+            "name": "perception_fusion_mid.launch",
+            "package": "perception_fusion_mid",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "locating.launch",
+            "package": "vslam",
+            "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
         }
     ]
 }
