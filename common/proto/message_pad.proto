@@ -1,5 +1,6 @@
 syntax = "proto3";
 package mogo.telematics.pad;
+import "geometry.proto";
 
 enum ProtocolVersion
 {
@@ -116,6 +117,7 @@ message TrackedObject
     double driverTime = 13; //驱动感知时间, abandoned
     repeated TrackedSource tracked_source = 14;
     repeated Location polygon = 15;
+    geometry.Point center = 16;  
 }
 
 message TrackedObjects
