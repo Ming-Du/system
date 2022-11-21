@@ -203,6 +203,7 @@ message TrackedObject {
   optional int32  obu_obstacle_type = 19 [default = 0];
   // v2v_bsm = 1, v2i_rsm = 2, v2v_ssm = 3, v2n_rsm = 4, v2n_rsi = 5, v2i_ssm = 6
   optional ObjectSource source = 20;
+  repeated geometry.Point polygon_p = 21; //  longitude/latitude, in degrees
 }
 
 message TrackedObjects {

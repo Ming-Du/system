@@ -84,14 +84,15 @@ message Trajectory
 
 // message definition for MsgTypeTrackedObjects
 message SubSource
-{
-    uint32 source = 1; //[default = 0] v2v_bsm = 1 v2i_rsm = 2 v2v_ssm = 3 v2n_rsm = 4 v2n_rsi = 5
-    string id = 2; //HEX_string
+{ 
+    uint32 source = 1; // TrackedSource=1:1-lidar 2-camera 3-radar 4-vidar 5-falcon
+                       // TrackedSource=2:1-v2v_bsm 2-v2i_rsm 3-v2v_ssm 4-v2n_rsm 5-v2n_rsi 6-v2i_ssm
+    string id = 2; //HEX_string -bsm_id 
 }
 
 message TrackedSource
 {
-    uint32 source = 1; //lidar:1 camera:2 radar:3 v2x:4 vidar:5 falcon:6
+    uint32 source = 1; // 1-car 2-v2x
     repeated SubSource sub_source = 2;
 }
 
