@@ -116,7 +116,7 @@ message Object {
   
   optional double time_stamp = 4;        // sensing time
   optional float confidence = 5;         // probability
-  optional RoadType status = 6;             // reserved
+  optional int32 status = 6;             // reserved
 
   optional float x_distance = 7;         // longitudinal distance
   optional float y_distance = 8;         // lateral distance
@@ -154,6 +154,7 @@ message Object {
   optional float type_confidence = 28;
   optional float exist_confidence = 29;
   optional float orientation = 30;
+  optional RoadType road_status = 31;
 
 }
 
