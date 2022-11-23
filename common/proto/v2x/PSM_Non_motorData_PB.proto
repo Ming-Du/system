@@ -1,6 +1,5 @@
 syntax = "proto2";
 
-import "String_PB.proto";
 import "PSM_PropelledInformation_PB.proto";
 import "PSM_PersonalExtensions_PB.proto";
 import "PSM_RoadWorkerExtensions_PB.proto";
