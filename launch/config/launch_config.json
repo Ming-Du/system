@@ -542,6 +542,7 @@
             },
             "type": "SYS"
         },
+        {
             "name": "autocar_socket.launch",
             "package": "autocar_socket",
             "machine": {
