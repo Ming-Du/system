@@ -1,7 +1,6 @@
 syntax = "proto2";
 package common;
 
-import "ParticipantType_PB.proto";
 import "SourceType_PB.proto";
 import "String_PB.proto";
 import "PositionOffsetLLV_PB.proto";

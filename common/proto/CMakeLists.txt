@@ -1,7 +1,10 @@
 project(common_proto)
 find_package(Protobuf REQUIRED)
 set(proto_dir ${CMAKE_CURRENT_SOURCE_DIR})
+set(proto_dir_2 "${CMAKE_CURRENT_SOURCE_DIR}/v2x")
 file(GLOB proto_files "${proto_dir}/*.proto")
+file(GLOB proto_files_2 "${proto_dir_2}/*.proto")
+list(APPEND proto_files ${proto_files_2})
 
  #catkin_destinations()
 
@@ -20,6 +23,7 @@ endforeach(proto_file ${proto_files})
 add_custom_command(
   OUTPUT ${proto_gen_cpp_files}
   COMMAND ${PROTOBUF_PROTOC_EXECUTABLE}
+    --proto_path=${proto_dir_2}
     --proto_path=${proto_dir}
     --cpp_out=${proto_gen_dir} ${proto_files}
   DEPENDS ${PROTOBUF_PROTOC_EXECUTABLE} ${proto_files}

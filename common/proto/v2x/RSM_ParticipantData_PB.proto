@@ -1,7 +1,6 @@
 syntax = "proto2";
 
 import "String_PB.proto";
-import "Position3D_PB.proto";
 import "PositionOffsetLLV_PB.proto";
 import "PositionConfidenceSet_PB.proto";
 import "TransmissionState_PB.proto";

@@ -1,6 +1,5 @@
 syntax = "proto2";
 
-import "String_PB.proto";
 import "RSI_ReferenceLink_PB.proto";
 import "PositionOffsetLLV_PB.proto";
 import "PositionConfidenceSet_PB.proto";
