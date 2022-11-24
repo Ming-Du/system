@@ -887,7 +887,7 @@ class Log_handler():
                 with open(file_path, 'r') as fp:
                     contents = fp.read()
                     self.local_save_fd.write(contents)  # add by huxinyu 20221117 for 103 local_log_save
-            self.local_save_fd.close()
+        self.local_save_fd.close()
 
     def clear_input_files(self):
         if self.handle_index >= 0:
