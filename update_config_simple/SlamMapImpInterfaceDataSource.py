@@ -239,7 +239,9 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
                         strMd5 = fileCollect[idx]['md5']
                         jobItem = JobItem()
                         jobItem.strFullFileName = strFilePath
-                        strFullFileTempName = "{0}.temp".format(strFilePath)
+                        strBaseName = os.path.basename(strFilePath)
+                        strSaveTempPath = "/home/mogo/data/slam_backup/"
+                        strFullFileTempName = "{0}/{1}".format(strSaveTempPath,strBaseName)
                         jobItem.strFullFileTempName = strFullFileTempName
                         jobItem.strUrl = strCosPath
                         jobItem.strMd5 = strMd5
