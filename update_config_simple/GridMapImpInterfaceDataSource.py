@@ -23,10 +23,9 @@ from EnumJobType import EnumJobType
 from CommonEventUtils import CommonEventUtils
 
 instanceCommonUtils = CommonUtilsCompare()
-instanceCacheUtils = CacheUtils("/home/mogo/data/SlamMapCache.json")
+instanceCacheUtils = CacheUtils("/home/mogo/data/GridMapCache.json")
 instanceReadConfigFile = CommonUtilsReadFile()
 instanceCommonHttpUtils = CommonHttpUtils()
-instanceCommonUtilsCompare = CommonUtilsCompare()
 from FileUtils import FileUtils
 import sys
 
@@ -88,7 +87,7 @@ def link_file(strDownStageLocationFileMap, strStandardLocationFileMap):
     return ret
 
 
-class SlamMapImpInterfaceDataSource(InterfaceDataSource):
+class GridMapImpInterfaceDataSource(InterfaceDataSource):
     strUrlList = None
     strUrlSync = None
     mScheduler = None
@@ -101,10 +100,10 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
 
     def __init__(self):
         try:
-            self.strUrlList = "https://mdev.zhidaohulian.com:443/config/slam/list"
-            self.strUrlSync = "https://mdev.zhidaohulian.com:443/config/slam/sync"
+            self.strUrlList = "https://mdev.zhidaohulian.com:443/config/grid/list"
+            self.strUrlSync = "https://mdev.zhidaohulian.com:443/config/grid/sync"
             self.mEnumDataSourceType = EnumDataSourceType.DATA_SOURCE_UPDATE_CONFIG
-            self.mStrConfigFileName = "/home/mogo/data/SlamMapCache.json"
+            self.mStrConfigFileName = "/home/mogo/data/GridMapCache.json"
             self.mCommonPara = CommonPara()
             self.mCommonPara.initPara()
             self.mIntTimeval = 432000
@@ -126,7 +125,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
     def configure(self):
         intError = 0
         try:
-            strConfigFilePath = "/home/mogo/data/vehicle_monitor/SlamMapConfig.json"
+            strConfigFilePath = "/home/mogo/data/vehicle_monitor/GridMapConfig.json"
             intError = 0
             dictConfig = {}
             intError, dictConfig = instanceReadConfigFile.readJsonConfig(strConfigFilePath)
@@ -239,9 +238,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
                         strMd5 = fileCollect[idx]['md5']
                         jobItem = JobItem()
                         jobItem.strFullFileName = strFilePath
-                        strBaseName = os.path.basename(strFilePath)
-                        strSaveTempPath = "/home/mogo/data/slam_backup/"
-                        strFullFileTempName = "{0}/{1}".format(strSaveTempPath,strBaseName)
+                        strFullFileTempName = "{0}.temp".format(strFilePath)
                         jobItem.strFullFileTempName = strFullFileTempName
                         jobItem.strUrl = strCosPath
                         jobItem.strMd5 = strMd5
@@ -264,7 +261,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
     def process_cycle(self, dictParameter):
         try:
             if dictParameter["longitude"] == -0.01 or dictParameter["latitude"] == -0.01:
-                rospy.loginfo(" slam cannot recv  lat and on ")
+                rospy.loginfo(" grid cannot recv  lat and on ")
             else:
                 instanceHttpUtils = CommonHttpUtils()
                 dictPostPara = {}
@@ -327,10 +324,10 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
             # print "==================  self.mFiles:{0}".format(self.mFiles)
             rospy.loginfo("...........................intFileRepeat:{0}".format(intFileRepeat))
             if intFileRepeat == 0:
-                rospy.loginfo("##### push slam task")
+                rospy.loginfo("##### push grid task")
                 self.mScheduler.add_job_to_queue(refDataSource, refJob)
             else:
-                rospy.loginfo("##ignore  repleat  slam task")
+                rospy.loginfo("##ignore  repleat  grid task")
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -351,50 +348,31 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def checkAtomicFeature(self, refJob):
-        rospy.logdebug("----------enter slam checkAtomicFeature------------")
+        rospy.logdebug("----------enter grid checkAtomicFeature------------")
 
     def install_stage_path(self, refJob):
-        rospy.logdebug("----------enter slam install_stage_path-------------------------------")
+        rospy.logdebug("----------enter grid install_stage_path-------------------------------")
         # for idx in range(len(refJob.listJobCollect)):
         #     shutil.copyfile(refJob.listJobCollect[idx].strFullFileTempName,
         #                     refJob.listJobCollect[idx].strFullFileStageName)
         pass
 
     def install_dst_path(self, refJob):
-        rospy.logdebug("----enter slam install_dst_path---")
-        intTempFileNum = 0
-        intSuccessNum = 0
-        intContinueFlag = 0
+
+        rospy.logdebug("----------enter grid install_dst_path-------------------------------")
         try:
             for idx in range(len(refJob.listJobCollect)):
-                if os.path.exists(refJob.listJobCollect[idx].strFullFileTempName):
-                    intTempFileNum = intTempFileNum + 1
-                    strRealFileMd5 = instanceCommonUtilsCompare.checkFileMd5(refJob.listJobCollect[idx].strFullFileTempName)
-                    rospy.loginfo("idx:{0},strRealFileMd5:{1},refJob.listJobCollect[idx].strMd5:{2}".format(idx,strRealFileMd5, refJob.listJobCollect[idx].strMd5))
-                    if len(strRealFileMd5) > 2 and (strRealFileMd5 == refJob.listJobCollect[idx].strMd5):
-                        intSuccessNum = intSuccessNum + 1
-            rospy.loginfo("slam::install_dst_path intTempFileNum:{0},intSuccessNum:{1}".format(intTempFileNum,intSuccessNum))
-            if (intTempFileNum > 0) and (intSuccessNum > 0) and (intTempFileNum == intSuccessNum):
-                intContinueFlag = 1
-            rospy.loginfo("slam::install_dst_path intContinueFlag:{0}".format(intContinueFlag))
-            if intContinueFlag == 1:
-                strCommandRmDir = "/bin/rm -rf /home/mogo/data/vehicle_monitor/LidarSLAM_data/map/*"
-                os.system(strCommandRmDir)
-                for idx in range(len(refJob.listJobCollect)):
-                    if os.path.exists(refJob.listJobCollect[idx].strFullFileTempName):
-                        shutil.copyfile(refJob.listJobCollect[idx].strFullFileTempName, refJob.listJobCollect[idx].strFullFileName)
-            else:
-                rospy.logwarn("intContinueFlag != 1")
+                shutil.copyfile(refJob.listJobCollect[idx].strFullFileTempName, refJob.listJobCollect[idx].strFullFileName)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def write_cache_file(self, refJob):
-        rospy.logdebug("----enter slam write_cache_file----")
+        rospy.logdebug("----enter grid write_cache_file----")
         try:
             for idx in range(len(refJob.listJobCollect)):
-                intLocalModifyTimeStamp = int(os.path.getmtime(refJob.listJobCollect[idx].strFullFileName))
+                intLocalModifyTimeStamp = int(os.path.getmtime(refJob.listJobCollect[idx].strFullFileTempName))
                 strUrl = refJob.listJobCollect[idx].strUrl
                 strMd5 = refJob.listJobCollect[idx].strMd5
                 intPublishTimestamp = refJob.listJobCollect[idx].intPublishTimeStamp
@@ -410,7 +388,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
 
     def notify_pad(self, refJob):
         try:
-            rospy.logdebug("----------enter slam notify_pad-----")
+            rospy.logdebug("----------enter grid notify_pad-----")
             if len(refJob.listJobCollectUpdate) > 0:
                 for idx in (range(len(refJob.listJobCollectUpdate))):
                     strKey = "{0}".format(refJob.listJobCollectUpdate[idx].strFullFileTempName)
@@ -424,7 +402,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def notify_cloud(self, refJob):
-        rospy.logdebug("----enter slam notify_cloud-----")
+        rospy.logdebug("----enter grid notify_cloud-----")
         try:
             for idx in range(len(refJob.listJobCollect)):
                 dictReceiptContent = {}
@@ -439,7 +417,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
 
     def write_event(self, refJob):
         try:
-            rospy.logdebug("----enter slam write_event-----")
+            rospy.logdebug("----enter grid write_event-----")
             instanceCommonEventUtils = CommonEventUtils()
             instanceCommonEventUtils.SaveEventToFile("update_config_simple.yaml", "ISYS_CONFIG_UPDATE_SLAM_MAP", "/update_config_simple","")
         except Exception as e:
@@ -451,7 +429,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
         return self.mIntTimeval
 
     def getModuleName(self):
-        return "SlamMapImpInterfaceDataSource"
+        return "gridMapImpInterfaceDataSource"
 
     def relink(self):
         pass

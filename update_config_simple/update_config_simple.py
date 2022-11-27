@@ -68,7 +68,7 @@ from SlamMapImpInterfaceDataSource import SlamMapImpInterfaceDataSource
 from CommonSchedulerImpInterfaceTaskSchedulingPool import CommonSchedulerImpInterfaceTaskSchedulingPool
 from CommonTriggerImpInterfaceTrigger import CommonTriggerImpInterfaceTrigger
 from CommonSimpleSchedulerImpInterfaceTaskSchedulingPool import CommonSimpleSchedulerImpInterfaceTaskSchedulingPool
-
+from GridMapImpInterfaceDataSource import GridMapImpInterfaceDataSource
 
 instanceTrigger = CommonTriggerImpInterfaceTrigger()
 
@@ -144,6 +144,7 @@ def init_module():
         instanceSlamMap = SlamMapImpInterfaceDataSource()
         instanceScheduler = CommonSchedulerImpInterfaceTaskSchedulingPool()
         instanceSimpleScheduler = CommonSimpleSchedulerImpInterfaceTaskSchedulingPool()
+        instanceGrid = GridMapImpInterfaceDataSource()
 
         ## configure
         instanceTrigger.configure()
@@ -154,6 +155,7 @@ def init_module():
         instanceSlamMap.configure()
         instanceScheduler.configure()
         instanceSimpleScheduler.configure()
+        instanceGrid.configure()
 
         ## init_module
         instanceTrigger.init_module()
@@ -164,12 +166,14 @@ def init_module():
         instanceSlamMap.init_module()
         instanceScheduler.init_module()
         instanceSimpleScheduler.init_module()
+        instanceGrid.init_module()
 
         #dataSource set Scheduler
         instanceConfig.setScheduler(instanceSimpleScheduler)
         instanceHdmapAgent.setScheduler(instanceSimpleScheduler)
         instanceAiModle.setScheduler(instanceSimpleScheduler)
         instanceSlamMap.setScheduler(instanceSimpleScheduler)
+        instanceGrid.setScheduler(instanceSimpleScheduler)
 
 
 
@@ -179,6 +183,7 @@ def init_module():
         instanceTrigger.addNotifyDataSourceModule(instanceAiModle)
         instanceTrigger.addNotifyDataSourceModule(instanceSlamMap)
         instanceTrigger.addNotifyTaskSchedulerPool(instanceSimpleScheduler)
+        instanceTrigger.addNotifyDataSourceModule(instanceGrid)
         addLocalizationListener()
         instanceTrigger.process_startup(globalDictParameter)
         instanceTrigger.start_loop_internal_timer(globalDictParameter)
