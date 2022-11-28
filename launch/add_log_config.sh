@@ -23,7 +23,7 @@ for value in $pkg_str; do
     #LOGCXX
     echo "log4j.logger.ros=${level},${InfoAppender},${ErrorAppender}
 log4j.appender.${InfoAppender}=org.apache.log4j.DailyRollingFileAppender
-log4j.appender.${InfoAppender}.Threshold=INFO
+log4j.appender.${InfoAppender}.Threshold=DEBUG
 log4j.appender.${InfoAppender}.ImmediateFlush=true
 log4j.appender.${InfoAppender}.Append=true
 log4j.appender.${InfoAppender}.File=${ros_log_dir}/${InfoFile}
