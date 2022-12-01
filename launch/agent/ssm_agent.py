@@ -10,6 +10,7 @@ import pickle
 import logging
 import datetime
 import requests
+import traceback
 import subprocess
 import multiprocessing
 from logging.handlers import TimedRotatingFileHandler
@@ -140,6 +141,7 @@ def write_killed_launch_node_with_lock(launch_node, append=True, lock=killed_lau
                 KILLED_LAUNCH_NODE_LIST.remove(launch_node)
             except Exception as e:
                 logger.warning("KILLED_LAUNCH_NODE_LIST 删除launch_node:{}时报错:{}".format(launch_node, str(e)))
+                logger.warning('%s' % traceback.format_exc())
     lock.release()
 
 
@@ -206,6 +208,7 @@ class MyRequests(object):
         try:
             json_res = res.json()
         except Exception as e:
+            logger.warning('%s' % traceback.format_exc())
             return {"code": 1, "message": "解析结果失败：%s" % str(e), "data": {"msg": "解析结果失败：%s" % str(e)}}
         return json_res
 
@@ -330,6 +333,7 @@ def set_agent_config(request_data):
         write_with_lock(MACHINE_INFO_FILE, data, machine_info_lock)
     except Exception as e:
         logger.error("将master下发的要启动的node写到配置里时报错:%s" % e)
+        logger.warning('%s' % traceback.format_exc())
         state = 1
         message = e
     return state, message
@@ -344,7 +348,7 @@ def get_cmd_out(cmd_line):
             cmd_line, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)
     except Exception as e:
         logger.warning("获取执行命令{}结果时报错:{}".format(cmd_line, e))
-        print(e)
+        logger.warning('%s' % traceback.format_exc())
         out_lines = ""
     else:
         if out.returncode == 0:
@@ -387,8 +391,8 @@ def get_machine_name(net_if="eth0"):
                     break
                 line = fd.readline()
     except Exception as e:
-        print(e)
         logger.error("获取机器ros名报错:%s" % e)
+        logger.warning('%s' % traceback.format_exc())
     return machine_name
 
 
@@ -410,7 +414,7 @@ def get_car_plate_brand():
                     brand = line.split("\n")[0].split(":")[1].split('"')[1]
         except Exception as e:
             logger.error("从配置获取车牌和品牌报错:{}".format(e))
-            print(e)
+            logger.warning('%s' % traceback.format_exc())
     return plate, brand.lower()
 
 
@@ -476,8 +480,8 @@ def get_hardware_state():
             "total_disk_used": str(psutil.disk_usage("/").percent) + "%"
         }
     except Exception as e:
-        print(e)
         logger.error("获取硬件信息报错:{}".format(e))
+        logger.warning('%s' % traceback.format_exc())
     return hardware_state
 
 
@@ -529,8 +533,8 @@ def yaml_to_dict(yaml_path):
         try:
             datas = yaml.load(f, Loader=yaml.FullLoader)  # 将文件的内容转换为字典形式
         except Exception as e:
-            print(e)
             logger.error("yaml文件{}内容转换成dict格式报错:{}".format(yaml_path, e))
+            logger.warning('%s' % traceback.format_exc())
     return datas
 
 
@@ -550,6 +554,24 @@ def get_launch_nodes(launch_cmd):
             if line.startswith("/"):
                 node_list.append(line.replace(" ", ""))
     return node_list
+
+
+def get_launch_files(launch_path):
+    """
+    获取launch里的launch文件路径
+    Args:
+        launch_path: launch文件的绝对路径
+    Returns:
+        [launch1, launch2]
+    """
+    launch_list = list()
+    cmd_line = "roslaunch --files " + launch_path
+    out_lines = get_cmd_out(cmd_line)
+    for line in out_lines.split("\n"):
+        if line:
+            if line.startswith("/"):
+                launch_list.append(line.replace(" ", ""))
+    return launch_list
 
 
 def create_config():
@@ -629,8 +651,8 @@ def send_report(report_dict):
             res = myrequest.post(url, json=report_dict, timeout=10)
             logger.debug(str(myrequest.get_result(res)))
         except Exception as e:
-            print(e)
             logger.warning("向master上报配置报错:%s" % e)
+            logger.warning('%s' % traceback.format_exc())
             time.sleep(2)
             continue
         break
@@ -689,20 +711,21 @@ def get_current_nodes_pid(launch_node_dict):
                                                         "launch_name": launch_info.get("launch_name", ""),
                                                         "launch_cmd": launch_info.get("launch_cmd", "")}
         except Exception as e:
-            print(e)
             logger.error("获取本地要启动的launch与node:{}进程号时报错:{}".format(e, str(launch_node_name)))
+            logger.warning('%s' % traceback.format_exc())
             continue
 
     return current_nodes_pid_info
 
 
-def start_node(node_name, launch_name, launch_node_dict):
+def start_node(node_name, launch_name, launch_node_dict, package_path_dict):
     """
     根据node名启动node
     Args:
         node_name: node名
         launch_name: launch名
         launch_node_dict: node与launch的启动关系
+        package_path_dict: 包与绝对地址关系
     Returns:
         0,{}
     """
@@ -715,10 +738,40 @@ def start_node(node_name, launch_name, launch_node_dict):
             launch_cmd = node_info.get("launch_cmd", "")
             launch_cmd_node = "roslaunch --wait " + \
                               launch_cmd + " --launch-node " + node_name
-            shell_cmd = 'cd {} && . {} "{}" INFO'.format(LAUNCH_PATH, LAUNCH_LOG_SHELL, launch_cmd_node)
-            shell_process = subprocess.Popen(shell_cmd, shell=True, executable="bash", stdout=None,
-                                             stderr=None, env={"ABS_PATH": ABS_PATH, "ROS_LOG_DIR": ROS_LOG_DIR})
-            logger.debug("launch log,shell_cmd:{}, shell_pid:{}".format(shell_cmd, str(shell_process.pid)))
+            try:
+                if " " in launch_cmd:
+                    package_name = launch_cmd.split(" ")[0]
+                    package_path = package_path_dict.get(package_name, "")
+                    launch_abs_path = os.path.join(package_path, launch_name)
+                    if not os.path.exists(launch_abs_path):
+                        launch_abs_path = os.path.join(package_path, "launch", launch_name)
+                else:
+                    launch_abs_path = launch_cmd
+                launch_files_list = get_launch_files(launch_abs_path)
+                if len(launch_files_list) > 1:
+                    for launch_file in launch_files_list:
+                        if launch_file == launch_abs_path:
+                            continue
+                        else:
+                            if node_name in get_launch_nodes(launch_file):
+                                launch_abs_path = launch_file
+                                break
+                # launch_cmd_new = "roslaunch " + launch_cmd
+                shell_cmd = '. {} {} INFO {}'.format(LAUNCH_LOG_SHELL, launch_abs_path, node_name)
+                shell_process = subprocess.Popen(shell_cmd, shell=True, executable="bash", stdout=None,
+                                                 stderr=None, env={"ABS_PATH": ABS_PATH, "ROS_LOG_DIR": ROS_LOG_DIR})
+                node_last_name = get_last_node_name(node_name)
+                # launch_name_file = launch_abs_path.split("/")[-1].split(".")[0]
+                rosconsole_config_file = os.path.join(ABS_PATH, "config", node_last_name + "_INFO_console.config")
+                ros_python_log_config_file = os.path.join(ABS_PATH, "config",
+                                                          "python_logging_" + node_last_name + ".conf")
+                logger.debug(
+                    "launch log,shell_cmd:{}, shell_pid:{}, ROSCONSOLE_CONFIG_FILE:{}, ROS_PYTHON_LOG_CONFIG_FILE:{}".format(
+                        shell_cmd, str(shell_process.pid), rosconsole_config_file, ros_python_log_config_file))
+                os.environ['ROSCONSOLE_CONFIG_FILE'] = rosconsole_config_file
+                os.environ['ROS_PYTHON_LOG_CONFIG_FILE'] = ros_python_log_config_file
+            except Exception as e:
+                logger.warning('%s' % traceback.format_exc())
             for i in range(3):
                 launch_process = subprocess.Popen(launch_cmd_node, shell=True, executable="bash", stdout=None,
                                                   stderr=None)
@@ -795,8 +848,7 @@ def agent_worker():
         try:
             machine_info_dict = read_with_lock(
                 MACHINE_INFO_FILE, machine_info_lock)
-            # current_nodes_pid_info = machine_info_dict.get(
-            #     "current_nodes_pid_info", {})
+            package_path_dict = machine_info_dict.get("package_path_dict", {})
             launch_node_dict = machine_info_dict.get("launch_node_dict", {})
             agent_work_result = machine_info_dict.get("agent_work_result", {})
             target_launch_node_list = machine_info_dict.get(
@@ -869,7 +921,7 @@ def agent_worker():
                                 pass
                         else:
                             # 1. agent(无)+当前(无)+目标(有) ->启动并记录;
-                            status, res = start_node(node_name, launch_name, launch_node_dict)
+                            status, res = start_node(node_name, launch_name, launch_node_dict, package_path_dict)
                             if status == 0:
                                 agent_work_result[launch_node_name] = res
 
@@ -911,6 +963,7 @@ def agent_worker():
                             pass
         except Exception as e:
             logger.error("agent worker报错:{}".format(e))
+            logger.warning('%s' % traceback.format_exc())
         time.sleep(10)
 
 
@@ -1022,14 +1075,15 @@ def heart_beat():
             logger.info(str(heart_beat_info))
         except Exception as e:
             logger.warning("heart beat报错:{}".format(e))
+            logger.warning('%s' % traceback.format_exc())
             continue
         try:
             res = myrequest.post(heart_beat_url,
                                  json=heart_beat_info, timeout=1)
             response_re = myrequest.get_result(res)
         except Exception as e:
-            print(e)
             logger.warning("发送心跳请求异常:{}".format(e))
+            logger.warning('%s' % traceback.format_exc())
             continue
         time.sleep(2)
 

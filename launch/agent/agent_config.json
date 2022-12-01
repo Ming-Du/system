@@ -842,14 +842,14 @@
       "machine": {
         "2x": {
           "must": [
-            "rosmaster"
+            "rosslave"
           ],
           "should": [],
           "must_not": []
         },
         "6x": {
           "must": [
-            "rosmaster"
+            "rosslave-106"
           ],
           "should": [],
           "must_not": []
