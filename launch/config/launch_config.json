@@ -543,6 +543,50 @@
             "type": "SYS"
         },
         {
+            "name": "autocar_socket.launch",
+            "package": "autocar_socket",
+            "machine": {
+                "df": {
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "kaiwo": {
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                },
+                "jinlv": {
+                    "6x": [
+                        "rosslave-103"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
+            "name": "push_video.launch",
+            "package": "pushvideo",
+            "machine": {
+                "df": {
+                    "6x": [
+                        "rosslave-103", "rosslave-105", "rosslave-107"
+                    ]
+                },
+                "kaiwo": {
+                    "6x": [
+                        "rosslave-103", "rosslave-105", "rosslave-107"
+                    ]
+                },
+                "jinlv": {
+                    "6x": [
+                        "rosslave-103", "rosslave-105", "rosslave-107"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
             "name": "monitor_collect.launch",
             "package": "monitor_collect",
             "machine": {
@@ -1211,6 +1255,45 @@
                 }
             },
             "type": "SYS"
+        },
+        {
+            "name": "led_screen_manager.launch",
+            "package": "led_screen_manager",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "SYS"
+        },
+        {
+            "name": "perception_fusion_mid.launch",
+            "package": "perception_fusion_mid",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "locating.launch",
+            "package": "vslam",
+            "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
         }
     ]
 }

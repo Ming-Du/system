@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import json
 import os
 import traceback
@@ -20,17 +19,16 @@ from CommonSchedulerImpInterfaceTaskSchedulingPool import CommonSchedulerImpInte
 from EnumDataSourceType import EnumDataSourceType
 import rospy
 import requests
-from FileUtils import FileUtils
-
 from EnumJobType import EnumJobType
 from CommonEventUtils import CommonEventUtils
 
 instanceCommonUtils = CommonUtilsCompare()
+instanceCacheUtils = CacheUtils("/home/mogo/data/GridMapCache.json")
 instanceReadConfigFile = CommonUtilsReadFile()
-instanceCacheUtils = CacheUtils("/home/mogo/data/AiModelCache.json")
 instanceCommonHttpUtils = CommonHttpUtils()
 from FileUtils import FileUtils
 import sys
+
 sys.path.append(os.path.dirname(__file__) + '/../mogo_reporter/script/')
 sys.path.append('../mogo_reporter/script/')
 from get_msg_by_code import gen_report_msg
@@ -49,9 +47,9 @@ def simpleHttpsQuery(strIp, strPort, strApiName, dictQueryCondition):
         j = json.loads(s)
         strJsonResult = json.dumps(j, sort_keys=True, indent=4)
     except Exception as e:
-        rospy.loginfo('repr(e):{0}'.format(repr(e)))
-        rospy.loginfo('e.message:{0}'.format(e.message))
-        rospy.loginfo('traceback.format_exc():%s' % (traceback.format_exc()))
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
     return strJsonResult
 
 
@@ -82,7 +80,6 @@ def link_file(strDownStageLocationFileMap, strStandardLocationFileMap):
         else:
             rospy.logwarn("src file:{0} not exists, link failed".format(strDownStageLocationFileMap))
             ret = -1
-
     except Exception as e:
         rospy.logwarn('repr(e):{0}'.format(repr(e)))
         rospy.logwarn('e.message:{0}'.format(e.message))
@@ -90,7 +87,7 @@ def link_file(strDownStageLocationFileMap, strStandardLocationFileMap):
     return ret
 
 
-class AiModelImpInterfaceDataSource(InterfaceDataSource):
+class GridMapImpInterfaceDataSource(InterfaceDataSource):
     strUrlList = None
     strUrlSync = None
     mScheduler = None
@@ -99,14 +96,14 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
     mStrConfigFileName = None
     mCommonPara = None
     mIntTimeval = None
-    mFiles  = None
+    mFiles = None
 
     def __init__(self):
         try:
-            self.strUrlList = "https://mdev.zhidaohulian.com:443/config/ai/list"
-            self.strUrlSync = "https://mdev.zhidaohulian.com:443/config/ai/sync"
+            self.strUrlList = "https://mdev.zhidaohulian.com:443/config/grid/list"
+            self.strUrlSync = "https://mdev.zhidaohulian.com:443/config/grid/sync"
             self.mEnumDataSourceType = EnumDataSourceType.DATA_SOURCE_UPDATE_CONFIG
-            self.mStrConfigFileName = "/home/mogo/data/AiModelCache.json"
+            self.mStrConfigFileName = "/home/mogo/data/GridMapCache.json"
             self.mCommonPara = CommonPara()
             self.mCommonPara.initPara()
             self.mIntTimeval = 432000
@@ -128,7 +125,8 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
     def configure(self):
         intError = 0
         try:
-            strConfigFilePath = "/home/mogo/data/vehicle_monitor/AiModelConfig.json"
+            strConfigFilePath = "/home/mogo/data/vehicle_monitor/GridMapConfig.json"
+            intError = 0
             dictConfig = {}
             intError, dictConfig = instanceReadConfigFile.readJsonConfig(strConfigFilePath)
             if intError == 0 and len(dictConfig) > 0:
@@ -144,16 +142,37 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         return intError
 
+    def createFolder(self, strFolderPath):
+        try:
+            if not os.path.exists(strFolderPath):
+                os.makedirs(strFolderPath)
+                os.chmod(strFolderPath, 0777)
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+
     def init_module(self):
-        self.setCacheUtils(instanceCacheUtils)
+        try:
+            self.setCacheUtils(instanceCacheUtils)
+            strMapPath = "/home/mogo/data/vehicle_monitor/LidarSLAM_data/map/"
+            self.createFolder(strMapPath)
+            strkeyFramePath = "/home/mogo/data/vehicle_monitor/LidarSLAM_data/key_frames"
+            self.createFolder(strkeyFramePath)
+            strTrajPath = "/home/mogo/data/vehicle_monitor/LidarSLAM_data/trajectory"
+            self.createFolder(strTrajPath)
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def destroy_module(self):
         pass
 
     def readHttpList(self, strRespContent, refJob):
-        intError = 0
+        intError = -1
         dictResult = {}
-        rospy.loginfo("strRespContent:{0}".format(strRespContent))
+        rospy.logdebug("strRespContent:{0}".format(strRespContent))
         intLenData = 0
         listJobItem = []
         dictResult = None
@@ -175,15 +194,14 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
                     intError = -1
                     break
             except Exception as e:
-                rospy.loginfo('repr(e):{0}'.format(repr(e)))
-                rospy.loginfo('e.message:{0}'.format(e.message))
-                rospy.loginfo('traceback.format_exc():%s' % (traceback.format_exc()))
+                rospy.logwarn('repr(e):{0}'.format(repr(e)))
+                rospy.logwarn('e.message:{0}'.format(e.message))
+                rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
             try:
                 dictResult = json.loads(strRespContent)
             except Exception as e:
-                rospy.loginfo('repr(e):{0}'.format(repr(e)))
-                rospy.loginfo('e.message:{0}'.format(e.message))
-                rospy.loginfo('traceback.format_exc():%s' % (traceback.format_exc()))
+                rospy.logwarn(str(e))
+                rospy.logwarn('traceback.format_exc():{0}'.format((traceback.format_exc())))
             try:
                 if len(dictResult) == 0:
                     intError = -1
@@ -198,9 +216,9 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
                     intError = -1
                     break
             except Exception as e:
-                rospy.loginfo('repr(e):{0}'.format(repr(e)))
-                rospy.loginfo('e.message:{0}'.format(e.message))
-                rospy.loginfo('traceback.format_exc():%s' % (traceback.format_exc()))
+                rospy.logwarn('repr(e):{0}'.format(repr(e)))
+                rospy.logwarn('e.message:{0}'.format(e.message))
+                rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
             dictResult = None
             try:
@@ -216,11 +234,8 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
                     fileCollect = dictResult['data']['file']
                     for idx in range(len(fileCollect)):
                         strCosPath = fileCollect[idx]['cosPath']
-                        rospy.loginfo("************************   readHttpList idx:{0}  strCosPath:{1}".format(idx, strCosPath))
                         strFilePath = fileCollect[idx]['path']
-                        rospy.loginfo("***********************  readHttpList idx:{0}  strFilePath:{1}".format(idx, strFilePath))
                         strMd5 = fileCollect[idx]['md5']
-                        rospy.loginfo("***********************  readHttpList idx:{0}  strMd5:{1}".format(idx, strMd5))
                         jobItem = JobItem()
                         jobItem.strFullFileName = strFilePath
                         strFullFileTempName = "{0}.temp".format(strFilePath)
@@ -229,8 +244,8 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
                         jobItem.strMd5 = strMd5
                         jobItem.intReplyId = intId
                         jobItem.intPublishTimeStamp = intTimeStamp
+                        jobItem.strVersionMap = strMapVersion
                         refJob[0].listJobCollect.append(jobItem)
-                        refJob[0].strJobId = "define_job_id"
             except Exception as e:
                 rospy.logwarn('repr(e):{0}'.format(repr(e)))
                 rospy.logwarn('e.message:{0}'.format(e.message))
@@ -245,51 +260,39 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
 
     def process_cycle(self, dictParameter):
         try:
-            instanceHttpUtils = CommonHttpUtils()
-            dictPostPara = {}
-            dictPostPara['vehicleConfSn'] = self.mCommonPara.dictCarInfo['car_plate']
-            # dictPostPara['mac'] = self.mCommonPara.dictCarInfo['mac']
-            intHttpCode, strRespContent = instanceHttpUtils.sendSimpleHttpRequestWithHeader(self.strUrlList,
-                                                                                            dictPostPara)
-            listJobItem = []
-            instanceJob = Job()
-            refJob = [instanceJob]
-            intError = 0
-            if intHttpCode == 200:
-                intError = self.readHttpList(strRespContent, refJob)
-            rospy.logdebug("================ refJob[0].listJobCollect:{0}".format(refJob[0].listJobCollect))
-            if intError == 0 and len(refJob[0].listJobCollect) > 0:
-                intError = self.getNeedUpdateFile(refJob)
-            if intError == 0:
-                self.pushJobScheduler(self, refJob)
+            if dictParameter["longitude"] == -0.01 or dictParameter["latitude"] == -0.01:
+                rospy.loginfo(" grid cannot recv  lat and on ")
+            else:
+                instanceHttpUtils = CommonHttpUtils()
+                dictPostPara = {}
+                dictPostPara['vehicleConfSn'] = self.mCommonPara.dictCarInfo['car_plate']
+                dictPostPara['lng'] = dictParameter["longitude"]
+                dictPostPara['lat'] = dictParameter["latitude"]
+                intHttpCode, strRespContent = instanceHttpUtils.sendSimpleHttpRequestWithHeader(self.strUrlList,
+                                                                                                dictPostPara)
+                instanceJob = Job()
+                refJob = [instanceJob]
+                intError = 0
+                if intHttpCode == 200:
+                    listJobItem = self.readHttpList(strRespContent, refJob)
+                if len(refJob[0].listJobCollect) > 0:
+                    intError = self.getNeedUpdateFile(refJob)
+                if intError == 0 and len(refJob[0].listJobCollect) > 0:
+                    # print "process_cycle === ref[0].listJobCollect:{0}".format(refJob[0].listJobCollect)
+                    self.pushJobScheduler(self, refJob)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def process_startup(self, dictParameter):
-        try:
-            instanceHttpUtils = CommonHttpUtils()
-            dictPostPara = {}
-            dictPostPara['vehicleConfSn'] = self.mCommonPara.dictCarInfo['car_plate']
-            # dictPostPara['mac'] = self.mCommonPara.dictCarInfo['mac']
-            intHttpCode, strRespContent = instanceHttpUtils.sendSimpleHttpRequestWithHeader(self.strUrlList,
-                                                                                            dictPostPara)
-            listJobItem = []
-            instanceJob = Job()
-            refJob = [instanceJob]
-            intError = 0
-            if intHttpCode == 200:
-                intError = self.readHttpList(strRespContent, refJob)
-            rospy.logdebug("================ refJob[0].listJobCollect:{0}".format(refJob[0].listJobCollect))
-            if intError == 0 and len(refJob[0].listJobCollect) > 0:
-                intError = self.getNeedUpdateFile(refJob)
-            if intError == 0:
-                self.pushBlockJobScheduler(self, refJob)
-        except Exception as e:
-            rospy.logwarn('repr(e):{0}'.format(repr(e)))
-            rospy.logwarn('e.message:{0}'.format(e.message))
-            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+        pass
+        # try:
+        #     self.process_cycle(dictParameter)
+        # except Exception as e:
+        #     rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        #     rospy.logwarn('e.message:{0}'.format(e.message))
+        #     rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def getNeedUpdateFile(self, refJob):
         intError = 0
@@ -308,31 +311,29 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
         try:
             refJob[0].enumJobType = EnumJobType.JOB_TYPE_DELAY
             refJob[0].handlerDataSource = self
-            rospy.logdebug("=======================    pushJobScheduler,listCollect: {0} ".format(refJob[0].listJobCollect))
             intFileRepeat = 0
             for idx in range(len(refJob[0].listJobCollectUpdate)):
                 strKey = "{0}".format(refJob[0].listJobCollectUpdate[idx].strFullFileTempName)
-                rospy.loginfo("strkey:{0}".format(strKey))
+                rospy.loginfo("=========================== strkey:{0}".format(strKey))
                 if self.mFiles.has_key(strKey):
                     rospy.loginfo("!!!!! repeat task happend ,now ignore")
                     intFileRepeat = 1
                     break
                 else:
                     self.mFiles[strKey] = 0
+            # print "==================  self.mFiles:{0}".format(self.mFiles)
+            rospy.loginfo("...........................intFileRepeat:{0}".format(intFileRepeat))
             if intFileRepeat == 0:
-                rospy.loginfo("##### push AI task")
+                rospy.loginfo("##### push grid task")
                 self.mScheduler.add_job_to_queue(refDataSource, refJob)
             else:
-                rospy.loginfo("##ignore  repleat  AI task")
-
+                rospy.loginfo("##ignore  repleat  grid task")
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def schedulerFinishAction(self, refJob):
-        rospy.logdebug(
-            "---------------------------enter  AiModelImpInterfaceDataSource schedulerFinishAction--------------- ")
         try:
             self.checkAtomicFeature(refJob)
             self.install_stage_path(refJob)
@@ -347,51 +348,36 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def checkAtomicFeature(self, refJob):
-        rospy.logdebug(
-            "---------------------------enter  AiModelImpInterfaceDataSource cckAtomicFeature--------------- ")
-        pass
+        rospy.logdebug("----------enter grid checkAtomicFeature------------")
 
     def install_stage_path(self, refJob):
-        rospy.logdebug(
-            "---------------------------enter  AiModelImpInterfaceDataSource install_stage_path--------------- ")
+        rospy.logdebug("----------enter grid install_stage_path-------------------------------")
+        # for idx in range(len(refJob.listJobCollect)):
+        #     shutil.copyfile(refJob.listJobCollect[idx].strFullFileTempName,
+        #                     refJob.listJobCollect[idx].strFullFileStageName)
         pass
-        # for idx in range(len(refJob[0].listJobCollect)):
-        #     shutil.copyfile(refJob[0].listJobCollect[idx].strFullFileTempName,
-        #                     refJob[0].listJobCollect[idx].strFullFileStageName)
-        # pass
-
 
     def install_dst_path(self, refJob):
-        rospy.logdebug("-----enter  AiModelImpInterfaceDataSource install_dst_path--")
+
+        rospy.logdebug("----------enter grid install_dst_path-------------------------------")
         try:
             for idx in range(len(refJob.listJobCollect)):
-                if os.path.exists(refJob.listJobCollect[idx].strFullFileTempName):
-                    shutil.copyfile(refJob.listJobCollect[idx].strFullFileTempName, refJob.listJobCollect[idx].strFullFileName)
-
-            strSnLinkConfig = ""
-            if self.mCommonPara.dictCarInfo.has_key('car_plate') and len(self.mCommonPara.dictCarInfo['car_plate']) > 0:
-                strSnLinkConfig = "/home/mogo/data/vehicle_monitor/{0}/slinks_AiModel.cfg".format(
-                    self.mCommonPara.dictCarInfo['car_plate'])
-            strCommonLinkConfig = "/home/mogo/data/vehicle_monitor/slinks_AiModel.cfg"
-            rospy.loginfo("strSnLinkConfig:{0}".format(strSnLinkConfig))
-            rospy.loginfo("strCommonLinkConfig:{0}".format(strCommonLinkConfig))
-            instanceFileUtils = FileUtils()
-            instanceFileUtils.linkFileAccordConfig(strCommonLinkConfig)
-            instanceFileUtils.linkFileAccordConfig(strSnLinkConfig)
+                shutil.copyfile(refJob.listJobCollect[idx].strFullFileTempName, refJob.listJobCollect[idx].strFullFileName)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def write_cache_file(self, refJob):
-        rospy.logdebug("---enter  AiModelImpInterfaceDataSource write_cache_file---")
+        rospy.logdebug("----enter grid write_cache_file----")
         try:
             for idx in range(len(refJob.listJobCollect)):
                 intLocalModifyTimeStamp = int(os.path.getmtime(refJob.listJobCollect[idx].strFullFileName))
                 strUrl = refJob.listJobCollect[idx].strUrl
                 strMd5 = refJob.listJobCollect[idx].strMd5
                 intPublishTimestamp = refJob.listJobCollect[idx].intPublishTimeStamp
-                self.mCacheUtils.writeFileCacheInfo(refJob.listJobCollect[idx].strFullFileName, strUrl, strMd5, intPublishTimestamp,
+                self.mCacheUtils.writeFileCacheInfo(refJob.listJobCollect[idx].strFullFileName, strUrl, strMd5,
+                                                    intPublishTimestamp,
                                                     intLocalModifyTimeStamp)
                 if os.path.exists(refJob.listJobCollect[idx].strFullFileTempName):
                     os.remove(refJob.listJobCollect[idx].strFullFileTempName)
@@ -402,6 +388,7 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
 
     def notify_pad(self, refJob):
         try:
+            rospy.logdebug("----------enter grid notify_pad-----")
             if len(refJob.listJobCollectUpdate) > 0:
                 for idx in (range(len(refJob.listJobCollectUpdate))):
                     strKey = "{0}".format(refJob.listJobCollectUpdate[idx].strFullFileTempName)
@@ -415,12 +402,12 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def notify_cloud(self, refJob):
-        rospy.logdebug("-----enter AiModelImpInterfaceDataSource notify_cloud---")
+        rospy.logdebug("----enter grid notify_cloud-----")
         try:
             for idx in range(len(refJob.listJobCollect)):
                 dictReceiptContent = {}
-                dictReceiptContent['mapId'] = refJob.listJobCollect[idx].intReplyId
-                dictReceiptContent['pid'] = refJob.listJobCollect[idx].intReplyId
+                dictReceiptContent['version'] = refJob.listJobCollect[idx].strVersionMap
+                dictReceiptContent['id'] = refJob.listJobCollect[idx].intReplyId
                 dictReceiptContent['vehicleConfSn'] = self.mCommonPara.dictCarInfo['car_plate']
                 instanceCommonHttpUtils.sendSimpleHttpRequestWithHeader(self.strUrlSync, dictReceiptContent)
         except Exception as e:
@@ -430,56 +417,20 @@ class AiModelImpInterfaceDataSource(InterfaceDataSource):
 
     def write_event(self, refJob):
         try:
-            rospy.loginfo("---enter  AiModelImpInterfaceDataSource write_event------")
+            rospy.logdebug("----enter grid write_event-----")
             instanceCommonEventUtils = CommonEventUtils()
-            instanceCommonEventUtils.SaveEventToFile("update_config_simple.yaml", "ISYS_CONFIG_UPDATE_AI_MODEL", "/update_config_simple", "")
+            instanceCommonEventUtils.SaveEventToFile("update_config_simple.yaml", "ISYS_CONFIG_UPDATE_SLAM_MAP", "/update_config_simple","")
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def getTimeval(self):
-        rospy.logdebug("-----enter  AiModelImpInterfaceDataSource getTimeval-----")
         return self.mIntTimeval
 
     def getModuleName(self):
-         return "AiModelImpInterfaceDataSource"
-
-    def pushSimpleJobScheduler(self, refDataSource, refJob):
-        try:
-            refJob[0].enumJobType = EnumJobType.JOB_TYPE_DELAY
-            refJob[0].handlerDataSource = self
-            self.mScheduler.add_task(refDataSource, refJob)
-        except Exception as e:
-            rospy.logwarn('repr(e):{0}'.format(repr(e)))
-            rospy.logwarn('e.message:{0}'.format(e.message))
-            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+        return "gridMapImpInterfaceDataSource"
 
     def relink(self):
-        rospy.logdebug("---------------enter relink---------------------- ")
-        try:
-            strSnLinkConfig = ""
-            if self.mCommonPara.dictCarInfo.has_key('car_plate') and len(self.mCommonPara.dictCarInfo['car_plate']) > 0:
-                strSnLinkConfig = "/home/mogo/data/vehicle_monitor/{0}/slinks_AiModel.cfg".format(
-                    self.mCommonPara.dictCarInfo['car_plate'])
-            strCommonLinkConfig = "/home/mogo/data/vehicle_monitor/slinks_AiModel.cfg"
-            rospy.loginfo("strSnLinkConfig:{0}".format(strSnLinkConfig))
-            rospy.loginfo("strCommonLinkConfig:{0}".format(strCommonLinkConfig))
-            instanceFileUtils = FileUtils()
-            instanceFileUtils.linkFileAccordConfig(strCommonLinkConfig)
-            instanceFileUtils.linkFileAccordConfig(strSnLinkConfig)
-        except Exception as e:
-            rospy.logwarn('repr(e):{0}'.format(repr(e)))
-            rospy.logwarn('e.message:{0}'.format(e.message))
-            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+        pass
 
-    def pushBlockJobScheduler(self, refDataSource, refJob):
-        try:
-            refJob[0].enumJobType = EnumJobType.JOB_TYPE_DELAY
-            refJob[0].handlerDataSource = self
-            if len(refJob) > 0:
-                self.mScheduler.run_block_executor_job(refJob[0])
-        except Exception as e:
-            rospy.logwarn('repr(e):{0}'.format(repr(e)))
-            rospy.logwarn('e.message:{0}'.format(e.message))
-            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))

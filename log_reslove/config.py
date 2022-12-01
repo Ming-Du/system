@@ -13,7 +13,7 @@ node_config["/controller"]["pub"] = "/chassis/command"
 node_config["/controller"]["man_beg"] = "controller_begin"
 
 node_config["/local_planning"] = {}
-node_config["/local_planning"]["sub"] = ["/perception/fusion/obstacles"]
+node_config["/local_planning"]["sub"] = ["/perception/fusion/obstacles", "/hadmap_engine/lanes_msg", "/planning/global_trajectory"]
 node_config["/local_planning"]["pub"] = "/planning/trajectory"
 node_config["/local_planning"]["man_beg"] = "planning_begin"
 
@@ -64,3 +64,12 @@ node_config["/sensor/camera/sensing60/drivers_camera_sensing60"] = {}
 node_config["/sensor/camera/sensing60/drivers_camera_sensing60"]["sub"] = []
 node_config["/sensor/camera/sensing60/drivers_camera_sensing60"]["pub"] = "/sensor/camera/sensing/image_raw_60/nvjpeg"
 node_config["/sensor/camera/sensing60/drivers_camera_sensing60"]["man_beg"] = "camera_grab"
+
+#2.10.0 新增config
+node_config["/hadmap_engine_node"] = {}
+node_config["/hadmap_engine_node"]["sub"] = []
+node_config["/hadmap_engine_node"]["pub"] = "/hadmap_engine/lanes_msg"
+
+node_config["/hadmap_server"] = {}
+node_config["/hadmap_server"]["sub"] = []
+node_config["/hadmap_server"]["pub"] = "/planning/global_trajectory"

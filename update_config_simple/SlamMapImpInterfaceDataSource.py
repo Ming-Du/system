@@ -26,6 +26,7 @@ instanceCommonUtils = CommonUtilsCompare()
 instanceCacheUtils = CacheUtils("/home/mogo/data/SlamMapCache.json")
 instanceReadConfigFile = CommonUtilsReadFile()
 instanceCommonHttpUtils = CommonHttpUtils()
+instanceCommonUtilsCompare = CommonUtilsCompare()
 from FileUtils import FileUtils
 import sys
 
@@ -238,7 +239,9 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
                         strMd5 = fileCollect[idx]['md5']
                         jobItem = JobItem()
                         jobItem.strFullFileName = strFilePath
-                        strFullFileTempName = "{0}.temp".format(strFilePath)
+                        strBaseName = os.path.basename(strFilePath)
+                        strSaveTempPath = "/home/mogo/data/slam_backup/"
+                        strFullFileTempName = "{0}/{1}".format(strSaveTempPath,strBaseName)
                         jobItem.strFullFileTempName = strFullFileTempName
                         jobItem.strUrl = strCosPath
                         jobItem.strMd5 = strMd5
@@ -358,11 +361,30 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
         pass
 
     def install_dst_path(self, refJob):
-
-        rospy.logdebug("----------enter slam install_dst_path-------------------------------")
+        rospy.logdebug("----enter slam install_dst_path---")
+        intTempFileNum = 0
+        intSuccessNum = 0
+        intContinueFlag = 0
         try:
             for idx in range(len(refJob.listJobCollect)):
-                shutil.copyfile(refJob.listJobCollect[idx].strFullFileTempName, refJob.listJobCollect[idx].strFullFileName)
+                if os.path.exists(refJob.listJobCollect[idx].strFullFileTempName):
+                    intTempFileNum = intTempFileNum + 1
+                    strRealFileMd5 = instanceCommonUtilsCompare.checkFileMd5(refJob.listJobCollect[idx].strFullFileTempName)
+                    rospy.loginfo("idx:{0},strRealFileMd5:{1},refJob.listJobCollect[idx].strMd5:{2}".format(idx,strRealFileMd5, refJob.listJobCollect[idx].strMd5))
+                    if len(strRealFileMd5) > 2 and (strRealFileMd5 == refJob.listJobCollect[idx].strMd5):
+                        intSuccessNum = intSuccessNum + 1
+            rospy.loginfo("slam::install_dst_path intTempFileNum:{0},intSuccessNum:{1}".format(intTempFileNum,intSuccessNum))
+            if (intTempFileNum > 0) and (intSuccessNum > 0) and (intTempFileNum == intSuccessNum):
+                intContinueFlag = 1
+            rospy.loginfo("slam::install_dst_path intContinueFlag:{0}".format(intContinueFlag))
+            if intContinueFlag == 1:
+                strCommandRmDir = "/bin/rm -rf /home/mogo/data/vehicle_monitor/LidarSLAM_data/map/*"
+                os.system(strCommandRmDir)
+                for idx in range(len(refJob.listJobCollect)):
+                    if os.path.exists(refJob.listJobCollect[idx].strFullFileTempName):
+                        shutil.copyfile(refJob.listJobCollect[idx].strFullFileTempName, refJob.listJobCollect[idx].strFullFileName)
+            else:
+                rospy.logwarn("intContinueFlag != 1")
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -372,7 +394,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
         rospy.logdebug("----enter slam write_cache_file----")
         try:
             for idx in range(len(refJob.listJobCollect)):
-                intLocalModifyTimeStamp = int(os.path.getmtime(refJob.listJobCollect[idx].strFullFileTempName))
+                intLocalModifyTimeStamp = int(os.path.getmtime(refJob.listJobCollect[idx].strFullFileName))
                 strUrl = refJob.listJobCollect[idx].strUrl
                 strMd5 = refJob.listJobCollect[idx].strMd5
                 intPublishTimestamp = refJob.listJobCollect[idx].intPublishTimeStamp

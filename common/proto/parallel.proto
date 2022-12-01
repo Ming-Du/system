@@ -4,11 +4,11 @@ package parallel;
 import "header.proto";
 
 
-/* 控制是否推流指令 */
+/* 推流指令 */
 message StreamCmd {
     /* header 不用填写。因为函数 RosToProto 反序列化时，会自动使用 autopilot_msgs::BinaryData::header 来填充 */
     optional common.Header header = 1;
-    /* 驾舱端下发的消息 ID，回复消息时 StreamCmdResp */
+    /* 驾舱端下发的消息 ID */
     required uint64 msgId = 2;
     /* 推流控制指令  1-开始推流  0-结束推流 */
     required bool pushCommand = 3;
@@ -17,14 +17,10 @@ message StreamCmd {
 /* 控制推流指令的回复 */
 message StreamCmdResp {
     optional common.Header header = 1;
-    /* 驾舱端下发的消息ID */
-    required uint64 msgId = 2;
-
-    /* 0-操作失败，1-操作成功 */
-    required uint32 result = 3;
-
-    /* 失败原因，只有失败时才回传 */
-    optional string content = 4;
+    required uint64 msgId = 2;    /* 驾舱端下发的消息ID */
+    required uint32 result = 3;   /* 0-操作失败，1-操作成功 */
+    optional string content = 4;  /* 失败原因，只有失败时才回传 */
+    required string rosnode = 5;  /* 推流程序的名称 */
 }
 
 /* 接管指令在文件 ./system_cmd.proto */
@@ -47,4 +43,38 @@ message TakeOverStatus {
 
     /* 失败原因，只有失败时才回传 */
     optional string content = 5;
+}
+
+message VehicleVideoConfigs{
+    optional common.Header header = 1;
+    /* 配置 json 字符串，客户端可以直接用来初始化 trro 程序 */
+    repeated VehicleVideoConfig config = 2;
+}
+
+message VehicleVideoConfig{
+    /* 配置 ID */
+    required int32 id = 1;
+    /* 用于唯一标识车辆上的域控 */
+    required string ipSuffix = 2;
+    /* 配置 json 字符串，客户端可以直接用来初始化 trro 程序 */
+    required string configJson = 3;
+}
+
+message VehicleVideoConfigsRequest{
+    optional common.Header header = 1;
+    /* 客户端唯一标识，mac 地址 */
+    required string sn = 2;
+}
+
+/* 推单个摄像头的流，成功推流的帧率 */
+message StreamCameraRate {
+    required string topic = 1;     /* ros 节点上的摄像头唯一标识 */
+    required uint32 count = 2;     /* 过去 1s 成功推流的帧数 */
+    required uint32 total = 3;     /* 过去 1s 内 camera 产生图片总帧率 */
+}
+
+message StreamState {
+    optional common.Header header = 1;
+    required string rosnode = 2;            // 推流程序的名称
+    repeated StreamCameraRate cameras = 3;  // 推各个摄像头的流，成功的帧率
 }

@@ -7,7 +7,7 @@ import "header.proto";
 enum cmd_src {
   Unknow = 0;
   AutoPolit = 1;
-  RemotePilot = 2;
+  RemotePilot = 6;
 }
 
 enum cmd_act {

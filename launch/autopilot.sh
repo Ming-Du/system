@@ -654,7 +654,7 @@ fi
 
 write_action
 # 后台发送心跳
-heart_beat &
+# heart_beat &
 #check system time
 declare last_launch_time
 if [ -f $ABS_PATH/launch_time ]; then
@@ -745,13 +745,36 @@ LoggingINFO "update config finished"
 if [ -f "/home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup" ];then
  \cp -d /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite
 fi
-start_sys
-start_map
-
 monitor_shell=/home/mogo/autopilot/share/launch/monitor_cpu_mem_net.sh
 chmod +x $monitor_shell
 bash $monitor_shell &
 python3 /home/mogo/autopilot/share/launch/disk_manage.py >> /home/mogo/data/log/disk_manage.log 2>&1 &
+
+request_master_mes=$(curl -d -m 10 -o /dev/null -s http://${master_ip}:8080/report_config)
+# 等待systerm master响应
+while [ -z "$request_master_mes" ]; do
+    sleep 1
+    request_master_mes=$(curl -d -m 10 -o /dev/null -s http://${master_ip}:8080/report_config)
+    LoggingINFO "waitting for systerm master running!"
+done
+LoggingINFO "$request_master_mes"
+old_rquest_master_mes="The datas used fault format"
+# 判断是否走新agent
+if [[ $request_master_mes =~ $old_rquest_master_mes ]]; then
+    # old agent
+    # 后台发送心跳
+    heart_beat &
+    LoggingINFO "use old agent!!!!!!!"
+    start_sys
+    start_map
+else
+    # new agent
+    LoggingINFO "use new agent!!!!!!!"
+    pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple psutil
+    python3 /home/mogo/autopilot/share/launch/agent/ssm_agent.py $ABS_PATH $ROS_LOG_DIR >> /dev/null 2>&1 &
+fi
+
+
 
 set_pr
 

@@ -2,7 +2,14 @@
 
 [[ -z "$1" ]] && exit 1
 level=${2:-ERROR}
+
 launch_name=$(echo ${1##*/} | cut -d. -f1)
+if [ ! -n "$3" ]; then
+    launch_name=$(echo ${1##*/} | cut -d. -f1)
+else
+    launch_name=$(echo ${3##*/})
+fi
+
 ROSCONSOLE_CONFIG_FILE="$ABS_PATH/config/${launch_name}_${level}_console.config"
 ROS_PYTHON_LOG_CONFIG_FILE="$ABS_PATH/config/python_logging_${launch_name}.conf"
 echo >$ROSCONSOLE_CONFIG_FILE
@@ -23,7 +30,7 @@ for value in $pkg_str; do
     #LOGCXX
     echo "log4j.logger.ros=${level},${InfoAppender},${ErrorAppender}
 log4j.appender.${InfoAppender}=org.apache.log4j.DailyRollingFileAppender
-log4j.appender.${InfoAppender}.Threshold=INFO
+log4j.appender.${InfoAppender}.Threshold=DEBUG
 log4j.appender.${InfoAppender}.ImmediateFlush=true
 log4j.appender.${InfoAppender}.Append=true
 log4j.appender.${InfoAppender}.File=${ros_log_dir}/${InfoFile}

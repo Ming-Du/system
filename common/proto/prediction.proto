@@ -17,7 +17,9 @@ message mPredictionObject {
 
   repeated geometry.Point  prediction_trajectory = 5;  //target prediction trajectory :vector : meter
   repeated geometry.Point  prediction_pose = 6;         //targe prediciton pose  vector       angle:°
-  optional geometry.Vector3  objsize = 7; //length width height  :meter                             
+  optional geometry.Vector3  objsize = 7; //length width height  :meter           
+  
+  optional int32 drive_state=8; // drive state: 0 normal, 1 cutin
 
 }
 

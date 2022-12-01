@@ -6,7 +6,10 @@ import "header.proto";
 enum PilotMode {
   MODE_MANUAL = 0;
   MODE_AUTO_DRIVE = 1;
-  MODE_REMOTE_DRIVE = 2;
+  MODE_STEER_ONLY = 2;
+  MODE_SPEED_ONLY = 3;
+  MODE_REMOTE_DRIVE = 6;
+  CHASSID_TELECONTROL_DRIVE = 7;
 }
 
 message SYSVehicleState {
@@ -22,4 +25,5 @@ message SYSVehicleState {
   optional bool chassis_status_missing = 9 [default = false]; //未收到车辆底盘反馈信息
   optional bool brake_light_status = 10 [default = false]; //自驾模式下制动灯状态
   optional bool pilot_mode_condition_met = 11 [default = false];
+  optional bytes fsm_state = 12;  // 底盘状态chassis_state
 }

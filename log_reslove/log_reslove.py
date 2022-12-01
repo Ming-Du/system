@@ -878,6 +878,16 @@ class Log_handler():
         
         self.results=dict()
 
+    def save_local_bak_file(self):
+        if self.handle_index >= 0:
+            return
+        self.local_save_fd = open(Constants.bak_dir + "/local_bak_{}.log".format(int(time.time())), 'w+')
+        for file_path in self.input_paths:
+            if 'remote' not in file_path:
+                with open(file_path, 'r') as fp:
+                    contents = fp.read()
+                    self.local_save_fd.write(contents)  # add by huxinyu 20221117 for 103 local_log_save
+        self.local_save_fd.close()
 
     def clear_input_files(self):
         if self.handle_index >= 0:
@@ -901,6 +911,7 @@ class Log_handler():
             self.save_result(from_sensor_flag=True)
             self.analyze_key_info()
             self.save_result()
+            self.save_local_bak_file()
             self.clear_input_files()
         except Exception as e:
             log_print("run once error, {}".format(e))
