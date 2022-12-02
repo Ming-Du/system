@@ -1223,7 +1223,7 @@
         },
         "6x": {
           "must": [
-            "rosslave-104"
+            "rosslave-106"
           ],
           "should": [],
           "must_not": []
