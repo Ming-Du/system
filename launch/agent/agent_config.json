@@ -1849,6 +1849,7 @@
         }
       },
       "car_type": [
+        "df",
         "jinlv"
       ],
       "node_type": "MAP",
