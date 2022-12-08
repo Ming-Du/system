@@ -56,3 +56,10 @@ enum VehicleTakeOverStatus {
   Longitude_TakeOver = 2;
   Latteral_TakeOver = 3;
 }
+
+enum VehicleFaultLevel {
+  None_Fault = 0;
+  General_Fault = 1;
+  Serious_Fault = 2;
+  Critical_Fault = 3;
+}

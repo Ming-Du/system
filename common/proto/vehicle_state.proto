@@ -55,6 +55,8 @@ message VehicleState {
 
     optional chassis.EPBWorkStatus epb = 35 [default = EPBSTATUS_NONE]; // EPB工作状态
     optional chassis.VehicleTakeOverStatus vehicletakeoverstatus = 36 [default = None_TakeOver]; // 车辆人工接管状态
+    optional bool Emergency_Stop_Switch = 37 [default = false]; // 急停开关状态
+    optional chassis.VehicleFaultLevel vehiclefaultlevel = 38 [default = None_Fault]; // 整车故障状态
 
     optional float bms_soc = 40 [default = 0];  // 电量百分比范围   0~100
     optional float fuel_value = 41 [default = 0]; // 油车剩余油量
