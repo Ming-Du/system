@@ -1,11 +1,12 @@
 syntax = "proto3";
 package mogo.telematics.pad;
+
 import "geometry.proto";
 
 enum ProtocolVersion
 {
     Defaultver = 0;
-    CurrentVersion = 8; //每次修改proto文件增加1
+    CurrentVersion = 9; //每次修改proto文件增加1
 }
 
 enum MessageType
@@ -13,6 +14,8 @@ enum MessageType
     MsgTypeDefault = 0;
 
     //MsgTypePlanningDecisionState = 0x00001 //planning决策状态, 透传
+    //MsgTypeSweeperTaskIndexData = 0x00002 //清扫车指标数据
+    //MsgTypeObuWarningData = 0x00003 //obu预警事件
 
     MsgTypeTrajectory = 0x10000; //局部轨迹,车前引导线
     MsgTypeTrackedObjects = 0x10001; //障碍物信息
@@ -25,6 +28,8 @@ enum MessageType
     MsgTypePointCloud = 0x10008; //点云透传
     MsgTypePlanningObjects = 0x10009; //planning障碍物
     MsgTypeOBU = 0x1000a; //OBU
+    MsgTypeChassisStates = 0x1000b; //重构后的底盘状态, 透传
+    MsgTypeFunctionStates = 0x1000c; //重构后的功能状态, 透传
 
     MsgTypeBasicInfoReq = 0x10100; //自动驾驶设备基础信息请求
     MsgTypeBasicInfoResp = 0x10101; //自动驾驶设备基础信息应答
@@ -53,6 +58,7 @@ enum MessageType
     MsgTypeSpecialVehicleTaskCmd = 0x10118; //特种车辆命令
     MsgTypeSetParamReq = 0x10119; //设置参数命令
     MsgTypeTripInfoEvent = 0x1011a; //行程信息
+    MsgTypeBagManagerCmd = 0x1011b; //bag管理
 }
 
 message Header
@@ -85,10 +91,10 @@ message Trajectory
 
 // message definition for MsgTypeTrackedObjects
 message SubSource
-{ 
+{
     uint32 source = 1; // TrackedSource=1:1-lidar 2-camera 3-radar 4-vidar 5-falcon
                        // TrackedSource=2:1-v2v_bsm 2-v2i_rsm 3-v2v_ssm 4-v2n_rsm 5-v2n_rsi 6-v2i_ssm
-    string id = 2; //HEX_string -bsm_id 
+    string id = 2; //HEX_string -bsm_id
 }
 
 message TrackedSource
@@ -117,7 +123,7 @@ message TrackedObject
     double driverTime = 13; //驱动感知时间, abandoned
     repeated TrackedSource tracked_source = 14;
     repeated Location polygon = 15;
-    geometry.Point center = 16;  
+    geometry.Point center = 16;
 }
 
 message TrackedObjects
@@ -146,11 +152,11 @@ message GnssInfo
 // message definition for MessageType: MsgTypeAutopilotState
 message AutopilotState
 {
-    uint32 state = 1; //0: 不可用(abandoned), 1:ready, 2:自动驾驶中
+    uint32 state = 1; //0: 不可用(abandoned), 1:ready, 2:自动驾驶中, 7:平行驾驶中
     uint32 camera = 2; //camera节点状态 1:开启，0:关闭
     uint32 radar = 3; //雷达节点状态 1:开启，0:关闭
     uint32 rtk = 4; //RTK节点状态 1:开启，0:关闭
-    uint32 autopilotMode = 5; //自动驾驶状态 0: 非自动驾驶，1: 自动驾驶
+    uint32 autopilotMode = 5; //自动驾驶状态 0: 非自动驾驶，1: 自动驾驶, 6:平行驾驶
     double speed = 6; //惯导车速 m/s
     string reason = 7; //不可用原因(abandoned)
 }
@@ -497,6 +503,21 @@ message TripInfoEvent
     string arrivalStopName = 4; //下一站到达站点名
     bool isLastStop = 5; //下一站到达站是否最终站
 }
+
+//message definition for MsgTypeChassisStates
+//refer to chassis_states.proto for details
+
+//message definition for MsgTypeFunctionStates
+//refer to function_states.proto for details
+
+//message definition for MsgTypeSweeperTaskIndexData
+//refer to robo_sweeper_task_index.proto for details
+
+//message definition for MsgTypeObuWarningData
+//refer to obu_warning_event.proto for details
+
+//message definition for MsgTypeBagManagerCmd
+//refer to bag_manager.proto for details
 
 
 
