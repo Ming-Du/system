@@ -1,0 +1,118 @@
+syntax = "proto3";
+package mogo.v2x.v2i;
+
+import "header.proto";
+import "PositionOffsetLLV_PB.proto";
+import "AccelerationSet4Way_PB.proto";
+import "VehicleSize_PB.proto";
+
+message RsiWarning {
+    int32 unitMask = 1;        /* 描述所属字段有效性 */
+    int32 sceneType = 2;        /* 预警类型，0：无效，1：限速信息，2：道路危险，3：车内标牌，4：前方拥堵 */
+    PositionOffsetLLV_PB position = 3;       /* 交通标志/事件位置信息 */
+    int32 signSerialNum = 4;  /* 交通标志类型序号，根据预警类型匹配，0：无效，参照国标《GB 5768.2-2009中“交通标志中文名称索引》表序号 */
+    int32 eventSerialNum = 5; /* 交通事件类型序号，根据预警类型匹配，0：无效，参考国标《GB/T 29100-2012》中定义的事件分类代码 */
+    int32 speedMaxLimit = 6;  /* 建议最大车速，单位(0.02m/s) */
+    int32 speedMinLimit = 7;  /* 建议最小车速，单位(0.02m/s) */
+    int32 eventRadius = 8;     /* 交通事件触发半径，根据预警类型匹配，0：无效，单位(0.1m) */
+    int32 warningLevel = 9;     /* 预警等级，0：无效，1：DETECTED，2：INFORM，3：WARNING */
+    int32 targetPosition = 10;   /* 目标方位，参考mg_rti_target_position_t */
+    int32 distance = 11;          /* 预警触发时与自车之间的距离，单位(0.01m) */
+}
+
+//预警事件 RSI Warning event
+message RsiWarningData {
+    int32 status = 1;          /* 状态信息，0：更新，1：添加，2：删除 */
+    //int32 warning_num = 2;     /* 预警信息数量 */
+    repeated RsiWarning warningMsg = 2; /* 预警信息集合 */
+}
+
+message participant{
+    int32 ptcType = 1;         /* 交通参与者类型，0：未知，1：机动车，2：非机动车，3：行人，4：OBU自身 */
+    int32 ptcID = 2;           /* 临时ID，取值范围(1..255) */
+    int32 source = 3;            /* 监测信息来源，0：未知，1：RSU自身，2：V2X广播，3：视频传感器，4：微波雷达，5：地磁线圈传感器，6：激光雷达传感器，7：两类或以上感知数据融合 */
+    int64 secMark = 4;         /* UTC时间，单位(ms) */
+    int64 latitude = 5;          /* 维度，单位(1e-7°) */
+    int64 longitude = 6;         /* 经度，单位(1e-7°) */
+    int64 elevation = 7;         /* 海拔，单位(0.1m) */
+    int64 speed = 8;             /* 速度，单位(0.02m/s) */
+    int32 heading = 9;          /* 航向角，单位(0.0125°) */
+    AccelerationSet4Way_PB accFourAxes = 10; /* 四轴加速度 */
+    VehicleSize_PB ptcSize = 11;          /* 交通参与者尺寸信息 */
+    int32 vehicleClass = 12;     /* 车辆类型，参考《OBU软件SDK使用文档》附录A中的表1 */
+    int32 targetPosition = 13;   /* 目标方位，参考mg_veh_target_position_t */
+}
+
+message ParticipantWarningData{
+    int32 unitMask = 1; /* 描述所属字段有效性 */
+    int32 status = 2;            /* 状态信息，0：更新，1：添加，2：删除 */
+    int32 warningType = 3;     /* 预警类型，0：前向碰撞预警，1：交叉路口碰撞预警，2：左转辅助预警，3：盲区预警，4：变道预警，
+    5：逆向超车预警，6：紧急制动预警，7：异常车辆提醒，8：失控车辆预警，9：紧急车辆预警，10：弱势交通参与者碰撞预警 */
+    int32 warningLevel = 4;     /* 预警等级，0：无效，1：DETECTED，2：INFORM，3：WARNING */
+    int32 warningPriority = 5; /* 预警优先级，默认为0，预留 */
+}
+
+message DateTime{
+    int32 year = 1;        /* 年份 */
+    int32 month = 2;        /* 月份 */
+    int32 day = 3;          /* 日期 */
+    int32 hour = 4;         /* 小时 */
+    int32 minute = 5;       /* 分钟 */
+    int32 millisecond = 6; /* 毫秒 */
+    int32 offset = 7;       /* 定义与UTC时间的分钟差 */
+}
+
+message ParticipantWarning{
+    int32 unitMask = 1; /* 描述所属字段有效性 */
+    repeated ParticipantWarningData warningData = 2;
+    DateTime warningTime = 3; /* 预警触发时间 */
+    int32 distance = 4;      /* 预警触发时与自车之间的距离，单位(0.01m)  */
+}
+
+
+//RSM Warning Msg
+message RsmWarningData{
+    int32 status = 1;         /* 状态信息，0：更新，1：添加，2：删除 */
+    participant participantOfOne = 2; /* 弱势交通参与者信息 */
+    ParticipantWarning warningMsg = 3; /* 弱势交通参与者预警信息 */
+}
+
+message SpatLight{
+    int32 phaseID = 1;           /* 信号灯相位ID */
+    int32 maneuvers = 2;          /* 允许转向关系，bit0：直行，bit1：左转，bit2：右转，bit3：掉头 */
+    int32 light = 3;              /* 灯色，0：不可用，1：黑色，2：红闪，3：红色，4：绿闪，5：permissive_green，6：protected_green，7：黄色，8：黄闪 */
+    int32 countDown = 4;        /* 灯色倒计时，单位(0.1s) */
+    int32 suggestMaxSpeed = 5; /* 建议最大车速，单位(0.02m/s) */
+    int32 suggestMinSpeed = 6; /* 建议最小车速，单位(0.02m/s) */
+}
+
+//SPAT Msg
+message SpatWarningData{
+    int32 status = 1;       /* 状态信息，0：更新，1：添加，2：删除 */
+    int32 warningType = 2; /* 预警类型信息 */
+    repeated SpatLight lights = 3;    /* 灯色信息集合 */
+}
+
+message NodeID{
+	int32 region = 1;/* 定义地图中划分区域的ID号 */
+	int32 id = 2;    /* 定义地图节点ID */
+}
+
+message MapMatchData{
+	int32 status = 1;/* 状态信息，0：更新，1：添加，2：删除 */
+	int32 unitMask = 2;/* 描述所属字段有效性 */
+	NodeID currentNodeID = 3;/* 前方节点信息 */
+	NodeID upstreamNodeID = 4;/* 上游节点信息 */
+	int32 matchingLaneID = 5;/* 匹配车道ID，0：无效 */
+	int32 speedMaxLimit = 6;/* 建议最大车速，单位(0.02m/s) */
+	int32 speedMinLimit = 7;/* 建议最小车速，单位(0.02m/s) */
+}
+
+message ObuWarningData{
+    common.Header header = 1;
+    int32 msgDataType = 2; /*1:rsiEvent; 2:rsmEvent; 3:spatEvent; 4:mapMatchData*/
+    RsiWarningData rsiEvent = 3;
+    RsmWarningData rsmEvent = 4;
+    SpatWarningData spatEvent = 5;
+	MapMatchData mapMatchData = 6;
+}

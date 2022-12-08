@@ -26,6 +26,9 @@ include_directories(
 #add by shh
 set(proto_dir ${PROJECT_SOURCE_DIR}/proto)
 file(GLOB proto_files "${proto_dir}/*.proto")
+file(GLOB proto_files_2 "${proto_dir}/v2x/*.proto")
+list(APPEND proto_files ${proto_files_2})
+
 message(STATUS "Proto Source Dir: ${proto_dir}")
 message(STATUS "Proto Source Files: ${proto_files}")
 
@@ -42,7 +45,7 @@ endforeach(proto_file ${proto_files})
 
 add_custom_command(
     OUTPUT  ${proto_gen_py_files}
-    COMMAND ${PROTOBUF_PROTOC_EXECUTABLE} --proto_path=${proto_dir} --python_out=${proto_gen_py_dir}  ${proto_files}
+    COMMAND ${PROTOBUF_PROTOC_EXECUTABLE} --proto_path=${proto_dir}/v2x --proto_path=${proto_dir} --python_out=${proto_gen_py_dir}  ${proto_files}
     DEPENDS ${PROTOBUF_PROTOC_EXECUTABLE} ${proto_files}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
@@ -71,4 +74,13 @@ install(DIRECTORY ${proto_gen_py_dir}/
   FILES_MATCHING PATTERN "*.py"
 )
 
+install(DIRECTORY include
+  DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}/common
+  FILES_MATCHING PATTERN "*.h"
+)
+
+install(DIRECTORY proto
+  DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}/common
+  FILES_MATCHING PATTERN "*.h"
+)
 #add end

@@ -40,3 +40,19 @@ enum EPSSteeringMode {
   ManualFromEPSFailure = 3;
   TemporaryInhibited = 4;
 }
+
+enum EPBWorkStatus {
+  EPBSTATUS_NONE = 0;
+  EPBSTATUS_LOCKED = 1;
+  EPBSTATUS_RELEASED = 2;
+  EPBSTATUS_LOCKED_FAIL = 3;
+  EPBSTATUS_RELEASE_FAIL = 4;
+  EPBSTATUS_FAULT = 5;
+}
+
+enum VehicleTakeOverStatus {
+  None_TakeOver = 0;
+  Vehicle_TakeOver = 1;
+  Longitude_TakeOver = 2;
+  Latteral_TakeOver = 3;
+}

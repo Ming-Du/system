@@ -1,0 +1,67 @@
+syntax = "proto2";
+package bag_manager;
+
+enum BagStat{
+    SUCCEED = 0;
+    COPYERROR = 1;
+    MERGEERROR = 2;
+    UPLOADCOSERROR = 3;
+}
+
+// 上传cos桶状态
+message UploadCosStat{
+    required uint64 key = 1;
+    required uint32 stat = 2; // 0-成功 1-执行中 2-copy过程失败 3-合并过程失败 4-上传过程失败
+    optional string message = 3; // 失败时的具体描述
+}
+
+//空间使用情况
+message SpaceInfo{
+    optional string directory = 1; // 路径名,为空表示总空间,否则表示对应的/home/mogo/data/bags下的子目录
+    optional uint64 total = 2; // 总空间
+    optional uint64 free = 3; // 可用空间
+    optional uint64 used = 4; // 已用空间
+}
+// bag目录空间使用情况
+message BagSpaceInfo{
+    optional string host = 1; // 主机名
+    optional SpaceInfo diskSpaceInfo = 2; // 硬盘空间信息
+    repeated SpaceInfo BagDirsSpaceInfo = 3; // /home/mogo/data/bags下各子空间信息
+}
+
+// bag附加信息(录音,备注,接管信息)
+message BagDescription{
+    optional string description = 1; // bag接管描述或重命名信息
+    optional bool hasAudio = 2; // 此bag是否具有录音文件
+    optional string audioUrl = 3; // bag附加录音文件的文件名
+    optional bool reportBI = 4; //上报BI状态
+}
+
+// 各主机上报的包信息
+message SubBag {
+    required uint64 key = 1; // bag key值
+    required string host = 2; // 主机名
+    optional uint64 size = 3; // 此子包的大小
+}
+
+// 单个key值对应的包信息
+message BagInfo{
+    required uint64 key = 1; // bag key值
+    optional uint64 totalSize = 2; // 所有子包或合并后的包的总大小
+    optional string timestamp = 3; // 时间戳
+    optional bool mergeStat = 4; // 合并状态
+    optional string mergeBagName = 5; // 若合并状态为true,此字段为合并后的包名
+    optional bool uploadSata = 6; // 上传cos桶状态
+    optional BagDescription description = 7; // 包描述信息
+    repeated SubBag subBags = 8; // 子包信息
+}
+
+// 包管理请求
+message BagManager{
+    required uint32 reqType = 1; // 请求类型:0-invalid 1-获取空间使用信息 2-遍历所有bag 3-上传cos 4-删除bag 5-为bag添加附加信息
+    optional uint64 keyReq = 2; // 要操作的包的key值,发送请求且reqType=(3,4,5)时有效
+    optional BagDescription descReq = 3; // 更新包附加信息,发送请求且reqType=5时有效
+    repeated BagSpaceInfo spaceInfoResp = 4; // 空间使用信息,获取响应且reqType=1时有效
+    repeated BagInfo bagsInfoResp = 5; // 包信息列表,获取响应且reqType=2时有效
+    optional UploadCosStat uploadCosResp = 6; //反馈上传cos桶结果,获取响应且reqType=3时有效
+}
