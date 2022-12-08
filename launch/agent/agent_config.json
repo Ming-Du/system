@@ -1223,7 +1223,7 @@
         },
         "6x": {
           "must": [
-            "rosslave-104"
+            "rosslave-106"
           ],
           "should": [],
           "must_not": []
@@ -1729,7 +1729,7 @@
       "launch_name": "radar_fusion.launch",
       "node_name": "",
       "package": "config",
-      "path": "vehicle/drivers/radar",
+      "path": "vehicle/perception/radar",
       "machine": {
         "2x": {
           "must": [],
