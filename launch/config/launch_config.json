@@ -118,8 +118,9 @@
             "type": "SYS"
         },
         {
-            "name": "drivers_camera30.launch",
-            "package": "launch",
+            "name": "sensing30.launch",
+            "package": "config",
+            "path": "vehicle/drivers/camera",
             "machine": {
                 "df": {
                     "2x": [
@@ -149,8 +150,9 @@
             "type": "MAP"
         },
         {
-            "name": "drivers_camera60.launch",
-            "package": "launch",
+            "name": "sensing60.launch",
+            "package": "config",
+            "path": "vehicle/drivers/camera",
             "machine": {
                 "df": {
                     "2x": [
@@ -180,8 +182,9 @@
             "type": "MAP"
         },
         {
-            "name": "drivers_camera120.launch",
-            "package": "launch",
+            "name": "sensing120.launch",
+            "package": "config",
+            "path": "vehicle/drivers/camera",
             "machine": {
                 "df": {
                     "2x": [],
