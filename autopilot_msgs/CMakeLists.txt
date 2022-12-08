@@ -35,6 +35,7 @@ add_message_files(
   RoadArrow.msg
   LaneLine.msg
   LaneLines.msg
+  RoadSide.msg
 )
 
 add_service_files(
