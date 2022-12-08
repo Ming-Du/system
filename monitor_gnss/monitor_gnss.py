@@ -26,11 +26,12 @@ from os import path, access, R_OK
 import os, sys, stat
 
 from autopilot_msgs.msg import BinaryData
-import proto.localization_pb2 as common_localization
-import proto.vehicle_state_pb2 as common_vehicle_state_pb2
+import common.localization_pb2 as common_localization
+import common.vehicle_state_pb2 as common_vehicle_state_pb2
 from  entity.LocInfo import  LocInfo
 from entity.CommonPara import  CommonPara
-import proto.message_pad_pb2 as common_message_pad
+import common.message_pad_pb2 as common_message_pad
+import common.system_state_report_pb2 as common_system_state_report
 
 from threading import Thread
 import threading
@@ -42,6 +43,7 @@ from entity.CollectVehicleInfo import   CollectVehicleInfo
 globalLocationPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_Location')
 globalVihiclePool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_vehicle')
 globalPlanningDecisionStatePool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_planningDecisionState')
+globalStateReportPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_StateReport')
 globalCollectVehicleInfo  = CollectVehicleInfo()
 globalCommonPara = CommonPara()
 globalLastMicroSec = 0
@@ -57,6 +59,10 @@ globalWriteInterval_vehicle_status = 50
 globalLastMicroSec_decision_status = 0
 globalListPostion_decision_status = []
 globalWriteInterval_decision_status = 50
+
+globalLastMicroSec_sys_state_report = 0
+globalListSystem_state_report = []
+globalWriteInterval_sys_state_report = 50
 
 def folder_check():
     PATH='/home/mogo/data/log/filebeat_upload/'
@@ -142,6 +148,8 @@ def task_localization(pb_msg):
     dictPostionLog["horizontal_v"] = instanceLocInfoUnit.horizontal_v
     dictPostionLog["utm_zone"] = instanceLocInfoUnit.utm_zone
     dictPostionLog["gnss_sys_dtime"] = instanceLocInfoUnit.gnss_sys_dtime
+    dictPostionLog["rtk_counts"] = location.gnss_num
+    dictPostionLog["altitude"] = location.altitude
 
 
     CurrentMicroSec = instanceLocInfoUnit.sec*1000 + instanceLocInfoUnit.nsec/1000000
@@ -292,11 +300,14 @@ def task_vehicle(pb_msg):
         dictVehicleLog['longitude_driving_mode'] = pbStatus.longitude_driving_mode
         dictVehicleLog['eps_steering_mode'] = pbStatus.eps_steering_mode
         dictVehicleLog['steering_sign'] = pbStatus.steering_sign
+        # hxy added these 2 fields at 20221208
+        dictVehicleLog['bms_soc'] = pbStatus.bms_soc
+        dictVehicleLog['fuel_value'] = pbStatus.fuel_value
+
     except Exception as e:
         rospy.logwarn('repr(e):{0}'.format(repr(e)))
         rospy.logwarn('e.message:{0}'.format(e.message))
         rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
-    
     sec = 0
     nsec = 0
     sec = (pbStatus.header.stamp.sec)
@@ -423,6 +434,75 @@ def autopilotModeCallback(msg):
             break
         break
 
+def task_stateReport(pb_msg):
+
+    pbStatus = common_system_state_report.StateReport()
+    pbStatus.ParseFromString(pb_msg)
+
+    dictStateReport = {}
+
+    dictStateReport['src'] = pbStatus.src
+    dictStateReport['state'] = pbStatus.state
+    dictStateReport['code'] = pbStatus.code
+    dictStateReport['desc'] = pbStatus.desc
+    dictStateReport['reserved'] = pbStatus.reserved
+
+    sec = (pbStatus.header.stamp.sec)
+    nsec = (pbStatus.header.stamp.nsec)
+
+    CurrentMicroSec = sec * 1000 + nsec / 1000000
+    dictStateReport['sec'] = sec
+    dictStateReport['nsec'] = nsec
+    dictStateReport["msec"] = CurrentMicroSec
+
+    global globalListSystem_state_report
+    global globalLastMicroSec_sys_state_report
+
+
+    if globalLastMicroSec_sys_state_report == 0:
+        rospy.logdebug_throttle(5, "enter first update globalLastMicroSec")
+        globalListSystem_state_report.append(dictStateReport)
+        ## update last micro sec
+        globalLastMicroSec_sys_state_report = CurrentMicroSec
+
+    elif CurrentMicroSec - globalLastMicroSec_sys_state_report >= globalWriteInterval_decision_status:
+        rospy.logdebug_throttle(5, "enter first update globalLastMicroSec")
+        globalListSystem_state_report.append(dictStateReport)
+        ### update  last micro sec
+        globalLastMicroSec_sys_state_report = CurrentMicroSec
+
+
+
+    if len(globalListSystem_state_report) >= (1000 / globalWriteInterval_sys_state_report):
+        tree = lambda: collections.defaultdict(tree)
+        dictLogInfo = tree()
+        dictLogInfo["log_type"] = "sweeper_task_index"
+        curSec = rospy.rostime.Time.now().secs
+        curNsec = rospy.rostime.Time.now().nsecs
+        dictLogInfo["timestamp"]['sec'] = curSec
+        dictLogInfo["timestamp"]["nsec"] = curNsec
+        dictLogInfo["car_info"] = globalCommonPara.dictCarInfo
+        dictLogInfo["content"] = globalListSystem_state_report
+        strJsonLineContent = json.dumps(dictLogInfo)
+
+        try:
+            folder_check()
+            with open('/home/mogo/data/log/filebeat_upload/system_state_report.log', 'a+') as f:
+                f.write(strJsonLineContent)
+                f.write("\n")
+            globalListSystem_state_report = []
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+
+
+def stateReportCallback(msg):
+    print "enter stateReportCallback"
+    if msg.size > 0:
+        globalStateReportPool.submit(task_stateReport,msg.data)
+
+
 def task_decisionState(pb_msg):
     pbStatus = common_message_pad.PlanningActionMsg()
     pbStatus.ParseFromString(pb_msg)
@@ -494,6 +574,8 @@ def addLocalizationListener():
     rospy.Subscriber('/localization/global', BinaryData, localizationCallback)
     rospy.Subscriber('/chassis/vehicle_state', BinaryData, autopilotModeCallback)
     rospy.Subscriber('/planning/decision_state',BinaryData,decisionStateCallback)
+    # huxinyu added this new topic at 20221206
+    rospy.Subscriber('/system_master/StateReport', BinaryData, stateReportCallback)
 
 def main():
     # initial node
@@ -503,6 +585,8 @@ def main():
     global globalWriteInterval
     global globalWriteInterval_vehicle_status
     global globalWriteInterval_decision_status
+    global globalWriteInterval_sys_state_report
+
     strFullParaName = "%s/monitor_gnss_interval" %(rospy.get_name())
     rospy.loginfo("strFullParaName:%s" %(strFullParaName))
     temp  = rospy.get_param(strFullParaName)
@@ -528,9 +612,15 @@ def main():
         globalWriteInterval_decision_status = temp
 
 
+    strFullParaName = "%s/monitor_gnss_interval_system_state_report" % (rospy.get_name())
+    rospy.loginfo("strFullParaName:%s" % (strFullParaName))
+    temp = rospy.get_param(strFullParaName)
+    if temp >= 1000 or temp <= 0:
+        globalWriteInterval_sys_state_report = 1000
+    else:
+        globalWriteInterval_sys_state_report = temp
 
-    rospy.loginfo("set globalWriteInterval:{0},globalWriteInterval_vehicle_status:{1},globalWriteInterval_decision_status:{2}".format(globalWriteInterval,globalWriteInterval_vehicle_status,
-                                                                                       globalWriteInterval_decision_status))
+    rospy.loginfo("set globalWriteInterval:{0},globalWriteInterval_vehicle_status:{1},globalWriteInterval_decision_status:{2},globalWriteInterval_sys_state_report:{3}".format(globalWriteInterval,globalWriteInterval_vehicle_status,globalWriteInterval_decision_status,globalWriteInterval_sys_state_report))
     addLocalizationListener()
     ## wait msg
     rospy.spin()
