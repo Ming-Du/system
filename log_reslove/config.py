@@ -57,7 +57,7 @@ node_config["/sensor/lidar/c32/rear/c32_rear_driver"]["pub"] = "/sensor/lidar/c3
 node_config["/sensor/lidar/c32/rear/c32_rear_driver"]["man_beg"] = "lidar_grab"
 
 node_config["/perception_camera_2D_front"] = {}
-node_config["/perception_camera_2D_front"]["sub"] = ["/sensor/camera/sensing/image_raw_60/nvjpeg"]
+node_config["/perception_camera_2D_front"]["sub"] = ["/sensor/camera/sensing/image_raw_60/nvjpeg", "/sensor/camera/sensing/image_raw_30"]
 node_config["/perception_camera_2D_front"]["pub"] = "/perception/camera/camera_obstacle_front60"
 
 node_config["/sensor/camera/sensing60/drivers_camera_sensing60"] = {}
