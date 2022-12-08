@@ -271,6 +271,7 @@ add_privilege_monitor_gnss() {
     chmod -R 777 /autocar-code/install/share/hd_map_agent  >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/share/trajectory_agent  >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/lib/drivers_innolidar  >/dev/null 2>&1
+    chmod -R 777 /autocar-code/install/lib/zvision_lidar_driver  >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/share/update_config_simple  >/dev/null 2>&1
 }
 
