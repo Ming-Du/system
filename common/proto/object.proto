@@ -112,6 +112,8 @@ enum ObjectSource {
 message VehicleLightSupplement {
   optional int32 light_turn = 1;
   optional float light_turn_confidence = 2;
+  optional int32 light_brake = 3;
+  optional float light_brake_confidence = 4;
 }
 
 message Object {
