@@ -279,10 +279,9 @@ def task_vehicle(pb_msg):
         dictVehicleLog['b_trajectory_missing'] = pbStatus.trajectory_missing
         dictVehicleLog['b_chassis_status_missing'] = pbStatus.chassis_status_missing
         dictVehicleLog['brake_light_status'] = pbStatus.brake_light_status
-        # hxy found these field deleted in earlier version at 20221208
-        # dictVehicleLog['steeringSpd'] = float(pbStatus.steeringSpd)
-        # dictVehicleLog['leftFrontWheelAngle'] = float(pbStatus.leftFrontWheelAngle)
-        # dictVehicleLog['rightFrontWheelAngle'] = float(pbStatus.rightFrontWheelAngle)
+        dictVehicleLog['steeringSpd'] = float(pbStatus.steeringSpd)
+        dictVehicleLog['leftFrontWheelAngle'] = float(pbStatus.leftFrontWheelAngle)
+        dictVehicleLog['rightFrontWheelAngle'] = float(pbStatus.rightFrontWheelAngle)
         dictVehicleLog['pilot_mode_condition_met']=float(pbStatus.pilot_mode_condition_met)
         dictVehicleLog['steering'] = pbStatus.steering
         dictVehicleLog['speed'] = pbStatus.speed
