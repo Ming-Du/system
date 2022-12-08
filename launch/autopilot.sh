@@ -758,7 +758,7 @@ while [ -z "$request_master_mes" ]; do
     request_master_mes=$(curl -d -m 10 -o /dev/null -s http://${master_ip}:8080/report_config)
     LoggingINFO "waitting for systerm master running!"
 done
-LoggingINFO "$request_master_mes"
+LoggingINFO "ssm ret=$request_master_mes"
 old_rquest_master_mes="The datas used fault format"
 # 判断是否走新agent
 if [[ $request_master_mes =~ $old_rquest_master_mes ]]; then
