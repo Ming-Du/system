@@ -108,6 +108,14 @@ enum ObjectSource {
   V2I_SSM = 6;
 };
 
+// Modify-huangweijie
+message VehicleLightSupplement {
+  optional int32 light_turn = 1;
+  optional float light_turn_confidence = 2;
+  optional int32 light_brake = 3;
+  optional float light_brake_confidence = 4;
+}
+
 message Object {
   optional uint32 id = 1;                // obj id, after tracked
   optional string sensor_name = 2;
@@ -155,6 +163,8 @@ message Object {
   optional float exist_confidence = 29;
   optional float orientation = 30;
   optional RoadType road_status = 31;
+  // Modify-huangweijie - vehicle light supplement
+  optional VehicleLightSupplement vehicle_light = 32;
 
 }
 
