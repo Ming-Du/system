@@ -681,7 +681,7 @@
                 }
             },
             "type": "MAP"
-        },        
+        },
         {
             "name": "drivers_rslidar.launch",
             "package": "launch",
@@ -1388,6 +1388,32 @@
                     "2x": [],
                     "6x": [
                         "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_2D_hd_node_6x_df.launch",
+            "package": "perception_camera_2D_hd",
+            "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_2D_hd_node_6x_bus.launch",
+            "package": "perception_camera_2D_hd",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosmaster"
                     ]
                 }
             },
