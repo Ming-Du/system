@@ -128,10 +128,10 @@
       }
     },
     {
-      "launch_name": "drivers_camera30.launch",
+      "launch_name": "sensing30.launch",
       "node_name": "",
-      "package": "launch",
-      "path": "",
+      "package": "config",
+      "path": "vehicle/drivers/camera",
       "machine": {
         "2x": {
           "must": [
@@ -166,10 +166,10 @@
       }
     },
     {
-      "launch_name": "drivers_camera60.launch",
+      "launch_name": "sensing60.launch",
       "node_name": "",
-      "package": "launch",
-      "path": "",
+      "package": "config",
+      "path": "vehicle/drivers/camera",
       "machine": {
         "2x": {
           "must": [
@@ -204,10 +204,10 @@
       }
     },
     {
-      "launch_name": "drivers_camera120.launch",
+      "launch_name": "sensing120.launch",
       "node_name": "",
-      "package": "launch",
-      "path": "",
+      "package": "config",
+      "path": "vehicle/drivers/camera",
       "machine": {
         "2x": {
           "must": [],
