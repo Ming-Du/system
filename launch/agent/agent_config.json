@@ -1899,6 +1899,74 @@
       }
     },
     {
+      "launch_name": "perception_M1_lidar.launch",
+      "node_name": "",
+      "package": "config",
+      "path": "vehicle/perception/lidar",
+      "machine": {
+        "2x": {
+          "must": [],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosslave-106"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
+      "launch_name": "perception_zvision_lidar.launch",
+      "node_name": "",
+      "package": "config",
+      "path": "vehicle/perception/lidar",
+      "machine": {
+        "2x": {
+          "must": [],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosslave-107"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },     
+    {
       "launch_name": "hadmap.launch",
       "node_name": "",
       "package": "launch",
