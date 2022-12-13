@@ -522,6 +522,11 @@ trap 'command_handler "stop_map"' 35
 export ABS_PATH # autopilot.sh脚本的路径
 ABS_PATH="$(cd "$(dirname $0)" && pwd)"
 
+echo 0 > /proc/sys/vm/swappiness
+echo 500 > /proc/sys/vm/watermark_scale_factor
+echo 5 > /proc/sys/vm/dirty_background_ratio
+echo 60 > /proc/sys/vm/dirty_ratio
+
 declare -A -g map_pid_name=() sys_pid_name=()
 declare -g launch_files_array=() map_launch_files_array=() sys_launch_files_array=()
 declare -g map_child_node_array=() sys_child_node_array=()
