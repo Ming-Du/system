@@ -36,7 +36,7 @@ LAUNCH_LOG_SHELL = "/home/mogo/autopilot/share/launch/add_log_config.sh"
 LAUNCH_PATH = "/home/mogo/autopilot/share/launch"
 ABS_PATH = LAUNCH_PATH
 ROS_LOG_DIR = os.path.join("/home/mogo/data/log/", datetime.datetime.now().strftime('%Y%m%d'))
-KILLED_LAUNCH_NODE_LIST = list()
+KILLED_LAUNCH_NODE_LIST = multiprocessing.Manager().list()
 
 # 进程锁,在对全局配置读写时进行加锁
 machine_info_lock = multiprocessing.Lock()
@@ -1115,6 +1115,9 @@ def main():
     http_server_beat_process.start()
     time.sleep(1)
     heart_beat_process.start()
+    work_process.join()
+    http_server_beat_process.join()
+    heart_beat_process.join()
 
 
 if __name__ == "__main__":
