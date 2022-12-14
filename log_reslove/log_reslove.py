@@ -479,8 +479,10 @@ class Log_handler():
         # get time used of the topic between put to sub_recv
         pub_recv_time = topic['info']['recv_stamp'] - topic['info']['pub_stamp']
         recv_call_time = topic['info']['call_stamp'] - topic['info']['recv_stamp']
-        if topic['recv_node'].name.find("decoder") < 0:
-            data["use_time"] += pub_recv_time + recv_call_time
+        if topic['recv_node'].name.find("local_planning") > 0:
+            data["use_time"] += recv_call_time              #跨机传输的时间戳受时间同步影响，不统计
+        elif topic['recv_node'].name.find("decoder") < 0:
+            data["use_time"] += pub_recv_time + recv_call_time      #从驱动处理完成开始统计
         data["path"].append({"type":"pub_recv", "node":topic['recv_node'].name, "use_time":pub_recv_time})
         data["path"].append({"type":"recv_call", "node":topic['recv_node'].name, "use_time":recv_call_time})
 
