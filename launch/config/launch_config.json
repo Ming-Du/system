@@ -728,6 +728,21 @@
             "type": "MAP"
         },
         {
+            "name": "perception_lidar.launch",
+            "package": "launch",
+            "machine": {
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
             "name": "perception_M1_lidar.launch",
             "package": "launch",
             "machine": {
