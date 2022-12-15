@@ -3,9 +3,11 @@ package bag_manager;
 
 enum BagStat{
     SUCCEED = 0;
-    COPYERROR = 1;
-    MERGEERROR = 2;
-    UPLOADCOSERROR = 3;
+    EXECUTING = 1;
+    EXECUTEERROR = 2;
+    COPYERROR = 3;
+    MERGEERROR = 4;
+    UPLOADCOSERROR = 5;
 }
 
 // 上传cos桶状态
@@ -49,9 +51,9 @@ message BagInfo{
     required uint64 key = 1; // bag key值
     optional uint64 totalSize = 2; // 所有子包或合并后的包的总大小
     optional string timestamp = 3; // 时间戳
-    optional bool mergeStat = 4; // 合并状态
-    optional string mergeBagName = 5; // 若合并状态为true,此字段为合并后的包名
-    optional bool uploadSata = 6; // 上传cos桶状态
+    optional string bagPath = 4; // bag所在路径
+    optional bool mergeStat = 5; // 合并状态
+    optional bool uploadStat = 6; // 上传cos桶状态
     optional BagDescription description = 7; // 包描述信息
     repeated SubBag subBags = 8; // 子包信息
 }
