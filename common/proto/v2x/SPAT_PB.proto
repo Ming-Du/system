@@ -5,7 +5,7 @@ import "header.proto";
 import "String_PB.proto";
 
 message TimeChangeDetails_PB{
-    int32 startTime = 1;
+  int32 startTime = 1;
 	int32 minEndTime = 2;
 	int32 maxEndTime = 3;
 	int32 likelyEndTime = 4;
@@ -37,16 +37,16 @@ message SignalPhase_PB{
 }
 
 message NodeReferenceID_PB{
-    int32 region = 1;
+  int32 region = 1;
 	int32 id = 2;
 }
 
 message SignalIntersectionState_PB{
-    NodeReferenceID_PB intersectionId = 1;
-    String_PB status = 2;
-    int64  minuteOfTheYear = 3;
-    int32  timeStampDSecond = 4;
-    repeated SignalPhase_PB phases = 5;
+  NodeReferenceID_PB intersectionId = 1;
+  String_PB status = 2;
+  int64  minuteOfTheYear = 3;
+  int32  timeStampDSecond = 4;
+  repeated SignalPhase_PB phases = 5;
 }
 
 message Spat{
