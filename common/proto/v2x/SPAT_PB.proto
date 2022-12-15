@@ -6,12 +6,12 @@ import "String_PB.proto";
 
 message TimeChangeDetails_PB{
   int32 startTime = 1;
-	int32 minEndTime = 2;
-	int32 maxEndTime = 3;
-	int32 likelyEndTime = 4;
-	int32 timeConfidence = 5;
-	int32 nextStartTime = 6;
-	int32 nextDuration = 7;
+  int32 minEndTime = 2;
+  int32 maxEndTime = 3;
+  int32 likelyEndTime = 4;
+  int32 timeConfidence = 5;
+  int32 nextStartTime = 6;
+  int32 nextDuration = 7;
 }
 
 message SignalPhaseState_PB{
@@ -31,14 +31,14 @@ message SignalPhaseState_PB{
 }
 
 message SignalPhase_PB{
-	int32 id = 1;
-	String_PB status = 2;
-	repeated SignalPhaseState_PB phaseStates = 3;
+  int32 id = 1;
+  String_PB status = 2;
+  repeated SignalPhaseState_PB phaseStates = 3;
 }
 
 message NodeReferenceID_PB{
   int32 region = 1;
-	int32 id = 2;
+  int32 id = 2;
 }
 
 message SignalIntersectionState_PB{
@@ -50,13 +50,13 @@ message SignalIntersectionState_PB{
 }
 
 message Spat{
-	int32  msgCount = 1;
-	int64  motTimeStamp = 2;
-	String_PB	 id = 3; 
-	repeated SignalIntersectionState_PB intersections = 4;
+  int32  msgCount = 1;
+  int64  motTimeStamp = 2;
+  String_PB	 id = 3; 
+  repeated SignalIntersectionState_PB intersections = 4;
 }
 
 message SPAT_PB {
-	Spat spatFrame = 1;
-	common.Header header = 2;
+  Spat spatFrame = 1;
+  common.Header header = 2;
 }
