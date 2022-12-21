@@ -1087,7 +1087,7 @@
       "mutexs": [],
       "idle_mode_support": 0,
       "function": {
-        "auto_pilot": 1,
+        "auto_pilot": 2,
         "remote_pilot": 1,
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
@@ -1201,7 +1201,7 @@
       "mutexs": [],
       "idle_mode_support": 0,
       "function": {
-        "auto_pilot": 1,
+        "auto_pilot": 2,
         "remote_pilot": 2,
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
@@ -1351,7 +1351,7 @@
       "idle_mode_support": 1,
       "function": {
         "auto_pilot": 1,
-        "remote_pilot": 2,
+        "remote_pilot": 1,
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
@@ -1649,8 +1649,8 @@
       "mutexs": [],
       "idle_mode_support": 0,
       "function": {
-        "auto_pilot": 1,
-        "remote_pilot": 1,
+        "auto_pilot": 2,
+        "remote_pilot": 2,
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
@@ -1683,8 +1683,8 @@
       "mutexs": [],
       "idle_mode_support": 1,
       "function": {
-        "auto_pilot": 1,
-        "remote_pilot": 1,
+        "auto_pilot": 2,
+        "remote_pilot": 2,
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
@@ -1752,8 +1752,8 @@
       "mutexs": [],
       "idle_mode_support": 1,
       "function": {
-        "auto_pilot": 1,
-        "remote_pilot": 1,
+        "auto_pilot": 2,
+        "remote_pilot": 2,
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
@@ -2136,40 +2136,6 @@
       "function": {
         "auto_pilot": 2,
         "remote_pilot": 2,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
-      "launch_name": "perception_fusion_mid.launch",
-      "node_name": "",
-      "package": "perception_fusion_mid",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-106"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "car_type": [
-        "jinlv"
-      ],
-      "node_type": "MAP",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 1,
-        "remote_pilot": 1,
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
