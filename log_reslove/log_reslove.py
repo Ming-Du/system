@@ -565,7 +565,7 @@ class Log_handler():
             idle_spend = call_pub_time - u_spend - s_spend - w_spend
 
             u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/call_pub_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]     
-             if topic_entity['recv_node'].name.find("decoder") < 0:
+            if topic_entity['recv_node'].name.find("decoder") < 0:
                 pdata["use_time"] += call_pub_time
             pdata["path"].append({"type": "call_pub", "node": topic_entity['recv_node'].name, "use_time": call_pub_time})
             pdata["path"].append({"type": "call_pub_cpu", "node": topic_entity['recv_node'].name, 
