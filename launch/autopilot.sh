@@ -588,16 +588,20 @@ export VEHICLE_PLATE
 export JINLV_SUBTYPE
 if [ -f /home/mogo/data/vehicle_monitor/vehicle_config.txt ]; then
     VEHICLE_PLATE=$(grep plate /home/mogo/data/vehicle_monitor/vehicle_config.txt | awk -F: '{print $2}' | sed -e 's/ //g' -e 's/\"//g')
-    JINLV_SUBTYPE=$(grep subtype /home/mogo/data/vehicle_monitor/vehicle_config.txt | awk -F: '{print $2}' | sed -e 's/ //g' -e 's/\"//g')
+    [[ -z "$VEHICLE_PLATE" ]] && LoggingERR "cannot read /home/mogo/data/vehicle_monitor/vehicle_config.txt" "EINIT_LOST_FILE"
+    [[ ! -z "$VEHICLE_PLATE" ]] && ln -snf /home/mogo/data/vehicle_monitor/${VEHICLE_PLATE} /home/mogo/autopilot/share/config/vehicle 2>/dev/null
+fi
+
+if [ -f /home/mogo/autopilot/share/config/vehicle/vehicle_config.txt ]; then
+    JINLV_SUBTYPE=$(grep subtype /home/mogo/autopilot/share/config/vehicle/vehicle_config.txt | awk -F: '{print $2}' | sed -e 's/ //g' -e 's/\"//g')
     if [ ! -z "$JINLV_SUBTYPE" ]; then
       JINLV_SUBTYPE_FLAG=$(grep "export\b[[:space:]]*JINLV_SUBTYPE" ~/.bashrc | grep -v "^#" | tail -1)
       if [ -z "$JINLV_SUBTYPE_FLAG" ]; then
         echo "export JINLV_SUBTYPE=$JINLV_SUBTYPE" >>~/.bashrc
       fi
     fi
-    [[ -z "$VEHICLE_PLATE" ]] && LoggingERR "cannot read /home/mogo/data/vehicle_monitor/vehicle_config.txt" "EINIT_LOST_FILE"
-    [[ ! -z "$VEHICLE_PLATE" ]] && ln -snf /home/mogo/data/vehicle_monitor/${VEHICLE_PLATE} /home/mogo/autopilot/share/config/vehicle 2>/dev/null
 fi
+
 vehicletypes="wey df hq byd jinlv kaiwo"
 [[ -z "$opt_launch_file" && (-z "$VehicleType" || $(echo $vehicletypes | grep -wc $VehicleType) -lt 1) ]] && LoggingERR "vehicle type undefined" && Usage && exit 1
 [ ! -f $MOGO_MSG_CONFIG ] && LoggingERR "cannot get mogo_msg_config,report could be incompletion" "EINIT_LOST_FILE"
