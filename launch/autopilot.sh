@@ -628,7 +628,6 @@ export OMP_NUM_THREADS=1
 export BASHRC="source ${SETUP_ROS} && source ${SETUP_AUTOPILOT}"
 export ROS_ENV="export ROS_LOG_DIR=${ROS_LOG_DIR}; export ROS_MASTER_URI=http://${ros_master}:11311; export ROS_HOSTNAME=${ros_machine}"
 export JINLV_SUBTYPE=${JINLV_SUBTYPE}
-export
 _update
 set_bashrc
 #获取车辆用途
