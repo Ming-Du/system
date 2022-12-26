@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <launch>
   <include if="$(eval env('D_CAR_TYPE')=='df')" file="$(find can_adapter)/launch/DongFeng_E70_can_adapter.launch"/>
-  <include if="$(eval env('D_CAR_TYPE')=='jinlv')" file="$(find can_adapter)/launch/jinlv_can_adapter.launch"/>
+  <include if="$(eval env('D_CAR_TYPE')=='jinlv' and env('JINLV_SUBTYPE')=='M1')" file="$(find can_adapter)/launch/M1_can_adapter.launch"/>
+  <include if="$(eval env('D_CAR_TYPE')=='jinlv' and env('JINLV_SUBTYPE')=='M2')" file="$(find can_adapter)/launch/M2_can_adapter.launch"/>
+  <include if="$(eval env('D_CAR_TYPE')=='jinlv' and env('JINLV_SUBTYPE')=='')" file="$(find can_adapter)/launch/jinlv_can_adapter.launch"/>
   <include if="$(eval env('D_CAR_TYPE')=='wey')" file="$(find can_adapter)/launch/vv6_can_adapter.launch"/>
   <include if="$(eval env('D_CAR_TYPE')=='byd')" file="$(find can_adapter)/launch/byd_can_adapter.launch"/>
   <include if="$(eval env('D_CAR_TYPE')=='hq')" file="$(find can_adapter)/launch/Hongqi_H9_can_adapter.launch"/>
