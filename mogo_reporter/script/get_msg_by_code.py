@@ -33,7 +33,7 @@ def gen_report_msg(file_name, code, src="test", org_msg=""):
     Returns:
         code信息json格式
     """
-    file_path = os.path.dirname(os.path.abspath(__file__)) + '/../../config/mogo_msgs/nodes/' + os.path.basename(
+    file_path = os.path.dirname(os.path.abspath(__file__)) + '/../../mogo_messages/nodes/' + os.path.basename(
         file_name)
     if not os.path.exists(file_path):
         print(file_path)

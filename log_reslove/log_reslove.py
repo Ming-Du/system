@@ -479,7 +479,10 @@ class Log_handler():
         # get time used of the topic between put to sub_recv
         pub_recv_time = topic['info']['recv_stamp'] - topic['info']['pub_stamp']
         recv_call_time = topic['info']['call_stamp'] - topic['info']['recv_stamp']
-        data["use_time"] += pub_recv_time + recv_call_time
+        if topic['recv_node'].name.find("local_planning") > 0:
+            data["use_time"] += recv_call_time              #跨机传输的时间戳受时间同步影响，不统计
+        elif topic['recv_node'].name.find("decoder") < 0:
+            data["use_time"] += pub_recv_time + recv_call_time      #从驱动处理完成开始统计
         data["path"].append({"type":"pub_recv", "node":topic['recv_node'].name, "use_time":pub_recv_time})
         data["path"].append({"type":"recv_call", "node":topic['recv_node'].name, "use_time":recv_call_time})
 
@@ -562,7 +565,8 @@ class Log_handler():
             idle_spend = call_pub_time - u_spend - s_spend - w_spend
 
             u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/call_pub_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]     
-            pdata["use_time"] += call_pub_time
+            if topic_entity['recv_node'].name.find("decoder") < 0:
+                pdata["use_time"] += call_pub_time
             pdata["path"].append({"type": "call_pub", "node": topic_entity['recv_node'].name, "use_time": call_pub_time})
             pdata["path"].append({"type": "call_pub_cpu", "node": topic_entity['recv_node'].name, 
             "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
