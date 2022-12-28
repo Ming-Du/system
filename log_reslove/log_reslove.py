@@ -537,6 +537,10 @@ class Log_handler():
 
             if callback in all_link_topic_list[sub_topic_name]:
                 topic_entity = all_link_topic_list[sub_topic_name][callback]
+                if not topic_entity['finish_flag']:
+                    data['succ'] = False
+                    data['wrong'] = '{}[{}] not match success'.format(topic_entity['topic'], callback)
+                    return
             else:
                 data['succ'] = False
                 data['wrong'] = '[uuid:{}] not in all_topic_list of [{}]'.format(callback, sub_topic_name)
