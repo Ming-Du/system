@@ -40,3 +40,6 @@ utm_y : 4449854.790312
 pre_coef : 0.5
 trj_num : 20
 filter_coef: 1
+flag_scenario_change : 0
+plan_dis_lmt : 50
+plan_width_buff : 0.5
