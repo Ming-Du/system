@@ -271,6 +271,7 @@ add_privilege_monitor_gnss() {
     chmod -R 777 /autocar-code/install/share/hd_map_agent  >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/share/trajectory_agent  >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/lib/drivers_innolidar  >/dev/null 2>&1
+    chmod -R 777 /autocar-code/install/lib/zvision_lidar_driver  >/dev/null 2>&1
     chmod -R 777 /autocar-code/install/share/update_config_simple  >/dev/null 2>&1
 }
 
@@ -521,6 +522,11 @@ trap 'command_handler "stop_map"' 35
 export ABS_PATH # autopilot.sh脚本的路径
 ABS_PATH="$(cd "$(dirname $0)" && pwd)"
 
+echo 0 > /proc/sys/vm/swappiness
+echo 500 > /proc/sys/vm/watermark_scale_factor
+echo 5 > /proc/sys/vm/dirty_background_ratio
+echo 60 > /proc/sys/vm/dirty_ratio
+
 declare -A -g map_pid_name=() sys_pid_name=()
 declare -g launch_files_array=() map_launch_files_array=() sys_launch_files_array=()
 declare -g map_child_node_array=() sys_child_node_array=()
@@ -579,11 +585,23 @@ export TitleOpt        # 指定terminal窗口标题的选项，xfce为'-T'，gno
 export SETUP_ROS       # ros系统自带的setup.bash路径，一般位于/opt/ros/melodic/setup.bash
 export SETUP_AUTOPILOT # 用户程序的setup.bash
 export VEHICLE_PLATE
+export JINLV_SUBTYPE
 if [ -f /home/mogo/data/vehicle_monitor/vehicle_config.txt ]; then
     VEHICLE_PLATE=$(grep plate /home/mogo/data/vehicle_monitor/vehicle_config.txt | awk -F: '{print $2}' | sed -e 's/ //g' -e 's/\"//g')
     [[ -z "$VEHICLE_PLATE" ]] && LoggingERR "cannot read /home/mogo/data/vehicle_monitor/vehicle_config.txt" "EINIT_LOST_FILE"
     [[ ! -z "$VEHICLE_PLATE" ]] && ln -snf /home/mogo/data/vehicle_monitor/${VEHICLE_PLATE} /home/mogo/autopilot/share/config/vehicle 2>/dev/null
 fi
+
+if [ -f /home/mogo/autopilot/share/config/vehicle/vehicle_config.txt ]; then
+    JINLV_SUBTYPE=$(grep subtype /home/mogo/autopilot/share/config/vehicle/vehicle_config.txt | awk -F: '{print $2}' | sed -e 's/ //g' -e 's/\"//g')
+    if [ ! -z "$JINLV_SUBTYPE" ]; then
+      JINLV_SUBTYPE_FLAG=$(grep "export\b[[:space:]]*JINLV_SUBTYPE" ~/.bashrc | grep -v "^#" | tail -1)
+      if [ -z "$JINLV_SUBTYPE_FLAG" ]; then
+        echo "export JINLV_SUBTYPE=$JINLV_SUBTYPE" >>~/.bashrc
+      fi
+    fi
+fi
+
 vehicletypes="wey df hq byd jinlv kaiwo"
 [[ -z "$opt_launch_file" && (-z "$VehicleType" || $(echo $vehicletypes | grep -wc $VehicleType) -lt 1) ]] && LoggingERR "vehicle type undefined" && Usage && exit 1
 [ ! -f $MOGO_MSG_CONFIG ] && LoggingERR "cannot get mogo_msg_config,report could be incompletion" "EINIT_LOST_FILE"
@@ -613,6 +631,7 @@ export ROS_MASTER_URI=http://${ros_master}:11311
 export OMP_NUM_THREADS=1
 export BASHRC="source ${SETUP_ROS} && source ${SETUP_AUTOPILOT}"
 export ROS_ENV="export ROS_LOG_DIR=${ROS_LOG_DIR}; export ROS_MASTER_URI=http://${ros_master}:11311; export ROS_HOSTNAME=${ros_machine}"
+export JINLV_SUBTYPE=${JINLV_SUBTYPE}
 _update
 set_bashrc
 #获取车辆用途
@@ -757,7 +776,7 @@ while [ -z "$request_master_mes" ]; do
     request_master_mes=$(curl -d -m 10 -o /dev/null -s http://${master_ip}:8080/report_config)
     LoggingINFO "waitting for systerm master running!"
 done
-LoggingINFO "$request_master_mes"
+LoggingINFO "ssm ret=$request_master_mes"
 old_rquest_master_mes="The datas used fault format"
 # 判断是否走新agent
 if [[ $request_master_mes =~ $old_rquest_master_mes ]]; then

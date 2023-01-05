@@ -118,8 +118,9 @@
             "type": "SYS"
         },
         {
-            "name": "drivers_camera30.launch",
-            "package": "launch",
+            "name": "sensing30.launch",
+            "package": "config",
+            "path": "vehicle/drivers/camera",
             "machine": {
                 "df": {
                     "2x": [
@@ -149,8 +150,9 @@
             "type": "MAP"
         },
         {
-            "name": "drivers_camera60.launch",
-            "package": "launch",
+            "name": "sensing60.launch",
+            "package": "config",
+            "path": "vehicle/drivers/camera",
             "machine": {
                 "df": {
                     "2x": [
@@ -180,8 +182,9 @@
             "type": "MAP"
         },
         {
-            "name": "drivers_camera120.launch",
-            "package": "launch",
+            "name": "sensing120.launch",
+            "package": "config",
+            "path": "vehicle/drivers/camera",
             "machine": {
                 "df": {
                     "2x": [],
@@ -440,7 +443,7 @@
                 },
                 "jinlv": {
                     "2x": [
-                        "rosslave"    
+                        "rosslave"
                     ],
                     "6x": [
                         "rosslave-106"
@@ -680,31 +683,103 @@
             "type": "MAP"
         },
         {
-            "name": "perception_lidar.launch",
+            "name": "drivers_rslidar.launch",
             "package": "launch",
             "machine": {
-                "df": {
-                    "2x": [
-                        "rosslave"
-                    ],
-                    "6x": [
-                        "rosslave-104"
-                    ]
-                },
-                "hq": {
-                    "2x": [
-                        "rosslave"
-                    ],
-                    "6x": [
-                        "rosslave-104"
-                    ]
-                },
                 "jinlv": {
                     "2x": [
                         "rosslave"
                     ],
                     "6x": [
                         "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "drivers_innolidar.launch",
+            "package": "launch",
+            "machine": {
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-104"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "drivers_zvisionlidar.launch",
+            "package": "launch",
+            "machine": {
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_lidar.launch",
+            "package": "launch",
+            "machine": {
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_M1_lidar.launch",
+            "package": "launch",
+            "machine": {
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_falcon_lidar.launch",
+            "package": "launch",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-104"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_zvision_lidar.launch",
+            "package": "launch",
+            "machine": {
+                "jinlv": {
+                    "2x": [
+                        "rosslave"
+                    ],
+                    "6x": [
+                        "rosslave-107"
                     ]
                 }
             },
@@ -927,7 +1002,7 @@
         },
         {
             "name": "radar_308_front.launch",
-            "package": "config",
+            "package":"config",
             "path": "vehicle/drivers/radar",
             "machine": {
                 "jinlv": {
@@ -955,7 +1030,7 @@
         },
         {
             "name": "radar_fusion.launch",
-            "package":"config",
+            "package": "config",
             "path": "vehicle/perception/radar",
             "machine": {
                 "jinlv": {
@@ -975,6 +1050,44 @@
                     "2x": [],
                     "6x": [
                         "rosslave-104"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "drivers_rslidar.launch",
+            "package": "launch",
+            "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "drivers_zvisionlidar.launch",
+            "package": "launch",
+            "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                },
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-107"
                     ]
                 }
             },
@@ -1207,7 +1320,7 @@
             },
             "type": "SYS"
         },
-		 {
+        {
             "name": "update_config_simple.launch",
             "package": "update_config_simple",
             "machine": {
@@ -1290,6 +1403,32 @@
                     "2x": [],
                     "6x": [
                         "rosslave-106"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_2D_hd_node_6x_df.launch",
+            "package": "perception_camera_2D_hd",
+            "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosmaster"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "perception_2D_hd_node_6x_bus.launch",
+            "package": "perception_camera_2D_hd",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosmaster"
                     ]
                 }
             },

@@ -128,10 +128,10 @@
       }
     },
     {
-      "launch_name": "drivers_camera30.launch",
+      "launch_name": "sensing30.launch",
       "node_name": "",
-      "package": "launch",
-      "path": "",
+      "package": "config",
+      "path": "vehicle/drivers/camera",
       "machine": {
         "2x": {
           "must": [
@@ -166,10 +166,10 @@
       }
     },
     {
-      "launch_name": "drivers_camera60.launch",
+      "launch_name": "sensing60.launch",
       "node_name": "",
-      "package": "launch",
-      "path": "",
+      "package": "config",
+      "path": "vehicle/drivers/camera",
       "machine": {
         "2x": {
           "must": [
@@ -204,10 +204,10 @@
       }
     },
     {
-      "launch_name": "drivers_camera120.launch",
+      "launch_name": "sensing120.launch",
       "node_name": "",
-      "package": "launch",
-      "path": "",
+      "package": "config",
+      "path": "vehicle/drivers/camera",
       "machine": {
         "2x": {
           "must": [],
@@ -1170,7 +1170,7 @@
         "mem_ctrl": 0
       }
     },
-     {
+    {
       "launch_name": "trajectory_agent.launch",
       "node_name": "",
       "package": "trajectory_agent",
@@ -1760,6 +1760,76 @@
       }
     },
     {
+      "launch_name": "drivers_rslidar.launch",
+      "node_name": "",
+      "package": "launch",
+      "path": "",
+      "machine": {
+        "2x": {
+          "must": [],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosslave-106"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "car_type": [
+        "df",
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
+      "launch_name": "drivers_zvisionlidar.launch",
+      "node_name": "",
+      "package": "launch",
+      "path": "",
+      "machine": {
+        "2x": {
+          "must": [],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosslave-107"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "car_type": [
+        "df",
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
       "launch_name": "drivers_innolidar.launch",
       "node_name": "",
       "package": "launch",
@@ -1779,6 +1849,7 @@
         }
       },
       "car_type": [
+        "df",
         "jinlv"
       ],
       "node_type": "MAP",
@@ -1827,6 +1898,74 @@
         "mem_ctrl": 0
       }
     },
+    {
+      "launch_name": "perception_M1_lidar.launch",
+      "node_name": "",
+      "package": "config",
+      "path": "vehicle/perception/lidar",
+      "machine": {
+        "2x": {
+          "must": [],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosslave-106"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
+      "launch_name": "perception_zvision_lidar.launch",
+      "node_name": "",
+      "package": "config",
+      "path": "vehicle/perception/lidar",
+      "machine": {
+        "2x": {
+          "must": [],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosslave-107"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },     
     {
       "launch_name": "hadmap.launch",
       "node_name": "",
@@ -2142,6 +2281,40 @@
       }
     },
     {
+      "launch_name": "perception_fusion_mid.launch",
+      "node_name": "",
+      "package": "perception_fusion_mid",
+      "path": "",
+      "machine": {
+        "2x": {
+          "must": [],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosslave-106"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 1,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
       "launch_name": "locating.launch",
       "node_name": "",
       "package": "vslam",
@@ -2170,6 +2343,76 @@
       "function": {
         "auto_pilot": 2,
         "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
+      "launch_name": "perception_2D_hd_node_6x_df.launch",
+      "node_name": "",
+      "package": "perception_camera_2D_hd",
+      "path": "",
+      "machine": {
+        "2x": {
+          "must": [
+          ],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosmaster"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "car_type": [
+        "df"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 1,
+        "remote_pilot": 1,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
+      "launch_name": "perception_2D_hd_node_6x_bus.launch",
+      "node_name": "",
+      "package": "perception_camera_2D_hd",
+      "path": "",
+      "machine": {
+        "2x": {
+          "must": [
+          ],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosmaster"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 1,
+        "remote_pilot": 1,
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0

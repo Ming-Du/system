@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <launch>
   <include if="$(eval env('D_CAR_TYPE')=='df')" file="$(find controller)/launch/controller_dfe70.launch"/>
-  <include if="$(eval env('D_CAR_TYPE')=='jinlv')" file="$(find controller)/launch/controller_jinlv.launch"/>
+  <include if="$(eval env('D_CAR_TYPE')=='jinlv' and env('JINLV_SUBTYPE')=='M1')" file="$(find controller)/launch/controller_m1.launch"/>
+  <include if="$(eval env('D_CAR_TYPE')=='jinlv' and env('JINLV_SUBTYPE')=='M2')" file="$(find controller)/launch/controller_m2.launch"/>
+  <include if="$(eval env('D_CAR_TYPE')=='jinlv' and env('JINLV_SUBTYPE')=='')" file="$(find controller)/launch/controller_jinlv.launch"/>
   <include if="$(eval env('D_CAR_TYPE')=='wey')" file="$(find controller)/launch/controller_vv6.launch"/>
   <include if="$(eval env('D_CAR_TYPE')=='byd')" file="$(find controller)/launch/controller_qinpro.launch"/>
   <include if="$(eval env('D_CAR_TYPE')=='hq')" file="$(find controller)/launch/controller_hqh9.launch"/>

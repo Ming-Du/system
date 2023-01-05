@@ -35,6 +35,7 @@ add_message_files(
   RoadArrow.msg
   LaneLine.msg
   LaneLines.msg
+  RoadSide.msg
 )
 
 add_service_files(
@@ -46,6 +47,7 @@ add_service_files(
   StartTask.srv
   StopTask.srv
   TaskInfo.srv
+  BinarySrv.srv
 )
 
 ## Generate added messages and services with any dependencies listed here

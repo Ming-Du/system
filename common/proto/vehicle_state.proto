@@ -4,6 +4,15 @@ package chassis;
 import "header.proto";
 import "chassis.proto";
 
+message RoboTaxiState {
+    optional bool veh_rta_recover = 1 [default = false]; // 车辆可进入自动驾驶标志位，不可进入时一定时间内恢复可自动进入
+    optional bool veh_rta_no_recover = 2 [default = false];  // 车辆可进入自动驾驶标志位，不可进入时恢复无法自动进入
+}
+
+message RoboBusState {
+    optional bool reserved = 1; // 预留
+}
+
 message VehicleState {
     optional common.Header header = 1;
     optional chassis.PilotMode pilot_mode = 2 [default = MODE_MANUAL];
@@ -43,5 +52,16 @@ message VehicleState {
 
     optional float leftFrontWheelAngle = 33 [default = 0];//左前轮角度（deg）,左负右正
     optional float rightFrontWheelAngle = 34 [default = 0]; //右前轮角度（deg）,左负右正
+
+    optional chassis.EPBWorkStatus epb = 35 [default = EPBSTATUS_NONE]; // EPB工作状态
+    optional chassis.VehicleTakeOverStatus vehicletakeoverstatus = 36 [default = None_TakeOver]; // 车辆人工接管状态
+    optional bool Emergency_Stop_Switch = 37 [default = false]; // 急停开关状态
+    optional chassis.VehicleFaultLevel vehiclefaultlevel = 38 [default = None_Fault]; // 整车故障状态
+
     optional float bms_soc = 40 [default = 0];  // 电量百分比范围   0~100
+    optional float fuel_value = 41 [default = 0]; // 油车剩余油量
+
+
+    optional RoboTaxiState robo_taxi_state = 201; // taxi状态
+    optional RoboBusState robo_bus_state = 202; // bus状态
 }
