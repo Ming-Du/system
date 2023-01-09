@@ -737,7 +737,7 @@ class Log_handler():
 
                 result[name] = list()
                 topic_match_dict = dict()
-                last_match_time = 0
+                last_match_time = self.last_timestamp
                 wrong_count = 0
                 for uuid, info in node_entity.start_pub_msg_list.items():
                     ## 找到起始的uuid，通过topic遍历, 一直查找到 end_node (can_adapter)

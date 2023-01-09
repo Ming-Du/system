@@ -1,186 +1,77 @@
 
-一：环境配置
+一：运行说明
 
-1，需要安装 protobuf python 库，解析 ros nodes 消息使用。
-可以通过 pip install protobuf 命令安装
+1，车上运行，匹配自动驾驶过程中的时间点，订阅了车辆状态topic /system_master/SysVehicleState
+	车上手动启动命令 容器中root用户下执行 
+	roslaunch --wait /home/mogo/autopilot/share/log_reslove/log_reslove.launch &
+
+2、离线测试，需要设置 g_test_mode = True  不初始化topic，不匹配自驾时间段
+	离线测试，需要创建好/home/mogo/data/log 目前，并将车上的保留日志放置到 /home/mogo/data/log/ROS_STAT/EXPORT
+    离线环境测试命令  进入到log_reslove源码目录
+	python3 log_reslove.py
 
 
 --------------------------------------------------------
 --------------------------------------------------------
 
-二，工具安装
+二，埋点日志原理介绍
 
-1，新建 operator_tool 目录
+1，参考文档
+   http://wiki.zhidaohulian.com/pages/viewpage.action?pageId=79454645
 
-2，把当前文件夹下全部内容拷贝到 operator_tool 目录下
+2，因为依赖于ros埋点，ros的代码（mogo_libs）修改，需要注意log_reslove的解析变更。
 
-3，配置 conf.txt，这是工具脚本的配置文件。
 
-4，和系统其它模块一起编译、安装。
-备注：
-	operator_tool.py 和 operator_tool.ui 以及文件夹中的 proto 都会被安装到同一目录。
-
-4，启动 operator_tool 工具方式
-
-python operator_tool.py qt5 conf.txt
-
-注：
-	1》启动前需要配置好配置文件中的配置项
-	2》脚本需要两个参数，pyqt 版本和 配置文件 conf.txt 的绝对路径。
-	3》如果启动失败，主要原因就是 conf.txt 指定有错，或者配置文件有问题。
-	
-5，用 start_operator_tool 启动工具
-为了方便启动工具，把启动命令写入一个简单脚本 start_operator_tool.
-给脚本添加执行权限:
-
-chmod 777 start_operator_tool
-
-之后就可以通过它启动工具。
 --------------------------------------------------------
 --------------------------------------------------------
 
-三，工具功能简介
+三，log_reslove 的DAG配置介绍
 
-1，Control tab
-1）Traffic light 部分
-功能状态：可用。
-功能说明：设置红绿灯。
-备注：
+1、 config.py 中双层dict的形式进行了配置
 
-2）Control Mode
-功能状态：可用。
-功能说明：
-	设置自动驾驶或人工驾驶。
-	变换车道线。
-	设置最大行驶速度。
-备注：
+2、第一层字典中的key 表示node名称， value 是二层字典表示了该node的订阅topic列表，发布topic，以及手动埋点关键字段
 
-3）Choose Map
-功能状态：可用
-功能说明：选择行驶地图。
-备注：
-	
-
-4）Lock log
-功能状态：可用
-功能说明：锁定当前 ros 日志
-备注：由于需求理解不同，需要再讨论和测试。
-
-2，Tool tab
-1）Track operation
-功能状态：可用
-功能说名：
-	录制轨迹。
-	导出轨迹文件。
-备注：
-	
-	
-2）Mark maps
-功能状态：可用。
-功能说明：
-	地图打点。
-备注：
-	1》地图打点文件通过配置文件配置路径，名称自动生成。
-	2》举例：/home/root/stop_and_speed_limit_20201214035902.txt
-	3》每次重新启动工具，点击任意地图打点按钮，地图打点文件都会重新生成一个。
-	4》地图打点文件以时间戳为后缀，区分每个不同打点文件。
-	
-3）Calibration
-功能状态：不可用。
-功能说明：
-	外参标定。
-备注：
-	需要再讨论需求细节。
-
-3，Monitor tab
-1）Ros Node
-功能状态：可用
-功能说明：
-	工具启动后，根据收到的节点状态数据，展示当前系统中正在运行和未启动的 ros 节点。绿色表示已经启动，红色表示没有启动。
-	会自动更新 ros 节点启停状态，并展示。
-	启动指定的节点。（此功能是否需要，带讨论。）
-	停止指定的节点。（此功能是否需要，带讨论。）
-备注：
-	只是展示收到的节点状态信息
-
-2）Mem Status
-功能状态：可用。
-功能说明：实时显示当前系统内存状态。
-备注：
-	只是展示收到的内存状态信息
-
-3）Cpu Status
-功能状态：可用。
-功能说明：展示当前系统每个 CPU 的利用率。
-备注：
-	只是展示收到的 cpu 状态信息
+3、注意，目前全链路配置中的节点为关键链路节点，且只支持一路pub输出
 --------------------------------------------------------
 --------------------------------------------------------
 
 
-四，配置文件 conf.txt 配置项说明
+四，log_relove 结构介绍
+
+main()函数中
+  首先 初始化config配置中关键Node节点的实例
+  其次 创建 Log_handler()类，并运行 
+
+关键函数
+	Node_base().update_node_info()  自驾期间的日志行进行解析存储
+	Log_handler().run_once()  一次自驾允许的处理
+
+	Log_handler().get_topic_info() 反向全链路匹配计算函数
+	Log_handler().get_sensor_node_info() 正向全链路匹配计算函数
 
 
-1，traj_filter_exe_path:
-说明：traj_filter 可执行文件的路径。
-举例：/home/mogo/autopilot/lib/hadmap/
-备注：
-	1》路径后面需要有反斜杠 '/'，否则可能找不到可执行文件。
-
-2，record_track_file_path
-说明：轨迹文件存放路径
-举例：/home/mogo/
-备注：
-	1》路径后面需要有反斜杠 '/'。
-	2》文件名自动生成
-	
-3，choose_map_json_file_path
-说明：地图选择功能的配置文件放置路径
-举例：/home/mogo/
-备注：
+关键全局结构：
+all_link_node_list  记录了Node_base的实例列表， 每个实例包含自身node的pub sub man_beg man_end等节点内匹配逻辑
+all_link_topic_list  记录了所有topic的信息字段，包含每个uuid标识的topic的sub pub 以及关联beg 或者 end信息
 
 
-4，mark_map_file_path
-说明：地图打点生成的文件所在路径
-举例：/home/mogo/
-备注：	
-	1》只能指定路径，文件名自动生成。
-	
-5，traj_file_path
-说明：对应于 hadmap_server 的 launch 文件的 traj_file 选项，指定文件路径。
-举例： /home/mogo/autopilot/share/map_data
-备注：
-	1》
-		
-6，traj_file_prefix
-说明：对应于 hadmap_server 的 launch 文件的 traj_file 选项，指定文件路径的前缀。
-举例：$(find map_data)
-备注：
-	1》在 launch 文件中配置可能是如下写法：
-	   <param name="traj_file" value="$(find map_data)/BXY/demo_bxy_ql_gov_40km_af_loc_bias.csv:$(find map_data)/BXY/BXY_19_7_40km.csv:$(find map_data)/BXY/BXY_7_QL_40km.csv" />
-    
-			
-	  发送此 value 给 ros 节点时，需要获取绝对路径：
-	  /home/mogo/autopilot/share/map_data/BXY/demo_bxy_ql_gov_40km_af_loc_bias.csv
-	  
-	  工具需要把 $(find map_data 替换为 /home/mogo/autopilot/share/map_data。
-	  
-	  否则工具发出的路径数据不可用。
-	  
-7，db_file_path
-说明：
-举例：
-备注：
-	1》参考 traj_file_path 和 traj_file_prefix
+--------------------------------------------------------
+--------------------------------------------------------
 
 
-8，db_file_prefix
-说明：
-举例：
-备注：
-	1》参考 traj_file_path 和 traj_file_prefix
+五，log_relove 迭代修改说明
 
-	  
+MAP2.11之前版本 主要功能罗列 
+1、正向统计
+2、反向统计
+3、自驾时间范围的判断
+3、按解析次数(2秒一次) 保存自驾时候日志
+
+
+20220109 log_reslove 迭代修改说明（更新到MAP3.0.0+）
+1、全链路匹配最后时间last_timestamp  只在正向统计中计算
+2、反向统计 只统计last_timestamp 之前的，之后数据缓存，下一次匹配（为了反向匹配更全，减少丢失）
+3、增加clear_match_data_and_save_error_topic 清除last_timestamp之前的topic，输出topic匹配不全的信息
 
 
 
