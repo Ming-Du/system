@@ -1,0 +1,49 @@
+syntax = "proto2";
+package chassis;
+
+import "header.proto";
+
+message RoboSweeperFuTianCleanCmd {
+    optional uint32 clean_open_requirement = 1 [default = 0]; //  清扫作业开启需求 0--no req 1--Req_clean_work, 2--No_clean_work
+    optional uint32 clean_mode_requirement = 2 [default = 0]; //  清扫作业模式需求 0--no req, 1--Sweeping mode, 2--Wash sweeper mode, 3--Pure wash mode, 4--Pure draw mode, 5--close clean mode
+    optional uint32 clean_direction_requirement = 3 [default = 0]; //  清扫方向需求指 0--no req, 1--both side work, 2--left side work, 3--right side work, 4--close side work
+    optional uint32 clean_intensity_requirement = 4 [default = 0]; //  作业强度需求 0--no req, 1--stand clean work, 2--strong clean work
+    optional uint32 dusk_close_requirement = 5 [default = 0];  //  降尘关闭需求 0--no req, 1--close dusk, 2--open dusk
+    optional uint32 suction_nozzlefle_open_requirement = 6 [default = 0]; //  吸嘴挡板需求 0--no req, 1--open, 2--close
+    optional uint32 spray_gun_open_requirement = 7 [default = 0];  // 喷雾枪需求 0--no req, 1--open, 2--close
+    optional uint32 sweepdisk_speed_requirement = 8 [default = 0]; // 扫盘加速需求 0--no req, 1--decelerate req, 2--accelerate req（扫盘加速需求，每点一次为加速一次，每次加速为5%pwm）
+}
+
+message RoboSweeperFuTianTaskCmd {
+    optional RoboSweeperFuTianCleanCmd  robo_sweeper_futian_clean_cmd = 1; // 福田清扫车清扫作业指令
+
+}
+
+message RoboVanSkywellTaskCmd {
+    optional uint32 door_cmd = 1 [default = 0]; //1: 开门 2:关门
+    optional uint32 horn_cmd = 2  [default = 0]; //1:开始鸣笛 2:停止鸣笛
+}
+
+message RoboBusJinlvM1Cmd {
+    optional uint32 air_conditioner_cmd = 1; //0: default, 1: 开启空调, 2: 关闭空调
+    optional uint32 air_conditioner_mode_cmd = 2; //模式 0: default, 1: 自动模式, 2: 制冷模式, 3: 通风模式（仅送风，无温度）
+    optional uint32 air_conditioner_wind_speed_cmd = 3; //风速 0: default, 1: 1档，2: 2档，3:3档
+    optional uint32 air_conditioner_temperature_cmd = 4; //温度 0: default, 16-26: 温度
+
+    optional uint32 header_cmd = 5; //0: default, 1: 开启暖风机, 2: 关闭暖风机
+    optional uint32 header_wind_speed_cmd = 6; //风速 0: default, 1: 1档，2: 2档
+
+    optional uint32 main_lamp1_cmd = 7; //0: default, 1: 开启顶灯1, 2: 关闭顶灯1
+    optional uint32 main_lamp2_cmd = 8; //0: default, 1: 开启顶灯2, 2: 关闭顶灯2
+    optional uint32 small_lamp_cmd = 9; //0: default, 1: 开启小灯(氛围灯), 2: 关闭小灯(氛围灯)
+
+    optional uint32 front_door_cmd = 10; //0: default, 1: 开启车门, 2: 关闭车门
+}
+
+
+message SpecialVehicleTaskCmd {
+    optional common.Header header = 1;
+    optional RoboSweeperFuTianTaskCmd robo_sweeper_futian_task_cmd = 2; // 福田清扫车业务指令
+    optional RoboVanSkywellTaskCmd robo_van_skywell_task_cmd = 3; // 开沃小巴业务指令
+    optional RoboBusJinlvM1Cmd robo_bus_jinlv_m1_cmd = 4; //金旅定制车m1指令
+}

@@ -6,7 +6,7 @@ import "geometry.proto";
 enum ProtocolVersion
 {
     Defaultver = 0;
-    CurrentVersion = 9; //每次修改proto文件增加1
+    CurrentVersion = 10; //每次修改proto文件增加1
 }
 
 enum MessageType
@@ -453,9 +453,14 @@ enum DrivingState
     AUTO_LANE_CHANGE_RIGHT = 6; //主动向左变道状态: driving_action：1 表示触发变道；driving_action:2 表示执行变道；driving_action:3 表示变道取消；driving_action:4 表示变道完成
     LANE_AVOID_LEFT = 7; //主动向左绕行状态: driving_action：1 表示触发绕行；driving_action:2 表示执行绕行；driving_action:3 表示绕行取消；driving_action:4 表示绕行完成
     LANE_AVOID_RIGHT = 8; //主动向右绕行状态: driving_action：1 表示触发绕行；driving_action:2 表示执行绕行；driving_action:3 表示绕行取消；driving_action:4 表示绕行完成
-    START_UP = 9; //起步状态： driving_action：1 表示正常启动；driving_action:2 表示择机起步；
-    PULL_OVER = 10; //靠边停车状态： driving_action：1 表示正常靠边停车；driving_action:2 表示择机靠边停车；
-    UN_PROTECTED_INTERSECTION = 11; //路口预测响应状态： driving_action：1 表示触发了预测响应；
+    START_UP = 9; //起步状态： driving_action：1 表示正常启动；driving_action:2 表示择机起步
+    PULL_OVER = 10; //靠边停车状态： driving_action：1 表示正常靠边停车；driving_action:2 表示择机靠边停车
+    UN_PROTECTED_INTERSECTION = 11; //路口预测响应状态： driving_action：1 表示触发了预测响应
+    AUTO_LANE_CHANGE_LEFT_V2N = 12; //V2N主动向左变道状态: driving_action：1 表示触发变道；driving_action:2 表示执行变道；driving_action:3 表示变道取消；driving_action:4 表示变道完成
+    AUTO_LANE_CHANGE_RIGHT_V2N = 13; //V2N主动向右变道状态: driving_action：1 表示触发变道；driving_action:2 表示执行变道；driving_action:3 表示变道取消；driving_action:4 表示变道完成
+    LANE_AVOID_LEFT_V2N = 14; //V2N主动向左绕行状态: driving_action：1 表示触发绕行；driving_action:2 表示执行绕行；driving_action:3 表示绕行取消；driving_action:4 表示绕行完成
+    LANE_AVOID_RIGHT_V2N = 15; //V2N主动向右绕行状态: driving_action：1 表示触发绕行；driving_action:2 表示执行绕行；driving_action:3 表示绕行取消；driving_action:4 表示绕行完成
+    WAITING_V2N = 16; //V2N正在等待变道避让施工场景/静止障碍物: driving_action：1 表示正在等待；driving_action:2 表示等待超时请求平行驾驶；
 }
 
 enum DrivingAction
@@ -518,6 +523,4 @@ message TripInfoEvent
 
 //message definition for MsgTypeBagManagerCmd
 //refer to bag_manager.proto for details
-
-
 
