@@ -59,6 +59,7 @@ enum MessageType
     MsgTypeSetParamReq = 0x10119; //设置参数命令
     MsgTypeTripInfoEvent = 0x1011a; //行程信息
     MsgTypeBagManagerCmd = 0x1011b; //bag管理
+    MsgTypePlanningCmd = 0x1011c; //给planning的指令
 }
 
 message Header
@@ -456,11 +457,30 @@ enum DrivingState
     START_UP = 9; //起步状态： driving_action：1 表示正常启动；driving_action:2 表示择机起步
     PULL_OVER = 10; //靠边停车状态： driving_action：1 表示正常靠边停车；driving_action:2 表示择机靠边停车
     UN_PROTECTED_INTERSECTION = 11; //路口预测响应状态： driving_action：1 表示触发了预测响应
+
     AUTO_LANE_CHANGE_LEFT_V2N = 12; //V2N主动向左变道状态: driving_action：1 表示触发变道；driving_action:2 表示执行变道；driving_action:3 表示变道取消；driving_action:4 表示变道完成
     AUTO_LANE_CHANGE_RIGHT_V2N = 13; //V2N主动向右变道状态: driving_action：1 表示触发变道；driving_action:2 表示执行变道；driving_action:3 表示变道取消；driving_action:4 表示变道完成
     LANE_AVOID_LEFT_V2N = 14; //V2N主动向左绕行状态: driving_action：1 表示触发绕行；driving_action:2 表示执行绕行；driving_action:3 表示绕行取消；driving_action:4 表示绕行完成
     LANE_AVOID_RIGHT_V2N = 15; //V2N主动向右绕行状态: driving_action：1 表示触发绕行；driving_action:2 表示执行绕行；driving_action:3 表示绕行取消；driving_action:4 表示绕行完成
     WAITING_V2N = 16; //V2N正在等待变道避让施工场景/静止障碍物: driving_action：1 表示正在等待；driving_action:2 表示等待超时请求平行驾驶；
+
+    AUTO_LANE_CHANGE_LEFT_RSI = 17; //V2N RSI主动向左变道状态: driving_action：1 表示触发变道；driving_action:2 表示执行变道；driving_action:3 表示变道取消；driving_action:4 表示变道完成
+    AUTO_LANE_CHANGE_RIGHT_RSI = 18; //V2N RSI主动向右变道状态: driving_action：1 表示触发变道；driving_action:2 表示执行变道；driving_action:3 表示变道取消；driving_action:4 表示变道完成
+    LANE_AVOID_LEFT_RSI = 19; //V2N RSI主动向左绕行状态: driving_action：1 表示触发绕行；driving_action:2 表示执行绕行；driving_action:3 表示绕行取消；driving_action:4 表示绕行完成
+    LANE_AVOID_RIGHT_RSI = 20; //V2N RSI主动向右绕行状态: driving_action：1 表示触发绕行；driving_action:2 表示执行绕行；driving_action:3 表示绕行取消；driving_action:4 表示绕行完成
+    WAITING_RSI = 21; //V2N RSI正在等待变道避让施工场景/静止障碍物: driving_action：1 表示正在等待；driving_action:2 表示等待超时请求平行驾驶；
+
+    AUTO_LANE_CHANGE_LEFT_RSM = 22; //V2N RSM主动向左变道状态: driving_action：1 表示触发变道；driving_action:2 表示执行变道；driving_action:3 表示变道取消；driving_action:4 表示变道完成
+    AUTO_LANE_CHANGE_RIGHT_RSM = 23; //V2N RSM主动向右变道状态: driving_action：1 表示触发变道；driving_action:2 表示执行变道；driving_action:3 表示变道取消；driving_action:4 表示变道完成
+    LANE_AVOID_LEFT_RSM = 24; //V2N RSM主动向左绕行状态: driving_action：1 表示触发绕行；driving_action:2 表示执行绕行；driving_action:3 表示绕行取消；driving_action:4 表示绕行完成
+    LANE_AVOID_RIGHT_RSM = 25; //V2N RSM主动向右绕行状态: driving_action：1 表示触发绕行；driving_action:2 表示执行绕行；driving_action:3 表示绕行取消；driving_action:4 表示绕行完成
+    WAITING_RSM = 26; //V2N RSM正在等待变道避让施工场景/静止障碍物: driving_action：1 表示正在等待；driving_action:2 表示等待超时请求平行驾驶；
+
+    AUTO_LANE_CHANGE_LEFT_RSI_TRIANGLE = 27; //V2N 三角锥主动向左变道状态: driving_action：1 表示触发变道；driving_action:2 表示执行变道；driving_action:3 表示变道取消；driving_action:4 表示变道完成
+    AUTO_LANE_CHANGE_RIGHT_RSI_TRIANGLE = 28; //V2N 三角锥主动向右变道状态: driving_action：1 表示触发变道；driving_action:2 表示执行变道；driving_action:3 表示变道取消；driving_action:4 表示变道完成
+    LANE_AVOID_LEFT_RSI_TRIANGLE = 29; //V2N 三角锥主动向左绕行状态: driving_action：1 表示触发绕行；driving_action:2 表示执行绕行；driving_action:3 表示绕行取消；driving_action:4 表示绕行完成
+    LANE_AVOID_RIGHT_RSI_TRIANGLE = 30; //V2N 三角锥主动向右绕行状态: driving_action：1 表示触发绕行；driving_action:2 表示执行绕行；driving_action:3 表示绕行取消；driving_action:4 表示绕行完成
+    WAITING_RSI_TRIANGLE = 31; //V2N 三角锥正在等待变道避让施工场景/静止障碍物: driving_action：1 表示正在等待；driving_action:2 表示等待超时请求平行驾驶
 }
 
 enum DrivingAction
@@ -470,6 +490,11 @@ enum DrivingAction
     DRIVING_ACTION_STATE_TWO = 2;
     DRIVING_ACTION_STATE_THREE = 3;
     DRIVING_ACTION_STATE_FOUR = 4;
+    DRIVING_ACTION_STATE_FIVE = 5;
+    DRIVING_ACTION_STATE_SIX = 6;
+    DRIVING_ACTION_STATE_SEVEN = 7;
+    DRIVING_ACTION_STATE_EIGHT = 8;
+    DRIVING_ACTION_STATE_NINE = 9;
 }
 
 message DrivingActionMsg
@@ -478,10 +503,36 @@ message DrivingActionMsg
     DrivingAction driving_action = 2;
 }
 
+enum ParkScenarioDrivingState
+{
+    PARK_SENARIO_NO_AUTODRIVING = 0; //不在自动驾驶状态
+    PARK_SENARIO_LANKE_KEEP = 1; //车道保持状态
+    PARK_SENARIO_LANE_AVOID_LEFT = 2; //主动向左绕行状态: driving_action：1 表示触发绕行；driving_action:2 表示执行绕行；driving_action:3 表示绕行取消；driving_action:4 表示绕行完成
+    PARK_SENARIO_LANE_AVOID_RIGHT = 3; //主动向右绕行状态: driving_action：1 表示触发绕行；driving_action:2 表示执行绕行；driving_action:3 表示绕行取消；driving_action:4 表示绕行完成
+    PARK_SENARIO_START_UP = 4; //起步状态： driving_action：1 表示正常启动；driving_action:2 表示择机起步；
+    PARK_SENARIO_PULL_OVER = 5; //站点停车状态： driving_action：1 表示正常站点停车；driving_action:2 表示择机站点停车；
+    PARK_SENARIO_FORCE_PULL_OVER_ON = 6; //响应触发靠边停车状态： driving_action：1 表示开始靠边停车；driving_action:2 表示靠边停车成功；3：靠边停车失败;
+    PARK_SENARIO_FORCE_PULL_OVER_OFF = 7; //不响应触发靠边停车状态： driving_action：1 表示距离前方站点100m；driving_action:2 表示距离路口100m；3： 正在变道 。。。
+}
+
+message ParkScenarioDrivingAction
+{
+    ParkScenarioDrivingAction driving_state = 1; //决策场景
+    DrivingAction driving_action = 2; //决策场景状态
+}
+
+message ParkScenarioPlanningAction
+{
+    ParkScenarioDrivingAction action_msg = 1; //决策场景（包含场景以及响应状态）
+    double destination_acc = 2; //驾驶的意图（规划期望的加速或者减速值)
+}
+
 message PlanningActionMsg
 {
     DrivingActionMsg action_msg = 1;
     double destination_acc = 2; //驾驶的意图（规划期望的加速或者减速值)
+
+    ParkScenarioPlanningAction park_scenario_action = 3;
 }
 
 //message definition for MsgTypeSpecialVehicleTaskCmd
@@ -523,4 +574,16 @@ message TripInfoEvent
 
 //message definition for MsgTypeBagManagerCmd
 //refer to bag_manager.proto for details
+
+//message definition for MsgTypePlanningCmd
+message PullOverCmd
+{
+    uint32 cmd = 1; //0: default 1: 靠边停车 2:重新起步
+}
+
+message PlanningCmd
+{
+    PullOverCmd pullOverCmd = 1;
+}
+
 
