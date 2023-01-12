@@ -67,4 +67,8 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+install(FILES ros_proto.h
+  DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}/autopilot_msgs
+)
+
 
