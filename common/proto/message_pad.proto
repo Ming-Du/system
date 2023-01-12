@@ -517,7 +517,7 @@ enum ParkScenarioDrivingState
 
 message ParkScenarioDrivingAction
 {
-    ParkScenarioDrivingAction driving_state = 1; //决策场景
+    ParkScenarioDrivingState driving_state = 1; //决策场景
     DrivingAction driving_action = 2; //决策场景状态
 }
 
