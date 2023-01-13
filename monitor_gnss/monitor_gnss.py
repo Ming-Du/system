@@ -32,6 +32,7 @@ from  entity.LocInfo import  LocInfo
 from entity.CommonPara import  CommonPara
 import common.message_pad_pb2 as common_message_pad
 import common.system_state_report_pb2 as common_system_state_report
+import common.trfclts_statistics_pb2 as common_trfclts_statistics
 
 from threading import Thread
 import threading
@@ -44,6 +45,7 @@ globalLocationPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Threa
 globalVihiclePool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_vehicle')
 globalPlanningDecisionStatePool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_planningDecisionState')
 globalStateReportPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_StateReport')
+globalTrfcltsCtrlPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_TrfcltsCtrl')
 globalCollectVehicleInfo  = CollectVehicleInfo()
 globalCommonPara = CommonPara()
 globalLastMicroSec = 0
@@ -63,6 +65,11 @@ globalWriteInterval_decision_status = 50
 globalLastMicroSec_sys_state_report = 0
 globalListSystem_state_report = []
 globalWriteInterval_sys_state_report = 50
+
+globalLastMicroSec_trfclts_ctrl = 0
+globalListTrfclts_ctrl = []
+globalWriteInterval_trfclts_ctrl = 50
+
 
 def folder_check():
     PATH='/home/mogo/data/log/filebeat_upload/'
@@ -465,7 +472,7 @@ def task_stateReport(pb_msg):
         ## update last micro sec
         globalLastMicroSec_sys_state_report = CurrentMicroSec
 
-    elif CurrentMicroSec - globalLastMicroSec_sys_state_report >= globalWriteInterval_decision_status:
+    elif CurrentMicroSec - globalLastMicroSec_sys_state_report >= 0:
         rospy.logdebug_throttle(5, "enter first update globalLastMicroSec")
         globalListSystem_state_report.append(dictStateReport)
         ### update  last micro sec
@@ -476,7 +483,7 @@ def task_stateReport(pb_msg):
     if len(globalListSystem_state_report) >= (1000 / globalWriteInterval_sys_state_report):
         tree = lambda: collections.defaultdict(tree)
         dictLogInfo = tree()
-        dictLogInfo["log_type"] = "sweeper_task_index"
+        dictLogInfo["log_type"] = "sys_state_report"
         curSec = rospy.rostime.Time.now().secs
         curNsec = rospy.rostime.Time.now().nsecs
         dictLogInfo["timestamp"]['sec'] = curSec
@@ -569,6 +576,78 @@ def decisionStateCallback(msg):
     if msg.size > 0:
         globalPlanningDecisionStatePool.submit(task_decisionState,msg.data)
 
+def task_trfcltsCtrl(pb_msg):
+    pbStatus = common_trfclts_statistics.TrfcLtsStatistics()
+    pbStatus.ParseFromString(pb_msg.data)
+    dictTrfcltsCtrl = {}
+    dictTrfcltsCtrl['cmd_cnt'] = pbStatus.cmd_cnt
+    dictTrfcltsCtrl['obu_cnt'] = pbStatus.obu_cnt
+    dictTrfcltsCtrl['v2n_cnt'] = pbStatus.v2n_cnt
+    dictTrfcltsCtrl['hhp_cnt'] = pbStatus.hhp_cnt
+    dictTrfcltsCtrl['shp_cnt'] = pbStatus.shp_cnt
+    dictTrfcltsCtrl['vis_cnt'] = pbStatus.vis_cnt
+    dictTrfcltsCtrl['log_cnt'] = pbStatus.log_cnt
+    dictTrfcltsCtrl['cmd_ratio'] = round(pbStatus.cmd_ratio, 5) * 100
+    dictTrfcltsCtrl['obu_ratio'] = round(pbStatus.obu_ratio, 5) * 100
+    dictTrfcltsCtrl['v2n_ratio'] = round(pbStatus.v2n_ratio, 5) * 100
+    dictTrfcltsCtrl['hhp_ratio'] = round(pbStatus.hhp_ratio, 5) * 100
+    dictTrfcltsCtrl['shp_ratio'] = round(pbStatus.shp_ratio, 5) * 100
+    dictTrfcltsCtrl['vis_ratio'] = round(pbStatus.vis_ratio, 5) * 100
+    dictTrfcltsCtrl['log_ratio'] = round(pbStatus.log_ratio, 5) * 100
+
+    rospy.logdebug("dictTrfcltsCtrl:{0}".format(dictTrfcltsCtrl))
+
+    sec = rospy.rostime.Time.now().secs
+    nsec = rospy.rostime.Time.now().nsecs
+    CurrentMicroSec = sec * 1000 + nsec / 1000000
+
+    global globalListTrfclts_ctrl
+    global globalLastMicroSec_trfclts_ctrl
+
+    while True:
+        if globalLastMicroSec_trfclts_ctrl == 0:
+            rospy.logdebug_throttle(5, "enter first update globalLastMicroSec")
+            globalListTrfclts_ctrl.append(dictTrfcltsCtrl)
+            ## update last micro sec
+            globalLastMicroSec_trfclts_ctrl = CurrentMicroSec
+            break
+        if (CurrentMicroSec - globalLastMicroSec_trfclts_ctrl > globalWriteInterval_trfclts_ctrl) or (
+                CurrentMicroSec - globalLastMicroSec_trfclts_ctrl == globalWriteInterval_trfclts_ctrl):
+            rospy.logdebug_throttle(5, "enter first update globalLastMicroSec")
+            globalListTrfclts_ctrl.append(dictTrfcltsCtrl)
+            ### update  last micro sec
+            globalLastMicroSec_trfclts_ctrl = CurrentMicroSec
+            break
+        break
+
+    if (len(globalListTrfclts_ctrl) > (1000 / globalWriteInterval_trfclts_ctrl)) or (
+            len(globalListTrfclts_ctrl) == (1000 / globalWriteInterval_trfclts_ctrl)):
+        tree = lambda: collections.defaultdict(tree)
+        dictLogInfo = tree()
+        dictLogInfo["log_type"] = "trfclts_ctrl"
+        curSec = rospy.rostime.Time.now().secs
+        curNsec = rospy.rostime.Time.now().nsecs
+        dictLogInfo["timestamp"]['sec'] = curSec
+        dictLogInfo["timestamp"]["nsec"] = curNsec
+        dictLogInfo["car_info"] = globalCommonPara.dictCarInfo
+        dictLogInfo["content"] = globalListTrfclts_ctrl
+        strJsonLineContent = json.dumps(dictLogInfo)
+
+        try:
+            folder_check()
+            with open('/home/mogo/data/log/filebeat_upload/trfclts_ctrl.log', 'a+') as f:
+                f.write(strJsonLineContent)
+                f.write("\n")
+            globalListTrfclts_ctrl = []
+        except Exception as e:
+            rospy.logwarn('repr(e):{0}'.format(repr(e)))
+            rospy.logwarn('e.message:{0}'.format(e.message))
+            rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+
+
+def trfcltsCtrlCallback(msg):
+    if len(msg.data) > 0:
+        globalTrfcltsCtrlPool.submit(task_trfcltsCtrl, msg)
 
 def addLocalizationListener():
     rospy.Subscriber('/localization/global', BinaryData, localizationCallback)
@@ -576,6 +655,8 @@ def addLocalizationListener():
     rospy.Subscriber('/planning/decision_state',BinaryData,decisionStateCallback)
     # huxinyu added this new topic at 20221206
     rospy.Subscriber('/system_master/StateReport', BinaryData, stateReportCallback)
+    # huxinyu added this new topic at 20230104
+    rospy.Subscriber('/perception/camera/trfclts_ctrl_statistics', String, trfcltsCtrlCallback)
 
 def main():
     # initial node
@@ -586,6 +667,7 @@ def main():
     global globalWriteInterval_vehicle_status
     global globalWriteInterval_decision_status
     global globalWriteInterval_sys_state_report
+    global globalWriteInterval_trfclts_ctrl
 
     strFullParaName = "%s/monitor_gnss_interval" %(rospy.get_name())
     rospy.loginfo("strFullParaName:%s" %(strFullParaName))
@@ -620,7 +702,15 @@ def main():
     else:
         globalWriteInterval_sys_state_report = temp
 
-    rospy.loginfo("set globalWriteInterval:{0},globalWriteInterval_vehicle_status:{1},globalWriteInterval_decision_status:{2},globalWriteInterval_sys_state_report:{3}".format(globalWriteInterval,globalWriteInterval_vehicle_status,globalWriteInterval_decision_status,globalWriteInterval_sys_state_report))
+    strFullParaName = "%s/monitor_gnss_interval_trfclts_ctrl" % (rospy.get_name())
+    rospy.loginfo("strFullParaName:%s" % (strFullParaName))
+    temp = rospy.get_param(strFullParaName)
+    if temp >= 1000 or temp <= 0:
+        globalWriteInterval_trfclts_ctrl = 1000
+    else:
+        globalWriteInterval_trfclts_ctrl = temp
+
+    rospy.loginfo("set globalWriteInterval:{0},globalWriteInterval_vehicle_status:{1},globalWriteInterval_decision_status:{2},globalWriteInterval_sys_state_report:{3},globalWriteInterval_trfclts_ctrl:{4}".format(globalWriteInterval,globalWriteInterval_vehicle_status,globalWriteInterval_decision_status,globalWriteInterval_sys_state_report, globalWriteInterval_trfclts_ctrl))
     addLocalizationListener()
     ## wait msg
     rospy.spin()
