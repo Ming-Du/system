@@ -271,7 +271,7 @@ class Log_handler():
     """
     def __init__(self) -> None:
         self.car_info = Car_Status()
-        self.last_timestamp = time.time() * Constants.unit_stamp_sec
+        self.last_timestamp = (time.time()-10) * Constants.unit_stamp_sec #文件时差解决10s
         self.handle_index = -1
         self.time_split_threshold = Constants.g_time_split_threshold
         self.time_start_value = 0
@@ -414,10 +414,10 @@ class Log_handler():
                     st_atime = stat.st_atime
                 if st_mtime <  stat.st_mtime:
                     st_mtime = stat.st_mtime
-            if st_atime < int(time.time()) - 60:
+            if st_atime < int(time.time()) - 30:
                 self.time_start_value = int(time.time()) - 5
             else:
-                self.time_start_value = st_atime - 3  # before min access time 2 sec
+                self.time_start_value = st_atime - 5  # before min access time 5 sec
             self.time_split_end = st_mtime + 2
             if st_mtime - st_atime > self.time_split_threshold:   # log 1.7M/s  30s about 50M
                 log_print('log save {} secs, more than {}, handle a part!'.format(st_mtime-st_atime, self.time_split_threshold) )
@@ -614,8 +614,13 @@ class Log_handler():
         target_match_info = dict()  #{k=path, match_num}
         target_match_info[target] = 0
         for topic_entity in all_link_topic_list[target].values():
-            if not topic_entity['finish_flag'] or self.last_timestamp < topic_entity['info']['call_stamp']:
-                # command 没有匹配完成，链路结束节点时间小于 正向最后时间，本次不进行反向查找
+            if not topic_entity['finish_flag']:
+                # command 没有匹配完成
+                continue  
+            if self.last_last_timestamp > topic_entity['info']['call_stamp'] \
+                or self.last_timestamp < topic_entity['info']['call_stamp']:
+                # 链路的结束节点时间 大于 正向最后时间，本次不进行反向查找
+                # 链路的结束节点时间 小于 上一次正向匹配时间，本次不再反向查找，防止重复
                 continue
             
             target_match_info[target] += 1 # 计算进行匹配的target总数
@@ -644,7 +649,7 @@ class Log_handler():
                     target_match_info[data["split_path_str"]] = 0    
                 target_match_info[data["split_path_str"]] += 1
 
-                # 反向不更新self.last_timestamp， 已正向时间为准
+                # 反向不更新self.last_timestamp， 以正向时间为准
                 # 只对正向时间内进行反向匹配，每次反向计算比正向少算一次全链路时间，但是匹配更全
                 #if self.last_timestamp < topic_entity['info']["recv_stamp"] - data['use_time'] - 1 *Constants.unit_stamp_sec:  #mod by liyl 20220414 delay 1 sec for test
                 #    self.last_timestamp = topic_entity['info']["recv_stamp"] - data['use_time'] - 1 *Constants.unit_stamp_sec
@@ -916,7 +921,7 @@ class Log_handler():
                 if not topic['finish_flag']:
                     # topic没有匹配成功，属于没有pub或者sub的情况
                     if 'call_stamp' in topic['info']: ## 存在sub的情况，没有上游pub, 存在日志丢死可能
-                        if topic['info'].get('call_stamp') <= self.last_timestamp:
+                        if topic['info'].get('call_stamp') <= self.last_last_timestamp:
                             pub_error_list.append({
                                 'topic':topic['topic'],
                                 'recv_node':topic['recv_node'].name, 
@@ -929,7 +934,7 @@ class Log_handler():
                         else:
                             all_link_topic_temp[uuid] = topic
                     else: # 没有call 那边必定有 pub信息，需要清除发生节点中的finish_dict
-                        if topic['info'].get('pub_stamp') <= self.last_timestamp:
+                        if topic['info'].get('pub_stamp') <= self.last_last_timestamp:
                             sub_error_list.append({
                                 'topic':topic['topic'],
                                 'send_node':topic['send_node'].name,
@@ -942,7 +947,7 @@ class Log_handler():
                         else:
                             all_link_topic_temp[uuid] = topic
 
-                elif topic['info'].get('call_stamp', 2000000000) > self.last_timestamp:
+                elif topic['info'].get('call_stamp', 2000000000) > self.last_last_timestamp:
                     all_link_topic_temp[uuid] = topic
 
                 else: #将匹配成功时间内，已经匹配的topic 相关信息进行清除

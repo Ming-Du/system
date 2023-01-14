@@ -18,12 +18,9 @@ node_config["/local_planning"]["pub"] = "/planning/trajectory"
 node_config["/local_planning"]["man_beg"] = "planning_begin"
 
 node_config["/perception/fusion/perception_fusion2"] = {}
-node_config["/perception/fusion/perception_fusion2"]["sub"] = ["/perception/fusion_mid/lidar_obstacle", "/perception/camera/camera_obstacle_front60", "/perception/lidar/lidar_zvision_obstacle"]
+node_config["/perception/fusion/perception_fusion2"]["sub"] = ["/perception/lidar/lidar_obstacle", "/perception/camera/camera_obstacle_front60", "/perception/lidar/lidar_zvision_obstacle"]
 node_config["/perception/fusion/perception_fusion2"]["pub"] = "/perception/fusion/obstacles"
 
-node_config["/perception/fusion/perception_fusion_mid"] = {}
-node_config["/perception/fusion/perception_fusion_mid"]["sub"] = ["/perception/lidar/lidar_obstacle"]
-node_config["/perception/fusion/perception_fusion_mid"]["pub"] = "/perception/fusion_mid/lidar_obstacle"
 
 node_config["/perception/lidar/rs_perception_node"] = {}
 node_config["/perception/lidar/rs_perception_node"]["sub"] = ["/sensor/lidar/middle/point_cloud"]
