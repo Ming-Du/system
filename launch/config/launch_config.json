@@ -621,37 +621,6 @@
             "type": "SYS"
         },
         {
-            "name": "trajectory_agent.launch",
-            "package": "trajectory_agent",
-            "machine": {
-                "df": {
-                    "2x": [
-                        "rosslave"
-                    ],
-                    "6x": [
-                        "rosslave-107"
-                    ]
-                },
-                "hq": {
-                    "2x": [
-                        "rosslave"
-                    ],
-                    "6x": [
-                        "rosslave-107"
-                    ]
-                },
-                "jinlv": {
-                    "2x": [
-                        "rosslave"
-                    ],
-                    "6x": [
-                        "rosslave-107"
-                    ]
-                }
-            },
-            "type": "SYS"
-        },
-        {
             "name": "drivers_lidar.launch",
             "package": "launch",
             "machine": {
