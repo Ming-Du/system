@@ -742,7 +742,7 @@ class Log_handler():
 
                 result[name] = list()
                 topic_match_dict = dict()
-                last_match_time = self.last_timestamp
+                last_match_time = self.time_start_value * Constants.unit_stamp_sec
                 wrong_count = 0
                 for uuid, info in node_entity.start_pub_msg_list.items():
                     ## 找到起始的uuid，通过topic遍历, 一直查找到 end_node (can_adapter)
@@ -872,13 +872,15 @@ class Log_handler():
 
             save_data["path"] = split_path_str
             save_data["count"] = len(result)
-            save_data["timestamp"] = int(self.last_timestamp/1000000)
+            #save_data["timestamp"] = int(self.last_timestamp/1000000)
             self.car_info.set_car_info(save_data)
             #log_print(json.dumps(save_data, sort_keys=True, indent=4))
             if from_sensor_flag:
+                save_data["timestamp"] = int(self.last_timestamp/1000000)
                 with open(Constants.output_file_from_sensor, "a+") as fp:
                     fp.write("{0}\n".format(json.dumps(save_data)))
             else:
+                save_data["timestamp"] = int(self.last_last_timestamp/1000000)
                 with open(Constants.output_file, "a+") as fp:
                     fp.write("{0}\n".format(json.dumps(save_data)))
         
@@ -907,9 +909,9 @@ class Log_handler():
         # add by liyl 20230106
         # 本函数增加用于 清除已经匹配的节点，并且从已经完成匹配的时间段中找到pub，sub丢失的情况，输出到文件
         """
-        ## 清除last_last_time 到 last_time 之间的已匹配消息, last_time到现在的消息，依然保存
-        if self.last_timestamp < self.time_start_value * Constants.unit_stamp_sec:
-            self.last_timestamp = self.time_start_value * Constants.unit_stamp_sec
+        ## 清除last_last_time 之前的已匹配消息, last_last_time到现在的消息，依然保存
+        #if self.last_timestamp < self.time_start_value * Constants.unit_stamp_sec:
+        #    self.last_timestamp = self.time_start_value * Constants.unit_stamp_sec
         log_print("this time analyze log timestamp form {} to {} ".format(self.last_last_timestamp, self.last_timestamp))
 
         pub_error_list=list()
