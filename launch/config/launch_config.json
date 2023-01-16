@@ -324,18 +324,6 @@
             "type": "MAP"
         },
         {
-            "name": "perception_2D_side_node_6x_bus.launch",
-            "package": "perception_camera_2D_side",
-            "machine": {
-                "jinlv": {
-                    "6x": [
-                        "rosslave-107"
-                    ]
-                }
-            },
-            "type": "MAP"
-        },
-        {
             "name": "can_adapter.launch",
             "package": "launch",
             "machine": {
@@ -615,37 +603,6 @@
                     ],
                     "6x": [
                         "rosslave-103"
-                    ]
-                }
-            },
-            "type": "SYS"
-        },
-        {
-            "name": "trajectory_agent.launch",
-            "package": "trajectory_agent",
-            "machine": {
-                "df": {
-                    "2x": [
-                        "rosslave"
-                    ],
-                    "6x": [
-                        "rosslave-107"
-                    ]
-                },
-                "hq": {
-                    "2x": [
-                        "rosslave"
-                    ],
-                    "6x": [
-                        "rosslave-107"
-                    ]
-                },
-                "jinlv": {
-                    "2x": [
-                        "rosslave"
-                    ],
-                    "6x": [
-                        "rosslave-107"
                     ]
                 }
             },
