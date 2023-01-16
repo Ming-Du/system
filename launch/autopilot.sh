@@ -190,6 +190,7 @@ set_pr() {
             "xiaoba_lidars_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 15 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             "c32_rear_decoder" | "c32_left_decoder" | "c32_right_decoder") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 11 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             "drivers_robosense_node" | "c32_rear_driver" | "c32_left_driver" | "c32_right_driver") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 10 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+            "zvision_lidar_front_nodelet_manager" | "zvision_lidar_front_nodelet_manager_driver" | "zvision_lidar_front_nodelet_manager_cloud" | "zvision_lidar_left_nodelet_manager" | "zvision_lidar_left_nodelet_manager_driver" | "zvision_lidar_left_nodelet_manager_cloud" | "zvision_lidar_right_nodelet_manager" | "zvision_lidar_right_nodelet_manager_driver" | "zvision_lidar_right_nodelet_manager_cloud" | "zvision_lidar_rear_nodelet_manager" | "zvision_lidar_rear_nodelet_manager_driver" | "zvision_lidar_rear_nodelet_manager_cloud" | "xiaoba_zvisionlidars_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 10 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
             *) ;;
             esac
         done
