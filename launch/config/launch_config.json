@@ -674,10 +674,14 @@
             "name": "drivers_rslidar.launch",
             "package": "launch",
             "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-106"
+                    ]
+                },
                 "jinlv": {
-                    "2x": [
-                        "rosslave"
-                    ],
+                    "2x": [],
                     "6x": [
                         "rosslave-106"
                     ]
@@ -699,22 +703,26 @@
                 }
             },
             "type": "MAP"
-        },
+        },        
         {
             "name": "drivers_zvisionlidar.launch",
             "package": "launch",
             "machine": {
+                "df": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-107"
+                    ]
+                },
                 "jinlv": {
-                    "2x": [
-                        "rosslave"
-                    ],
+                    "2x": [],
                     "6x": [
                         "rosslave-107"
                     ]
                 }
             },
             "type": "MAP"
-        },
+        },        
         {
             "name": "perception_lidar.launch",
             "package": "launch",
@@ -1025,70 +1033,6 @@
                     "2x": [],
                     "6x": [
                         "rosslave-105"
-                    ]
-                }
-            },
-            "type": "MAP"
-        },
-        {
-            "name": "drivers_innolidar.launch",
-            "package": "launch",
-            "machine": {
-                "jinlv": {
-                    "2x": [],
-                    "6x": [
-                        "rosslave-104"
-                    ]
-                }
-            },
-            "type": "MAP"
-        },
-        {
-            "name": "drivers_rslidar.launch",
-            "package": "launch",
-            "machine": {
-                "df": {
-                    "2x": [],
-                    "6x": [
-                        "rosslave-106"
-                    ]
-                },
-                "jinlv": {
-                    "2x": [],
-                    "6x": [
-                        "rosslave-106"
-                    ]
-                }
-            },
-            "type": "MAP"
-        },
-        {
-            "name": "drivers_zvisionlidar.launch",
-            "package": "launch",
-            "machine": {
-                "df": {
-                    "2x": [],
-                    "6x": [
-                        "rosslave-107"
-                    ]
-                },
-                "jinlv": {
-                    "2x": [],
-                    "6x": [
-                        "rosslave-107"
-                    ]
-                }
-            },
-            "type": "MAP"
-        },
-        {
-            "name": "perception_falcon_lidar.launch",
-            "package": "launch",
-            "machine": {
-                "jinlv": {
-                    "2x": [],
-                    "6x": [
-                        "rosslave-104"
                     ]
                 }
             },
