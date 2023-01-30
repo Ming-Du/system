@@ -14,11 +14,12 @@ RoadSide[] roadsides
 
 # add by wandanpan
 RoadArrow[] arrows
-sensor_msgs/Image lane_arrow_stopline_seg
-sensor_msgs/Image fs_rs_seg  # freespace and roadside
+sensor_msgs/Image lane_arrow_stopline_crossing_seg  # lane:235, arrow:245, stopline:255, crossing:205
+sensor_msgs/Image fs_rs_seg  # freespace and roadside, freespace:215, roadside:225
 sensor_msgs/Image laneline_inst_seg  # laneline instance seg
 
 # laneline arrow stopline exist flag
 bool laneline_exist_flag
 bool arrow_exist_flag
 bool stopline_exist_flag
+bool crossing_exist_flag
