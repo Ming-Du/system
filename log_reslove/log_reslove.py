@@ -541,12 +541,12 @@ class Log_handler():
                 topic_entity = all_link_topic_list[sub_topic_name][callback]
                 if not topic_entity['finish_flag']:
                     # 怀疑相同id替换会出现这种情况的错误（feature）
-                    data['succ'] = False
-                    data['wrong'] = '{}[{}] not match success'.format(topic_entity['topic'], callback)
+                    pdata['succ'] = False
+                    pdata['wrong'] = '{}[{}] not match success'.format(topic_entity['topic'], callback)
                     return
             else:
-                data['succ'] = False
-                data['wrong'] = '[uuid:{}] not in all_topic_list of [{}]'.format(callback, sub_topic_name)
+                pdata['succ'] = False
+                pdata['wrong'] = '[uuid:{}] not in all_topic_list of [{}]'.format(callback, sub_topic_name)
                 return
 
             if len(topic['send_node'].sub_topic_list) > 1:
@@ -558,8 +558,8 @@ class Log_handler():
             # get time used of the node between A topic recv_sub to B topic pub
             call_pub_time = topic['info']['pub_stamp'] - topic_entity['info']['call_stamp']
             if call_pub_time < 0:
-                data['succ'] = False
-                data['wrong'] = 'Error: The call_pub_time < 0! node:{}, pub_topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
+                pdata['succ'] = False
+                pdata['wrong'] = 'Error: The call_pub_time < 0! node:{}, pub_topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
                 return
             if call_pub_time > 1.0 * Constants.unit_stamp_sec:
                 log_print('warning: call_pub_time={}, pub_topic={}, pub_uuid={}, node={}, sub_topic={}, sub_uuid={}'.format(
@@ -588,7 +588,7 @@ class Log_handler():
                         log_print("warning: beg_end time too large, node={}, thread={}, ident={}".format(
                             beg_info.get('node','none'), beg_info.get('thread','none'), beg_info.get('ident','none')))
                     # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
-                    data["path"].append({"type": "beg_end", "node": topic['send_node'].name, "use_time": beg_end_time})
+                    pdata["path"].append({"type": "beg_end", "node": topic['send_node'].name, "use_time": beg_end_time})
                     if beg_info['thread'] == topic['info']['pub_thread']:
                         #计算beg_end_cpu时候 要保证同一线程，20220915增加
                         u_spend = topic['info']['pub_utime'] - beg_info["utime"]
@@ -597,7 +597,7 @@ class Log_handler():
                         idle_spend = beg_end_time - u_spend - s_spend - w_spend    
                         u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
                         
-                        data["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
+                        pdata["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
                         "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
                         "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
             
