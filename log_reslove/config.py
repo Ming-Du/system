@@ -112,3 +112,18 @@ node_config["/zvision_lidar_rear_nodelet_manager"]["pub"] = "/sensor/lidar/zvisi
 node_config["/zvision_lidar_rear_nodelet_manager"]["man_beg"] = "lidar_grab"
 
 
+#3.0.0 新增  适配新镭神 lidar_driver
+node_config["/sensor/lidar/c32_new/front_left/c32_left_driver"] = {}
+node_config["/sensor/lidar/c32_new/front_left/c32_left_driver"]["sub"] = []
+node_config["/sensor/lidar/c32_new/front_left/c32_left_driver"]["pub"] = "/sensor/lidar/front_left/point_cloud"
+node_config["/sensor/lidar/c32_new/front_left/c32_left_driver"]["man_beg"] = "lidar_grab"
+
+node_config["/sensor/lidar/c32_new/front_right/c32_right_driver"] = {}
+node_config["/sensor/lidar/c32_new/front_right/c32_right_driver"]["sub"] = []
+node_config["/sensor/lidar/c32_new/front_right/c32_right_driver"]["pub"] = "/sensor/lidar/front_right/point_cloud"
+node_config["/sensor/lidar/c32_new/front_right/c32_right_driver"]["man_beg"] = "lidar_grab"
+
+node_config["/sensor/lidar/c32_new/rear/c32_rear_driver"] = {}
+node_config["/sensor/lidar/c32_new/rear/c32_rear_driver"]["sub"] = []
+node_config["/sensor/lidar/c32_new/rear/c32_rear_driver"]["pub"] = "/sensor/lidar/rear/point_cloud"
+node_config["/sensor/lidar/c32_new/rear/c32_rear_driver"]["man_beg"] = "lidar_grab"
