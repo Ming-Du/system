@@ -22,6 +22,7 @@ enum ObjectType {
   TYPE_BLACK = 34;
   TYPE_TRIANGLEROADBLOCK = 35;
   TYPE_WARNINGTRIANGLE = 36;
+  TYPE_VEGETATION = 37;
   TYPE_UNKNOWN_SMALL = 91;
   TYPE_UNKNOWN_BIG = 92;
   TYPE_UNKNOWN_STATIC = 93;
@@ -95,6 +96,7 @@ message ObuObjectsSupplement {
   optional float absolute_vel_x = 6;
   optional float absolute_vel_y = 7;
   optional uint32 measurement_id = 8;
+  optional bool use_pass_through = 9 [default = false];
 }
 
 // Modify-baihaijiang
@@ -107,6 +109,14 @@ enum ObjectSource {
   V2N_RSI = 5;
   V2I_SSM = 6;
 };
+
+// Modify-huangweijie
+message VehicleLightSupplement {
+  optional int32 light_turn = 1;
+  optional float light_turn_confidence = 2;
+  optional int32 light_brake = 3;
+  optional float light_brake_confidence = 4;
+}
 
 message Object {
   optional uint32 id = 1;                // obj id, after tracked
@@ -155,6 +165,8 @@ message Object {
   optional float exist_confidence = 29;
   optional float orientation = 30;
   optional RoadType road_status = 31;
+  // Modify-huangweijie - vehicle light supplement
+  optional VehicleLightSupplement vehicle_light = 32;
 
 }
 
@@ -205,6 +217,7 @@ message TrackedObject {
   // v2v_bsm = 1, v2i_rsm = 2, v2v_ssm = 3, v2n_rsm = 4, v2n_rsi = 5, v2i_ssm = 6
   optional ObjectSource source = 20;
   repeated geometry.Point polygon_p = 21; //  longitude/latitude, in degrees
+  repeated geometry.Point contour_p = 22;  // contour points, East->0 , in meters
 }
 
 message TrackedObjects {

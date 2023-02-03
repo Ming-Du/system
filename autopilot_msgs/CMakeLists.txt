@@ -35,6 +35,7 @@ add_message_files(
   RoadArrow.msg
   LaneLine.msg
   LaneLines.msg
+  RoadSide.msg
 )
 
 add_service_files(
@@ -46,6 +47,7 @@ add_service_files(
   StartTask.srv
   StopTask.srv
   TaskInfo.srv
+  BinarySrv.srv
 )
 
 ## Generate added messages and services with any dependencies listed here
@@ -63,6 +65,10 @@ catkin_package(
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+)
+
+install(FILES ros_proto.h
+  DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}/autopilot_msgs
 )
 
 

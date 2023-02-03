@@ -31,6 +31,7 @@ class Constants():
     bak_dir = os.path.join(work_dir, "ROS_STAT", '{}'.format(datetime.date.today()))
     output_file = os.path.join(output_dir, "topic_stat")
     output_file_from_sensor = os.path.join(output_dir, "link_stat_start_sensor")
+    output_error_info = os.path.join(output_dir, "pub_sub_error_info")
     g_time_split_threshold = 30   # second
     g_type_of_pub = 0
     g_type_of_sub = 1
@@ -270,7 +271,7 @@ class Log_handler():
     """
     def __init__(self) -> None:
         self.car_info = Car_Status()
-        self.last_timestamp = time.time() * Constants.unit_stamp_sec
+        self.last_timestamp = (time.time()-10) * Constants.unit_stamp_sec #文件时差解决10s
         self.handle_index = -1
         self.time_split_threshold = Constants.g_time_split_threshold
         self.time_start_value = 0
@@ -279,6 +280,7 @@ class Log_handler():
         self.input_paths = list()
         self.results = dict()
         self.once_save_fd = None
+        self.last_last_timestamp = 0
         
 
     def prepare_input_files(self):
@@ -412,10 +414,10 @@ class Log_handler():
                     st_atime = stat.st_atime
                 if st_mtime <  stat.st_mtime:
                     st_mtime = stat.st_mtime
-            if st_atime < int(time.time()) - 60:
+            if st_atime < int(time.time()) - 30:
                 self.time_start_value = int(time.time()) - 5
             else:
-                self.time_start_value = st_atime - 3  # before min access time 2 sec
+                self.time_start_value = st_atime - 5  # before min access time 5 sec
             self.time_split_end = st_mtime + 2
             if st_mtime - st_atime > self.time_split_threshold:   # log 1.7M/s  30s about 50M
                 log_print('log save {} secs, more than {}, handle a part!'.format(st_mtime-st_atime, self.time_split_threshold) )
@@ -537,9 +539,14 @@ class Log_handler():
 
             if callback in all_link_topic_list[sub_topic_name]:
                 topic_entity = all_link_topic_list[sub_topic_name][callback]
+                if not topic_entity['finish_flag']:
+                    # 怀疑相同id替换会出现这种情况的错误（feature）
+                    pdata['succ'] = False
+                    pdata['wrong'] = '{}[{}] not match success'.format(topic_entity['topic'], callback)
+                    return
             else:
-                data['succ'] = False
-                data['wrong'] = '[uuid:{}] not in all_topic_list of [{}]'.format(callback, sub_topic_name)
+                pdata['succ'] = False
+                pdata['wrong'] = '[uuid:{}] not in all_topic_list of [{}]'.format(callback, sub_topic_name)
                 return
 
             if len(topic['send_node'].sub_topic_list) > 1:
@@ -551,8 +558,8 @@ class Log_handler():
             # get time used of the node between A topic recv_sub to B topic pub
             call_pub_time = topic['info']['pub_stamp'] - topic_entity['info']['call_stamp']
             if call_pub_time < 0:
-                data['succ'] = False
-                data['wrong'] = 'Error: The call_pub_time < 0! node:{}, pub_topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
+                pdata['succ'] = False
+                pdata['wrong'] = 'Error: The call_pub_time < 0! node:{}, pub_topic_uuid:{}'.format(topic['send_node'].name, topic['uuid'])
                 return
             if call_pub_time > 1.0 * Constants.unit_stamp_sec:
                 log_print('warning: call_pub_time={}, pub_topic={}, pub_uuid={}, node={}, sub_topic={}, sub_uuid={}'.format(
@@ -581,7 +588,7 @@ class Log_handler():
                         log_print("warning: beg_end time too large, node={}, thread={}, ident={}".format(
                             beg_info.get('node','none'), beg_info.get('thread','none'), beg_info.get('ident','none')))
                     # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
-                    data["path"].append({"type": "beg_end", "node": topic['send_node'].name, "use_time": beg_end_time})
+                    pdata["path"].append({"type": "beg_end", "node": topic['send_node'].name, "use_time": beg_end_time})
                     if beg_info['thread'] == topic['info']['pub_thread']:
                         #计算beg_end_cpu时候 要保证同一线程，20220915增加
                         u_spend = topic['info']['pub_utime'] - beg_info["utime"]
@@ -590,7 +597,7 @@ class Log_handler():
                         idle_spend = beg_end_time - u_spend - s_spend - w_spend    
                         u_percent, s_percent, w_percent, idle_percent = [round(x*1.0/beg_end_time,2) for x in (u_spend,s_spend,w_spend,idle_spend)]
                         
-                        data["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
+                        pdata["path"].append({"type": "beg_end_cpu", "node": topic['send_node'].name, 
                         "u_spend": u_spend, "u_percent": u_percent, "s_spend": s_spend, "s_percent": s_percent, 
                         "w_spend": w_spend, "w_percent": w_percent, "idle_spend": idle_spend, "idle_percent": idle_percent})
             
@@ -604,10 +611,19 @@ class Log_handler():
         target = "/chassis/command"
         #if g_test_mode:
         #   target = '/perception/fusion/obstacles'
-        target_handle_complate = dict()  #{k=uuid, v=split topic completed}
-        
+        target_match_info = dict()  #{k=path, match_num}
+        target_match_info[target] = 0
         for topic_entity in all_link_topic_list[target].values():
-            target_handle_complate[topic_entity['uuid']] = 0
+            if not topic_entity['finish_flag']:
+                # command 没有匹配完成
+                continue  
+            if self.last_last_timestamp > topic_entity['info']['call_stamp'] \
+                or self.last_timestamp < topic_entity['info']['call_stamp']:
+                # 链路的结束节点时间 大于 正向最后时间，本次不进行反向查找
+                # 链路的结束节点时间 小于 上一次正向匹配时间，本次不再反向查找，防止重复
+                continue
+            
+            target_match_info[target] += 1 # 计算进行匹配的target总数
             record = list()
             data = dict()
             data["use_time"] = 0
@@ -628,58 +644,31 @@ class Log_handler():
                 if data["split_path_str"] not in result:
                     result[data["split_path_str"]] = []
                 result[data["split_path_str"]].append(data)
-                    
-                target_handle_complate[topic_entity['uuid']] += 1
 
-                if self.last_timestamp < topic_entity['info']["recv_stamp"] - data['use_time'] - 1 *Constants.unit_stamp_sec:  #mod by liyl 20220414 delay 1 sec for test
-                    self.last_timestamp = topic_entity['info']["recv_stamp"] - data['use_time'] - 1 *Constants.unit_stamp_sec
+                if data["split_path_str"] not in target_match_info:
+                    target_match_info[data["split_path_str"]] = 0    
+                target_match_info[data["split_path_str"]] += 1
 
+                # 反向不更新self.last_timestamp， 以正向时间为准
+                # 只对正向时间内进行反向匹配，每次反向计算比正向少算一次全链路时间，但是匹配更全
+                #if self.last_timestamp < topic_entity['info']["recv_stamp"] - data['use_time'] - 1 *Constants.unit_stamp_sec:  #mod by liyl 20220414 delay 1 sec for test
+                #    self.last_timestamp = topic_entity['info']["recv_stamp"] - data['use_time'] - 1 *Constants.unit_stamp_sec
 
-        match_one_num = 0
-        match_two_num = 0
-        no_match_num = 0  
-        for uuid_time, match_num in target_handle_complate.items():
-            if match_num == 0:
-                no_match_num += 1
-                continue
-            elif match_num == 1:   
-                match_one_num += 1
-            elif match_num == 2:  # The case is ugly, maybe the sub list more than 2 in future
-                match_two_num += 1
-            
-            del all_link_topic_list[target][uuid_time]
-
-        log_print("{} total_num={}, match_two_paths={}, match_one_paths={} no_path={}".format(
-            target, len(target_handle_complate), match_two_num, match_one_num, no_match_num))
-            
-        if self.last_timestamp < self.time_start_value * Constants.unit_stamp_sec:
-            self.last_timestamp = self.time_start_value * Constants.unit_stamp_sec
-
-        for topic_name in all_link_topic_list.keys():
-            all_link_topic_temp = dict()
-            for uuid, topic in all_link_topic_list[topic_name].items():
-                if topic['info'].get('call_stamp', 2000000000) > self.last_timestamp:
-                    all_link_topic_temp[uuid] = topic
-                elif topic['send_node'] and topic['uuid'] in topic['send_node'].finish_dict:
-                    del topic['send_node'].finish_dict[topic['uuid']]
-                    if topic['uuid'] in topic['send_node'].beg_msg_dict:
-                        del topic['send_node'].beg_msg_dict[topic['uuid']]
-                    if topic['uuid'] in topic['send_node'].sub_pub_recent_match_dict.get(topic['topic'],{}):
-                        del topic['send_node'].sub_pub_recent_match_dict[topic['topic']][topic['uuid']]
-                    ## TODO：man_end增加后，需要清理 end_msg_dict
-            all_link_topic_list[topic_name] = all_link_topic_temp
+        log_print("{} match_path={}, match_info=[{}]".format(
+            target, len(target_match_info)-1, target_match_info))
         
-        ## add by liyl 20220901 for clear sub msg and beg msg
-        for node_entry in all_link_node_list.values():
-            node_entry.sub_msg_dict.clear()
-            node_entry.beg_msg_dict.clear()
-
+        ## 去除已经计算过的node 和topic 封装到 clear_match_data_and_save_error_topic 中处理   
         self.results = result
         return 
 
     def get_sensor_node_info(self, topic, data):
         topic_entity = None
         while topic:
+            if topic['topic'] in data["match"]:
+                data["match"][topic['topic']] += 1
+            else:
+                data["match"][topic['topic']] = 1
+
             if not topic['finish_flag']:
                 data['succ'] = False
                 data['wrong'] = '{} not match success in log'.format(topic['topic'])
@@ -744,10 +733,16 @@ class Log_handler():
     def analyze_log_from_sensor(self):
         # add liyl 20220909  analyze log for sensor to  can_adapter
         result = dict()
+        min_start_last_time = 0
         for name, node_entity in all_link_node_list.items():
             if node_entity.is_start_node:
+                if not node_entity.start_pub_msg_list:
+                    #非自驾时间，start_pub_msg_list为空，无需遍历
+                    continue
+
                 result[name] = list()
-                last_match_time = 0
+                topic_match_dict = dict()
+                last_match_time = self.time_start_value * Constants.unit_stamp_sec
                 wrong_count = 0
                 for uuid, info in node_entity.start_pub_msg_list.items():
                     ## 找到起始的uuid，通过topic遍历, 一直查找到 end_node (can_adapter)
@@ -760,6 +755,7 @@ class Log_handler():
                     data = dict()
                     data["use_time"] = 0
                     data["path"] = []
+                    data["match"] = topic_match_dict
                     try:
                         self.get_sensor_node_info(topic, data)
                     except Exception as e:
@@ -781,14 +777,20 @@ class Log_handler():
                     if last_match_time < info['stamp']:
                         tmp_list[uuid] = info
                 
-                log_print("sensor:{} total_pub_num={}, match_num={}, error_num={} left_num={}".format(
-                    name, len(node_entity.start_pub_msg_list), len(result[name]), wrong_count, len(tmp_list)))
+                log_print("start_node:{} total_pub_num={}, match_num={}, error_num={} left_num={}\nmatch_info=[{}]".format(
+                    name, len(node_entity.start_pub_msg_list), len(result[name]), wrong_count, len(tmp_list), topic_match_dict))
                 node_entity.start_pub_msg_list = tmp_list
 
-                if self.last_timestamp < last_match_time:
-                    self.last_timestamp = last_match_time
+                # add by liyl 20230109, get min start node match time as last_timestamp
+                if min_start_last_time == 0:
+                    min_start_last_time = last_match_time
+                elif min_start_last_time > last_match_time:
+                    min_start_last_time = last_match_time
 
-        ## 去除已经计算过的sub_pub_recent_match_dict 在 analyze_key_info 中处理               
+        if self.last_timestamp < min_start_last_time:
+            self.last_timestamp = min_start_last_time
+
+        ## 去除已经计算过的sub_pub_recent_match_dict 在 clear_match_data_and_save_error_topic 中处理               
         self.results = result
 
     @staticmethod
@@ -870,52 +872,140 @@ class Log_handler():
 
             save_data["path"] = split_path_str
             save_data["count"] = len(result)
-            save_data["timestamp"] = int(self.last_timestamp/1000000)
+            #save_data["timestamp"] = int(self.last_timestamp/1000000)
             self.car_info.set_car_info(save_data)
             #log_print(json.dumps(save_data, sort_keys=True, indent=4))
             if from_sensor_flag:
+                save_data["timestamp"] = int(self.last_timestamp/1000000)
                 with open(Constants.output_file_from_sensor, "a+") as fp:
                     fp.write("{0}\n".format(json.dumps(save_data)))
             else:
+                save_data["timestamp"] = int(self.last_last_timestamp/1000000)
                 with open(Constants.output_file, "a+") as fp:
                     fp.write("{0}\n".format(json.dumps(save_data)))
         
         self.results=dict()
 
-    def save_local_bak_file(self):
-        if self.handle_index >= 0:
-            return
-        self.local_save_fd = open(Constants.bak_dir + "/local_bak_{}.log".format(int(time.time())), 'w+')
-        for file_path in self.input_paths:
-            if 'remote' not in file_path:
-                with open(file_path, 'r') as fp:
-                    contents = fp.read()
-                    self.local_save_fd.write(contents)  # add by huxinyu 20221117 for 103 local_log_save
-        self.local_save_fd.close()
 
     def clear_input_files(self):
         if self.handle_index >= 0:
             return
 
+        local_save_fd = open(Constants.bak_dir + "/local_bak_{}.log".format(int(time.time())), 'w+')
         for file_path in self.input_paths:
-            # 备份处理后的文件，到备份目录，防止remote文件重复，增加全量时间戳
-            # os.rename(file_path, '{}/{}_{}'.format(Constants.bak_dir, os.path.basename(file_path), int(time.time())))
-            # 备份处理后的零散文件，直接删除
+            if 'remote' not in file_path:
+                with open(file_path, 'r') as fp:
+                    contents = fp.read()
+                    local_save_fd.write(contents)  # add by huxinyu 20221117 for 103 local_log_save
+            # 备份处理后的文件，直接删除
             os.remove(file_path)
+        local_save_fd.close()
 
         self.input_paths=list()
+
+
+    def clear_match_data_and_save_error_topic(self):
+        """
+        # add by liyl 20230106
+        # 本函数增加用于 清除已经匹配的节点，并且从已经完成匹配的时间段中找到pub，sub丢失的情况，输出到文件
+        """
+        ## 清除last_last_time 之前的已匹配消息, last_last_time到现在的消息，依然保存
+        #if self.last_timestamp < self.time_start_value * Constants.unit_stamp_sec:
+        #    self.last_timestamp = self.time_start_value * Constants.unit_stamp_sec
+        log_print("this time analyze log timestamp form {} to {} ".format(self.last_last_timestamp, self.last_timestamp))
+
+        pub_error_list=list()
+        sub_error_list=list()
+
+        for topic_name in all_link_topic_list.keys():
+            all_link_topic_temp = dict()
+            for uuid, topic in all_link_topic_list[topic_name].items():
+                if not topic['finish_flag']:
+                    # topic没有匹配成功，属于没有pub或者sub的情况
+                    if 'call_stamp' in topic['info']: ## 存在sub的情况，没有上游pub, 存在日志丢死可能
+                        if topic['info'].get('call_stamp') <= self.last_last_timestamp:
+                            pub_error_list.append({
+                                'topic':topic['topic'],
+                                'recv_node':topic['recv_node'].name, 
+                                'sub_stamp':topic['info'].get('call_stamp'),
+                                'uuid':topic['uuid']})
+                            if topic['uuid'] in topic['recv_node'].sub_pub_recent_match_dict.get(topic['topic'],{}):
+                                del topic['recv_node'].sub_pub_recent_match_dict[topic['topic']][topic['uuid']]
+                            if topic['uuid'] in topic['recv_node'].end_msg_dict:
+                                del topic['recv_node'].end_msg_dict[topic['uuid']]
+                        else:
+                            all_link_topic_temp[uuid] = topic
+                    else: # 没有call 那边必定有 pub信息，需要清除发生节点中的finish_dict
+                        if topic['info'].get('pub_stamp') <= self.last_last_timestamp:
+                            sub_error_list.append({
+                                'topic':topic['topic'],
+                                'send_node':topic['send_node'].name,
+                                'pub_stamp':topic['info'].get('pub_stamp'),
+                                'uuid':topic['uuid']})
+                            if topic['uuid'] in topic['send_node'].finish_dict:
+                                del topic['send_node'].finish_dict[topic['uuid']]
+                            if topic['uuid'] in topic['send_node'].beg_msg_dict:
+                                del topic['send_node'].beg_msg_dict[topic['uuid']]
+                        else:
+                            all_link_topic_temp[uuid] = topic
+
+                elif topic['info'].get('call_stamp', 2000000000) > self.last_last_timestamp:
+                    all_link_topic_temp[uuid] = topic
+
+                else: #将匹配成功时间内，已经匹配的topic 相关信息进行清除
+                    if topic['send_node'] and topic['uuid'] in topic['send_node'].finish_dict:
+                        del topic['send_node'].finish_dict[topic['uuid']]
+                    if topic['uuid'] in topic['send_node'].beg_msg_dict:
+                        del topic['send_node'].beg_msg_dict[topic['uuid']]
+                    if topic['uuid'] in topic['recv_node'].sub_pub_recent_match_dict.get(topic['topic'],{}):
+                        del topic['recv_node'].sub_pub_recent_match_dict[topic['topic']][topic['uuid']]
+                    if topic['uuid'] in topic['recv_node'].end_msg_dict:
+                        del topic['recv_node'].end_msg_dict[topic['uuid']]
+
+            all_link_topic_list[topic_name] = all_link_topic_temp
+         
+        ##输出文件而非日志，便于查找和追溯问题
+        save_error = dict()
+        if pub_error_list:
+            save_error["pub_lost_info"] = pub_error_list
+        if sub_error_list:
+            save_error["sub_lost_info"] = sub_error_list
+        if save_error:
+            save_error["begin_timestamp"] = int(self.last_last_timestamp/1000000)
+            save_error["timestamp"] = int(self.last_timestamp/1000000)
+            save_error["pub_lost_num"] = len(pub_error_list)
+            save_error["sub_lost_num"] = len(sub_error_list)
+            # self.car_info.set_car_info(save_error)
+
+            if self.last_last_timestamp:
+                # 自驾中重启log_reslove, 首次运行, 必然存在未匹配较多，不记录到文件
+                log_print("this time have pub_lost_num={} sub_lost_num={}".format(save_error["pub_lost_num"], save_error["sub_lost_num"]))
+                with open(Constants.output_error_info, "a+") as fp:
+                    fp.write("{0}\n".format(json.dumps(save_error)))
+        else:
+            log_print("this time no topic sub or pub lost!")
+    
+        ''' 日志加载已判断排序，防止清除sub会导致的检测sub，pub丢帧异常，不再清除
+        ## add by liyl 20220901 for clear sub msg and beg msg
+        for node_entry in all_link_node_list.values():
+            node_entry.sub_msg_dict.clear()
+            node_entry.beg_msg_dict.clear()
+        '''
+
+        self.last_last_timestamp = self.last_timestamp 
 
 
     def run_once(self):
         try:
             self.prepare_input_files()
             self.load_logs()
-            ## add by liyl 20220909 for sensor -> can_adapter
+            
             self.analyze_log_from_sensor()
             self.save_result(from_sensor_flag=True)
             self.analyze_key_info()
             self.save_result()
-            self.save_local_bak_file()
+ 
+            self.clear_match_data_and_save_error_topic() 
             self.clear_input_files()
         except Exception as e:
             log_print("run once error, {}".format(e))

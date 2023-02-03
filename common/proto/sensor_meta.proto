@@ -3,7 +3,7 @@ package perception.base;
 import "geometry.proto";
 
 enum SensorType {
-  UNKNOWN_SENSOR_TYPE = -1;
+    UNKNOWN_SENSOR_TYPE = -1;
   GNSS = 0;
   CAMERA_6MM = 1;
   CAMERA_12MM = 2;
@@ -19,13 +19,16 @@ enum SensorType {
   SENSING_120 = 12;
   HESAI_128 = 13;
   RSLIDAR_80 = 14;
-  INNOVUSION_FALCON_LIDAR = 15;
-  CONTI_RADAR_ARS408 = 16;
-  CONTI_RADAR_SRR308 = 17;
+  CONTI_RADAR_ARS408 = 15;
+  CONTI_RADAR_SRR308 = 16;
   // Modify(@liuxinyu): obu_test
   V2X = 18;
   OBU_RSM = 19;
   VIDAR = 20;
+  ZVISIONLIDAR = 30;
+  RSLIDAR_M1 = 31;
+  INNOVUSION_FALCON_LIDAR = 32;
+  RSLIDAR_HELIOS = 33;
   }
 
 enum SensorOrientation {

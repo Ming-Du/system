@@ -1,0 +1,62 @@
+syntax = "proto3";
+package mogo.v2x.v2i;
+
+import "header.proto";
+import "String_PB.proto";
+
+message TimeChangeDetails_PB{
+  int32 startTime = 1;
+  int32 minEndTime = 2;
+  int32 maxEndTime = 3;
+  int32 likelyEndTime = 4;
+  int32 timeConfidence = 5;
+  int32 nextStartTime = 6;
+  int32 nextDuration = 7;
+}
+
+message SignalPhaseState_PB{
+  enum LightState {
+    unavailable = 0;
+    dark = 1;
+    stop_Then_Proceed = 2;
+    stop_And_Remain = 3;
+    pre_Movement = 4;
+    permissive_Movement_Allowed = 5;
+    protected_Movement_Allowed = 6;
+    intersection_clearance = 7;
+    caution_Conflicting_Traffic = 8;
+  }
+  LightState light = 1;
+  TimeChangeDetails_PB timeing = 2;
+}
+
+message SignalPhase_PB{
+  int32 id = 1;
+  String_PB status = 2;
+  repeated SignalPhaseState_PB phaseStates = 3;
+}
+
+message NodeReferenceID_PB{
+  int32 region = 1;
+  int32 id = 2;
+}
+
+message SignalIntersectionState_PB{
+  NodeReferenceID_PB intersectionId = 1;
+  String_PB status = 2;
+  int64  minuteOfTheYear = 3;
+  int32  timeStampDSecond = 4;
+  repeated SignalPhase_PB phases = 5;
+}
+
+message Spat{
+  int32  msgCount = 1;
+  int64  motTimeStamp = 2;
+  String_PB	 id = 3; 
+  repeated SignalIntersectionState_PB intersections = 4;
+}
+
+message SPAT_PB {
+  Spat spatFrame = 1;
+  common.Header header = 2;
+}

@@ -10,6 +10,8 @@ LaneMark right2 #
 # add by qianlei
 LaneMark[] lanemarks
 
+RoadSide[] roadsides
+
 # add by wandanpan
 RoadArrow[] arrows
 sensor_msgs/Image lane_arrow_stopline_seg

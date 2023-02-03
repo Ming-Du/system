@@ -1,0 +1,21 @@
+syntax = "proto2";
+
+package vision;
+
+message TrfcLtsStatistics {
+  optional int64 cmd_cnt = 1;
+  optional int64 obu_cnt = 2;
+  optional int64 v2n_cnt = 3;
+  optional int64 hhp_cnt = 4;
+  optional int64 shp_cnt = 5;
+  optional int64 vis_cnt = 6;
+  optional int64 log_cnt = 7;
+  
+  optional double cmd_ratio = 8;
+  optional double obu_ratio = 9;
+  optional double v2n_ratio = 10;
+  optional double hhp_ratio = 11;
+  optional double shp_ratio = 12;
+  optional double vis_ratio = 13;
+  optional double log_ratio = 14;
+}

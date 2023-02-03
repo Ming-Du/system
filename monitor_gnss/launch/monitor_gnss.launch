@@ -3,5 +3,7 @@
     <param name="monitor_gnss_interval" type="int" value="50" />
     <param name="monitor_gnss_interval_vehicle" type="int" value="50" />
     <param name="monitor_gnss_interval_decision_status" type="int" value="50" />
+    <param name="monitor_gnss_interval_system_state_report" type="int" value="1000" />
+    <param name="monitor_gnss_interval_trfclts_ctrl" type="int" value="1000" />
     </node>
 </launch>

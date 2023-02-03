@@ -899,7 +899,7 @@ def agent_worker():
                                     "node_pid") not in current_nodes_runnig_pid_info.get(launch_node_name).get(
                                 "node_pid"):
                                 try:
-                                    write_killed_launch_node_with_lock(launch_node_name, append=True)
+                                    # write_killed_launch_node_with_lock(launch_node_name, append=True)
                                     agent_work_result.pop(launch_node_name, "")
                                 except:
                                     pass
@@ -915,7 +915,7 @@ def agent_worker():
                                 if agent_work_result.get(launch_node_name, {}).get("launch_pid"):
                                     pass
                                 else:
-                                    write_killed_launch_node_with_lock(launch_node_name, append=True)
+                                    # write_killed_launch_node_with_lock(launch_node_name, append=True)
                                     agent_work_result.pop(launch_node_name, "")
                             except:
                                 pass
@@ -954,7 +954,7 @@ def agent_worker():
                         if launch_node_name in agent_work_result:
                             # 7. agent(有)+当前(无)+目标(无) ->删除agent记录(人为关闭)
                             try:
-                                write_killed_launch_node_with_lock(launch_node_name, append=True)
+                                # write_killed_launch_node_with_lock(launch_node_name, append=True)
                                 agent_work_result.pop(launch_node_name, "")
                             except:
                                 pass
@@ -1079,7 +1079,7 @@ def heart_beat():
             continue
         try:
             res = myrequest.post(heart_beat_url,
-                                 json=heart_beat_info, timeout=1)
+                                 json=heart_beat_info, timeout=5)
             response_re = myrequest.get_result(res)
         except Exception as e:
             logger.warning("发送心跳请求异常:{}".format(e))
@@ -1098,6 +1098,11 @@ def main():
             ABS_PATH = sys.argv[1]
         if sys.argv[2]:
             ROS_LOG_DIR = sys.argv[2]
+    except:
+        pass
+    try:
+        if os.path.exists(MACHINE_INFO_FILE):
+            os.remove(MACHINE_INFO_FILE)
     except:
         pass
     ROSMASTER_IP_PORT = "http://" + get_ssm_master_ip() + ":" + str(MASTER_PORT)

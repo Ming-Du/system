@@ -4,6 +4,45 @@ package chassis;
 import "header.proto";
 import "chassis.proto";
 
+message RoboTaxiState {
+    optional bool veh_rta_recover = 1 [default = false]; // 车辆可进入自动驾驶标志位，不可进入时一定时间内恢复可自动进入
+    optional bool veh_rta_no_recover = 2 [default = false];  // 车辆可进入自动驾驶标志位，不可进入时恢复无法自动进入
+}
+
+message RoboBusState {
+    optional bool reserved = 1; // 预留
+}
+
+message AirConditionerState {
+    optional bool is_on = 1; //是否开启
+    optional uint32 mode = 2; //模式, 1: 自动模式, 2: 制冷模式, 3: 通风模式（仅送风，无温度）
+    optional uint32 temperature = 3; //温度
+    optional uint32 wind_speed = 4; //风速, 1-3: 1-3档
+}
+
+message HeaterState {
+    optional bool is_on = 1; //是否开启
+    optional uint32 wind_speed = 2; //风速, 1-2: 1-2档
+}
+
+message DoorState {
+    optional bool is_on = 1; //是否开启
+}
+
+message LightState {
+    optional bool is_on = 1; //是否开启
+    optional uint32 color = 2; //颜色
+}
+
+message RoboBusJinlvM1State {
+    optional AirConditionerState air_conditioner_state = 1; //空调
+    optional HeaterState heater_state = 2; //暖风机
+    optional DoorState front_door_state = 3; //车门
+    optional LightState main_lamp1_state = 4; //顶灯1
+    optional LightState main_lamp2_state = 5; //顶灯2
+    optional LightState small_lamp_state = 6; //小灯(氛围灯)
+}
+
 message VehicleState {
     optional common.Header header = 1;
     optional chassis.PilotMode pilot_mode = 2 [default = MODE_MANUAL];
@@ -43,5 +82,16 @@ message VehicleState {
 
     optional float leftFrontWheelAngle = 33 [default = 0];//左前轮角度（deg）,左负右正
     optional float rightFrontWheelAngle = 34 [default = 0]; //右前轮角度（deg）,左负右正
+
+    optional chassis.EPBWorkStatus epb = 35 [default = EPBSTATUS_NONE]; // EPB工作状态
+    optional chassis.VehicleTakeOverStatus vehicletakeoverstatus = 36 [default = None_TakeOver]; // 车辆人工接管状态
+    optional bool Emergency_Stop_Switch = 37 [default = false]; // 急停开关状态
+    optional chassis.VehicleFaultLevel vehiclefaultlevel = 38 [default = None_Fault]; // 整车故障状态
+
     optional float bms_soc = 40 [default = 0];  // 电量百分比范围   0~100
+    optional float fuel_value = 41 [default = 0]; // 油车剩余油量
+
+    optional RoboTaxiState robo_taxi_state = 201; // taxi状态
+    optional RoboBusState robo_bus_state = 202; // bus状态
+    optional RoboBusJinlvM1State robo_bus_jinlv_m1_state = 203; //金旅定制车m1状态
 }

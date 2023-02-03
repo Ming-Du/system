@@ -24,6 +24,10 @@ message PlanningConfig {
     optional double dis_stop = 14;
     optional bool  flag_global_lane_change = 15;
     optional bool  flag_horn_enable = 16;
+    optional int32 flag_scenario_change = 17;
+    optional double plan_dis_lmt = 18;
+    optional double plan_width_buff = 19;
+    optional bool flag_cross_walk_decision = 20;
     // spdplan para
     optional double vc_kp = 43;
     optional double vc_ki = 44;

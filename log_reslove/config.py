@@ -18,8 +18,9 @@ node_config["/local_planning"]["pub"] = "/planning/trajectory"
 node_config["/local_planning"]["man_beg"] = "planning_begin"
 
 node_config["/perception/fusion/perception_fusion2"] = {}
-node_config["/perception/fusion/perception_fusion2"]["sub"] = ["/perception/lidar/lidar_obstacle", "/perception/camera/camera_obstacle_front60"]
+node_config["/perception/fusion/perception_fusion2"]["sub"] = ["/perception/lidar/lidar_obstacle", "/perception/camera/camera_obstacle_front60", "/perception/lidar/lidar_zvision_obstacle"]
 node_config["/perception/fusion/perception_fusion2"]["pub"] = "/perception/fusion/obstacles"
+
 
 node_config["/perception/lidar/rs_perception_node"] = {}
 node_config["/perception/lidar/rs_perception_node"]["sub"] = ["/sensor/lidar/middle/point_cloud"]
@@ -73,3 +74,56 @@ node_config["/hadmap_engine_node"]["pub"] = "/hadmap_engine/lanes_msg"
 node_config["/hadmap_server"] = {}
 node_config["/hadmap_server"]["sub"] = []
 node_config["/hadmap_server"]["pub"] = "/planning/global_trajectory"
+
+
+#2.11.0 新增M2 lidar适配
+
+node_config["/M2_can_adapter"] = {}
+node_config["/M2_can_adapter"]["sub"] = ["/chassis/command"]
+node_config["/M2_can_adapter"]["pub"] = ""
+node_config["/M2_can_adapter"]["man_end"] = "can_end"
+
+node_config["/perception/lidar/rs_perception_zvision_node"] = {}
+node_config["/perception/lidar/rs_perception_zvision_node"]["sub"] = ["/sensor/zvisionlidar/middle/point_cloud"]
+node_config["/perception/lidar/rs_perception_zvision_node"]["pub"] = "/perception/lidar/lidar_zvision_obstacle"
+
+node_config["/xiaoba_zvisionlidars_fusion"] = {}
+node_config["/xiaoba_zvisionlidars_fusion"]["sub"] = ["/sensor/lidar/zvisionlidar/front/point_cloud", "/sensor/lidar/zvisionlidar/left/point_cloud","/sensor/lidar/zvisionlidar/rear/point_cloud","/sensor/lidar/zvisionlidar/right/point_cloud"]
+node_config["/xiaoba_zvisionlidars_fusion"]["pub"] = "/sensor/zvisionlidar/middle/point_cloud"
+
+node_config["/zvision_lidar_front_nodelet_manager"] = {}
+node_config["/zvision_lidar_front_nodelet_manager"]["sub"] = []
+node_config["/zvision_lidar_front_nodelet_manager"]["pub"] = "/sensor/lidar/zvisionlidar/front/point_cloud"
+node_config["/zvision_lidar_front_nodelet_manager"]["man_beg"] = "lidar_grab"
+
+node_config["/zvision_lidar_left_nodelet_manager"] = {}
+node_config["/zvision_lidar_left_nodelet_manager"]["sub"] = []
+node_config["/zvision_lidar_left_nodelet_manager"]["pub"] = "/sensor/lidar/zvisionlidar/left/point_cloud"
+node_config["/zvision_lidar_left_nodelet_manager"]["man_beg"] = "lidar_grab"
+
+node_config["/zvision_lidar_right_nodelet_manager"] = {}
+node_config["/zvision_lidar_right_nodelet_manager"]["sub"] = []
+node_config["/zvision_lidar_right_nodelet_manager"]["pub"] = "/sensor/lidar/zvisionlidar/right/point_cloud"
+node_config["/zvision_lidar_right_nodelet_manager"]["man_beg"] = "lidar_grab"
+
+node_config["/zvision_lidar_rear_nodelet_manager"] = {}
+node_config["/zvision_lidar_rear_nodelet_manager"]["sub"] = []
+node_config["/zvision_lidar_rear_nodelet_manager"]["pub"] = "/sensor/lidar/zvisionlidar/rear/point_cloud"
+node_config["/zvision_lidar_rear_nodelet_manager"]["man_beg"] = "lidar_grab"
+
+
+#3.0.0 新增  适配新镭神 lidar_driver
+node_config["/sensor/lidar/c32_new/front_left/c32_left_driver"] = {}
+node_config["/sensor/lidar/c32_new/front_left/c32_left_driver"]["sub"] = []
+node_config["/sensor/lidar/c32_new/front_left/c32_left_driver"]["pub"] = "/sensor/lidar/front_left/point_cloud"
+node_config["/sensor/lidar/c32_new/front_left/c32_left_driver"]["man_beg"] = "lidar_grab"
+
+node_config["/sensor/lidar/c32_new/front_right/c32_right_driver"] = {}
+node_config["/sensor/lidar/c32_new/front_right/c32_right_driver"]["sub"] = []
+node_config["/sensor/lidar/c32_new/front_right/c32_right_driver"]["pub"] = "/sensor/lidar/front_right/point_cloud"
+node_config["/sensor/lidar/c32_new/front_right/c32_right_driver"]["man_beg"] = "lidar_grab"
+
+node_config["/sensor/lidar/c32_new/rear/c32_rear_driver"] = {}
+node_config["/sensor/lidar/c32_new/rear/c32_rear_driver"]["sub"] = []
+node_config["/sensor/lidar/c32_new/rear/c32_rear_driver"]["pub"] = "/sensor/lidar/rear/point_cloud"
+node_config["/sensor/lidar/c32_new/rear/c32_rear_driver"]["man_beg"] = "lidar_grab"

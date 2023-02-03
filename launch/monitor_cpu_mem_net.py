@@ -1,14 +1,28 @@
+#!/usr/bin/python3
+# -*- coding: UTF-8 -*-
 import os
 import time
 import psutil
 import threading
 import datetime
+import traceback
 import subprocess
 import json
+import logging
+from logging.handlers import TimedRotatingFileHandler
 import pprint
 
 LOG_PATH = "/home/mogo/data/log/monitor_cpu_mem_net/"
 FILEBEAT_UPLOAD = '/home/mogo/data/log/filebeat_upload/'
+VEHICLE_CONFIG_FILE = "/home/mogo/data/vehicle_monitor/vehicle_config.txt"
+MONITOR_LOG_FILE = "monitor.log"
+if not os.path.exists(LOG_PATH):
+    os.mkdir(LOG_PATH)
+try:
+    with open('/home/mogo/autopilot/share/launch/radar_config.json', 'r', encoding='utf-8') as f:
+        RADAR_IP_DICT = json.load(f)
+except:
+    print("未找到radar_config.json")
 MACHINE = ''
 CAR_INFO = None
 sys_state_lock = threading.RLock()
@@ -16,6 +30,45 @@ iftop_lok = threading.RLock()
 mpstat_lok = threading.RLock()
 pidstat_lok = threading.RLock()
 
+
+class Logger(object):
+    """
+    基于logging的二次封装
+    """
+
+    def __init__(self, logger_name, log_filename,
+                 level=logging.INFO,
+                 when="MIDNIGHT",
+                 interval=1,
+                 backup_count=15,
+                 suffix="%Y-%m-%d",
+                 log_formatter="[%(asctime)s][%(levelname)s][%(filename)s:%(lineno)d][%(process)d] - %(message)s"):
+        self.logger = logging.getLogger(logger_name)
+        self.formatter = logging.Formatter(log_formatter)
+        self.handler = TimedRotatingFileHandler(log_filename, when=when, interval=interval, backupCount=backup_count,encoding="UTF-8", delay=False, utc=True)
+        self.handler.suffix = suffix  # 设置切分后日志文件名的时间格式默认 filename+"." + suffix 如果需要更改需要改logging源码
+
+        self.handler.setFormatter(self.formatter)
+        logging.basicConfig(level=level, stream=None)
+        self.logger.addHandler(self.handler)
+
+    def debug(self, mes):
+        self.logger.debug(mes)
+
+    def info(self, mes):
+        self.logger.info(mes)
+
+    def warning(self, mes):
+        self.logger.warning(mes)
+
+    def error(self, mes):
+        self.logger.error(mes)
+
+    def critical(self, mes):
+        self.logger.critical(mes)
+
+
+logger = Logger("monitor", os.path.join(LOG_PATH, MONITOR_LOG_FILE), level=logging.INFO)
 
 
 class Car_Status(object):
@@ -220,7 +273,7 @@ def get_sys_state():
     del sys_state_dict["time"]
     cpu_dict = dict()
     for i in range(len(sys_state_dict["cpu_percent"])):
-        cpu_dict['cpu' + str(i+1) + "(percent)"] = float(sys_state_dict["cpu_percent"][i][:-1])
+        cpu_dict['cpu' + str(i + 1) + "(percent)"] = float(sys_state_dict["cpu_percent"][i][:-1])
     sys_state_dict["cpu_percent"] = cpu_dict
     sys_state_dict["mem_percent"] = float(sys_state_dict["mem_percent"][:-1])
     sys_state_dict["total_cpu_percent"] = float(sys_state_dict["total_cpu_percent"][:-1])
@@ -263,6 +316,7 @@ def sys_state_loop(file_path, json_path):
         json_path: 日志json文件路径
     Returns:
     """
+    logger.info("获取系统状态开始....")
     while True:
         try:
             mes, mes_json = get_sys_state()
@@ -281,6 +335,7 @@ def iftop_mes_loop(file_path):
         file_path: 日志文件路径
     Returns:
     """
+    logger.info("获取iftop信息开始....")
     while True:
         first_line = "==========================================" \
                      + str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')) \
@@ -312,6 +367,7 @@ def pidstat_loop(file_path):
         file_path: 日志文件路径
     Returns:
     """
+    logger.info("获取pidstat信息开始....")
     while True:
         first_line = "==========================================" \
                      + str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')) \
@@ -360,6 +416,7 @@ def mpstat_loop(file_path, json_path):
         file_path: 日志文件路径
     Returns:
     """
+    logger.info("获取mpstat信息开始....")
     while True:
         first_line = "==========================================" \
                      + str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')) \
@@ -374,6 +431,54 @@ def mpstat_loop(file_path, json_path):
             mes = first_line + e
         write_logs(mes, file_path, mpstat_lok)
         time.sleep(1)
+
+
+def get_car_plate_brand():
+    """
+    从配置获取车牌和品牌
+    Returns:
+       'TAXI001', 'df'
+    """
+    plate, brand = "", ""
+    with open(VEHICLE_CONFIG_FILE, "r") as fd:
+        config_lines = fd.readlines()
+        try:
+            for line in config_lines:
+                if "plate" in line:
+                    plate = line.split("\n")[0].split(":")[1].split('"')[1]
+                    continue
+                if "brand" in line:
+                    brand = line.split("\n")[0].split(":")[1].split('"')[1]
+        except Exception as e:
+            logger.error("从配置获取车牌和品牌报错:{}".format(e))
+            logger.warning('%s' % traceback.format_exc())
+    return plate, brand.lower()
+
+def get_car_type():
+    """
+    获取车辆型号2x/6x
+    Returns:
+        2x/6x
+    """
+    count = 0
+    with open("/etc/hosts", "r") as fd:
+        lines = fd.readlines()
+        for line in lines:
+            if line[0] == "#":
+                continue
+            if "ros" in line:
+                count = count + 1
+        car_type = "2x" if count < 6 else "6x"
+    return car_type
+
+
+def ping_thread(log_dir_path):
+    logger.info("获取ping_radar信息开始....")
+    _, car_brand = get_car_plate_brand()
+    car_type = get_car_type()
+    for radar_name, radar_ip in RADAR_IP_DICT[car_brand][car_type].items():
+        cmd_run = "ping -D -c 86400 -i 1 {0} >> {1}/{2}.log 2>&1 &".format(radar_ip, log_dir_path, radar_name)
+        subprocess.Popen(cmd_run, shell=True, executable="bash", stdout=None, stderr=None)
 
 
 def main():
@@ -402,6 +507,7 @@ def main():
     t2.start()
     t3.start()
     t4.start()
+    ping_thread(log_dir_path)
 
 
 if __name__ == "__main__":
