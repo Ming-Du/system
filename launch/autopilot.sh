@@ -178,7 +178,7 @@ set_pr() {
             [[ -z "$pids" ]] && continue
             for pid in ${pids}; do
                 [[ -z "$pid" ]] && continue
-                priority=$(top -b -n 1 -p $pid | grep $pid | awk '{print $(NF-9)}')
+                priority=$(top -b -n 1 -p $pid | tail -n 1 | awk '{print $(NF-9)}')
                 [[ "$priority" == "rt" ]] && continue
                 case "$t" in
                 "DongFeng_E70_can_adapter" | "jinlv_can_adapter" | "hongqih9_can_adapter")
