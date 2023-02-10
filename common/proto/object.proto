@@ -44,9 +44,13 @@ enum MotionState {
 };
 
 enum NoiseState {
-  NOISE_CONFIRM = 0;
-  NOISE_SUSPECTED = 1;
-  NOISE_FLOWERBEDS = 2;
+  //NOISE_CONFIRM = 0;
+  //NOISE_SUSPECTED = 1;
+  //NOISE_FLOWERBEDS = 2;
+  NOISE_OBJECT = 0;
+  NOISE_NOISE = 1;
+  NOISE_SUSPECTED = 2;
+  NOISE_FLOWERBEDS = 3;
 };
 
 enum RoadType {
