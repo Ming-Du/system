@@ -41,7 +41,6 @@ class Executor:
                     os.system(strCmd)
                 else:
                     rospy.loginfo("------------------------ ignore: {0}".format(listTemp[idx].strFullFileTempName))
-                # self.create_task(listTemp[idx].strUrl, listTemp[idx].strFullFileTempName)
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
@@ -75,9 +74,6 @@ class Executor:
             status = 0
             pid = os.fork()
             while True:
-                # if len(self.dictRunningWgetPid) > 0:
-                #     print("len(self.dictRunningWgetPid) > 0 ")
-                #     break
                 if pid < 0:
                     rospy.logdebug("self.intCurrentJobId < 0 ")
                     status = -1
@@ -86,11 +82,6 @@ class Executor:
                     rospy.logdebug("parent process ")
                     self.dictRunningWgetPid[pid] = pid
                     rospy.logdebug("====register sub process_pid:{0}".format(self.dictRunningWgetPid))
-                    #  os.waitpid(pid, 0)
-                    # if self.dictRunningWgetPid.has_key(pid):
-                    #     del self.dictRunningWgetPid[pid]
-                    #     self.mJob = None
-                    #     self.mJob.enumStatus = EnumJobStatus.EnumJobStatus.JOB_STATUS_FINISH
                     rospy.logdebug("====after finish wget dictRunningWgetPid:{0}".format(self.dictRunningWgetPid))
                     status = 0
                     break

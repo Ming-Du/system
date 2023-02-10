@@ -7,6 +7,3 @@ def LogLine(msg):
         sys._getframe().f_lineno) + ' , in ' + sys._getframe().f_code.co_name)
 
 
-# if __name__ == '__main__':
-#     LogLine("content:{0}".format("hi fi"))
-#     LogLine("content2:{0}".format("hi fi"))

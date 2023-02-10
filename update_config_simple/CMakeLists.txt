@@ -15,11 +15,11 @@ include_directories(
 
 
 install(
-	FILES AiModelImpInterfaceDataSource.py CacheUtils.py CommonHttpUtils.py CommonPara.py CommonSchedulerImpInterfaceTaskSchedulingPool.py CommonSimpleSchedulerImpInterfaceTaskSchedulingPool.py CommonTriggerImpInterfaceTrigger.py CommonUtilsCompare.py CommonUtilsReadFile.py ConfigImpInterfaceDataSource.py EnumDataSourceType.py EnumJobStatus.py EnumJobType.py EnumVersion.py Executor.py FileUtils.py HdMapAgentImpInterfaceDataSource.py InterfaceDataSource.py InterfaceTaskSchedulingPool.py InterfaceTrigger.py JobItem.py Job.py LogLine.py SlamMapImpInterfaceDataSource.py TrajectoryImpInterfaceDataSource.py update_config_simple.py   CommonEventUtils.py GridMapImpInterfaceDataSource.py
+	FILES AiModelImpInterfaceDataSource.py CacheUtils.py CommonHttpUtils.py CommonPara.py CommonSchedulerImpInterfaceTaskSchedulingPool.py CommonSimpleSchedulerImpInterfaceTaskSchedulingPool.py CommonTriggerImpInterfaceTrigger.py CommonUtilsCompare.py CommonUtilsReadFile.py ConfigImpInterfaceDataSource.py EnumDataSourceType.py EnumJobStatus.py EnumJobType.py EnumVersion.py Executor.py FileUtils.py HdMapAgentImpInterfaceDataSource.py InterfaceDataSource.py InterfaceTaskSchedulingPool.py InterfaceTrigger.py JobItem.py Job.py LogLine.py SlamMapImpInterfaceDataSource.py TrajectoryImpInterfaceDataSource.py update_config_simple.py   CommonEventUtils.py DfTrajectoryImpInterfaceDataSource.py  BusTrajectoryImpInterfaceDataSource.py TrajV250.py TrajV260.py EnumTrajResult.py GridMapImpInterfaceDataSource.py CommonPrivilege.py CommonDataSourceUtil.py CommonWgetFileRestore.py ConfigUtils.py SubTask.py ProcessUtil.py
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/
   )
 install(
-    DIRECTORY  proto entity launch
+    DIRECTORY   entity launch
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/
   )
 

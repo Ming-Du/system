@@ -56,7 +56,7 @@ class CommonSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulingPool)
         pass
 
     def init_module(self):
-        # signal.signal(signal.SIGCHLD, signal_handler)
+
         self.setThreadPool(globalThreadExecutePool)
         pass
 
