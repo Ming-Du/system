@@ -1,5 +1,0 @@
-<launch>
-    <node name="trajectory_agent" pkg="trajectory_agent" type="trajectory_agent.py" output="screen">
-    <param name="detect_interval" type="int" value="10" />
-   </node>
-</launch>
