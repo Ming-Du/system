@@ -167,32 +167,36 @@ start_onenode() {
 
 set_pr() {
     while [ $exit_flag -ne 1 ] ;do
+        rt_node_array=`rosnode list | tr "\n" " "`
         sleep 2
-        for t in ${map_child_node_array[@]}; do
+        for t in ${rt_node_array[@]}; do
             t=${t##*/}
             [[ "$t" =~ "rviz" ]] && continue
             [[ "$t" =~ "update_map" ]] && continue
             #pr
-            pid=$(ps -ef | grep "__name:=$t" | grep -v grep | awk '{print $2}')
-            [[ -z "$pid" ]] && continue
-            priority=$(top -b -n 1 -p $pid | grep $pid | awk '{print $(NF-9)}')
-            [[ "$priority" == "rt" ]] && continue
-            case "$t" in
-            "DongFeng_E70_can_adapter" | "jinlv_can_adapter" | "hongqih9_can_adapter")
-                (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 45 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "controller") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 44 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "localization" | "drivers_gnss" | "drivers_gnss_zy") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 42 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "local_planning") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 40 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "perception_fusion_mid") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 29 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "hadmap_server" | "hadmap_engine_node") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 30 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "perception_fusion2" | "perception_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 30 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "rs_perception_node") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 20 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "xiaoba_lidars_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 15 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "c32_rear_decoder" | "c32_left_decoder" | "c32_right_decoder") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 11 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "drivers_robosense_node" | "c32_rear_driver" | "c32_left_driver" | "c32_right_driver") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 10 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            "zvision_lidar_front_nodelet_manager" | "zvision_lidar_front_nodelet_manager_driver" | "zvision_lidar_front_nodelet_manager_cloud" | "zvision_lidar_left_nodelet_manager" | "zvision_lidar_left_nodelet_manager_driver" | "zvision_lidar_left_nodelet_manager_cloud" | "zvision_lidar_right_nodelet_manager" | "zvision_lidar_right_nodelet_manager_driver" | "zvision_lidar_right_nodelet_manager_cloud" | "zvision_lidar_rear_nodelet_manager" | "zvision_lidar_rear_nodelet_manager_driver" | "zvision_lidar_rear_nodelet_manager_cloud" | "xiaoba_zvisionlidars_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 10 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-            *) ;;
-            esac
+            pids=$(ps -ef | grep "__name:=$t" | grep -v grep | awk '{print $2}')
+            [[ -z "$pids" ]] && continue
+            for pid in ${pids}; do
+                [[ -z "$pid" ]] && continue
+                priority=$(top -b -n 1 -p $pid | grep $pid | awk '{print $(NF-9)}')
+                [[ "$priority" == "rt" ]] && continue
+                case "$t" in
+                "DongFeng_E70_can_adapter" | "jinlv_can_adapter" | "hongqih9_can_adapter")
+                    (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 45 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                "controller") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 44 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                "localization" | "drivers_gnss" | "drivers_gnss_zy") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 42 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                "local_planning") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 40 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                "perception_fusion_mid") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 29 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                "hadmap_server" | "hadmap_engine_node") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 30 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                "perception_fusion2" | "perception_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 30 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                "rs_perception_node") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 20 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                "xiaoba_lidars_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 15 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                "c32_rear_decoder" | "c32_left_decoder" | "c32_right_decoder") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 11 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                "drivers_robosense_node" | "c32_rear_driver" | "c32_left_driver" | "c32_right_driver") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 10 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                "zvision_lidar_front_nodelet_manager" | "zvision_lidar_front_nodelet_manager_driver" | "zvision_lidar_front_nodelet_manager_cloud" | "zvision_lidar_left_nodelet_manager" | "zvision_lidar_left_nodelet_manager_driver" | "zvision_lidar_left_nodelet_manager_cloud" | "zvision_lidar_right_nodelet_manager" | "zvision_lidar_right_nodelet_manager_driver" | "zvision_lidar_right_nodelet_manager_cloud" | "zvision_lidar_rear_nodelet_manager" | "zvision_lidar_rear_nodelet_manager_driver" | "zvision_lidar_rear_nodelet_manager_cloud" | "xiaoba_zvisionlidars_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 10 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                *) ;;
+                esac
+            done
         done
     done
 }
@@ -755,6 +759,13 @@ if [[ -n "$opt_onenode" || -n "$opt_launch_file" ]];then
 fi
 pids=$(ps -ef | grep -w "autopilot\.sh" | grep -v grep | awk '!($3 in arr) && $2 != "'$self_pid'" && $3 != "'$self_pid'" {arr[$2]=$2};END{for(idx in arr){print arr[idx]}}')
 for pid in $pids; do [[ "$pid" != "$self_pid" ]] && LoggingINFO "clean exist $(basename $0)[$pid]" && kill -2 $pid; done
+# 备份filebeat文件
+mkdir -p /home/mogo/data/log/filebeat_backup
+FileBackPath="/home/mogo/data/log/filebeat_upload/tele_stat.log"
+if [ -e "$FileBackPath" ]; then
+    cp  "$FileBackPath"  /home/mogo/data/log/filebeat_backup/tele_stat$(date +_%Y-%m-%d_%H_%M_%S).log
+fi
+
 add_privilege_monitor_gnss
 start_core
 LoggingINFO "update config...."
@@ -791,6 +802,7 @@ else
     # new agent
     LoggingINFO "use new agent!!!!!!!"
     pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple psutil
+    wait_core
     python3 /home/mogo/autopilot/share/launch/agent/ssm_agent.py $ABS_PATH $ROS_LOG_DIR >> /dev/null 2>&1 &
 fi
 
