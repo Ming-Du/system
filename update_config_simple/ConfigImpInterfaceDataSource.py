@@ -98,6 +98,7 @@ class ConfigImpInterfaceDataSource(InterfaceDataSource):
     def readHttpNewList(self, strRespContent, refJob):
         intError = 0
         dictResult = {}
+        rospy.loginfo("strRespContent:{0}".format(strRespContent))
 
         intLenData = 0
         dictResult = None
@@ -143,6 +144,7 @@ class ConfigImpInterfaceDataSource(InterfaceDataSource):
                     strFullFileName = str(dictResult['data'][idx]['filepath'])
                     strMd5 = str(dictResult['data'][idx]['md5'])
                     strUrl = str(dictResult['data'][idx]['content'])
+                    strVersion = str(dictResult['data'][idx]['version'])
                     intPubTimeStamp = int(dictResult['data'][idx]['commitTime'])
                     intReplyId = dictResult['data'][idx]['id']
                     jobItem = JobItem()
@@ -154,6 +156,7 @@ class ConfigImpInterfaceDataSource(InterfaceDataSource):
                     jobItem.strMd5 = strMd5
                     jobItem.intReplyId = intReplyId
                     jobItem.intPublishTimeStamp = intPubTimeStamp
+                    jobItem.strVersion = strVersion
                     refJob[0].listJobCollect.append(jobItem)
                 except Exception as e:
                     rospy.logwarn('repr(e):{0}'.format(repr(e)))
@@ -183,7 +186,6 @@ class ConfigImpInterfaceDataSource(InterfaceDataSource):
                 rospy.loginfo("process_startup errcode:{0}".format(errcode))
 
             if errcode == 0 and len(refJob[0].listJobCollect) > 0:
-                # instanceJob.listJobCollect = listJobItem
                 rospy.loginfo("---------len(refJob[0].listJobCollec):{0}".format(len(refJob[0].listJobCollect)))
 
             intError = self.getNeedUpdateFile(refJob)
@@ -251,22 +253,6 @@ class ConfigImpInterfaceDataSource(InterfaceDataSource):
 
     def install_stage_path(self, refJob):
         pass
-        # print "--------------------enter install_stage_path --------------------  "
-        # for idx in range(len(refJob.listJobCollect)):
-        #     if len(refJob.listJobCollect[idx].strFullFileStageName) > 0:
-        #         strStageName = refJob.listJobCollect[idx].strFullFileStageName
-        #         strFolderName = os.path.dirname(strStageName)
-        #         if os.path.exists(strFolderName):
-        #             pass
-        #         else:
-        #             os.makedirs(strFolderName)
-        #             os.chmod(strFolderName, 0777)
-        #     print "----------------  refJob.listJobCollect[idx].strFullFileTempName:{0}".format(
-        #         refJob.listJobCollect[idx].strFullFileTempName)
-        #     print "----------------  refJob.listJobCollect[idx].strFullFileStageName:{0}".format(
-        #         refJob.listJobCollect[idx].strFullFileStageName)
-        #     shutil.copyfile(refJob.listJobCollect[idx].strFullFileTempName,
-        #                     refJob.listJobCollect[idx].strFullFileStageName)
 
     def install_dst_path(self, refJob):
         rospy.logdebug("---------------enter install_dst_path---------------------- ")
@@ -317,12 +303,14 @@ class ConfigImpInterfaceDataSource(InterfaceDataSource):
         rospy.logdebug("----------------------------enter notify_cloud------------------------")
         try:
             self.mCommonPara.initPara()
-            for idx in range(len(refJob.listJobCollect)):
+            for idx in range(len(refJob.listJobCollectUpdate)):
+                if refJob.listJobCollectUpdate[idx].intStatus != 0:
+                    continue
                 dictReceiptContent = {}
-                dictReceiptContent['id'] = refJob.listJobCollect[idx].intReplyId
-                dictReceiptContent['md5'] = refJob.listJobCollect[idx].strMd5
-                dictReceiptContent['version'] = "version"
-                dictReceiptContent['filepath'] = refJob.listJobCollect[idx].strFullFileTempName
+                dictReceiptContent['id'] = refJob.listJobCollectUpdate[idx].intReplyId
+                dictReceiptContent['md5'] = refJob.listJobCollectUpdate[idx].strMd5
+                dictReceiptContent['version'] = refJob.listJobCollectUpdate[idx].strVersion
+                dictReceiptContent['filepath'] = refJob.listJobCollectUpdate[idx].strFullFileTempName
                 dictReceiptContent['pullStatus'] = 1
                 dictReceiptContent['sn'] = self.mCommonPara.dictCarInfo['car_plate']
                 instanceCommonHttpUtils.sendSimpleHttpRequestWithHeader(self.strUrlSync, dictReceiptContent)

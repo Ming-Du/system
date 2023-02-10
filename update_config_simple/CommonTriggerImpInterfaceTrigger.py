@@ -86,7 +86,6 @@ class CommonTriggerImpInterfaceTrigger(InterfaceTrigger):
         pass
 
     def processPilotUpdate(self, intPilotMode):
-        # rospy.loginfo("processPilotUpdate value:{0}".format(intPilotMode))
         try:
             self.mTrigger.action_autopilot_status_change(intPilotMode)
             while True:
@@ -107,20 +106,21 @@ class CommonTriggerImpInterfaceTrigger(InterfaceTrigger):
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
     def processTopicInfo(self, strTopicName, pbTopicInfo):
-        rospy.loginfo("--processTopicInfo---recv from /trajectory_agent/cmd/transaction---strTopicName:{0}---".format(
-            strTopicName))
+        rospy.loginfo("#### processTopicInfo---recv from strTopicName:{0}---".format(strTopicName))
         # select handler
         try:
             handler = None
-            strTrajectoryKey = "trajectory"
+            #strTrajectoryKey = "df_trajectory"
             rospy.logdebug("==processTopicInfo===== now self.mMapDataSource:{0}".format(self.mMapDataSource))
             while True:
-                if strTopicName == "/trajectory_agent/cmd/transaction" or strTopicName == "/trajectory_agent/cmd/checktrajstate":
+                if strTopicName == "/trajectory_agent/cmd/transaction" or strTopicName == "/trajectory_agent/cmd/checktrajstate" :
                     rospy.logdebug("============= self.mMapDataSource:{0}".format(self.mMapDataSource))
-                    if self.mMapDataSource.has_key(strTrajectoryKey):
-                        handler = self.mMapDataSource["trajectory"]
-                        rospy.logdebug("====handler:{0}".format(handler))
-                        handler.process_topic(strTopicName, pbTopicInfo)
+                    for idx in range(len(self.mMapDataSource)):
+                        if self.mMapDataSource[idx].getModuleName() == "df_trajectory" or self.mMapDataSource[idx].getModuleName() == "bus_trajectory":
+                            handler = self.mMapDataSource[idx]
+                            rospy.logdebug("====handler:{0}".format(handler))
+                            handler.process_topic(strTopicName, pbTopicInfo)
+                            break
                     break
                 break
         except Exception as e:
@@ -135,6 +135,7 @@ class CommonTriggerImpInterfaceTrigger(InterfaceTrigger):
                 intTimeVal = self.mMapDataSource[idx].getTimeval()
                 schedule.every(intTimeVal).seconds.do(self.mMapDataSource[idx].process_cycle, dictParameter)
             rospy.loginfo("scheduler***** self.mMapDataSource:{0}".format(self.mMapDataSource))
+            #schedule.every(10).seconds.do(self.mTrigger.scheduler_again, "")
             while True:
                 schedule.run_pending()
                 time.sleep(1)
@@ -169,28 +170,3 @@ class CommonTriggerImpInterfaceTrigger(InterfaceTrigger):
 
     def process_startup(self, dictParameter):
         self.sub_process(dictParameter)
-        # self.sub_process(dictParameter)
-        # timeout = 10
-        # try:
-        #     pid = os.fork()
-        #     while True:
-        #         if pid < 0:
-        #             break
-        #         if pid == 0:
-        #             self.sub_process(dictParameter)
-        #             break
-        #         if pid > 0:
-        #             ##start time-out check
-        #             thread_timeout_check = Thread(target=thread_timer_stop, args=(timeout, pid,))
-        #             thread_timeout_check.start()
-        #             os.waitpid(pid, 0)
-        #             break
-        #         break
-        # except Exception as e:
-        #     print('str(Exception):\t', str(Exception))
-        #     print('str(e):\t\t', str(e))
-        #     print('repr(e):\t', repr(e))
-        #     print('e.message:\t', e.message)
-        #     print('traceback.print_exc():')
-        #     traceback.print_exc()
-        #     print('traceback.format_exc():\n%s' % (traceback.format_exc()))
