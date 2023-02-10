@@ -3,7 +3,7 @@
 from timeit import Timer
 
 import thread
-import threading
+from threading import Thread,Lock
 import traceback
 from random import random
 
@@ -29,6 +29,7 @@ import datetime
 from autopilot_msgs.msg import BinaryData
 import proto.localization_pb2 as common_localization
 import proto.vehicle_state_pb2 as common_vehicle_state_pb2
+import common.system_pilot_mode_pb2 as common_system_pilot_mode_pb2
 import proto.log_reslove_pb2 as common_log_reslove_pb2
 import proto.mogo_report_msg_pb2 as comon_mogo_report_msg_pb2
 from entity.LocInfo import LocInfo
@@ -54,8 +55,10 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+
+
 ### global area
-globalTopicHzPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='globalTopicHzPool')
+# globalTopicHzPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='globalTopicHzPool')
 globalTopicMsgPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='globalTopicMsgPool')
 globalCpuInfoPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='globalCpuInfoPool')
 globalMemInfoPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='globalMemInfoPool')
@@ -73,7 +76,6 @@ globalPubOperatorToolNodeHealth = rospy.Publisher("/monitor_process/nodes/health
 
 tree = lambda: collections.defaultdict(tree)
 rDictHzTable = tree()
-listSubScriptHzItem = []
 global_hz_time_write_interval = 0
 
 globalSumCpuMsgRecvInfo = 0
@@ -97,6 +99,7 @@ globalDictHzFlag  = {}
 globalTimeAlignDictHzRecord = tree()
 globalTimeAlignDictHzFlag = {}
 globalListWaitWriteBuffer  = []
+globalHzRecordLock = Lock()
 
 
 def folder_check():
@@ -179,7 +182,7 @@ def task_topic_hz_time_align(msg):
 
     try:
 
-        rospy.loginfo_throttle(5,"node: %s, topic: %s, type: %d, start: %d, hz: %f, max_delay: %d, stop:%d ",msg.node, msg.topic, msg.type, msg.start, msg.hz, msg.max_delay,msg.stop)
+        # rospy.loginfo_throttle(5,"node: %s, topic: %s, type: %d, start: %d, hz: %f, max_delay: %d, stop:%d ",msg.node, msg.topic, msg.type, msg.start, msg.hz, msg.max_delay,msg.stop)
         strType = ""
         if msg.type == 0:
             strType = "pub"
@@ -189,7 +192,7 @@ def task_topic_hz_time_align(msg):
 
         ##  process node info write cover
         strConflictKey = "{0}_{1}".format(msg.node,msg.topic)
-        rospy.loginfo_throttle(5, "strConflictKey:{0}".format(strConflictKey))
+        # rospy.loginfo_throttle(5, "strConflictKey:{0}".format(strConflictKey))
 
         recent_time = rospy.rostime.Time.now().secs
         if msg.stop < recent_time - 10:
@@ -197,6 +200,7 @@ def task_topic_hz_time_align(msg):
             return
 
         if not globalTimeAlignDictHzFlag.has_key(msg.stop):
+            globalHzRecordLock.acquire()
             globalTimeAlignDictHzFlag[msg.stop] = dict()
             ### fillup  upload time and carinfo
             globalTimeAlignDictHzRecord[msg.stop]["log_type"] = "topic_hz"
@@ -206,19 +210,22 @@ def task_topic_hz_time_align(msg):
             globalTimeAlignDictHzRecord[msg.stop]['carinfo']['car_type'] = globalCommonPara.dictCarInfo['car_type']
             globalTimeAlignDictHzRecord[msg.stop]['carinfo']['code_version'] = globalCommonPara.dictCarInfo['code_version']
             globalTimeAlignDictHzRecord[msg.stop]['carinfo']['car_plate'] = globalCommonPara.dictCarInfo['car_plate']
+            globalHzRecordLock.release()
 
         if  globalTimeAlignDictHzFlag[msg.stop].has_key(strConflictKey):
-            rospy.loginfo_throttle("{0} has received more than 1 msg at time_stamp {1}".format(strConflictKey, msg.stop))
+            rospy.loginfo_throttle(10,"{0} has received more than 1 msg at time_stamp {1}".format(strConflictKey, msg.stop))
             return
 
         ## normal  write data
         ### hzFlag add key msg.node
+        globalHzRecordLock.acquire()
         globalTimeAlignDictHzFlag[msg.stop][strConflictKey] = 0
         globalTimeAlignDictHzRecord[msg.stop][msg.node][msg.topic][strType]['hz']=msg.hz
         globalTimeAlignDictHzRecord[msg.stop][msg.node][msg.topic][strType]['max_delay'] = msg.max_delay
         globalTimeAlignDictHzRecord[msg.stop][msg.node][msg.topic][strType]['stime']= msg.start
         # globalTimeAlignDictHzRecord[msg.stop][msg.node][msg.topic][strType]['etime'] = msg.stop
-        rospy.logdebug_throttle(5,"=================== after write globalDictHzRecord:{0} ".format(globalTimeAlignDictHzRecord[msg.stop]))
+        # rospy.logdebug_throttle(5,"=================== after write globalDictHzRecord:{0} ".format(globalTimeAlignDictHzRecord[msg.stop]))
+        globalHzRecordLock.release()
         ### message sum
         #global_hz_time_write_interval = global_hz_time_write_interval + 1
     except Exception as e:
@@ -325,10 +332,10 @@ def task_topic_msg(msg):
 
 
 def topicHzRecvCallback(msg):
+    # rospy.loginfo_throttle(30, "recv from topic_hz")
+    task_topic_hz_time_align(msg)
 
-    rospy.loginfo_throttle(2, "recv from topic_hz")
-    # globalTopicHzPool.submit(task_topic_hz, msg)
-    globalTopicHzPool.submit(task_topic_hz_time_align, msg)
+
 
 
 
@@ -529,14 +536,24 @@ def autopilotModeCallback(msg):
         break
 
 
+def newAutopilotModeCallback(msg):
+
+    pbStatus = common_system_pilot_mode_pb2.SYSVehicleState()
+    pbStatus.ParseFromString(msg.data)
+
+    global globalCollectVehicleInfo
+    # globalCollectVehicleInfo = CollectVehicleInfo()
+    globalCollectVehicleInfo.int_pilot_mode = pbStatus.pilot_mode
+
+
 def addLocalizationListener():
-    rospy.Subscriber("/autopilot_info/topic_hz", TopicHz, topicHzRecvCallback)
+    rospy.Subscriber("/autopilot_info/topic_hz", TopicHz, topicHzRecvCallback, queue_size = 10)
     rospy.Subscriber("/autopilot_info/report_msg_info", BinaryData, topicMsgCallback)
     rospy.Subscriber("/autopilot_info/report_msg_error", BinaryData, topicMsgCallback)
     rospy.Subscriber("/monitor_process/sysinfo/cpu/status", BinaryData, topicCpuStatusCallback)
     rospy.Subscriber("/monitor_process/sysinfo/memory/status", BinaryData, topicMemoryStatusCallback)
     rospy.Subscriber("/monitor_process/sysinfo/nodes/status", BinaryData, topicNodeStatusCallback)
-    rospy.Subscriber('/chassis/vehicle_state', BinaryData, autopilotModeCallback)
+    rospy.Subscriber('/system_master/SysVehicleState', BinaryData, newAutopilotModeCallback)
 
 
 
@@ -580,9 +597,11 @@ def flushTopicHzWriterBuffer():
 def newFlushTopicHzWriterBuffer():
     global globalTimeAlignDictHzRecord
     global globalTimeAlignDictHzFlag
+    # rospy.loginfo_throttle(30, "writing hz data to file")
     try:
         folder_check()
         with open('/home/mogo/data/log/filebeat_upload/new_topic_hz_log.log', 'ab+') as f:
+            globalHzRecordLock.acquire()
             timestamps = globalTimeAlignDictHzRecord.keys()
             timestamps.sort()
             recent_time = rospy.rostime.Time.now().secs
@@ -593,9 +612,9 @@ def newFlushTopicHzWriterBuffer():
                 strBufferContent = json.dumps(globalTimeAlignDictHzRecord.pop(timestamp))
                 f.write(strBufferContent)
                 f.write('\n')
-            rospy.logdebug_throttle(2, "================================flushTopicHzWriterBuffer write  local disk finished ")
-            globalListWaitWriteBuffer = []
-            rospy.logdebug_throttle(2, "flushTopicHzWriterBuffer: after flush to  file , globalListWaitWriteBuffer :{0}".format(globalListWaitWriteBuffer))
+            globalHzRecordLock.release()
+            # rospy.logdebug_throttle(2, "================================flushTopicHzWriterBuffer write  local disk finished ")
+
     except Exception as e:
         rospy.logwarn('repr(e):{0}'.format(repr(e)))
         rospy.logwarn('e.message:{0}'.format(e.message))
@@ -604,10 +623,18 @@ def newFlushTopicHzWriterBuffer():
 
 def threadFlushTopicHz(intTimeVal):
     while True:
-        # flushTopicHzWriterBuffer()
-        globalTopicHzPool.submit(newFlushTopicHzWriterBuffer, )
-        # newFlushTopicHzWriterBuffer()
+        newFlushTopicHzWriterBuffer()
         time.sleep(30)
+
+
+def threadCheckHz(intTimeVal):
+    while True:
+        time.sleep(intTimeVal)
+        recent_time = rospy.rostime.Time.now().secs
+        if (recent_time - 60) in globalTimeAlignDictHzRecord:
+            rospy.loginfo("writing hz file went wrong, didn't write in 30s")
+        if (recent_time - 2) not in globalTimeAlignDictHzRecord:
+            rospy.loginfo("collecting hz data went wrong, didn't collect in 2s")
 
 
 def startThreadFlushWaitWriteBufferCmd(intTimeVal):
@@ -618,10 +645,16 @@ def startThreadFlushWaitWriteBufferCmd(intTimeVal):
         rospy.logwarn('e.message:{0}'.format(e.message))
         rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
 
+
+def startThreadCheckHzWorkingStatus(intTimeVal):
+    try:
+        thread.start_new_thread(threadCheckHz, (int(intTimeVal),))
+    except Exception as e:
+        rospy.logwarn('repr(e):{0}'.format(repr(e)))
+        rospy.logwarn('e.message:{0}'.format(e.message))
+        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+
 def main():
-    global listSubScriptHzItem
-    listSubScriptHzItem.append("/app1")
-    listSubScriptHzItem.append("/app3")
     # initial node
     globalCommonPara.initPara()
     rospy.init_node('monitor_collect', anonymous=True)
@@ -633,6 +666,7 @@ def main():
     addLocalizationListener()
     startThreadControlCmd(globalDelayTimeInterval)
     startThreadFlushWaitWriteBufferCmd(30)
+    startThreadCheckHzWorkingStatus(600)
     ## wait msg
     rospy.spin()
 

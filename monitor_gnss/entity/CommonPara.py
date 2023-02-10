@@ -29,6 +29,7 @@ class CommonPara:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))
             rospy.logwarn('e.message:{0}'.format(e.message))
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+
             return False
         return dictCarInfo
 
