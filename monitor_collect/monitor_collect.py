@@ -663,6 +663,7 @@ def main():
     globalDelayTimeInterval = 10
 
     # add listener
+    folder_check()
     addLocalizationListener()
     startThreadControlCmd(globalDelayTimeInterval)
     startThreadFlushWaitWriteBufferCmd(30)
