@@ -760,11 +760,15 @@ fi
 pids=$(ps -ef | grep -w "autopilot\.sh" | grep -v grep | awk '!($3 in arr) && $2 != "'$self_pid'" && $3 != "'$self_pid'" {arr[$2]=$2};END{for(idx in arr){print arr[idx]}}')
 for pid in $pids; do [[ "$pid" != "$self_pid" ]] && LoggingINFO "clean exist $(basename $0)[$pid]" && kill -2 $pid; done
 # 备份filebeat文件
-mkdir -p /home/mogo/data/log/filebeat_backup
-FileBackPath="/home/mogo/data/log/filebeat_upload/tele_stat.log"
-if [ -e "$FileBackPath" ]; then
-    cp  "$FileBackPath"  /home/mogo/data/log/filebeat_backup/tele_stat$(date +_%Y-%m-%d_%H_%M_%S).log
-fi
+filebeat_backup="/home/mogo/data/log/filebeat_backup"
+mkdir -p ${filebeat_backup}
+FileBackPath_arry=("/home/mogo/data/log/filebeat_upload/tele_stat.log" "/home/mogo/data/log/filebeat_upload/new_topic_hz_log.log")
+for FileBackPath in ${FileBackPath_arry[@]}; do
+    if [ -e "$FileBackPath" ]; then
+        cp_file_name=${FileBackPath##*/}
+        cp  "$FileBackPath"  "${filebeat_backup}/${cp_file_name}$(date +_%Y-%m-%d_%H_%M_%S)"
+    fi
+done
 
 add_privilege_monitor_gnss
 start_core
