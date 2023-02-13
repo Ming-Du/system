@@ -92,7 +92,6 @@ globalDelayTimeInterval = 0
 
 #global_hz_time_write_interval = 0
 
-tree = lambda: collections.defaultdict(tree)
 globalDictHzRecord = tree()
 globalDictHzFlag  = {}
 globalTimeAlignDictHzRecord = tree()
