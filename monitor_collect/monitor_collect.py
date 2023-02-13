@@ -541,7 +541,7 @@ def newAutopilotModeCallback(msg):
 
 
 def addLocalizationListener():
-    rospy.Subscriber("/autopilot_info/topic_hz", TopicHz, topicHzRecvCallback, queue_size = 10)
+    rospy.Subscriber("/autopilot_info/topic_hz", TopicHz, topicHzRecvCallback, queue_size = 100)
     rospy.Subscriber("/autopilot_info/report_msg_info", BinaryData, topicMsgCallback)
     rospy.Subscriber("/autopilot_info/report_msg_error", BinaryData, topicMsgCallback)
     rospy.Subscriber("/monitor_process/sysinfo/cpu/status", BinaryData, topicCpuStatusCallback)
