@@ -113,7 +113,7 @@ class RedisManager(object):
     def connect(self,retry_times=10):
         self.lock.acquire()
         try:
-            self.pool = ConnectionPool(host=self.rhost,port=self.rport, db=0, username=self.ruser,password=self.rpassword, max_connections=3,decode_responses=True)
+            self.pool = ConnectionPool(host=self.rhost,port=self.rport, db=0, username=self.ruser,password=self.rpassword, max_connections=10,decode_responses=True)
             self.redis_handler = StrictRedis(connection_pool=self.pool,socket_connect_timeout=self.connect_timeout,socket_keepalive=True,socket_timeout=self.socket_timeout,health_check_interval=5)
         except Exception as e:
             logwarn("functions of redis are invalid:%s"%e)
