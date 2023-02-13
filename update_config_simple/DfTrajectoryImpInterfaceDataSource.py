@@ -139,7 +139,7 @@ class DfTrajectoryImpInterfaceDataSource(InterfaceDataSource):
         strDpqpDir = ""
         str250Dir = ""
         while True:
-            if self.instanceCommonPrivilege.strCarType == "jinlv":
+            if self.instanceCommonPrivilege.strCarType == "jinlv" or self.instanceCommonPrivilege.strCarType == "sweeper" or self.instanceCommonPrivilege.strCarType == "kaiwo":
                 strDpqpDir = "/home/mogo/data/vehicle_monitor/MapEngine_data/track_record_data_dpqp/JL/"
                 str250Dir = "/home/mogo/data/vehicle_monitor/MapEngine_data/track_record_data/JL/"
                 break

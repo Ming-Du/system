@@ -26,30 +26,9 @@ import time
 import datetime
 from os import path, access, R_OK
 import os, sys, stat
+from CommonHttpUtils import CommonHttpUtils
 
-times = 0
-strFlagFile = "/home/mogo/autopilot/share/update_config_simple/ready.flag"
-if os.path.exists(strFlagFile):
-    os.remove(strFlagFile)
-while True:
-    times = times + 1
-    strFlagFile = "/home/mogo/autopilot/share/update_config_simple/ready.flag"
-    if os.path.exists(strFlagFile):
-        break
-    if not os.path.exists(strFlagFile):
-        strCmd = "sudo apt-get update  &&  sudo apt-get  install -y python-requests  && sudo apt-get install -y python-schedule && sudo apt-get install  python-pycurl  && sudo apt-get install  python-psutil "
-        status, output = commands.getstatusoutput(strCmd)
 
-        if status == 0:
-            strTouchCmd = "touch  {0}".format(strFlagFile)
-            strDirName = os.path.dirname(strFlagFile)
-            if not os.path.exists(strDirName):
-                os.makedirs(strDirName)
-            os.system(strTouchCmd)
-            if os.path.exists(strFlagFile):
-                break
-
-    time.sleep(5)
 
 from autopilot_msgs.msg import BinaryData
 import common.localization_pb2 as common_localization
@@ -208,6 +187,8 @@ def main():
     strCmd = "/bin/rm  -rf /home/mogo/data/update_config_temp"
     os.system(strCmd)
     rospy.init_node('NewUpdateConfig', anonymous=True)
+    httpUtils = CommonHttpUtils()
+    httpUtils.send_test_dns()
     init_module()
 
 
