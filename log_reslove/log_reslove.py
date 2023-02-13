@@ -2,7 +2,7 @@
 
 import os
 import time
-#import asyncio
+import sys
 import threading
 import json
 import copy
@@ -32,12 +32,14 @@ class Constants():
     output_file = os.path.join(output_dir, "topic_stat")
     output_file_from_sensor = os.path.join(output_dir, "link_stat_start_sensor")
     output_error_info = os.path.join(output_dir, "pub_sub_error_info")
+    # output_match_results = os.path.join(output_dir, "error_datas_info")
     g_time_split_threshold = 30   # second
     g_type_of_pub = 0
     g_type_of_sub = 1
     g_type_of_beg = 2
     g_type_of_end = 3
     unit_stamp_sec = 1000000000
+    p99_threshold_def = 500
     
 
 #utils
@@ -587,7 +589,7 @@ class Log_handler():
                     if beg_end_time > Constants.unit_stamp_sec * 1:  # if beg_end_time > 0.5s  log_print
                         log_print("warning: beg_end time too large, node={}, thread={}, ident={}".format(
                             beg_info.get('node','none'), beg_info.get('thread','none'), beg_info.get('ident','none')))
-                    # data["use_time"] += beg_end_time  del by liyl 20220609 not add to sum
+                    
                     pdata["path"].append({"type": "beg_end", "node": topic['send_node'].name, "use_time": beg_end_time})
                     if beg_info['thread'] == topic['info']['pub_thread']:
                         #计算beg_end_cpu时候 要保证同一线程，20220915增加
@@ -637,6 +639,7 @@ class Log_handler():
                     wrong_count += 1
                     if g_test_mode:
                         log_print(data.get('wrong', 'unknow reason'))
+                    log_print("just test from can ++++++++++++++++++ data:[{}]".format(data))
                     continue
                 
                 data["split_path_str"] = "_".join([x for x in data['split_path']])
@@ -765,6 +768,7 @@ class Log_handler():
                         wrong_count += 1
                         if g_test_mode:
                             log_print(data.get('wrong', 'unknow reason'))
+                        log_print("just test ++++++++++++++++++ data:[{}]".format(data))
                         continue
                     
                     result[name].append(data)
@@ -884,6 +888,13 @@ class Log_handler():
                 with open(Constants.output_file, "a+") as fp:
                     fp.write("{0}\n".format(json.dumps(save_data)))
         
+            ## add by liyl 20230203  p99超限输出 详细日志
+            if save_data.get("p99", 200) > Constants.p99_threshold_def: 
+                filename = "match_{}_results_{}_bak_{}.log".format(split_path_str, save_data["timestamp"], int(time.time()))
+                with open(os.path.join(Constants.bak_dir, filename), 'a+') as fp:
+                    fp.write("{0}\n".format(json.dumps(result, indent=2)))
+
+
         self.results=dict()
 
 
@@ -1124,4 +1135,10 @@ def main():
 
 
 if __name__ == '__main__':
+    if len(sys.argv):
+        for x in sys.argv:
+            if x == 'test':
+                print('this time run log_reslove for test!')
+                g_test_mode = True
+                log_print = print
     main()
