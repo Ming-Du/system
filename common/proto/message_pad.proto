@@ -90,6 +90,15 @@ message Trajectory
     repeated TrajectoryPoint points = 1;
 }
 
+enum AdditionalAttribute
+{
+    ATTR_UNKNOWN = 0;
+    ATTR_ZOMBIE = 1; // 僵尸车
+    ATTR_ROAD_CONSTRUCTION = 2; // 道路施工区域
+    ATTR_STATIC = 3; // 静止障碍物
+    ATTR_ACCIDENT = 4; // 事故车
+}
+
 // message definition for MsgTypeTrackedObjects
 message SubSource
 {
@@ -125,6 +134,7 @@ message TrackedObject
     repeated TrackedSource tracked_source = 14;
     repeated Location polygon = 15;
     geometry.Point center = 16;
+    AdditionalAttribute add_attribute = 17; // 事件类型
 }
 
 message TrackedObjects
