@@ -163,7 +163,13 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      }
+      },
+      "enable_control": [
+        {
+          "SOC": "6x",
+          "hardware_suite": ["2.0"]
+        }
+      ]
     },
     {
       "launch_name": "sensing60.launch",
@@ -201,7 +207,13 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      }
+      },
+      "enable_control": [
+        {
+          "SOC": "6x",
+          "hardware_suite": ["2.0"]
+        }
+      ]
     },
     {
       "launch_name": "sensing120.launch",
@@ -237,7 +249,13 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      }
+      },
+      "enable_control": [
+        {
+          "SOC": "6x",
+          "hardware_suite": ["2.0"]
+        }
+      ]
     },
     {
       "launch_name": "sensing120_back.launch",
@@ -273,7 +291,13 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      }
+      },
+      "enable_control": [
+        {
+          "SOC": "6x",
+          "hardware_suite": ["2.0"]
+        }
+      ]
     },
     {
       "launch_name": "sensing120_right.launch",
@@ -309,7 +333,13 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      }
+      },
+      "enable_control": [
+        {
+          "SOC": "6x",
+          "hardware_suite": ["2.0"]
+        }
+      ]
     },
     {
       "launch_name": "sensing120_left.launch",
@@ -333,6 +363,148 @@
       "car_type": [
         "df",
         "hq",
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      },
+      "enable_control": [
+        {
+          "SOC": "6x",
+          "hardware_suite": ["2.0"]
+        }
+      ]
+    },
+    {
+      "launch_name": "sensing_fisheye_front.launch",
+      "node_name": "",
+      "package": "config",
+      "path": "vehicle/drivers/camera",
+      "machine": {
+        "2x": {
+          "must": [],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosslave-105"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
+      "launch_name": "sensing_fisheye_back.launch",
+      "node_name": "",
+      "package": "config",
+      "path": "vehicle/drivers/camera",
+      "machine": {
+        "2x": {
+          "must": [],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosslave-105"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
+      "launch_name": "sensing_fisheye_left.launch",
+      "node_name": "",
+      "package": "config",
+      "path": "vehicle/drivers/camera",
+      "machine": {
+        "2x": {
+          "must": [],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosslave-105"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
+      "launch_name": "sensing_fisheye_right.launch",
+      "node_name": "",
+      "package": "config",
+      "path": "vehicle/drivers/camera",
+      "machine": {
+        "2x": {
+          "must": [],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosslave-105"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "car_type": [
         "jinlv"
       ],
       "node_type": "MAP",
@@ -1616,7 +1788,13 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      }
+      },
+      "enable_control": [
+        {
+          "SOC": "6x",
+          "hardware_suite": ["2.0"]
+        }
+      ]
     },
     {
       "launch_name": "radar_408_front_308_rear.launch",
@@ -1651,7 +1829,13 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      }
+      },
+      "enable_control": [
+        {
+          "SOC": "6x",
+          "hardware_suite": ["2.0"]
+        }
+      ]
     },
     {
       "launch_name": "radar_fusion.launch",
@@ -1758,7 +1942,13 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      }
+      },
+      "enable_control": [
+        {
+          "SOC": "6x",
+          "hardware_suite": ["2.0"]
+        }
+      ]
     },
     {
       "launch_name": "drivers_zvisionlidar.launch",
@@ -1793,7 +1983,13 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      }
+      },
+      "enable_control": [
+        {
+          "SOC": "6x",
+          "hardware_suite": ["2.0"]
+        }
+      ]
     },
     {
       "launch_name": "drivers_innolidar.launch",
@@ -1828,7 +2024,13 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      }
+      },
+      "enable_control": [
+        {
+          "SOC": "6x",
+          "hardware_suite": ["2.0"]
+        }
+      ]
     },
     {
       "launch_name": "perception_falcon_lidar.launch",
@@ -1931,7 +2133,7 @@
         "cpu_ctrl": 0,
         "mem_ctrl": 0
       }
-    },     
+    },
     {
       "launch_name": "hadmap.launch",
       "node_name": "",
