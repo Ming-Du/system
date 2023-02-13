@@ -92,14 +92,14 @@ globalDelayTimeInterval = 0
 
 #global_hz_time_write_interval = 0
 
-tree = lambda: collections.defaultdict(tree)
 globalDictHzRecord = tree()
 globalDictHzFlag  = {}
 globalTimeAlignDictHzRecord = tree()
 globalTimeAlignDictHzFlag = {}
 globalListWaitWriteBuffer  = []
 globalHzRecordLock = Lock()
-
+globalHzWarnTime = 0
+globalHzHandleTime = 0
 
 def folder_check():
     PATH = '/home/mogo/data/log/filebeat_upload/'
@@ -176,6 +176,8 @@ def task_topic_hz_time_align(msg):
 
     global globalTimeAlignDictHzRecord
     global globalTimeAlignDictHzFlag
+    global globalHzWarnTime
+    global globalHzHandleTime
 
     try:
         strType = ""
@@ -188,9 +190,13 @@ def task_topic_hz_time_align(msg):
         ##  process node info write cover
         strConflictKey = "{0}_{1}".format(msg.node,msg.topic)
 
-        recent_time = rospy.rostime.Time.now().secs
-        if msg.stop < recent_time - 10:
-            rospy.logwarn(" {2} at timestamp {0} will be discarded because it is data {1} seconds ago".format(msg.stop, recent_time - msg.stop, strConflictKey))
+        if msg.stop > globalHzHandleTime:
+            globalHzHandleTime = msg.stop
+
+        if msg.stop < globalHzHandleTime - 10:
+            if globalHzWarnTime + 10 < msg.stop:
+                rospy.logwarn(" {2} at timestamp {0} will be discarded because it is data {1} seconds ago".format(msg.stop, globalHzHandleTime - msg.stop, strConflictKey))
+                globalHzWarnTime = msg.stop
             return
 
         if not globalTimeAlignDictHzFlag.has_key(msg.stop):
@@ -535,7 +541,7 @@ def newAutopilotModeCallback(msg):
 
 
 def addLocalizationListener():
-    rospy.Subscriber("/autopilot_info/topic_hz", TopicHz, topicHzRecvCallback, queue_size = 10)
+    rospy.Subscriber("/autopilot_info/topic_hz", TopicHz, topicHzRecvCallback, queue_size = 100)
     rospy.Subscriber("/autopilot_info/report_msg_info", BinaryData, topicMsgCallback)
     rospy.Subscriber("/autopilot_info/report_msg_error", BinaryData, topicMsgCallback)
     rospy.Subscriber("/monitor_process/sysinfo/cpu/status", BinaryData, topicCpuStatusCallback)
@@ -585,15 +591,15 @@ def flushTopicHzWriterBuffer():
 def newFlushTopicHzWriterBuffer():
     global globalTimeAlignDictHzRecord
     global globalTimeAlignDictHzFlag
+    global globalHzHandleTime
     try:
         folder_check()
         with open('/home/mogo/data/log/filebeat_upload/new_topic_hz_log.log', 'ab+') as f:
             globalHzRecordLock.acquire()
-            timestamps = globalTimeAlignDictHzRecord.keys()
+            timestamps = list(globalTimeAlignDictHzRecord.keys())
             timestamps.sort()
-            recent_time = rospy.rostime.Time.now().secs
             for timestamp in timestamps:
-                if timestamp > recent_time - 15:
+                if timestamp > globalHzHandleTime - 15:
                     break
                 globalTimeAlignDictHzFlag.pop(timestamp)
                 strBufferContent = json.dumps(globalTimeAlignDictHzRecord.pop(timestamp))
