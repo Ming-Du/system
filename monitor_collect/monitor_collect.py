@@ -58,7 +58,6 @@ sys.setdefaultencoding('utf-8')
 
 
 ### global area
-# globalTopicHzPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='globalTopicHzPool')
 globalTopicMsgPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='globalTopicMsgPool')
 globalCpuInfoPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='globalCpuInfoPool')
 globalMemInfoPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='globalMemInfoPool')
@@ -173,16 +172,12 @@ def task_topic_hz(msg):
 def task_topic_hz_time_align(msg):
 
     global global_hz_time_write_interval
-    # global globalDictHzRecord
-    # global globalDictHzFlag
     global globalListWaitWriteBuffer
 
     global globalTimeAlignDictHzRecord
     global globalTimeAlignDictHzFlag
 
     try:
-
-        # rospy.loginfo_throttle(5,"node: %s, topic: %s, type: %d, start: %d, hz: %f, max_delay: %d, stop:%d ",msg.node, msg.topic, msg.type, msg.start, msg.hz, msg.max_delay,msg.stop)
         strType = ""
         if msg.type == 0:
             strType = "pub"
@@ -192,7 +187,6 @@ def task_topic_hz_time_align(msg):
 
         ##  process node info write cover
         strConflictKey = "{0}_{1}".format(msg.node,msg.topic)
-        # rospy.loginfo_throttle(5, "strConflictKey:{0}".format(strConflictKey))
 
         recent_time = rospy.rostime.Time.now().secs
         if msg.stop < recent_time - 10:
@@ -206,7 +200,6 @@ def task_topic_hz_time_align(msg):
             globalTimeAlignDictHzRecord[msg.stop]["log_type"] = "topic_hz"
             globalTimeAlignDictHzRecord[msg.stop]["etime"] = msg.stop
             globalTimeAlignDictHzRecord[msg.stop]["timestamp"] = msg.stop * 1000
-            # globalTimeAlignDictHzRecord[msg.stop]['report_stamp'] = (rospy.Time.now().secs * 1000) + (rospy.Time.now().nsecs / 1000000)
             globalTimeAlignDictHzRecord[msg.stop]['carinfo']['car_type'] = globalCommonPara.dictCarInfo['car_type']
             globalTimeAlignDictHzRecord[msg.stop]['carinfo']['code_version'] = globalCommonPara.dictCarInfo['code_version']
             globalTimeAlignDictHzRecord[msg.stop]['carinfo']['car_plate'] = globalCommonPara.dictCarInfo['car_plate']
@@ -223,11 +216,8 @@ def task_topic_hz_time_align(msg):
         globalTimeAlignDictHzRecord[msg.stop][msg.node][msg.topic][strType]['hz']=msg.hz
         globalTimeAlignDictHzRecord[msg.stop][msg.node][msg.topic][strType]['max_delay'] = msg.max_delay
         globalTimeAlignDictHzRecord[msg.stop][msg.node][msg.topic][strType]['stime']= msg.start
-        # globalTimeAlignDictHzRecord[msg.stop][msg.node][msg.topic][strType]['etime'] = msg.stop
-        # rospy.logdebug_throttle(5,"=================== after write globalDictHzRecord:{0} ".format(globalTimeAlignDictHzRecord[msg.stop]))
         globalHzRecordLock.release()
         ### message sum
-        #global_hz_time_write_interval = global_hz_time_write_interval + 1
     except Exception as e:
         rospy.logwarn('repr(e):{0}'.format(repr(e)))
         rospy.logwarn('e.message:{0}'.format(e.message))
@@ -332,7 +322,6 @@ def task_topic_msg(msg):
 
 
 def topicHzRecvCallback(msg):
-    # rospy.loginfo_throttle(30, "recv from topic_hz")
     task_topic_hz_time_align(msg)
 
 
@@ -542,7 +531,6 @@ def newAutopilotModeCallback(msg):
     pbStatus.ParseFromString(msg.data)
 
     global globalCollectVehicleInfo
-    # globalCollectVehicleInfo = CollectVehicleInfo()
     globalCollectVehicleInfo.int_pilot_mode = pbStatus.pilot_mode
 
 
@@ -597,7 +585,6 @@ def flushTopicHzWriterBuffer():
 def newFlushTopicHzWriterBuffer():
     global globalTimeAlignDictHzRecord
     global globalTimeAlignDictHzFlag
-    # rospy.loginfo_throttle(30, "writing hz data to file")
     try:
         folder_check()
         with open('/home/mogo/data/log/filebeat_upload/new_topic_hz_log.log', 'ab+') as f:
@@ -613,7 +600,6 @@ def newFlushTopicHzWriterBuffer():
                 f.write(strBufferContent)
                 f.write('\n')
             globalHzRecordLock.release()
-            # rospy.logdebug_throttle(2, "================================flushTopicHzWriterBuffer write  local disk finished ")
 
     except Exception as e:
         rospy.logwarn('repr(e):{0}'.format(repr(e)))

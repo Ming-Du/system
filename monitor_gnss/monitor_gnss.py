@@ -42,11 +42,6 @@ import json
 from entity.CollectVehicleInfo import   CollectVehicleInfo
 
 
-# globalLocationPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_Location')
-# globalVihiclePool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_vehicle')
-# globalPlanningDecisionStatePool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_planningDecisionState')
-# globalStateReportPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_StateReport')
-# globalTrfcltsCtrlPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='Thread_TrfcltsCtrl')
 tree = lambda: collections.defaultdict(tree)
 globalCollectVehicleInfo  = CollectVehicleInfo()
 globalCommonPara = CommonPara()
@@ -383,7 +378,6 @@ def task_decisionState(pb_msg):
 
     sec = pb_msg.header.stamp.secs
     nsec = pb_msg.header.stamp.nsecs
-    # rospy.logdebug("sec:{0},nsec:{1}".format(sec,nsec))
 
     CurrentMicroSec = sec * 1000 + nsec / 1000000
     dictDecisionState['sec'] = sec
