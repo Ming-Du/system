@@ -95,6 +95,7 @@ set_bashrc() {
             sed -i "s#^$alias_log#$add_alias#g" /home/mogo/.bashrc
         fi
     fi
+    sync
 }
 
 get_launch_files() {
@@ -280,16 +281,38 @@ add_privilege_monitor_gnss() {
     chmod -R 777 /autocar-code/install/share/update_config_simple  >/dev/null 2>&1
 }
 
+_md5cmp() {
+    [[ $# -ne 2 ]] && LoggingERR "_md5cmp expect two arguments" && return 1
+    [ ! -f $1 -o ! -f $2 ] && return 1
+    md5_1=$(md5sum $1 | awk '{print $1}')
+    md5_2=$(md5sum $2 | awk '{print $1}')
+    return $(test $md5_1 == $md5_2)
+}
+
 _update() {
     install_ros_log
     if [[ ! -f ${ABS_PATH}/update/updated.flag ]]; then
         [[ ! -d ${ABS_PATH}/update/old ]] && mkdir -p ${ABS_PATH}/update/old
         while read src_to_dest || [[ ! -z "$src_to_dest" ]]; do
             [[ ! -d ${ABS_PATH}/update/new ]] && break
-            [[ -f "${src_to_dest#* }/${src_to_dest#* }" || -d "${src_to_dest#* }/${src_to_dest#* }" ]] && cp -rf "${src_to_dest#* }/${src_to_dest#* }" ${ABS_PATH}/update/old/
-            cp -rf "${ABS_PATH}/update/new/${src_to_dest% *}" "${src_to_dest#* }"
+            local target_file=${src_to_dest% *}
+            local target_dir=${src_to_dest#* }
+            _md5cmp "${ABS_PATH}/update/new/${target_file}" "${target_dir}/${target_file}"
+            if [ $? -ne 0 ];then
+                [[ ! -d ${target_dir} ]] && mkdir -p ${target_dir}
+                #备份旧文件
+                [[ -f ${target_dir}/${target_file} ]] && mv ${target_dir}/${target_file} ${ABS_PATH}/update/old/${target_file}
+                cat ${ABS_PATH}/update/new/${target_file} > ${target_dir}/${target_file}
+                sync
+                #检查是否更新成功
+                _md5cmp "${ABS_PATH}/update/new/${target_file}" "${target_dir}/${target_file}"
+                if [ $? -eq 0 ];then
+                    LoggingINFO "update ${target_file} succeed"
+                else
+                    LoggingERR "update ${target_file} failed"
+                fi
+            fi
         done <${ABS_PATH}/update/update.list
-        touch ${ABS_PATH}/update/updated.flag
     fi
 }
 start_core() {
