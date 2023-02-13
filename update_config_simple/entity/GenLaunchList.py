@@ -61,6 +61,12 @@ class GenLaunchList:
                 if str(self.globalCommonPara.dictCarInfo['car_type']) == "HQ":
                     strCarType = "hq"
                     break
+                if str(self.globalCommonPara.dictCarInfo['car_type']) == "FT":
+                    strCarType = "sweeper"
+                    break
+                if str(self.globalCommonPara.dictCarInfo['car_type']) == "KW":
+                    strCarType = "kaiwo"
+                    break
                 break
         except Exception as e:
             rospy.logwarn('repr(e):{0}'.format(repr(e)))

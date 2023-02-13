@@ -49,7 +49,7 @@ instanceCommonPrivilege = CommonPrivilege()
 def getCarDirName():
     strDirFlag = ""
     while True:
-        if instanceCommonPrivilege.strCarType == "jinlv":
+        if instanceCommonPrivilege.strCarType == "jinlv" or instanceCommonPrivilege.strCarType == "sweeper" or instanceCommonPrivilege.strCarType == "kaiwo":
             strDirFlag = "JL"
             break
         if instanceCommonPrivilege.strCarType == "df":
