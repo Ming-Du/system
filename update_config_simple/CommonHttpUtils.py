@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import logging
+import time
 
 import rospy
 
@@ -56,4 +57,19 @@ class CommonHttpUtils:
             rospy.logwarn('e.message:{0}'.format(e.message))
             rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
         return intHttpCode, strRespContent
+
+    def send_test_dns(self):
+        idx = 0
+        try:
+            while True:
+                strUrl = "https://mdev.zhidaohulian.com/config/file/list"
+                dictPostPara = {'SN': "TAXI001"}
+                intHttpCode, strRespContent = self.sendSimpleHttpRequestWithHeader(strUrl, dictPostPara)
+                idx = idx + 1
+                rospy.loginfo("try test dns intHttpCode:{0},times:{1}".format(intHttpCode, idx))
+                if intHttpCode > -1:
+                    break
+                time.sleep(5)
+        except Exception as e:
+            rospy.logwarn('%s' % traceback.format_exc())
 
