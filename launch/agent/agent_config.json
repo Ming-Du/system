@@ -1,8 +1,8 @@
 {
   "desc": "Agent config",
   "author": "liyuelei@zhidaoauto.com",
-  "last_modify": "20221108",
-  "protocal_version": "1.0.0",
+  "last_modify": "20230214",
+  "protocal_version": "2.0.0",
   "src": "MAP",
   "MAP_agent_status_info": [
     {
