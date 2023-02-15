@@ -785,7 +785,7 @@ for pid in $pids; do [[ "$pid" != "$self_pid" ]] && LoggingINFO "clean exist $(b
 # 备份filebeat文件
 filebeat_backup="/home/mogo/data/log/filebeat_backup"
 mkdir -p ${filebeat_backup}
-FileBackPath_arry=("/home/mogo/data/log/filebeat_upload/tele_stat.log" "/home/mogo/data/log/filebeat_upload/new_topic_hz_log.log")
+FileBackPath_arry=("/home/mogo/data/log/filebeat_upload/tele_stat.log" "/home/mogo/data/log/filebeat_upload/new_topic_hz_log.log"  "/home/mogo/data/log/filebeat_upload/msg_record.log")
 for FileBackPath in ${FileBackPath_arry[@]}; do
     if [ -e "$FileBackPath" ]; then
         cp_file_name=${FileBackPath##*/}
