@@ -190,7 +190,7 @@ set_pr() {
                 "perception_fusion_mid") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 29 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
                 "hadmap_server" | "hadmap_engine_node") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 30 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
                 "perception_fusion2" | "perception_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 30 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-                "rs_perception_node") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 20 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                "rs_perception_node" | "rs_perception_zvision_node") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 20 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
                 "xiaoba_lidars_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 15 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
                 "c32_rear_decoder" | "c32_left_decoder" | "c32_right_decoder") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 11 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
                 "drivers_robosense_node" | "c32_rear_driver" | "c32_left_driver" | "c32_right_driver") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 10 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
