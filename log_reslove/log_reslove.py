@@ -639,7 +639,7 @@ class Log_handler():
                     wrong_count += 1
                     if g_test_mode:
                         log_print(data.get('wrong', 'unknow reason'))
-                    log_print("just test from can ++++++++++++++++++ data:[{}]".format(data))
+                    #log_print("just test from can ++++++++++++++++++ data:[{}]".format(data))
                     continue
                 
                 data["split_path_str"] = "_".join([x for x in data['split_path']])
@@ -768,7 +768,7 @@ class Log_handler():
                         wrong_count += 1
                         if g_test_mode:
                             log_print(data.get('wrong', 'unknow reason'))
-                        log_print("just test ++++++++++++++++++ data:[{}]".format(data))
+                        #log_print("just test ++++++++++++++++++ data:[{}]".format(data))
                         continue
                     
                     result[name].append(data)
