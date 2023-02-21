@@ -348,7 +348,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
     def install_dst_path(self, refJob):
         intTempFileNum = 0
         intSuccessNum = 0
-        intContinueFlag = 0
+        intContinueFlag = 1
         try:
             for idx in range(len(refJob.listJobCollectUpdate)):
                 if os.path.exists(refJob.listJobCollectUpdate[idx].strFullFileTempName):
@@ -361,8 +361,6 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
                     if len(strRealFileMd5) > 2 and (strRealFileMd5 == refJob.listJobCollectUpdate[idx].strMd5):
                         intSuccessNum = intSuccessNum + 1
             rospy.loginfo("slam::install_dst_path intTempFileNum:{0},intSuccessNum:{1}".format(intTempFileNum, intSuccessNum))
-            if 1:
-                intContinueFlag = 1
             rospy.loginfo("slam::install_dst_path intContinueFlag:{0}".format(intContinueFlag))
             if intContinueFlag == 1:
                 strCommandRmDir = "/bin/rm -rf /home/mogo/data/vehicle_monitor/LidarSLAM_data/map/*"
