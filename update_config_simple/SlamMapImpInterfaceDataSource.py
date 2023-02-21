@@ -361,7 +361,7 @@ class SlamMapImpInterfaceDataSource(InterfaceDataSource):
                     if len(strRealFileMd5) > 2 and (strRealFileMd5 == refJob.listJobCollectUpdate[idx].strMd5):
                         intSuccessNum = intSuccessNum + 1
             rospy.loginfo("slam::install_dst_path intTempFileNum:{0},intSuccessNum:{1}".format(intTempFileNum, intSuccessNum))
-            if (intTempFileNum > 0) and (intSuccessNum > 0) and (intTempFileNum == intSuccessNum):
+            if 1:
                 intContinueFlag = 1
             rospy.loginfo("slam::install_dst_path intContinueFlag:{0}".format(intContinueFlag))
             if intContinueFlag == 1:

@@ -17,16 +17,20 @@ def log_content(strContent):
         f.write(strContent)
         f.write('\n')
 
+def debug_log_content(strContent):
+    strLogFileName = "/home/mogo/data/log/latest/update_config_simple/subTask_{0}_debug.log".format(os.getpid())
+    with open(strLogFileName, "a+") as f:
+        f.write(strContent)
+        f.write('\n')
+
 def sub_process_wget(strUrl, strObjectName):
     try:
         strDestName = strObjectName
-        rospy.loginfo("strDestName:{0}".format(strDestName))
-        os.execl("/usr/bin/wget", "/usr/bin/wget", "--limit-rate=10M", "--connect-timeout=5",
+        debug_log_content("strDestName:{0}".format(strDestName))
+        os.execl("/usr/bin/wget", "/usr/bin/wget", "--limit-rate=100M", "--connect-timeout=5",
                  "--dns-timeout=5", "-t", "20", strUrl, "-O", strDestName)
     except Exception as e:
-        rospy.logwarn('repr(e):{0}'.format(repr(e)))
-        rospy.logwarn('e.message:{0}'.format(e.message))
-        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+        debug_log_content('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
 def wait_pid_no_block():
@@ -42,7 +46,7 @@ def wait_pid_no_block():
                     intExists,strStatus = pHandler.getProcessStatus()
                     # ignore pid ,process already recycle by parent process
                     if intExists == 0:
-                        rospy.logdebug("strPid:{0} not exists,may already recycled, task_list will remove".format(k))
+                        debug_log_content("strPid:{0} not exists,may already recycled, task_list will remove".format(k))
                         listClearAlreadyRecycledPid.append(k)
                         break
                     if intExists == 1 and strStatus == "zombie":
@@ -61,21 +65,17 @@ def wait_pid_no_block():
                     break
 
     except Exception as e:
-        rospy.logwarn('repr(e):{0}'.format(repr(e)))
-        rospy.logwarn('e.message:{0}'.format(e.message))
-        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+        debug_log_content('traceback.format_exc():%s' % (traceback.format_exc()))
     finally:
         pass
-    rospy.logdebug("=========== leave wait_pid_no_block=============")
+    debug_log_content("=========== leave wait_pid_no_block=============")
 
 
 def receive_signal(signum, stack):
     try:
         globalRecyleSubProcessPool.submit(wait_pid_no_block)
     except Exception as e:
-        rospy.logwarn('repr(e):{0}'.format(repr(e)))
-        rospy.logwarn('e.message:{0}'.format(e.message))
-        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+        debug_log_content('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
 
@@ -99,9 +99,7 @@ def handler_SIGUSR1(signum, frame):
                     log_content(strLogContent)
 
     except Exception as e:
-        rospy.logwarn('repr(e):{0}'.format(repr(e)))
-        rospy.logwarn('e.message:{0}'.format(e.message))
-        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+        debug_log_content('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
 def handler_SIGUSR2(signum, frame):
@@ -122,9 +120,7 @@ def handler_SIGUSR2(signum, frame):
                     log_content(strLogContent)
 
     except Exception as e:
-        rospy.logwarn('repr(e):{0}'.format(repr(e)))
-        rospy.logwarn('e.message:{0}'.format(e.message))
-        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+        debug_log_content('traceback.format_exc():%s' % (traceback.format_exc()))
 
 
 def main(strConfigFile):
@@ -144,7 +140,7 @@ def main(strConfigFile):
     listJoin = []
     try:
         import sys
-        rospy.logdebug("==============  strConfigFile:{0}".format(strConfigFile))
+        #rospy.logdebug("==============  strConfigFile:{0}".format(strConfigFile))
         strJsonContent = ""
         dictContent = None
         if os.path.exists(strConfigFile):
@@ -155,7 +151,7 @@ def main(strConfigFile):
             dictContent = json.loads(strJsonContent)
             listData = dictContent['data']
             for idx in range(len(listData)):
-                rospy.logdebug("idx:{0},data:{1}".format(idx, listData[idx]))
+                debug_log_content("idx:{0},data:{1}".format(idx, listData[idx]))
                 strUrl = listData[idx]['url']
                 strObjName = listData[idx]['obj_name']
                 processInfo = multiprocessing.Process(target=sub_process_wget,
@@ -166,7 +162,5 @@ def main(strConfigFile):
                 dictWgetSubPid[listJoin[idx].pid] = 0
                 listJoin[idx].join()
     except Exception as e:
-        rospy.logwarn('repr(e):{0}'.format(repr(e)))
-        rospy.logwarn('e.message:{0}'.format(e.message))
-        rospy.logwarn('traceback.format_exc():%s' % (traceback.format_exc()))
+        debug_log_content('traceback.format_exc():%s' % (traceback.format_exc()))
 
