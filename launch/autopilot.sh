@@ -182,7 +182,7 @@ set_pr() {
                 priority=$(top -b -n 1 -p $pid | tail -n 1 | awk '{print $(NF-9)}')
                 [[ "$priority" == "rt" ]] && continue
                 case "$t" in
-                "DongFeng_E70_can_adapter" | "jinlv_can_adapter" | "hongqih9_can_adapter")
+                "M1_can_adapter" | "jinlv_can_adapter" | "M2_can_adapter")
                     (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 45 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
                 "controller") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 44 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
                 "localization" | "drivers_gnss" | "drivers_gnss_zy") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 42 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
