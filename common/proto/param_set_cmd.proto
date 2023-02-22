@@ -1,0 +1,20 @@
+syntax = "proto3";
+package mogo.telematics;
+
+enum ParamSetType 
+{
+    ParamSetTypeNone = 0;
+    ParamSetTypeBlindArea = 1; //bool, 0:off 1:on
+}
+
+message ParamSetCmd
+{
+    uint32 src = 1; // 0: none, 1:pad, 2:aicloud
+    ParamSetType type = 2;
+    oneof Value {
+        bool boolValue = 3;
+        int64 intValue = 4;
+        double floatValue = 5;
+        string stringValue = 6;
+    }
+}

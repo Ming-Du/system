@@ -60,6 +60,7 @@ enum MessageType
     MsgTypeTripInfoEvent = 0x1011a; //行程信息
     MsgTypeBagManagerCmd = 0x1011b; //bag管理
     MsgTypePlanningCmd = 0x1011c; //给planning的指令
+    MsgTypeSetParamReqV2 = 0x1011d; //设置参数命令V2
 }
 
 message Header
@@ -137,9 +138,16 @@ message TrackedObject
     AdditionalAttribute add_attribute = 17; // 事件类型
 }
 
+message BlindAreaData
+{
+    float angleResolution = 1;
+    repeated int32 distances = 2;
+}
+
 message TrackedObjects
 {
     repeated TrackedObject objs = 1;
+    BlindAreaData blindAreaData = 2;
 }
 
 // message definition for MsgTypeGnssInfo
@@ -595,5 +603,8 @@ message PlanningCmd
 {
     PullOverCmd pullOverCmd = 1;
 }
+
+//message definition for MsgTypeSetParamReqV2
+//refer to param_set_cmd.proto for details
 
 
