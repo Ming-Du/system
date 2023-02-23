@@ -80,6 +80,10 @@ node_config["/hadmap_server"]["pub"] = "/planning/global_trajectory"
 
 
 #2.11.0 新增M2 lidar适配
+node_config["/M1_can_adapter"] = {}
+node_config["/M1_can_adapter"]["sub"] = ["/chassis/command"]
+node_config["/M1_can_adapter"]["pub"] = ""
+node_config["/M1_can_adapter"]["man_end"] = "can_end"
 
 node_config["/M2_can_adapter"] = {}
 node_config["/M2_can_adapter"]["sub"] = ["/chassis/command"]

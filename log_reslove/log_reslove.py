@@ -421,7 +421,8 @@ class Log_handler():
             else:
                 self.time_start_value = st_atime - 5  # before min access time 5 sec
             self.time_split_end = st_mtime + 2
-            if st_mtime - st_atime > self.time_split_threshold:   # log 1.7M/s  30s about 50M
+
+            if self.time_split_end - self.time_start_value > self.time_split_threshold:   # log 1.7M/s  30s about 50M
                 log_print('log save {} secs, more than {}, handle a part!'.format(st_mtime-st_atime, self.time_split_threshold) )
                 self.time_split_value = st_atime + self.time_split_threshold
                 self.handle_index = 0
@@ -890,9 +891,10 @@ class Log_handler():
         
             ## add by liyl 20230203  p99超限输出 详细日志
             if save_data.get("p99", 200) > Constants.p99_threshold_def: 
-                filename = "match_{}_results_{}_bak_{}.log".format(split_path_str, save_data["timestamp"], int(time.time()))
+                filename = "match_{}_results_{}_bak_{}.log".format(split_path_str.spilt('/')[-1], save_data["timestamp"], int(time.time()))
                 with open(os.path.join(Constants.bak_dir, filename), 'a+') as fp:
-                    fp.write("{0}\n".format(json.dumps(result, indent=2)))
+                    json.dump(result, fp)
+                    #fp.write("{0}\n".format(json.dumps(result, indent=2)))
 
 
         self.results=dict()
