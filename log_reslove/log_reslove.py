@@ -890,12 +890,14 @@ class Log_handler():
                     fp.write("{0}\n".format(json.dumps(save_data)))
         
             ## add by liyl 20230203  p99超限输出 详细日志
-            if save_data.get("p99", 200) > Constants.p99_threshold_def: 
-                filename = "match_{}_results_{}_bak_{}.log".format(split_path_str.spilt('/')[-1], save_data["timestamp"], int(time.time()))
-                with open(os.path.join(Constants.bak_dir, filename), 'a+') as fp:
-                    json.dump(result, fp)
-                    #fp.write("{0}\n".format(json.dumps(result, indent=2)))
-
+            try:
+                if save_data.get("p99", 200) > Constants.p99_threshold_def: 
+                    filename = "match_{}_results_{}_bak_{}.log".format(split_path_str.split('/')[-1], save_data["timestamp"], int(time.time()))
+                    with open(os.path.join(Constants.bak_dir, filename), 'a+') as fp:
+                        json.dump(result, fp)
+                        #fp.write("{0}\n".format(json.dumps(result, indent=2)))
+            except Exception as e:
+                log_print("have p99 large 500, but save failed: {}".format(e))
 
         self.results=dict()
 
