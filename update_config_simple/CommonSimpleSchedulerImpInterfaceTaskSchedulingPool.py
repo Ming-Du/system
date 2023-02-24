@@ -415,8 +415,10 @@ class CommonSimpleSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulin
         rospy.loginfo_throttle(1, "action_autopilot_status_change recv mode:{0}".format(intPilotMode))
         global globalAutopilotStatus
         try:
-            globalAutopilotStatus = intPilotMode
-            func_task_select(self, globalAutopilotStatus)
+            if globalAutopilotStatus != intPilotMode:
+                rospy.logwarn("change driver mode to:{0}".format(intPilotMode))
+                globalAutopilotStatus = intPilotMode
+                func_task_select(self, globalAutopilotStatus)
         except Exception as e:
             rospy.loginfo('repr(e):{0}'.format(repr(e)))
             rospy.loginfo('e.message:{0}'.format(e.message))
@@ -665,9 +667,10 @@ class CommonSimpleSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulin
                                     if intExist == 0:
                                         listClearAlreadyRecycledPid.append(v.intPid)
                                         listClearAlreadyRecycledCtime.append(k)
-                                        func_task_select(self, globalAutopilotStatus)
+
                             break
                         break
+
                 for idx in range(len(listClearAlreadyRecycledPid)):
                     intPid = listClearAlreadyRecycledPid[idx]
                     intCtime = listClearAlreadyRecycledCtime[idx]
@@ -675,6 +678,7 @@ class CommonSimpleSchedulerImpInterfaceTaskSchedulingPool(InterfaceTaskSchedulin
                         del self.mDictRunningJob[intCtime]
                     if self.mDictRunningJobRevert.has_key(intPid):
                         del self.mDictRunningJobRevert[intPid]
+                func_task_select(self, globalAutopilotStatus)
         except Exception as e:
             print('repr(e):{0}'.format(repr(e)))
             print('e.message:{0}'.format(e.message))
