@@ -1458,6 +1458,42 @@
       }
     },
     {
+      "launch_name": "perception_fusion_Mx.launch",
+      "node_name": "",
+      "package": "launch",
+      "path": "",
+      "machine": {
+        "2x": {
+          "must": [],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosslave-107"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "car_type": [
+        "df",
+        "hq",
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 1,
+        "remote_pilot": 1,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
       "launch_name": "rule_segement.launch",
       "node_name": "",
       "package": "rule_segement",
@@ -2449,9 +2485,9 @@
       }
     },
     {
-      "launch_name": "perception_fusion_mid.launch",
+      "launch_name": "perception_fusion_mid_106.launch",
       "node_name": "",
-      "package": "perception_fusion_mid",
+      "package": "launch",
       "path": "",
       "machine": {
         "2x": {
@@ -2462,6 +2498,40 @@
         "6x": {
           "must": [
             "rosslave-106"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 1,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
+      "launch_name": "perception_fusion_mid_107.launch",
+      "node_name": "",
+      "package": "launch",
+      "path": "",
+      "machine": {
+        "2x": {
+          "must": [],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosslave-107"
           ],
           "should": [],
           "must_not": []

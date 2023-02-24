@@ -1,6 +1,5 @@
 import os
 import json
-import pprint
 import sys
 import yaml
 import time
@@ -746,40 +745,41 @@ def start_node(node_name, launch_name, launch_node_dict, package_path_dict):
             launch_cmd = node_info.get("launch_cmd", "")
             launch_cmd_node = "roslaunch --wait " + \
                               launch_cmd + " --launch-node " + node_name
-            try:
-                if " " in launch_cmd:
-                    package_name = launch_cmd.split(" ")[0]
-                    package_path = package_path_dict.get(package_name, "")
-                    launch_abs_path = os.path.join(package_path, launch_name)
-                    if not os.path.exists(launch_abs_path):
-                        launch_abs_path = os.path.join(package_path, "launch", launch_name)
-                else:
-                    launch_abs_path = launch_cmd
-                launch_files_list = get_launch_files(launch_abs_path)
-                if len(launch_files_list) > 1:
-                    for launch_file in launch_files_list:
-                        if launch_file == launch_abs_path:
-                            continue
-                        else:
-                            if node_name in get_launch_nodes(launch_file):
-                                launch_abs_path = launch_file
-                                break
-                # launch_cmd_new = "roslaunch " + launch_cmd
-                shell_cmd = '. {} {} INFO {}'.format(LAUNCH_LOG_SHELL, launch_abs_path, node_name)
-                shell_process = subprocess.Popen(shell_cmd, shell=True, executable="bash", stdout=None,
-                                                 stderr=None, env={"ABS_PATH": ABS_PATH, "ROS_LOG_DIR": ROS_LOG_DIR})
-                node_last_name = get_last_node_name(node_name)
-                # launch_name_file = launch_abs_path.split("/")[-1].split(".")[0]
-                rosconsole_config_file = os.path.join(ABS_PATH, "config", node_last_name + "_INFO_console.config")
-                ros_python_log_config_file = os.path.join(ABS_PATH, "config",
-                                                          "python_logging_" + node_last_name + ".conf")
-                logger.debug(
-                    "launch log,shell_cmd:{}, shell_pid:{}, ROSCONSOLE_CONFIG_FILE:{}, ROS_PYTHON_LOG_CONFIG_FILE:{}".format(
-                        shell_cmd, str(shell_process.pid), rosconsole_config_file, ros_python_log_config_file))
-                os.environ['ROSCONSOLE_CONFIG_FILE'] = rosconsole_config_file
-                os.environ['ROS_PYTHON_LOG_CONFIG_FILE'] = ros_python_log_config_file
-            except Exception as e:
-                logger.warning('%s' % traceback.format_exc())
+            if "can_adapter.launch" not in launch_name:
+                try:
+                    if " " in launch_cmd:
+                        package_name = launch_cmd.split(" ")[0]
+                        package_path = package_path_dict.get(package_name, "")
+                        launch_abs_path = os.path.join(package_path, launch_name)
+                        if not os.path.exists(launch_abs_path):
+                            launch_abs_path = os.path.join(package_path, "launch", launch_name)
+                    else:
+                        launch_abs_path = launch_cmd
+                    launch_files_list = get_launch_files(launch_abs_path)
+                    if len(launch_files_list) > 1:
+                        for launch_file in launch_files_list:
+                            if launch_file == launch_abs_path:
+                                continue
+                            else:
+                                if node_name in get_launch_nodes(launch_file):
+                                    launch_abs_path = launch_file
+                                    break
+                    # launch_cmd_new = "roslaunch " + launch_cmd
+                    shell_cmd = '. {} {} INFO {}'.format(LAUNCH_LOG_SHELL, launch_abs_path, node_name)
+                    shell_process = subprocess.Popen(shell_cmd, shell=True, executable="bash", stdout=None,
+                                                    stderr=None, env={"ABS_PATH": ABS_PATH, "ROS_LOG_DIR": ROS_LOG_DIR})
+                    node_last_name = get_last_node_name(node_name)
+                    # launch_name_file = launch_abs_path.split("/")[-1].split(".")[0]
+                    rosconsole_config_file = os.path.join(ABS_PATH, "config", node_last_name + "_INFO_console.config")
+                    ros_python_log_config_file = os.path.join(ABS_PATH, "config",
+                                                            "python_logging_" + node_last_name + ".conf")
+                    logger.debug(
+                        "launch log,shell_cmd:{}, shell_pid:{}, ROSCONSOLE_CONFIG_FILE:{}, ROS_PYTHON_LOG_CONFIG_FILE:{}".format(
+                            shell_cmd, str(shell_process.pid), rosconsole_config_file, ros_python_log_config_file))
+                    os.environ['ROSCONSOLE_CONFIG_FILE'] = rosconsole_config_file
+                    os.environ['ROS_PYTHON_LOG_CONFIG_FILE'] = ros_python_log_config_file
+                except Exception as e:
+                    logger.warning('%s' % traceback.format_exc())
             for i in range(3):
                 launch_process = subprocess.Popen(launch_cmd_node, shell=True, executable="bash", stdout=None,
                                                   stderr=None)

@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-  <include file="$(find config)/vehicle/perception/fusion/perception_fusion.launch" />
+  <include if="$(eval env('D_CAR_TYPE')=='jinlv' and env('JINLV_SUBTYPE')=='')" file="$(find config)/vehicle/perception/fusion/perception_fusion.launch" />
 </launch>
+
