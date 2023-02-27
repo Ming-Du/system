@@ -61,6 +61,7 @@ enum MessageType
     MsgTypeBagManagerCmd = 0x1011b; //bag管理
     MsgTypePlanningCmd = 0x1011c; //给planning的指令
     MsgTypeSetParamReqV2 = 0x1011d; //设置参数命令V2
+    MsgTypeBackCameraVideo = 0x1011e; //清扫车后部摄像头视频 10hz
 }
 
 message Header
