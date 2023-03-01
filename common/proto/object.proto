@@ -35,6 +35,11 @@ enum DetectState {
   STATE_DETECT = 0;
   STATE_PREDICT = 1;
 };
+
+enum GroupType {
+    TYPE_SINGLE = 0;
+    TYPE_GROUP = 1;
+};
   
 enum MotionState {
   MOTION_STATIC = 0;
@@ -180,6 +185,7 @@ message Object {
   // Modify-huangweijie - vehicle light supplement
   optional VehicleLightSupplement vehicle_light = 32;
   optional AdditionalAttribute add_attribute = 33;
+  optional GroupType group_type = 34;
 
 }
 
