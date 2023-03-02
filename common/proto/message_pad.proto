@@ -30,6 +30,7 @@ enum MessageType
     MsgTypeOBU = 0x1000a; //OBU
     MsgTypeChassisStates = 0x1000b; //重构后的底盘状态, 透传
     MsgTypeFunctionStates = 0x1000c; //重构后的功能状态, 透传
+    MsgTypeBackCameraVideo = 0x1000d; //清扫车后部摄像头视频 10hz
 
     MsgTypeBasicInfoReq = 0x10100; //自动驾驶设备基础信息请求
     MsgTypeBasicInfoResp = 0x10101; //自动驾驶设备基础信息应答
@@ -61,7 +62,6 @@ enum MessageType
     MsgTypeBagManagerCmd = 0x1011b; //bag管理
     MsgTypePlanningCmd = 0x1011c; //给planning的指令
     MsgTypeSetParamReqV2 = 0x1011d; //设置参数命令V2
-    MsgTypeBackCameraVideo = 0x1011e; //清扫车后部摄像头视频 10hz
 }
 
 message Header
@@ -608,4 +608,5 @@ message PlanningCmd
 //message definition for MsgTypeSetParamReqV2
 //refer to param_set_cmd.proto for details
 
-
+//message definition for MsgTypeBackCameraVideo
+//payload:jpeg data 
