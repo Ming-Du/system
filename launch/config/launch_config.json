@@ -286,6 +286,62 @@
             "type": "MAP"
         },
         {
+            "name": "sensing_fisheye_front.launch",
+            "package": "config",
+            "path": "vehicle/drivers/camera",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-105"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "sensing_fisheye_back.launch",
+            "package": "config",
+            "path": "vehicle/drivers/camera",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-105"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "sensing_fisheye_left.launch",
+            "package": "config",
+            "path": "vehicle/drivers/camera",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-105"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
+            "name": "sensing_fisheye_right.launch",
+            "package": "config",
+            "path": "vehicle/drivers/camera",
+            "machine": {
+                "jinlv": {
+                    "2x": [],
+                    "6x": [
+                        "rosslave-105"
+                    ]
+                }
+            },
+            "type": "MAP"
+        },
+        {
             "name": "lane_detection.launch",
             "package": "perception_camera_SEG",
             "machine": {

@@ -33,4 +33,7 @@ message TrafficLights {
   optional TrafficLight left = 3;
   optional TrafficLight right = 4;
   optional TrafficLight u_turn = 5;
+  
+  optional bool shield = 6 [default = false];//wheather the traffic lights are shield
 }
+

@@ -1,0 +1,43 @@
+syntax = "proto3";
+package mogo.telematics;
+
+message IntItem {
+    int64 min = 1;
+    int64 max = 2;
+    int64 average = 3;
+}
+
+message DoubleItem {
+    double min = 1;
+    double max = 2;
+    double average = 3;
+}
+
+message StatisticItem {
+    uint64 count = 1;
+    double hz = 2;
+    IntItem size = 3;
+    DoubleItem timeCost = 4;
+}
+
+enum StatisticsDirection {
+    STATISTICS_DIRECTION_NONE = 0;
+    STATISTICS_DIRECTION_SEND = 1;
+    STATISTICS_DIRECTION_RECV = 2;
+}
+
+enum StatisticsTarget {
+    STATISTICS_TARGET_NONE = 0;
+    STATISTICS_TARGET_AICLOUD = 1;
+    STATISTICS_TARGET_PAD = 2;
+}
+
+message TelematicsStatistics {
+    StatisticsDirection direction = 1;
+    StatisticsTarget target = 2;
+    uint32 sessionID = 3;
+    double statisticInterval = 4;
+    double timestamp = 5;
+
+    map<uint64, StatisticItem> items = 6;
+}

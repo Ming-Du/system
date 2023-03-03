@@ -18,9 +18,12 @@ node_config["/local_planning"]["pub"] = "/planning/trajectory"
 node_config["/local_planning"]["man_beg"] = "planning_begin"
 
 node_config["/perception/fusion/perception_fusion2"] = {}
-node_config["/perception/fusion/perception_fusion2"]["sub"] = ["/perception/lidar/lidar_obstacle", "/perception/camera/camera_obstacle_front60", "/perception/lidar/lidar_zvision_obstacle"]
+node_config["/perception/fusion/perception_fusion2"]["sub"] = ["/perception/fusion_mid/lidar_obstacle", "/perception/camera/camera_obstacle_front60"]
 node_config["/perception/fusion/perception_fusion2"]["pub"] = "/perception/fusion/obstacles"
 
+node_config["/perception/fusion/perception_fusion_mid"] = {}
+node_config["/perception/fusion/perception_fusion_mid"]["sub"] = ["/perception/lidar/lidar_obstacle", "/perception/lidar/lidar_zvision_obstacle"]
+node_config["/perception/fusion/perception_fusion_mid"]["pub"] = "/perception/fusion_mid/lidar_obstacle"
 
 node_config["/perception/lidar/rs_perception_node"] = {}
 node_config["/perception/lidar/rs_perception_node"]["sub"] = ["/sensor/lidar/middle/point_cloud"]
@@ -77,6 +80,10 @@ node_config["/hadmap_server"]["pub"] = "/planning/global_trajectory"
 
 
 #2.11.0 新增M2 lidar适配
+node_config["/M1_can_adapter"] = {}
+node_config["/M1_can_adapter"]["sub"] = ["/chassis/command"]
+node_config["/M1_can_adapter"]["pub"] = ""
+node_config["/M1_can_adapter"]["man_end"] = "can_end"
 
 node_config["/M2_can_adapter"] = {}
 node_config["/M2_can_adapter"]["sub"] = ["/chassis/command"]

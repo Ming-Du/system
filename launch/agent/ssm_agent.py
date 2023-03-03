@@ -1,6 +1,5 @@
 import os
 import json
-import pprint
 import sys
 import yaml
 import time
@@ -347,13 +346,19 @@ def get_cmd_out(cmd_line):
         out = subprocess.run(
             cmd_line, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)
     except Exception as e:
-        logger.warning("获取执行命令{}结果时报错:{}".format(cmd_line, e))
+        logger.warning("执行命令{}时报错:{}".format(cmd_line, e))
         logger.warning('%s' % traceback.format_exc())
         out_lines = ""
     else:
-        if out.returncode == 0:
-            out_lines = str(out.stdout, encoding="utf-8")
-        else:
+        try:
+            if out.returncode == 0:
+                out_lines = str(out.stdout, encoding="utf-8")
+            else:
+                out_lines = ""
+                logger.warning("执行命令{}失败:{}".format(cmd_line, str(out.stderr, encoding="utf-8")))
+        except Exception as e:
+            logger.warning("获取执行命令{}结果报错:{}".format(cmd_line, e))
+            logger.warning('%s' % traceback.format_exc())
             out_lines = ""
     return out_lines
 
@@ -597,6 +602,8 @@ def create_config():
     report_dict["MAP_image_config"] = launch_config_list
     car_type = get_car_type()
     car_plate, car_brand = get_car_plate_brand()
+    if car_brand == "ft" or car_brand == "FT":
+        car_brand = "sweeper"
     launch_node_dict = dict()
     local_node_config = list()
     for launch_config in launch_config_list:
@@ -762,9 +769,13 @@ def start_node(node_name, launch_name, launch_node_dict, package_path_dict):
                                                  stderr=None, env={"ABS_PATH": ABS_PATH, "ROS_LOG_DIR": ROS_LOG_DIR})
                 node_last_name = get_last_node_name(node_name)
                 # launch_name_file = launch_abs_path.split("/")[-1].split(".")[0]
-                rosconsole_config_file = os.path.join(ABS_PATH, "config", node_last_name + "_INFO_console.config")
-                ros_python_log_config_file = os.path.join(ABS_PATH, "config",
-                                                          "python_logging_" + node_last_name + ".conf")
+                if "can_adapter.launch" == launch_name:
+                    rosconsole_config_file = "dev/null"
+                    ros_python_log_config_file = "dev/null"
+                else:
+                    rosconsole_config_file = os.path.join(ABS_PATH, "config", node_last_name + "_INFO_console.config")
+                    ros_python_log_config_file = os.path.join(ABS_PATH, "config",
+                                                              "python_logging_" + node_last_name + ".conf")
                 logger.debug(
                     "launch log,shell_cmd:{}, shell_pid:{}, ROSCONSOLE_CONFIG_FILE:{}, ROS_PYTHON_LOG_CONFIG_FILE:{}".format(
                         shell_cmd, str(shell_process.pid), rosconsole_config_file, ros_python_log_config_file))
@@ -975,6 +986,7 @@ def heart_beat():
     """
     global ROSMASTER_IP_PORT
     heart_beat_url = ROSMASTER_IP_PORT + HEART_BEAT_URL
+    launch_node_state_dict = dict()
     while True:
         try:
             heart_beat_info = dict()
@@ -1054,12 +1066,14 @@ def heart_beat():
                         #                   agent中node进程不存在->5(启动失败)
                         #                   否则->7(人为关闭)
                         if agent_work_result.get(launch_node_name, {}).get("node_pid", 0) == 0:
-                            state = 5
+                            # 当刚启动时launch进程启动而node进程还未启动时误报为5, 结合上次状态判断:0—>2(启动中),
+                            state = 2 if launch_node_state_dict.get(launch_node_name, 0) == 0 else 5
                         else:
-                            state = 7
+                            state = 2 if launch_node_state_dict.get(launch_node_name, 0) == 0 else 7
                     else:
                         # 1. agent(无)+当前(无) ->0(未启动);
                         state = 0
+                launch_node_state_dict[launch_node_name] = state
                 node_list.append({"node_name": launch_node_name[1],
                                   "launch_name": launch_info.get("launch_name", ""),
                                   "state": state})
@@ -1089,6 +1103,7 @@ def heart_beat():
 
 
 def main():
+    logger.info("SSM Agent starting....")
     global ROSMASTER_IP_PORT
     global REPORT_MESSAGE
     global ABS_PATH
@@ -1114,16 +1129,23 @@ def main():
     # 上报配置
     send_report(REPORT_MESSAGE)
     heart_beat_process = multiprocessing.Process(target=heart_beat)
-    http_server_beat_process = multiprocessing.Process(target=http_server)
+    http_server_process = multiprocessing.Process(target=http_server)
     work_process = multiprocessing.Process(target=agent_worker)
     work_process.start()
-    http_server_beat_process.start()
+    logger.info("worker process PID:{}".format(work_process.pid))
+    http_server_process.start()
+    logger.info("http server process PID:{}".format(http_server_process.pid))
     time.sleep(1)
     heart_beat_process.start()
+    logger.info("heart beat process PID:{}".format(heart_beat_process.pid))
     work_process.join()
-    http_server_beat_process.join()
+    http_server_process.join()
     heart_beat_process.join()
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        logger.warning("ssm agent 启动失败:{}".format(e))
+        logger.warning('%s' % traceback.format_exc())

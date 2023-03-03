@@ -10,7 +10,6 @@ import subprocess
 import json
 import logging
 from logging.handlers import TimedRotatingFileHandler
-import pprint
 
 LOG_PATH = "/home/mogo/data/log/monitor_cpu_mem_net/"
 FILEBEAT_UPLOAD = '/home/mogo/data/log/filebeat_upload/'
@@ -25,10 +24,13 @@ except:
     print("未找到radar_config.json")
 MACHINE = ''
 CAR_INFO = None
+USEING_PORT = set()
 sys_state_lock = threading.RLock()
 iftop_lok = threading.RLock()
 mpstat_lok = threading.RLock()
 pidstat_lok = threading.RLock()
+port_lock = threading.RLock()
+node_info_lock = threading.RLock()
 
 
 class Logger(object):
@@ -45,7 +47,8 @@ class Logger(object):
                  log_formatter="[%(asctime)s][%(levelname)s][%(filename)s:%(lineno)d][%(process)d] - %(message)s"):
         self.logger = logging.getLogger(logger_name)
         self.formatter = logging.Formatter(log_formatter)
-        self.handler = TimedRotatingFileHandler(log_filename, when=when, interval=interval, backupCount=backup_count,encoding="UTF-8", delay=False, utc=True)
+        self.handler = TimedRotatingFileHandler(log_filename, when=when, interval=interval, backupCount=backup_count,
+                                                encoding="UTF-8", delay=False, utc=True)
         self.handler.suffix = suffix  # 设置切分后日志文件名的时间格式默认 filename+"." + suffix 如果需要更改需要改logging源码
 
         self.handler.setFormatter(self.formatter)
@@ -127,7 +130,7 @@ def get_machine_name(net_if="eth0"):
                     break
                 line = fd.readline()
     except Exception as e:
-        print(e)
+        logger.warning(e)
     return machine_name
 
 
@@ -242,8 +245,10 @@ def cpu_consumption_str_2_json(pid_str):
 
     for i in range(1, 4):
         data = [part for part in lines[i].split(' ') if len(part) != 0]
-        res['top_3_pids']['top_' + str(i) + '_process'] = dict(map(lambda key, val: (key, float(val)), titles[:3], data[:3]))
-        res['top_3_pids']['top_' + str(i) + '_process']['PID'] = int(res['top_3_pids']['top_' + str(i) + '_process']['PID'])
+        res['top_3_pids']['top_' + str(i) + '_process'] = dict(
+            map(lambda key, val: (key, float(val)), titles[:3], data[:3]))
+        res['top_3_pids']['top_' + str(i) + '_process']['PID'] = int(
+            res['top_3_pids']['top_' + str(i) + '_process']['PID'])
         res['top_3_pids']['top_' + str(i) + '_process']['COMMAND'] = ' '.join(data[3:])
         CAR_INFO.set_car_info(res)
     return res
@@ -325,7 +330,139 @@ def sys_state_loop(file_path, json_path):
         except Exception as e:
             mes = e + "\n"
         write_logs(mes, file_path, sys_state_lock)
+        time.sleep(2)
+
+
+def get_cmd_out(cmd_line):
+    """
+    获取执行命令结果
+    """
+    try:
+        out = subprocess.run(
+            cmd_line, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)
+    except Exception as e:
+        logger.warning("执行命令{}时报错:{}".format(cmd_line, e))
+        logger.warning('%s' % traceback.format_exc())
+        out_lines = ""
+    else:
+        try:
+            if out.returncode == 0:
+                out_lines = str(out.stdout, encoding="utf-8")
+            else:
+                out_lines = ""
+                logger.warning("执行命令{}失败:{}".format(cmd_line, str(out.stderr, encoding="utf-8")))
+        except Exception as e:
+            logger.warning("获取执行命令{}结果报错:{}".format(cmd_line, e))
+            logger.warning('%s' % traceback.format_exc())
+            out_lines = ""
+    return out_lines
+
+
+def get_cmd_pids(cmd):
+    """
+    根据执行命令获取进程号列表
+    Args:
+        cmd: 执行命令
+    Returns:
+        [pid1, pid2]
+    """
+    pids_list = list()
+    ps_cmd = str("ps -ef | grep '{}' | grep -v grep ").format(cmd) + "| awk '{print $2}'"
+    out_lines = get_cmd_out(ps_cmd)
+    for line in out_lines.split("\n"):
+        if line:
+            try:
+                pids_list.append(int(line.replace(" ", "")))
+            except:
+                continue
+    return pids_list
+
+
+def get_nodes_info():
+    """
+    获取所有node状态
+    Returns:
+        [{}]
+    """
+    node_pids = get_cmd_pids("__name:")
+    node_info = list()
+    try:
+        p_objs = [psutil.Process(pid=i) for i in node_pids]
+        for p in p_objs:
+            p.cpu_percent(interval=None)
         time.sleep(1)
+        for p in p_objs:
+            node_info.append({
+                "node_pid": p.pid,
+                "node_cmd": " ".join(p.cmdline()),
+                "node_parent_cmd": " ".join(psutil.Process(p.ppid()).cmdline()),
+                "node_num_threads": len(p.threads()),
+                "node_nice": p.nice(),
+                "node_memory_percent": p.memory_percent(),
+                "node_cpu_percent": p.cpu_percent(interval=None),
+                "node_use_ports": list({pconn.laddr.port for pconn in p.connections() if pconn.laddr.port})
+            })
+    except Exception as e:
+        logger.warning("获取node状态报错:{}".format(e))
+        logger.warning('%s' % traceback.format_exc())
+    return node_info
+
+
+def get_port_process(port_set):
+    try:
+        net_process_info = [{"pid": sconn.pid,
+                             "cmd": " ".join(psutil.Process(sconn.pid).cmdline()),
+                             "laddr_port": sconn.laddr.port if sconn.laddr and sconn.laddr.port else "",
+                             "raddr_ip": sconn.raddr.ip if sconn.raddr and sconn.raddr.ip else "",
+                             "raddr_port": sconn.raddr.port if sconn.raddr and sconn.raddr.port else "",
+                             } for sconn in [sconn for sconn in psutil.net_connections() if sconn.pid] if
+                            sconn.laddr.port in port_set]
+    except Exception as e:
+        logger.error("获取端口进程信息报错:{}".format(e))
+        logger.warning('%s' % traceback.format_exc())
+        return []
+    else:
+        return net_process_info
+
+
+def port_process_loop(file_path):
+    """
+    循环获取端口进程信息
+    Args:
+        file_path: 日志目录
+    """
+    logger.info("获取端口进程信息开始....")
+    while True:
+        try:
+            res = get_port_process(USEING_PORT)
+            line = "{}{}{}:{}{}".format("[", str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')), "]",
+                                        json.dumps(res),
+                                        "\n")
+            write_logs(line, file_path, port_lock)
+        except Exception as e:
+            logger.error("获取端口进程信息报错:{}".format(e))
+            logger.warning('%s' % traceback.format_exc())
+        time.sleep(5)
+
+
+def get_process_info_loop(file_path):
+    """
+    循环获取node信息
+    Args:
+        file_path: 日志目录
+    """
+    logger.info("获取节点信息开始....")
+    while True:
+        try:
+            res = get_nodes_info()
+            line = "{}{}{}:{}{}".format("[", str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')), "]",
+                                        json.dumps(res),
+                                        "\n")
+            write_logs(line, file_path, node_info_lock)
+        except Exception as e:
+            logger.error("获取node信息报错:{}".format(e))
+            logger.warning('%s' % traceback.format_exc())
+        time.sleep(4)
 
 
 def iftop_mes_loop(file_path):
@@ -335,6 +472,7 @@ def iftop_mes_loop(file_path):
         file_path: 日志文件路径
     Returns:
     """
+    global USEING_PORT
     logger.info("获取iftop信息开始....")
     while True:
         first_line = "==========================================" \
@@ -346,6 +484,12 @@ def iftop_mes_loop(file_path):
         except Exception as e:
             mes = first_line + e
         write_logs(mes, file_path, iftop_lok)
+        for line in iftop_mes.split("\n"):
+            if "=>" in line:
+                try:
+                    USEING_PORT.add(int(line.split(":")[1].split(" ")[0]))
+                except Exception as e:
+                    logger.error("获取本机流量端口报错:{}".format(e))
         time.sleep(0.1)
 
 
@@ -378,7 +522,7 @@ def pidstat_loop(file_path):
         except Exception as e:
             mes = first_line + e
         write_logs(mes, file_path, pidstat_lok)
-        time.sleep(1)
+        time.sleep(2)
 
 
 def get_mpstat_mes():
@@ -430,7 +574,7 @@ def mpstat_loop(file_path, json_path):
         except Exception as e:
             mes = first_line + e
         write_logs(mes, file_path, mpstat_lok)
-        time.sleep(1)
+        time.sleep(2)
 
 
 def get_car_plate_brand():
@@ -453,6 +597,7 @@ def get_car_plate_brand():
             logger.error("从配置获取车牌和品牌报错:{}".format(e))
             logger.warning('%s' % traceback.format_exc())
     return plate, brand.lower()
+
 
 def get_car_type():
     """
@@ -494,6 +639,8 @@ def main():
     iftop_log = log_dir_path + "/iftop.log"
     pidstat_log = log_dir_path + "/pidstat.log"
     mpstat_log = log_dir_path + "/mpstat.log"
+    port_process_log = os.path.join(log_dir_path, "port_process.log")
+    node_info_log = os.path.join(log_dir_path, "node_info.log")
 
     mpstat_json = FILEBEAT_UPLOAD + "mpstat_json.log"
     sys_state_json = FILEBEAT_UPLOAD + 'sys_state_json.log'
@@ -502,15 +649,20 @@ def main():
     t2 = threading.Thread(target=iftop_mes_loop, args=(iftop_log,))
     t3 = threading.Thread(target=pidstat_loop, args=(pidstat_log,))
     t4 = threading.Thread(target=mpstat_loop, args=(mpstat_log, mpstat_json))
-
+    t5 = threading.Thread(target=port_process_loop, args=(port_process_log,))
+    t6 = threading.Thread(target=get_process_info_loop, args=(node_info_log,))
     t1.start()
     t2.start()
     t3.start()
     t4.start()
+    # t5.start()
+    t6.start()
     ping_thread(log_dir_path)
 
 
 if __name__ == "__main__":
-    main()
-
-
+    try:
+        main()
+    except Exception as e:
+        logger.error("监控报错:{}".format(e))
+        logger.warning('%s' % traceback.format_exc())

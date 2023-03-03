@@ -17,6 +17,7 @@ class JobItem:
     strVehicleType = None
     strLinkPath = None
     eVersion = None
+    strVersion = None
 
     def __init__(self):
         self.strFullFileName = ""
@@ -33,5 +34,6 @@ class JobItem:
         self.strVehicleType = ""
         self.strLinkPath = ""
         self.eVersion = EnumVersion.EnumVersion.INIT_VERSION
+        self.strVersion = ""
 
         pass
