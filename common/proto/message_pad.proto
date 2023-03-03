@@ -597,16 +597,22 @@ message TripInfoEvent
 //message definition for MsgTypePlanningCmd
 message PullOverCmd
 {
-    uint32 cmd = 1; //0: default 1: 靠边停车 2:重新起步
+    uint32 cmd = 1; //0: default 1: 靠边停车 2:重新起步 3:紧急停车
+}
+
+message LaneChangeCmd
+{
+    uint32 cmd = 1; //0: default 1: 左变道 2:右变道 3:超车
 }
 
 message PlanningCmd
 {
     PullOverCmd pullOverCmd = 1;
+    LaneChangeCmd laneChangeCmd = 2;
 }
 
 //message definition for MsgTypeSetParamReqV2
 //refer to param_set_cmd.proto for details
 
 //message definition for MsgTypeBackCameraVideo
-//payload:jpeg data 
+//payload:jpeg data
