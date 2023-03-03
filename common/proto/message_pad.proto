@@ -602,7 +602,7 @@ message PullOverCmd
 
 message LaneChangeCmd
 {
-    uint32 cmd = 1; //0: default 1: 左变道 2:右变道 3:超车
+    uint32 cmd = 1; //0: default 1: 左变道 2:右变道 3:超车 4:恢复自动决策
 }
 
 message PlanningCmd
