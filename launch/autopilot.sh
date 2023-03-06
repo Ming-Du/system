@@ -803,10 +803,10 @@ LoggingINFO "update config finished"
 if [ -f "/home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup" ];then
  \cp -d /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite
 fi
-monitor_shell=/home/mogo/autopilot/share/launch/monitor_cpu_mem_net.sh
+monitor_shell=/home/mogo/autopilot/share/system_monitor/monitor_cpu_mem_net/monitor_cpu_mem_net.sh
 chmod +x $monitor_shell
 bash $monitor_shell &
-python3 /home/mogo/autopilot/share/launch/disk_manage.py >> /home/mogo/data/log/disk_manage.log 2>&1 &
+python3 /home/mogo/autopilot/share/system_monitor/disk_manage/disk_manage.py >> /home/mogo/data/log/disk_manage.log 2>&1 &
 
 request_master_mes=$(curl -d -m 10 -o /dev/null -s http://${master_ip}:8080/report_config)
 # 等待systerm master响应
@@ -830,7 +830,7 @@ else
     LoggingINFO "use new agent!!!!!!!"
     pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple psutil
     wait_core
-    python3 /home/mogo/autopilot/share/launch/agent/ssm_agent.py $ABS_PATH $ROS_LOG_DIR >> /dev/null 2>&1 &
+    python3 /home/mogo/autopilot/share/system_monitor/ssm_agent/ssm_agent.py $ABS_PATH $ROS_LOG_DIR >> /dev/null 2>&1 &
 fi
 
 
