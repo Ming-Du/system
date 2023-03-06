@@ -5,6 +5,7 @@ enum ParamSetType
 {
     ParamSetTypeNone = 0;
     ParamSetTypeBlindArea = 1; //bool, 0:off 1:on
+    ParamSetTypeV2N = 2; //bool, 0:不发给PnC 1:发给Pnc
 }
 
 message ParamSetCmd
