@@ -632,9 +632,9 @@ fi
 
 vehicletypes="wey df hq byd jinlv kaiwo"
 [[ -z "$opt_launch_file" && (-z "$VehicleType" || $(echo $vehicletypes | grep -wc $VehicleType) -lt 1) ]] && LoggingERR "vehicle type undefined" && Usage && exit 1
-if [ -z /autocar-code/install/share/log_reslove/config.py ]; then
+if [ ! -f /autocar-code/install/share/log_reslove/config.py ]; then
     ln -snf /autocar-code/install/share/log_reslove/config_$VehicleType.py /autocar-code/install/share/log_reslove/config.py
-    [[ -z /autocar-code/install/share/log_reslove/config.py ]] && LoggingERR "create log_reslove/config.py error!"
+    [[ ! -f /autocar-code/install/share/log_reslove/config.py ]] && LoggingERR "create log_reslove/config.py error!"
 fi
 [ ! -f $MOGO_MSG_CONFIG ] && LoggingERR "cannot get mogo_msg_config,report could be incompletion" "EINIT_LOST_FILE"
 SETUP_ROS="/opt/ros/melodic/setup.bash"
@@ -807,10 +807,10 @@ LoggingINFO "update config finished"
 if [ -f "/home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup" ];then
  \cp -d /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite.backup /home/mogo/autopilot/share/hadmap_engine/data/hadmap_data/db.sqlite
 fi
-monitor_shell=/home/mogo/autopilot/share/system_monitor/monitor_cpu_mem_net/monitor_cpu_mem_net.sh
+monitor_shell=/home/mogo/autopilot/share/monitor_cpu_mem_net/monitor_cpu_mem_net.sh
 chmod +x $monitor_shell
 bash $monitor_shell &
-python3 /home/mogo/autopilot/share/system_monitor/disk_manage/disk_manage.py >> /home/mogo/data/log/disk_manage.log 2>&1 &
+python3 /home/mogo/autopilot/share/disk_manage/disk_manage.py >> /home/mogo/data/log/disk_manage.log 2>&1 &
 
 request_master_mes=$(curl -d -m 10 -o /dev/null -s http://${master_ip}:8080/report_config)
 # 等待systerm master响应
@@ -834,7 +834,7 @@ else
     LoggingINFO "use new agent!!!!!!!"
     pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple psutil
     wait_core
-    python3 /home/mogo/autopilot/share/system_monitor/ssm_agent/ssm_agent.py $ABS_PATH $ROS_LOG_DIR >> /dev/null 2>&1 &
+    python3 /home/mogo/autopilot/share/ssm_agent/ssm_agent.py $ABS_PATH $ROS_LOG_DIR >> /dev/null 2>&1 &
 fi
 
 
