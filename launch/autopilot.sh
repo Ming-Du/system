@@ -632,6 +632,10 @@ fi
 
 vehicletypes="wey df hq byd jinlv kaiwo"
 [[ -z "$opt_launch_file" && (-z "$VehicleType" || $(echo $vehicletypes | grep -wc $VehicleType) -lt 1) ]] && LoggingERR "vehicle type undefined" && Usage && exit 1
+if [ -z /autocar-code/install/share/log_reslove/config.py ]; then
+    ln -snf /autocar-code/install/share/log_reslove/config_$VehicleType.py /autocar-code/install/share/log_reslove/config.py
+    [[ -z /autocar-code/install/share/log_reslove/config.py ]] && LoggingERR "create log_reslove/config.py error!"
+fi
 [ ! -f $MOGO_MSG_CONFIG ] && LoggingERR "cannot get mogo_msg_config,report could be incompletion" "EINIT_LOST_FILE"
 SETUP_ROS="/opt/ros/melodic/setup.bash"
 if [ $(echo $ABS_PATH | grep -w "/home/mogo/autopilot" | wc -l) -eq 0 ]; then

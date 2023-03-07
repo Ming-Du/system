@@ -1,3 +1,0 @@
-<launch>
-    <node name="simu_client" pkg="trajectory_agent" type="simu_client.py" output="screen"></node>
-</launch>

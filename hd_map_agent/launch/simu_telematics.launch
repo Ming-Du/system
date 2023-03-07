@@ -1,3 +1,0 @@
-<launch>
-    <node name="simu_telematics" pkg="monitor_collect" type="simu_telematics.py" output="screen"></node>
-</launch>

@@ -1,5 +1,0 @@
-<launch>
-    <node name="monitor_collect" pkg="monitor_collect" type="monitor_collect.py" output="screen">
-    <param name="detect_interval" type="int" value="10" />
-   </node>
-</launch>

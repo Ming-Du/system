@@ -1,7 +1,0 @@
-<launch>
-    <arg if="$(eval env('ROS_HOSTNAME')=='' or env('ROS_HOSTNAME')=='rosmaster')" name="node_name" default="update_config_simple_rosmaster"/>
-    <arg if="$(eval env('ROS_HOSTNAME')!='' and env('ROS_HOSTNAME')!='rosmaster')" name="node_name" default="$(eval 'update_config_simple_'+str(env('ROS_HOSTNAME')).replace('-',''))"/>
-    <node name="$(arg node_name)" pkg="update_config_simple" type="update_config_simple.py" output="screen">
-     <param name="net_card_name" type="string" value="eth0" />
-    </node>
-</launch>
