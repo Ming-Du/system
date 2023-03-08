@@ -1,0 +1,46 @@
+syntax = "proto3";
+package mogo.v2x;
+
+enum V2xMsgType
+{
+    V2xMsgTypeNone = 0;
+    V2xMsgTypeBsm = 1;
+    V2xMsgTypeRsm = 2;
+    V2xMsgTypeSsmRsu = 3;
+    V2xMsgTypeSsmObu = 4;
+    V2xMsgTypeRsiWarning = 5;
+    V2xMsgTypeRsmWarning = 6;
+    V2xMsgTypeSpatWarning = 7;
+    V2xMsgTypeMapMatch = 8;
+}
+
+message StatisticsRecord
+{
+    uint64 threadId = 1;
+    uint64 recvTime = 2;
+    uint64 timeCost = 3;
+    V2xMsgType msgType = 4;
+    uint32 topicId = 5;
+    uint64 msgCount = 6;
+    uint64 msgTime = 7;
+    uint64 equipmentType = 8;
+    bytes equipmentId = 9;
+    bytes roadId = 10;
+}
+
+message CountsItem {
+    map<uint32, uint64> counts = 1;
+}
+
+message V2xStatisticsItem
+{
+    map<uint64, CountsItem> threadCounts = 1;
+    repeated StatisticsRecord records = 2;
+}
+
+message V2xStatistics
+{
+    uint64 timestamp = 1;
+    V2xStatisticsItem recvFromObuStatistics = 2;
+    V2xStatisticsItem sendToObuStatistics = 3;
+}
