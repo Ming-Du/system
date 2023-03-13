@@ -139,10 +139,21 @@ message TrackedObject
     AdditionalAttribute add_attribute = 17; // 事件类型
 }
 
+
+message LocalizationInfo{
+  double stamp = 1; //seconds
+  float longitude = 2;
+  float latitude = 3;
+  float alt = 4;
+  float heading = 5;
+}
+
 message BlindAreaData
 {
-    float angleResolution = 1;
-    repeated int32 distances = 2;
+    float angleResolution = 1; //degrees
+    repeated int32 distances = 2; //unit: cm
+    LocalizationInfo localizationInfo = 3;
+    float maxRange = 4;  //unit: m
 }
 
 message TrackedObjects
