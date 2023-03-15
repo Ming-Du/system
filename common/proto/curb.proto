@@ -1,0 +1,24 @@
+syntax = "proto2";
+package perception;
+
+import "header.proto";
+import "geometry.proto";
+
+message Curb {
+  optional int32 type = 1; //类型
+  optional int32 curb_id = 2; //id
+  repeated geometry.Point curb_point_ego = 3; //车体坐标路沿点xyz
+  repeated geometry.Point curb_point_utm = 4; //UTM坐标路沿点xyz
+}
+
+message Curbs {
+  optional common.Header header = 1;
+  optional string sensor_name = 2; 
+  optional geometry.Point host_position = 3; //自车定位
+  optional double host_yaw = 4; //自车yaw角
+  optional double host_yaw_v = 5;//自车yaw_v
+  optional double host_longitudinal_v = 6;//自车纵向速度
+  optional double host_lateral_v = 7;//自车横向速度
+  repeated Curb curbs = 8; 
+}
+
