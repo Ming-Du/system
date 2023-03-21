@@ -28,6 +28,7 @@ message PlanningConfig {
     optional double plan_dis_lmt = 18;
     optional double plan_width_buff = 19;
     optional bool flag_cross_walk_decision = 20;
+    optional bool flag_chang_lattice_config = 21;
     // spdplan para
     optional double vc_kp = 43;
     optional double vc_ki = 44;
