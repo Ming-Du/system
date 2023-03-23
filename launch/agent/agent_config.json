@@ -26,6 +26,9 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosmaster": []
+      },
       "car_type": [
         "df",
         "hq",
@@ -67,6 +70,13 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosmaster": [],
+        "rosslave-104": [],
+        "rosslave-105": [],
+        "rosslave-106": [],
+        "rosslave-107": []
       },
       "car_type": [
         "df",
@@ -110,6 +120,13 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosmaster": [],
+        "rosslave-104": [],
+        "rosslave-105": [],
+        "rosslave-106": [],
+        "rosslave-107": []
+      },
       "car_type": [
         "df",
         "hq",
@@ -148,6 +165,30 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosmaster": [
+          {
+            "SOC": [
+              "2x"
+            ]
+          }
+        ],
+        "rosslave-103": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "hardware_suite": [
+              "2.0"
+            ]
+          },
+          {
+            "SOC": [
+              "6x"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "df",
         "hq",
@@ -163,13 +204,7 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      },
-      "enable_control": [
-        {
-          "SOC": "6x",
-          "hardware_suite": ["2.0"]
-        }
-      ]
+      }
     },
     {
       "launch_name": "sensing60.launch",
@@ -192,6 +227,24 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosmaster": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "hardware_suite": [
+              "2.0"
+            ]
+          },
+          {
+            "SOC": [
+              "2x",
+              "6x"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "df",
         "hq",
@@ -207,13 +260,7 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      },
-      "enable_control": [
-        {
-          "SOC": "6x",
-          "hardware_suite": ["2.0"]
-        }
-      ]
+      }
     },
     {
       "launch_name": "sensing120.launch",
@@ -234,6 +281,23 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-103": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "hardware_suite": [
+              "2.0"
+            ]
+          },
+          {
+            "SOC": [
+              "6x"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "df",
         "hq",
@@ -249,13 +313,7 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      },
-      "enable_control": [
-        {
-          "SOC": "6x",
-          "hardware_suite": ["2.0"]
-        }
-      ]
+      }
     },
     {
       "launch_name": "sensing120_back.launch",
@@ -276,6 +334,23 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-105": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "hardware_suite": [
+              "2.0"
+            ]
+          },
+          {
+            "SOC": [
+              "6x"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "df",
         "hq",
@@ -291,13 +366,7 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      },
-      "enable_control": [
-        {
-          "SOC": "6x",
-          "hardware_suite": ["2.0"]
-        }
-      ]
+      }
     },
     {
       "launch_name": "sensing120_right.launch",
@@ -318,6 +387,23 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-107": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "hardware_suite": [
+              "2.0"
+            ]
+          },
+          {
+            "SOC": [
+              "6x"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "df",
         "hq",
@@ -333,13 +419,7 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      },
-      "enable_control": [
-        {
-          "SOC": "6x",
-          "hardware_suite": ["2.0"]
-        }
-      ]
+      }
     },
     {
       "launch_name": "sensing120_left.launch",
@@ -360,6 +440,23 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-107": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "hardware_suite": [
+              "2.0"
+            ]
+          },
+          {
+            "SOC": [
+              "6x"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "df",
         "hq",
@@ -375,13 +472,7 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      },
-      "enable_control": [
-        {
-          "SOC": "6x",
-          "hardware_suite": ["2.0"]
-        }
-      ]
+      }
     },
     {
       "launch_name": "sensing_fisheye_front.launch",
@@ -401,6 +492,18 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave-105": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV_M1"
+            ]
+          }
+        ]
       },
       "car_type": [
         "jinlv"
@@ -436,6 +539,18 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-105": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV_M1"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "jinlv"
       ],
@@ -469,6 +584,18 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave-105": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV_M1"
+            ]
+          }
+        ]
       },
       "car_type": [
         "jinlv"
@@ -504,6 +631,18 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-105": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV_M1"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "jinlv"
       ],
@@ -537,6 +676,15 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosmaster": [
+          {
+            "SOC": [
+              "6x"
+            ]
+          }
+        ]
       },
       "car_type": [
         "df",
@@ -574,6 +722,9 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-105": []
+      },
       "car_type": [
         "df",
         "hq"
@@ -609,6 +760,9 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-105": []
+      },
       "car_type": [
         "jinlv"
       ],
@@ -643,6 +797,9 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-107": []
+      },
       "car_type": [
         "df"
       ],
@@ -676,6 +833,9 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave-107": []
       },
       "car_type": [
         "hq"
@@ -712,6 +872,9 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosmaster": []
       },
       "car_type": [
         "df",
@@ -751,6 +914,9 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosmaster": []
+      },
       "car_type": [
         "df",
         "hq",
@@ -787,6 +953,9 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-103": []
+      },
       "car_type": [
         "df"
       ],
@@ -820,6 +989,15 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosmaster": [
+          {
+            "SOC": [
+              "2x"
+            ]
+          }
+        ]
       },
       "car_type": [
         "df"
@@ -855,6 +1033,9 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-103": []
+      },
       "car_type": [
         "hq"
       ],
@@ -888,6 +1069,15 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosmaster": [
+          {
+            "SOC": [
+              "2x"
+            ]
+          }
+        ]
       },
       "car_type": [
         "hq"
@@ -923,6 +1113,9 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-103": []
+      },
       "car_type": [
         "jinlv"
       ],
@@ -956,6 +1149,15 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosmaster": [
+          {
+            "SOC": [
+              "2x"
+            ]
+          }
+        ]
       },
       "car_type": [
         "jinlv"
@@ -992,6 +1194,10 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-106": []
       },
       "car_type": [
         "df",
@@ -1031,6 +1237,9 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosmaster": []
+      },
       "car_type": [
         "jinlv"
       ],
@@ -1066,6 +1275,9 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosmaster": []
       },
       "car_type": [
         "df",
@@ -1104,6 +1316,9 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosmaster": []
+      },
       "car_type": [
         "df",
         "hq"
@@ -1140,6 +1355,9 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosmaster": []
       },
       "car_type": [
         "df",
@@ -1179,6 +1397,9 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosmaster": []
+      },
       "car_type": [
         "df",
         "hq",
@@ -1214,6 +1435,9 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave-103": []
       },
       "car_type": [
         "df",
@@ -1253,6 +1477,42 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-103": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV",
+              "JINLV_M2"
+            ]
+          }
+        ],
+        "rosslave-105": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV",
+              "JINLV_M1",
+              "JINLV_M2"
+            ]
+          }
+        ],
+        "rosslave-107": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV",
+              "JINLV_M2"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "df",
         "kaiwo",
@@ -1290,6 +1550,10 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-103": []
       },
       "car_type": [
         "df",
@@ -1329,6 +1593,10 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-106": []
+      },
       "car_type": [
         "df",
         "hq",
@@ -1367,6 +1635,10 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-106": []
+      },
       "car_type": [
         "df",
         "hq",
@@ -1402,6 +1674,9 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave-105": []
       },
       "car_type": [
         "df",
@@ -1440,6 +1715,10 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-106": []
+      },
       "car_type": [
         "df",
         "hq",
@@ -1475,6 +1754,9 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave-107": []
       },
       "car_type": [
         "df",
@@ -1514,6 +1796,10 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-104": []
+      },
       "car_type": [
         "df",
         "hq"
@@ -1550,6 +1836,10 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-106": []
       },
       "car_type": [
         "df",
@@ -1589,6 +1879,10 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-106": []
+      },
       "car_type": [
         "jinlv",
         "df"
@@ -1625,6 +1919,10 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-103": []
       },
       "car_type": [
         "df",
@@ -1664,6 +1962,10 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-103": []
+      },
       "car_type": [
         "df",
         "hq",
@@ -1701,6 +2003,10 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-103": []
       },
       "car_type": [
         "df",
@@ -1740,6 +2046,10 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-104": []
+      },
       "car_type": [
         "df",
         "hq"
@@ -1777,6 +2087,17 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-103": [{
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV"
+            ]
+          }]
+      },
       "car_type": [
         "jinlv"
       ],
@@ -1811,6 +2132,23 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-104": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "hardware_suite": [
+              "2.0"
+            ]
+          },
+          {
+            "SOC": [
+              "6x"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "jinlv"
       ],
@@ -1824,13 +2162,7 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      },
-      "enable_control": [
-        {
-          "SOC": "6x",
-          "hardware_suite": ["2.0"]
-        }
-      ]
+      }
     },
     {
       "launch_name": "radar_408_front_308_rear.launch",
@@ -1851,6 +2183,23 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-105": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "hardware_suite": [
+              "2.0"
+            ]
+          },
+          {
+            "SOC": [
+              "6x"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "df",
         "jinlv"
@@ -1865,13 +2214,7 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      },
-      "enable_control": [
-        {
-          "SOC": "6x",
-          "hardware_suite": ["2.0"]
-        }
-      ]
+      }
     },
     {
       "launch_name": "radar_fusion.launch",
@@ -1891,6 +2234,9 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave-105": []
       },
       "car_type": [
         "jinlv"
@@ -1928,6 +2274,10 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-107": []
+      },
       "car_type": [
         "df",
         "hq",
@@ -1964,6 +2314,23 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-106": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "hardware_suite": [
+              "2.0"
+            ]
+          },
+          {
+            "SOC": [
+              "6x"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "df",
         "jinlv"
@@ -1978,13 +2345,7 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      },
-      "enable_control": [
-        {
-          "SOC": "6x",
-          "hardware_suite": ["2.0"]
-        }
-      ]
+      }
     },
     {
       "launch_name": "drivers_zvisionlidar.launch",
@@ -2005,6 +2366,23 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-107": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "hardware_suite": [
+              "2.0"
+            ]
+          },
+          {
+            "SOC": [
+              "6x"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "df",
         "jinlv"
@@ -2019,13 +2397,7 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      },
-      "enable_control": [
-        {
-          "SOC": "6x",
-          "hardware_suite": ["2.0"]
-        }
-      ]
+      }
     },
     {
       "launch_name": "drivers_innolidar.launch",
@@ -2046,6 +2418,23 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-104": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "hardware_suite": [
+              "2.0"
+            ]
+          },
+          {
+            "SOC": [
+              "6x"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "df",
         "jinlv"
@@ -2060,13 +2449,7 @@
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
-      },
-      "enable_control": [
-        {
-          "SOC": "6x",
-          "hardware_suite": ["2.0"]
-        }
-      ]
+      }
     },
     {
       "launch_name": "perception_falcon_lidar.launch",
@@ -2086,6 +2469,9 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave-104": []
       },
       "car_type": [
         "jinlv"
@@ -2121,6 +2507,9 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-106": []
+      },
       "car_type": [
         "jinlv"
       ],
@@ -2154,6 +2543,9 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave-107": []
       },
       "car_type": [
         "jinlv"
@@ -2190,6 +2582,10 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-107": []
       },
       "car_type": [
         "df",
@@ -2229,6 +2625,10 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-107": []
+      },
       "car_type": [
         "df",
         "hq",
@@ -2264,6 +2664,9 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave-106": []
       },
       "car_type": [
         "df"
@@ -2307,6 +2710,15 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosmaster": [],
+        "rosslave": [],
+        "rosslave-103": [],
+        "rosslave-104": [],
+        "rosslave-105": [],
+        "rosslave-106": [],
+        "rosslave-107": []
+      },
       "car_type": [
         "df",
         "hq",
@@ -2344,6 +2756,10 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave": [],
+        "rosslave-103": []
       },
       "car_type": [
         "df",
@@ -2389,6 +2805,15 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosmaster": [],
+        "rosslave": [],
+        "rosslave-103": [],
+        "rosslave-104": [],
+        "rosslave-105": [],
+        "rosslave-106": [],
+        "rosslave-107": []
+      },
       "car_type": [
         "df",
         "hq",
@@ -2433,6 +2858,15 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosmaster": [],
+        "rosslave": [],
+        "rosslave-103": [],
+        "rosslave-104": [],
+        "rosslave-105": [],
+        "rosslave-106": [],
+        "rosslave-107": []
+      },
       "car_type": [
         "df",
         "hq",
@@ -2469,6 +2903,9 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-106": []
+      },
       "car_type": [
         "jinlv"
       ],
@@ -2502,6 +2939,9 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave-106": []
       },
       "car_type": [
         "jinlv"
@@ -2537,6 +2977,9 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosslave-107": []
+      },
       "car_type": [
         "jinlv"
       ],
@@ -2570,6 +3013,9 @@
           "should": [],
           "must_not": []
         }
+      },
+      "enable_control": {
+        "rosslave-106": []
       },
       "car_type": [
         "df"
@@ -2606,6 +3052,15 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosmaster": [
+          {
+            "SOC": [
+              "6x"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "df"
       ],
@@ -2641,6 +3096,15 @@
           "must_not": []
         }
       },
+      "enable_control": {
+        "rosmaster": [
+          {
+            "SOC": [
+              "6x"
+            ]
+          }
+        ]
+      },
       "car_type": [
         "jinlv"
       ],
@@ -2651,6 +3115,51 @@
       "function": {
         "auto_pilot": 1,
         "remote_pilot": 1,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
+      "launch_name": "localization_mogo_innolidar.launch",
+      "node_name": "",
+      "package": "slam_localization",
+      "path": "",
+      "machine": {
+        "2x": {
+          "must": [],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosslave-104"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "enable_control": {
+        "rosslave-104": [{
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV_M1",
+              "JINLV_M2"
+            ]
+          }]
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "SYS",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 0,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
         "flow_ctrl": 0,
         "cpu_ctrl": 0,
         "mem_ctrl": 0
