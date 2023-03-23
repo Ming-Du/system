@@ -62,6 +62,8 @@ enum MessageType
     MsgTypeBagManagerCmd = 0x1011b; //bag管理
     MsgTypePlanningCmd = 0x1011c; //给planning的指令
     MsgTypeSetParamReqV2 = 0x1011d; //设置参数命令V2
+    MsgTypeV2nCongestionEvent = 0x1011e; //主车附近拥堵事件推送, 透传
+    MsgTypeV2nGlobalPathEvents = 0x1011f; //主车路径全局事件推送, 透传
 }
 
 message Header
@@ -627,3 +629,10 @@ message PlanningCmd
 
 //message definition for MsgTypeBackCameraVideo
 //payload:jpeg data
+
+//message definition for MsgTypeV2nCongestionEvent
+//refer to RSI_PB in mogo_v2x.proto for details
+
+//message definition for MsgTypeV2nGlobalPathEvents
+//refer to road_overview_events.proto for details
+
