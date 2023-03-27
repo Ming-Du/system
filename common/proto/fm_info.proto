@@ -1,0 +1,45 @@
+syntax = "proto2";
+
+package fault_management;
+
+
+message FaultInfo {
+    required string fault_id = 1;    //故障标识，每个告警有一个全域唯一的标识
+    required uint64 fault_time = 2;  //故障确认上报时间，毫秒单位
+    optional string fault_desc = 3;  //故障的补充描述
+    optional string fault_level = 4;      //预留字段 故障等级信息补充
+}
+
+message FaultReportMsg {   //主体消息
+    required string src = 1;                //故障来源  node_name
+    repeated FaultInfo infos = 2;          //故障原因与信息描述
+}
+
+
+enum FaultLevel {
+    NOTHING_TODO = 0;  //不采用故障等级策略
+    EMERGENCY_STOP = 1; //紧急停车
+    COMFORTABLE_SLOW_STOP = 2; //舒适减速停车
+    COMFORTABLE_PULL_OVER = 3; //舒适靠边停车
+    REDUCE_SPEED = 4; //减速形式   低于10km/小时
+    WARNING_ONLY = 5; //仅告警
+    STATISTICS_INFO = 6; //仅做系统后台统计
+}
+
+message FaultResultMsg {
+    required uint64 time = 1;       //故障策略输出时间
+    required FaultLevel level = 2;  //故障汇总等级  （前期按等级处理）
+    required uint32 fault_sum = 3;  //故障总数
+    repeated FaultInfo infos = 4;   //故障消息详情
+    required uint32 veh_policy=5;   //车端降级策略   (后期按bit位降级策略，可以多策略复合，先减速，后靠边，再人工)
+    required bool planning_exec_pilocy_must=6;  //规划需要执行降级策略
+    required bool controller_exec_pilocy_must =7; //控制需要执行降级策略（true的情况，planning可能故障）
+}
+
+
+message FaultIgnoreMsg {
+    required uint64 time = 1;   //故障忽略配置时间
+    required string ignore_src = 2;  //忽略来源，pad，云控，调测工具
+    repeated string Ignore_fault_id = 3;  //故障忽略全量列表
+}
+
