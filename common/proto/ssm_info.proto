@@ -1,0 +1,62 @@
+syntax = "proto2";
+
+package system_master;
+
+enum NodeState {
+    NONE = 0;      //未知状态None
+    WAITING = 1;   //依赖未就绪Waiting
+    STARTING = 2;  //启动中Starting
+    RUNNING = 3;   //运行running
+    STOPPING = 4;  //停止stopping
+    BROKEN = 5;    //无法启动状态
+    MAN_RUN = 6;   //人为启动状态
+    MAN_STOP = 7;  //人为关闭状态
+}
+
+enum AgentState {
+    DISCONNECT = 0;  //未连接或断开连接
+    CONNECTED = 1;   //连接状态
+}
+
+enum ModeState {
+    MODE_RUN_UNREADY = 0;  //运行模式-未就绪
+    MODE_RUN_READY = 1;   //运行模式-就绪 (所有节点启动)
+    MODE_STOP_UNREADY = 2;   //停止模式-未就绪
+    MODE_STOP_READY = 3;   //运行模式-就绪 (所有节点关闭)
+    MODE_IDLE_UNREADY = 4;   //空闲模式-未就绪
+    MODE_IDLE_READY = 5;   //空闲模式-就绪 (非驾驶状态)
+}
+
+
+message NodeInf {
+    optional string node_name = 1;       //node name
+    optional string launch_name = 2;     //launch name
+    optional NodeState state = 3;           
+}
+
+
+message SsmStatusInf {
+    required ModeState mode_state = 1;      // 当前系统模式状态
+    optional string map_version = 2;        // MAP 版本信息
+    optional string master_version = 3;     // SSM 版本信息
+    required bool auto_pilot_ready = 4;     // 自动驾驶状态就绪
+    required bool remote_pilot_ready = 5;   // 平行驾驶状态就绪
+    repeated NodeInf auto_pilot_unready_list = 6;   //自驾未就绪节点列表
+    repeated NodeInf remote_pilot_unready_list = 7;  //平行驾驶未就绪列表
+}
+
+
+
+message AgentInf {
+    required string agent_host = 1;      // 来自/etc/hosts
+    required AgentState agent_state = 2; // agent状态
+    required int32 node_sum = 3;         // agent内node的总数
+    repeated NodeInf node = 4;           //node列表
+}
+
+
+message SsmAgentState {
+    required ModeState mode_state = 1;   // 当前系统模式状态
+    required int32 agent_sum = 2;        // agent数量
+    repeated AgentInf agents = 3;        // agent列表      
+}
