@@ -1,0 +1,17 @@
+syntax="proto2";
+package rule_segement;
+
+import "header.proto";
+
+message MogoPointCloud
+{ 
+    optional common.Header header = 1; 
+    optional double self_longitude = 2;
+    optional double self_latitude = 3;
+    optional double self_altitude = 4;
+    optional double self_roll = 5;
+    optional double self_pitch = 6;
+    optional double self_yaw = 7;
+    repeated int32 add_data = 8 [packed=true];
+    optional double newgpstimestamp = 9;
+}
