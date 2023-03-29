@@ -19,12 +19,12 @@ enum AgentState {
 }
 
 enum ModeState {
-    MODE_RUN_UNREADY = 0;  //运行模式-未就绪
-    MODE_RUN_READY = 1;   //运行模式-就绪 (所有节点启动)
-    MODE_STOP_UNREADY = 2;   //停止模式-未就绪
-    MODE_STOP_READY = 3;   //运行模式-就绪 (所有节点关闭)
-    MODE_IDLE_UNREADY = 4;   //空闲模式-未就绪
-    MODE_IDLE_READY = 5;   //空闲模式-就绪 (非驾驶状态)
+    MODE_STOP_UNREADY = 0;  //停止模式-未就绪
+    MODE_STOP_READY = 1;    //运行模式-就绪 (所有节点关闭)
+    MODE_RUN_UNREADY = 2;   //运行模式-未就绪
+    MODE_RUN_READY = 3;     //运行模式-就绪 (所有节点启动)
+    MODE_IDLE_UNREADY = 4;  //空闲模式-未就绪
+    MODE_IDLE_READY = 5;    //空闲模式-就绪 (非驾驶状态)
 }
 
 
