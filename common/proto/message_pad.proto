@@ -573,7 +573,7 @@ message PlanningActionMsg
 //message definition for MsgTypeSetParamReq
 message SetOneParam
 {
-    uint32 type = 1; // 0:default 1:绕障类功能开关(bool) 2:变道绕障的目标障碍物速度阈值(double, m/s)
+    uint32 type = 1; // 0:default 1:绕障类功能开关(bool) 2:变道绕障的目标障碍物速度阈值(double, m/s) 3:AEB开关(bool)
     string value = 2; // 转成字符串的值
 }
 
