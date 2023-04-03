@@ -187,6 +187,7 @@ set_pr() {
                 "controller") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 44 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
                 "localization" | "drivers_gnss" | "drivers_gnss_zy") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 42 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
                 "local_planning") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 40 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                "autocar_socket_node") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 39 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
                 "perception_fusion_mid") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 29 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
                 "hadmap_server" | "hadmap_engine_node") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 30 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
                 "perception_fusion2" | "perception_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 30 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
