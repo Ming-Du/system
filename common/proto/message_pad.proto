@@ -310,6 +310,8 @@ message CarConfigResp
     double maxSpeedLimit = 6; //最大自动驾驶限速, 单位：m/s 
     double minAcceleration = 7; //最小加速度, 单位：m/s²
     double maxAcceleration = 8; //最大加速度, 单位：m/s²
+    string carType = 9; //车辆类型
+    string subCarType = 10; //车辆子类型
 }
 
 // message definition for MsgTypeRecordCause
