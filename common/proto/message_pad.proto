@@ -249,7 +249,7 @@ message BasicInfoReq
 {
 }
 
-// message definition for MessageType: MsgTypeBasicInfoRsp
+// message definition for MessageType: MsgTypeBasicInfoResp
 message BasicInfoResp
 {
     string sn = 1;
@@ -575,8 +575,12 @@ message PlanningActionMsg
 //message definition for MsgTypeSetParamReq
 message SetOneParam
 {
-    uint32 type = 1; // 0:default 1:绕障类功能开关(bool) 2:变道绕障的目标障碍物速度阈值(double, m/s) 3:AEB开关(bool)
-                     // 4:限制绕障开关(bool) 5:停车让行线前避让等待开关(bool) 6:地图限速功能开关(bool)
+    uint32 type = 1; // 0:default 1:绕障类功能开关(bool) 2:变道绕障的目标障碍物速度阈值(double, m/s) 
+                     // 3:AEB开关(bool)  0:关闭自动紧急制动功能 1:启用自动紧急制动功能
+                     // 4:限制绕障开关(bool) 0:正常绕障 1：限制绕障  默认0
+                     // 5:停车让行线前避让等待开关(bool) 0:停车让行线前无需等待 1:停车让行线前需要等待 默认0
+                     // 6:地图限速功能开关(bool) 0:不使用地图限速功能 1:使用地图限速功能 默认0
+                     // 7:环岛模式开关(bool) //0:普通模式 1:环岛模式  默认0
     string value = 2; // 转成字符串的值
 }
 
