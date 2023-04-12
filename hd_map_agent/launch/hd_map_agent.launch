@@ -1,5 +1,0 @@
-<launch>
-    <node name="hd_map_agent" pkg="hd_map_agent" type="hd_map_agent.py" output="screen">
-    <param name="detect_interval" type="int" value="10" />
-   </node>
-</launch>

@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-  <node name="log_reslove" pkg="log_reslove" type="log_reslove.py" output="screen">
-  </node>
-</launch>
