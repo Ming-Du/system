@@ -12,6 +12,8 @@ LaneMark[] lanemarks
 
 RoadSide[] roadsides
 
+geometry_msgs/Point[] fs_img_point_set  # 2D points of freespace contours
+
 # add by wandanpan
 RoadArrow[] arrows
 sensor_msgs/Image lane_arrow_stopline_crossing_seg  # lane:235, arrow:245, stopline:255, crossing:205
