@@ -64,6 +64,8 @@ enum MessageType
     MsgTypeSetParamReqV2 = 0x1011d; //设置参数命令V2
     MsgTypeV2nCongestionEvent = 0x1011e; //主车附近拥堵事件推送, 透传
     MsgTypeV2nGlobalPathEvents = 0x1011f; //主车路径全局事件推送, 透传
+    MsgTypeGetParamReq = 0x10120; //参数获取请求
+    MsgTypeGetParamResp = 0x10121; //参数获取应答
 }
 
 message Header
@@ -580,7 +582,8 @@ message SetOneParam
                      // 4:限制绕障开关(bool) 0:正常绕障 1：限制绕障  默认0
                      // 5:停车让行线前避让等待开关(bool) 0:停车让行线前无需等待 1:停车让行线前需要等待 默认0
                      // 6:地图限速功能开关(bool) 0:不使用地图限速功能 1:使用地图限速功能 默认0
-                     // 7:环岛模式开关(bool) //0:普通模式 1:环岛模式  默认0
+                     // 7:环岛模式开关(bool) 0:普通模式 1:环岛模式  默认0
+                     // 8:弱网减速停车策略开关(bool) 0:关闭弱网减速停车策略 1:使用弱网减速停车策略 
     string value = 2; // 转成字符串的值
 }
 
@@ -642,4 +645,10 @@ message PlanningCmd
 
 //message definition for MsgTypeV2nGlobalPathEvents
 //refer to road_overview_events.proto for details
+
+//message definition for MsgTypeGetParamReq
+//复用 SetParamReq
+
+//message definition for MsgTypeGetParamResp
+//复用 SetParamReq
 
