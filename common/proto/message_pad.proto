@@ -66,6 +66,7 @@ enum MessageType
     MsgTypeV2nGlobalPathEvents = 0x1011f; //主车路径全局事件推送, 透传
     MsgTypeGetParamReq = 0x10120; //参数获取请求
     MsgTypeGetParamResp = 0x10121; //参数获取应答
+    MsgTypeTaskCmd = 0x10122; //云控任务指令, 云控<->鹰眼双向透传
 }
 
 message Header
@@ -244,6 +245,7 @@ message Line
 message TrajectoryDownloadReq
 {
     Line line = 1; //路线
+    uint32 source = 2; //指令来源: 0: default, 1:aicloud, 2:pad
 }
 
 // message definition for MessageType: MsgTypeBasicInfoReq
