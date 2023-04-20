@@ -67,6 +67,8 @@ enum MessageType
     MsgTypeGetParamReq = 0x10120; //参数获取请求
     MsgTypeGetParamResp = 0x10121; //参数获取应答
     MsgTypeTaskCmd = 0x10122; //云控任务指令, 云控<->鹰眼双向透传
+    MsgTypeFSMStatusReasonQueryReq = 0x10123; //fsm状态原因查询
+    MsgTypeFSMStatusReasonQueryResp = 0x10124; //fsm状态原因查询应答
 }
 
 message Header
@@ -654,3 +656,11 @@ message PlanningCmd
 //message definition for MsgTypeGetParamResp
 //复用 SetParamReq
 
+//message definition for MsgTypeTaskCmd
+//查看云端和鹰眼的接口
+
+//message definition for MsgTypeFSMStatusReasonQueryReq
+//refer to FSMStatusReasonQuery.proto for details
+
+//message definition for MsgTypeFSMStatusReasonQueryResp
+//refer to FSMStatusReasonQuery.proto for details
