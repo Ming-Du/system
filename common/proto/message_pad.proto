@@ -245,7 +245,7 @@ message Line
 message TrajectoryDownloadReq
 {
     Line line = 1; //路线
-    uint32 source = 2; //指令来源: 0: default, 1:aicloud, 2:pad
+    uint32 source = 2; //指令来源: 0: default, 1:pad, 2:aicloud
 }
 
 // message definition for MessageType: MsgTypeBasicInfoReq
@@ -288,7 +288,7 @@ message RouteInfo
 message SetAutopilotModeReq
 {
     uint32 mode = 1; //1: enter autopilot mode, 0: quit autopilot mode
-    uint32 source = 2; //命令来源: 0: pad模拟, 1: aicloud业务
+    uint32 source = 2; //命令来源: 0: pad模拟, 1: pad业务, 2:aicloud
     RouteInfo routeInfo = 3; //自动驾驶路径信息
 }
 
