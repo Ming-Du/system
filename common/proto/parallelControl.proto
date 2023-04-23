@@ -39,6 +39,9 @@ message ParallelControlCMD {
   float accel = 15;          // 加速度。负的代表刹车，正的代表加速度
   bool door = 16;            // 开门-true；关门-false
   bool doorLock = 17;        // 门锁
+  bool fillLightLeft = 18;    //左补光灯
+  bool fillLightRight = 19;    //右补光灯
+  bool fillLightBack = 20;    //后补光灯
 }
 
 // 云发给车的平行驾驶控制指令
