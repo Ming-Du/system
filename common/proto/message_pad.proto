@@ -31,6 +31,7 @@ enum MessageType
     MsgTypeChassisStates = 0x1000b; //重构后的底盘状态, 透传
     MsgTypeFunctionStates = 0x1000c; //重构后的功能状态, 透传
     MsgTypeBackCameraVideo = 0x1000d; //清扫车后部摄像头视频 10hz
+    MsgTypeM1StitchedVideo = 0x1000e; //m1拼接视频 10hz
 
     MsgTypeBasicInfoReq = 0x10100; //自动驾驶设备基础信息请求
     MsgTypeBasicInfoResp = 0x10101; //自动驾驶设备基础信息应答
@@ -664,3 +665,6 @@ message PlanningCmd
 
 //message definition for MsgTypeFSMStatusReasonQueryResp
 //refer to FSMStatusReasonQuery.proto for details
+
+//message definition for MsgTypeM1StitchedVideo
+//payload:jpeg data
