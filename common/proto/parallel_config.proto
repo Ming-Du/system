@@ -42,6 +42,7 @@ enum SensorType {
     SENSING_60 = 11;
     SENSING_120 = 12;  //
     RSLIDAR_80 = 14;   //
+    SENSING_190 = 34;
 }
 
 enum SensorOrientation {
@@ -55,6 +56,10 @@ enum SensorOrientation {
     RIGHT_FORWARD = 7;
     PANORAMIC = 8;
     MIDDLE = 9;
+    FRONT_DOWN = 10;
+    LEFT_DOWN = 11;
+    RIGHT_DOWN = 12;
+    REAR_DOWN = 13;
 }
 
 message Point3D {
@@ -98,6 +103,7 @@ message SensorInfo {
     Extrinsic extrinsic = 6;
     Intrinsic intrinsic = 7;
     Distcoeff distcoeff = 8;
+    double xi = 9;
 }
 
 message ParallelVehicleConfigs {

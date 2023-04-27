@@ -29,6 +29,7 @@ enum SensorType {
   RSLIDAR_M1 = 31;
   INNOVUSION_FALCON_LIDAR = 32;
   RSLIDAR_HELIOS = 33;
+  SENSING_190 = 34;
   }
 
 enum SensorOrientation {
@@ -42,6 +43,10 @@ enum SensorOrientation {
   RIGHT_FORWARD = 7;
   PANORAMIC = 8;
   MIDDLE = 9;
+  FRONT_DOWN = 10;
+  LEFT_DOWN = 11;
+  RIGHT_DOWN = 12;
+  REAR_DOWN = 13;
 }
 
 message Extrinsic {
@@ -64,6 +69,10 @@ message Distcoeff {
   repeated double distort_matrix = 1;  // 5x1 matrix
 }
 
+message Xi {
+  repeated double matrix = 1;  // 1x1 matrix, the parameter xi of CMei's model
+}
+
 message SensorInfo {
   optional string name = 1;
   optional SensorType type = 2 [default = UNKNOWN_SENSOR_TYPE];
@@ -73,5 +82,6 @@ message SensorInfo {
   optional Extrinsic extrinsic = 6;
   optional Intrinsic intrinsic = 7;
   optional Distcoeff distcoeff = 8;
+  optional Xi xi = 9;  // the parameter xi of CMei's model
 }
 
