@@ -70,6 +70,7 @@ enum MessageType
     MsgTypeTaskCmd = 0x10122; //云控任务指令, 云控<->鹰眼双向透传
     MsgTypeFSMStatusReasonQueryReq = 0x10123; //fsm状态原因查询
     MsgTypeFSMStatusReasonQueryResp = 0x10124; //fsm状态原因查询应答
+    MsgTypeGetDebugInfo = 0x10125; //debug信息查询 pad->telematics
 }
 
 message Header
@@ -262,6 +263,7 @@ message BasicInfoResp
     string sn = 1;
     uint32 environment = 2; //1: 研发环境, 2:测试环境, 3:生产环境 4:演示环境
     uint32 role = 3; //客户端角色：0: 司机屏，1: 乘客屏，2: 调试屏
+    string version = 4; //鹰眼版本
 }
 
 // message definition for MsgTypeSetAutopilotModeReq
@@ -589,6 +591,7 @@ message SetOneParam
                      // 6:地图限速功能开关(bool) 0:不使用地图限速功能 1:使用地图限速功能 默认0
                      // 7:环岛模式开关(bool) 0:普通模式 1:环岛模式  默认0
                      // 8:弱网减速停车策略开关(bool) 0:关闭弱网减速停车策略 1:使用弱网减速停车策略 
+                     // 9:m1拼接视频自车位置参数(string), 格式:x,y,width,height
     string value = 2; // 转成字符串的值
 }
 
@@ -668,3 +671,19 @@ message PlanningCmd
 
 //message definition for MsgTypeM1StitchedVideo
 //payload:jpeg data
+
+//message definition for MsgTypeGetDebugInfo
+message DebugInfo
+{
+    uint32 seq = 1; //seq num
+    repeated SessionInfo sessions = 2; //有效session信息
+}
+
+message SessionInfo
+{
+    uint32 sessionID = 1;
+    uint32 role = 2;
+    string sn = 3;
+    uint64 connectedTimeStamp = 4;
+    string version = 5;
+}
