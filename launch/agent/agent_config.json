@@ -6,6 +6,47 @@
   "src": "MAP",
   "MAP_agent_status_info": [
     {
+      "launch_name": "telematics.launch",
+      "node_name": "",
+      "package": "telematics",
+      "path": "",
+      "machine": {
+        "2x": {
+          "must": [
+            "rosmaster"
+          ],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosmaster"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "enable_control": {
+        "rosmaster": []
+      },
+      "car_type": [
+        "df",
+        "hq",
+        "jinlv"
+      ],
+      "node_type": "SYS",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 0,
+      "function": {
+        "auto_pilot": 1,
+        "remote_pilot": 1,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
       "launch_name": "drivers_gnss.launch",
       "node_name": "",
       "package": "launch",
@@ -853,6 +894,43 @@
       }
     },
     {
+      "launch_name": "perception_2D_side_node_6x_bus.launch",
+      "node_name": "",
+      "package": "perception_camera_2D_right",
+      "path": "",
+      "machine": {
+        "2x": {
+          "must": [],
+          "should": [],
+          "must_not": []
+        },
+        "6x": {
+          "must": [
+            "rosslave-107"
+          ],
+          "should": [],
+          "must_not": []
+        }
+      },
+      "enable_control": {
+        "rosslave-107": []
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
       "launch_name": "can_adapter.launch",
       "node_name": "",
       "package": "launch",
@@ -1197,7 +1275,27 @@
       },
       "enable_control": {
         "rosslave": [],
-        "rosslave-106": []
+        "rosslave-106": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV_M1",
+              "JINLV_M2"
+            ]
+          }
+        ],
+        "rosslave-107": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV"
+            ]
+          }
+        ]
       },
       "car_type": [
         "df",
@@ -1368,47 +1466,6 @@
       "depends": [],
       "mutexs": [],
       "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 1,
-        "remote_pilot": 1,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
-      "launch_name": "telematics.launch",
-      "node_name": "",
-      "package": "telematics",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosmaster": []
-      },
-      "car_type": [
-        "df",
-        "hq",
-        "jinlv"
-      ],
-      "node_type": "SYS",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 0,
       "function": {
         "auto_pilot": 1,
         "remote_pilot": 1,
@@ -2089,14 +2146,16 @@
       },
       "enable_control": {
         "rosslave": [],
-        "rosslave-103": [{
+        "rosslave-103": [
+          {
             "SOC": [
               "6x"
             ],
             "vehicle_type": [
               "JINLV"
             ]
-          }]
+          }
+        ]
       },
       "car_type": [
         "jinlv"
@@ -2350,8 +2409,8 @@
     {
       "launch_name": "drivers_zvisionlidar.launch",
       "node_name": "",
-      "package": "launch",
-      "path": "",
+      "package": "config",
+      "path": "vehicle/drivers/lidar",
       "machine": {
         "2x": {
           "must": [],
@@ -2666,10 +2725,19 @@
         }
       },
       "enable_control": {
-        "rosslave-106": []
+        "rosslave-106": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV"
+            ]
+          }
+        ]
       },
       "car_type": [
-        "df"
+        "jinlv"
       ],
       "node_type": "MAP",
       "depends": [],
@@ -3140,7 +3208,8 @@
         }
       },
       "enable_control": {
-        "rosslave-104": [{
+        "rosslave-104": [
+          {
             "SOC": [
               "6x"
             ],
@@ -3148,7 +3217,8 @@
               "JINLV_M1",
               "JINLV_M2"
             ]
-          }]
+          }
+        ]
       },
       "car_type": [
         "jinlv"

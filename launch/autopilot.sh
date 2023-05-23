@@ -193,9 +193,24 @@ set_pr() {
                 "perception_fusion2" | "perception_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 30 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
                 "rs_perception_node" | "rs_perception_zvision_node") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 20 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
                 "xiaoba_lidars_fusion" | "xiaoba_rslidars_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 15 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-                "c32_rear_decoder" | "c32_left_decoder" | "c32_right_decoder") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 11 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
-                "drivers_robosense_node" | "c32_rear_driver" | "c32_left_driver" | "c32_right_driver") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 10 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                "c32_rear_decoder" | "c32_left_decoder" | "c32_right_decoder" | "perception_camera_2D_right") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 11 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                "drivers_robosense_node" | "c32_rear_driver" | "c32_left_driver" | "c32_right_driver" | "drivers_camera_sensing60" | "drivers_camera_sensing30" | "drivers_camera_sensing120") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 10 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
                 "rslidar_left" | "rslidar_rear" | "rslidar_right" | "zvision_lidar_front_nodelet_manager" | "zvision_lidar_front_nodelet_manager_driver" | "zvision_lidar_front_nodelet_manager_cloud" | "zvision_lidar_left_nodelet_manager" | "zvision_lidar_left_nodelet_manager_driver" | "zvision_lidar_left_nodelet_manager_cloud" | "zvision_lidar_right_nodelet_manager" | "zvision_lidar_right_nodelet_manager_driver" | "zvision_lidar_right_nodelet_manager_cloud" | "zvision_lidar_rear_nodelet_manager" | "zvision_lidar_rear_nodelet_manager_driver" | "zvision_lidar_rear_nodelet_manager_cloud" | "xiaoba_zvisionlidars_fusion") (($priority >= 0)) && (taskset -a -cp 1-7 $pid && chrt -a -p -r 10 $pid || LoggingERR "set priority of $t[pid:$pid] failed") ;;
+                *) ;;
+                esac
+            done
+        done
+        #非节点进程配置优先级
+        other_rt_processes_list=("GpuSchedule_server")
+        for pn in ${other_rt_processes_list[@]}; do
+            other_pids=$(ps -ef | grep "$pn" | grep -v grep | awk '{print $2}')
+            [[ -z "$other_pids" ]] && continue
+            for other_pid in ${other_pids}; do
+                [[ -z "$other_pid" ]] && continue
+                other_priority=$(top -b -n 1 -p $other_pid | tail -n 1 | awk '{print $(NF-9)}')
+                [[ "$other_priority" == "rt" ]] && continue
+                case "$pn" in
+                "GpuSchedule_server") (($other_priority >= 0)) && (taskset -a -cp 1-7 $other_pid && chrt -a -p -r 39 $other_pid || LoggingERR "set priority of $pn[pid:$other_pid] failed") ;;
                 *) ;;
                 esac
             done
@@ -373,165 +388,6 @@ read_action() {
     echo $(head -1 ${action_file})
     flock -u 9
 }
-# command type
-# 0 - invalid
-# 1 - roscore starting
-# 2 - roscore started
-# 3 - roscore stopping
-# 4 - roscore stopped
-# 5 - nodes starting
-# 6 - nodes started
-# 7 - nodes partial started
-# 8 - nodes stopping
-# 9 - nodes stopped
-# 10 - map started
-# signal 34 -- start map
-# signal 35 -- stop map
-
-# 状态字段:
-# 第一个字节:roscore状态
-# 第二个字节:其他节点状态
-# 第三个字节:map节点状态
-
-# 状态值
-# 0:未启动
-# 1:全部启动
-# 2:部分启动
-command_handler() {
-    local type=$1
-    LoggingINFO "receive ${type} command from master"
-    local action=$(read_action)
-    local _core_action=${action:0:1}
-    local _sys_action=${action:1:2}
-    local _map_action=${action:2:3}
-    case "$type" in
-    "start_sys") 
-        # only valid when status is stopped or unknown
-        ((_sys_action==1)) && LoggingERR "The operation[${type}] hasn't been executed because the sys nodes had be launched" "EAGENT_MASTER_COMMAND_HANDLER_FAILED" && return 1
-        start_sys
-        ;;
-    "stop_sys") 
-        ((_sys_action==0)) && LoggingERR "The operation[${type}] hasn't been executed because the sys nodes hadn't be launched" "EAGENT_MASTER_COMMAND_HANDLER_FAILED" && return 1
-        stop_sys
-        ;;
-    "start_map") 
-        # only valid when status is stopped or unknown
-        ((_map_action==1)) && LoggingERR "The operation[${type}] hasn't been executed because the map nodes had be launched" "EAGENT_MASTER_COMMAND_HANDLER_FAILED" && return 1
-        start_map
-        ;;
-    "stop_map") 
-        ((_map_action==0)) && LoggingERR "The operation[${type}] hasn't been executed because the sys nodes hadn't be launched" "EAGENT_MASTER_COMMAND_HANDLER_FAILED" && return 1
-        stop_map
-        ;;
-    *) LoggingERR "unknown command type:${type}" "EAGENT_MASTER_COMMAND_HANDLER_FAILED" && return 1 ;;
-    esac
-    LoggingINFO "execute ${type} command successfully" "IAGENT_EXECUTE_MASTER_COMMAND"
-
-}
-
-start_sys() {
-    sys_pid_name=()
-    LoggingINFO "starting SYS nodes..."
-    wait_core
-    get_sys_launch_files #获取所有需要启动的launch文件
-    failed_files_num=$?
-    ((failed_files_num==255)) && return $failed_files_num
-    sys_child_node_array+=($(roslaunch --nodes ${sys_launch_files_array[*]}))
-    for launch_cmd in ${sys_launch_files_array[*]}; do
-        start_onenode "$launch_cmd" "SYS"
-    done
-    python $ABS_PATH/mogodoctor.py c >/dev/null 2>&1
-    if [[ $failed_files_num -ne 0 ]]; then
-        sys_stat=2 && write_action
-        LoggingERR "partial SYS nodes launched failed."
-        return 0
-    fi
-    sleep 2 
-    if [[ $(ps -p ${!sys_pid_name[@]} | sed '1d' | wc -l) -lt ${#sys_pid_name[@]} ]];then 
-        sys_stat=2 && write_action
-        for p in ${!sys_pid_name[@]};do
-            [[ $(ps -p $p | sed '1d' | wc -l) -lt 1 ]] && LoggingERR "SYS node[${sys_pid_name[${p}]}] launched failed." || continue
-        done
-        LoggingERR "partial SYS nodes launched failed."
-    else
-        sys_stat=1 && write_action
-        LoggingINFO "All SYS nodes in launched successfully."
-    fi
-}
-
-start_map() {
-    map_pid_name=()
-    LoggingINFO "starting MAP nodes..."
-    wait_core
-    get_map_launch_files #获取所有需要启动的launch文件
-    failed_files_num=$?
-    ((failed_files_num==255)) && return $failed_files_num
-    map_child_node_array+=($(roslaunch --nodes ${map_launch_files_array[*]}))
-    for launch_cmd in ${map_launch_files_array[*]}; do
-        start_onenode "$launch_cmd" "MAP"
-    done
-    if [[ $failed_files_num -ne 0 ]]; then
-        map_stat=2 && write_action
-        LoggingERR "${ros_machine} Started finished with partial nodes failure." "EMAP_NODE"
-        return 0
-    fi
-    sleep 2 
-    if [[ $(ps -p ${!map_pid_name[@]} | sed '1d' | wc -l) -lt ${#map_pid_name[@]} ]];then 
-        map_stat=2 && write_action
-        for p in ${!map_pid_name[@]};do
-            [[ $(ps -p $p | sed '1d' | wc -l) -lt 1 ]] && LoggingERR "MAP node[${map_pid_name[${p}]}] launched failed." "EMAP_NODE" || continue
-        done
-    else
-        map_stat=1 && write_action
-        LoggingINFO "All MAP nodes in ${ros_machine} launched successfully." "IBOOT_MAP_STARTED" 
-    fi
-}
-
-stop_sys() {
-    LoggingINFO "stopping SYS nodes..." 
-    echo ${!sys_pid_name[@]} | xargs kill -2 >/dev/null 
-    LoggingINFO "stop SYS nodes finished..." 
-    sys_stat=0 && write_action
-}
-
-stop_map() {
-    LoggingINFO "stopping MAP nodes..." 
-    echo ${!map_pid_name[@]} | xargs kill -2 >/dev/null 
-    LoggingINFO "stop MAP nodes finished..." 
-    map_stat=0 && write_action
-}
-
-check_child_stat(){
-    ((map_stat==0&&sys_stat==0)) && return
-    if [[ $map_stat -ne 0 ]];then
-        for pid in ${!map_pid_name[@]};do
-            if [[ $(ps -p ${pid} | sed '1d' | wc -l) -eq 0 ]]; then
-                LoggingINFO "${map_pid_name[$pid]}[${pid}] exited"
-                unset map_pid_name[$pid] 
-                ((map_stat==1)) && map_stat=2 && write_action
-            fi
-        done
-    fi
-    if [[ $sys_stat -ne 0 ]];then
-        for pid in ${!sys_pid_name[@]};do
-            if [[ $(ps -p ${pid} | sed '1d' | wc -l) -eq 0 ]]; then
-                LoggingINFO "${sys_pid_name[$pid]}[${pid}] exited"
-                unset sys_pid_name[$pid] 
-                ((sys_stat==1)) && sys_stat=2 && write_action
-            fi
-        done
-    fi
-}
-
-heart_beat() {
-    [[ -n "$opt_onenode" || -n "$opt_launch_file" ]] && return
-    while [[ $exit_flag -eq 0 ]]; do
-        action=$(read_action)
-        timeout 5 curl -d "action=${action-"000"},time=$(date +"%s").$(($(echo $(date +"%N") | sed 's/^0*//') / 1000000))" $master_ip:8080 >/dev/null 2>&1
-        [[ $? -eq 124 ]] && LoggingERR "cannot connect with master" && continue
-        sleep 1
-    done
-}
 
 _exit() {
     LoggingINFO "autopilot shut down"
@@ -540,14 +396,15 @@ _exit() {
     timeout 2 curl -d "action=${action-0},time=$(date +"%s").$(($(echo $(date +"%N") | sed 's/^0*//') / 1000000))" $master_ip:8080 >/dev/null 2>&1
 }
 
+create_directory() {
+    if [ ! -d "$1" ]; then
+        mkdir -p "$1"
+    fi
+}
+
 # main
 trap 'LoggingINFO "receive SIGINT/SIGTERM signal";exit_flag=1' INT TERM
 trap '_exit' EXIT
-trap 'check_child_stat' CHLD
-trap 'command_handler "start_sys"' USR1
-trap 'command_handler "stop_sys"' USR2
-trap 'command_handler "start_map"' 34
-trap 'command_handler "stop_map"' 35
 export ABS_PATH # autopilot.sh脚本的路径
 ABS_PATH="$(cd "$(dirname $0)" && pwd)"
 
@@ -697,16 +554,14 @@ LoggingINFO "current property of $VEHICLE_PLATE is $vehicle_property"
 ((vehicle_property==3||vehicle_property==4)) && launch_prefix="$launch_prefix --respawn"
 # [[ "${ros_machine}" == "${ros_master}" && -z "$opt_launch_file" ]] && bash ${ABS_PATH}/../system_master/start_system_master.sh
 if [[ ${xavier_type} == "2x" ]]; then
-    master_ip=${ethnet_ip%.*}.103
+    master_ip="rosslave"
 elif [[ ${xavier_type} == "6x" ]]; then
-    master_ip=${ethnet_ip%.*}.106
+    master_ip="rosslave-106"
 else
-    master_ip=${ethnet_ip%.*}.102
+    master_ip="rosmaster"
 fi
 
 write_action
-# 后台发送心跳
-# heart_beat &
 #check system time
 declare last_launch_time
 if [ -f $ABS_PATH/launch_time ]; then
@@ -790,13 +645,19 @@ for pid in $pids; do [[ "$pid" != "$self_pid" ]] && LoggingINFO "clean exist $(b
 # 备份filebeat文件
 filebeat_backup="/home/mogo/data/log/filebeat_backup"
 mkdir -p ${filebeat_backup}
-FileBackPath_arry=("/home/mogo/data/log/filebeat_upload/tele_stat.log" "/home/mogo/data/log/filebeat_upload/new_topic_hz_log.log"  "/home/mogo/data/log/filebeat_upload/msg_record.log")
+FileBackPath_arry=("/home/mogo/data/log/filebeat_upload/tele_stat.log" "/home/mogo/data/log/filebeat_upload/new_topic_hz_log.log" "/home/mogo/data/log/filebeat_upload/msg_record.log" "/home/mogo/data/log/filebeat_upload/v2x_stat.log" "/home/mogo/data/log/filebeat_upload/gpu_info_json.log")
 for FileBackPath in ${FileBackPath_arry[@]}; do
     if [ -e "$FileBackPath" ]; then
         cp_file_name=${FileBackPath##*/}
         cp  "$FileBackPath"  "${filebeat_backup}/${cp_file_name}$(date +_%Y-%m-%d_%H_%M_%S)"
     fi
 done
+# GPU调度服务
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/mogo/autopilot/gpushedule/thirdparty/trt-model/lib:/home/mogo/autopilot/gpushedule/sdk/lib:/home/mogo/autopilot/gpushedule/proto/lib
+export PATH=$PATH:/home/mogo/autopilot/gpushedule/thirdparty/trt-model/bin:/home/mogo/autopilot/gpushedule/center/bin:/home/mogo/autopilot/gpushedule/sdk/bin
+gpu_schedule_server_log=${LOG_DIR}/latest/gpu_schedule_log
+create_directory ${gpu_schedule_server_log}
+GpuSchedule_server -log_dir=${gpu_schedule_server_log} -daemon=true &
 
 add_privilege_monitor_gnss
 start_core
@@ -814,31 +675,31 @@ bash $monitor_shell &
 python3 /home/mogo/autopilot/share/disk_manage/disk_manage.py >> /home/mogo/data/log/disk_manage.log 2>&1 &
 
 request_master_mes=$(curl -d -m 10 -o /dev/null -s http://${master_ip}:8080/report_config)
-# 等待systerm master响应
+LoggingINFO "master_ip=${master_ip}"
+# 等待system master响应
 while [ -z "$request_master_mes" ]; do
     sleep 1
-    request_master_mes=$(curl -d -m 10 -o /dev/null -s http://${master_ip}:8080/report_config)
-    LoggingINFO "waitting for systerm master running!"
+    if [ -z "$master_ip" ]; then
+        LoggingERR "network error, master_ip为空, 获取system master IP失败!"
+    	exit 1
+    else
+        request_master_mes=$(curl -d -m 10 -o /dev/null -s http://${master_ip}:8080/report_config)
+        LoggingINFO "waitting for systerm master running!"
+    fi
 done
+
 LoggingINFO "ssm ret=$request_master_mes"
 old_rquest_master_mes="The datas used fault format"
 # 判断是否走新agent
 if [[ $request_master_mes =~ $old_rquest_master_mes ]]; then
-    # old agent
-    # 后台发送心跳
-    heart_beat &
-    LoggingINFO "use old agent!!!!!!!"
-    start_sys
-    start_map
+    LoggingERR "system master should update!"
+    exit 1
 else
     # new agent
-    LoggingINFO "use new agent!!!!!!!"
-    pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple psutil
     wait_core
-    python3 /home/mogo/autopilot/share/ssm_agent/ssm_agent.py $ABS_PATH $ROS_LOG_DIR >> /dev/null 2>&1 &
+    LoggingINFO "roscore is started!"
+    LoggingINFO "use new agent!"
+    python3 /home/mogo/autopilot/share/ssm_agent/ssm_agent.py $ABS_PATH $ROS_LOG_DIR >/dev/null 2>&1 &
 fi
 
-
-
 set_pr
-
