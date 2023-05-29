@@ -120,6 +120,7 @@ enum ObjectSource {
   V2N_RSM = 4;
   V2N_RSI = 5;
   V2I_SSM = 6;
+  MID_FUSION = 7;
 };
 
 enum AdditionalAttribute {
