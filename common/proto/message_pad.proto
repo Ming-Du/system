@@ -146,6 +146,7 @@ message TrackedObject
     repeated Location polygon = 15;
     geometry.Point center = 16;
     AdditionalAttribute add_attribute = 17; // 事件类型
+    double angle = 18; //相对于自车x轴的角度，左正右负
 }
 
 
