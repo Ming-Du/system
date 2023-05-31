@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import sys
 import logging
@@ -112,6 +113,14 @@ class RedisManager(object):
 
     def connect(self,retry_times=10):
         self.lock.acquire()
+        # StrictRedis不支持连接超时，为了避免ip无效时连接阻塞,首先尝试使用普通Reids连接
+        try:
+            redis.Redis(host=self.rhost,port=self.rport, db=0, username=self.ruser,password=self.rpassword,socket_connect_timeout=3,socket_keepalive=True,socket_timeout=3).ping()
+        except Exception as e:
+            logerror('Connet redis server[%s:%s] failed:%s'%(self.rhost,self.rport,e))
+            self.lock.release()
+            return False
+        # 正式连接
         try:
             self.pool = ConnectionPool(host=self.rhost,port=self.rport, db=0, username=self.ruser,password=self.rpassword, max_connections=10,decode_responses=True)
             self.redis_handler = StrictRedis(connection_pool=self.pool,socket_connect_timeout=self.connect_timeout,socket_keepalive=True,socket_timeout=self.socket_timeout,health_check_interval=5)
