@@ -362,7 +362,8 @@ message GlobalPathReq
 // message definition for MsgTypeGlobalPathResp
 message GlobalPathResp
 {
-    repeated Location wayPoints = 1; 
+    repeated Location wayPoints = 1;
+    uint64 lineId = 2; //路线id
 }
 
 // message definition for MsgTypeTrafficLightData
