@@ -1,0 +1,117 @@
+syntax = "proto3";
+package parallel;
+
+
+message VideoControl {
+  /**
+   * 推流控制指令，1开始推流，2停止推流
+   * 当前有打开的视频流，打开其他或者关闭都是开始推流
+   * 全部停止的时候才会下发2
+   */
+  int32 pushCommand = 1;
+  /**
+   * 下发时的时间
+   */
+  uint64 timeMillis = 2;
+  uint64 msgId = 3;
+  /**
+   * 是否回收license 0：default，do nothing 1：是  2：否
+   * 只有pushCommand下发2的时候才可能为1
+   */
+  uint32 recycleSDKLicense = 4;
+  /**
+   * 推流具体控制
+   */
+  repeated VideoStreamFlags nodes = 5; 
+}
+
+message VideoStreamFlags {
+  /**
+   * 推流节点标识 103，105，107等
+   */
+  string ipSuffix = 1;
+  /**
+   * 该节点上的视频流推流开启状态
+   * 0:default，do nothing 1: video stream on 2：video stream off
+   */
+  repeated uint32 flags = 2;
+
+}
+
+
+message VideoControlResult {
+  /**
+   * 客户端唯一标识，mac地址。改为通信模块透传，此字段废弃
+   */
+  string sn = 1;
+  /**
+   * 驾舱端下发的消息ID
+   */
+  uint64 msgId = 2;
+  /**
+   * 车端回馈消息的时间
+   */
+  uint64 timeMillis = 3;
+  /**
+   * 0失败，当前状态与目标状态不一致，1成功，当前程序状态与目标状态一致
+   */
+  uint32 result = 4;
+  /**
+   * 失败原因，只有失败时才回传
+   */
+  string content = 5;
+  /**
+  * ipsuffix
+   */
+  string rosnode = 6;
+
+}
+
+message VehicleVideoConfigs{
+  /**
+   * 配置json字符串
+   */
+  repeated VehicleVideoConfig config = 1;
+
+}
+
+message VehicleVideoConfig{
+  /**
+   * 配置ID
+   */
+  int32 id = 1;
+  /**
+   * 用于唯一标识车辆上的域控
+   */
+  string ipSuffix = 2;
+  /**
+   * 配置json字符串，客户端可以直接用来初始化trro程序
+   */
+  string configJson = 3;
+}
+
+message VehicleVideoConfigsRequest{
+  /**
+   * 客户端唯一标识，mac地址。改为通信模块透传，此字段废弃
+   */
+  string sn = 1;
+  /**
+   * 请求配置的node标识，为空则全发。不为空，则只发送相应节点的配置 
+   */
+  string ipSuffix = 2;
+
+}
+
+/* 推单个摄像头的流，成功推流的帧率 */
+message StreamCameraRate {
+  string topic = 1;     /* ros 节点上的摄像头唯一标识 */
+  uint32 count = 2;     /* 过去 1s 成功推流的帧数 */
+  uint32 total = 3;     /* 过去 1s 内 camera 产生图片总帧率 */
+}
+
+message StreamState {
+  uint64 timeMillis = 1;                  // 车端返回的时间戳
+  string rosnode = 2;                     // ipsuffix
+  repeated StreamCameraRate cameras = 3;  // 推各个摄像头的流，成功的帧率
+}
+
