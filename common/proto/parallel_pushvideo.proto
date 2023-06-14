@@ -15,14 +15,9 @@ message VideoControl {
   uint64 timeMillis = 2;
   uint64 msgId = 3;
   /**
-   * 是否回收license 0：default，do nothing 1：是  2：否
-   * 只有pushCommand下发2的时候才可能为1
-   */
-  uint32 recycleSDKLicense = 4;
-  /**
    * 推流具体控制
    */
-  repeated VideoStreamFlags nodes = 5; 
+  repeated VideoStreamFlags nodes = 4; 
 }
 
 message VideoStreamFlags {
@@ -31,10 +26,21 @@ message VideoStreamFlags {
    */
   string ipSuffix = 1;
   /**
+   * 节点推流控制指令，1开始推流，2停止推流
+   * 当前有打开的视频流，打开其他或者关闭都是开始推流
+   * 全部停止的时候才会下发2
+   */
+  int32 pushCommand = 2;
+  /**
+   * 是否回收节点license 0：default，do nothing 1：是  2：否
+   * 只有pushCommand下发2的时候才可能为1
+   */
+  uint32 recycleSDKLicense = 3;
+  /**
    * 该节点上的视频流推流开启状态
    * 0:default，do nothing 1: video stream on 2：video stream off
    */
-  repeated uint32 flags = 2;
+  repeated uint32 flags = 4;
 
 }
 
