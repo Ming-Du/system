@@ -913,7 +913,17 @@
         }
       },
       "enable_control": {
-        "rosslave-107": []
+        "rosslave-107": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV",
+              "JINLV_M1"
+            ]
+          }
+        ]
       },
       "car_type": [
         "jinlv"
