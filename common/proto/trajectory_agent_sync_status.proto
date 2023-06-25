@@ -8,10 +8,13 @@ import "message_pad.proto";
 message TrajectoryAgentSyncStatus {
   optional common.Header header = 1;
   optional int32 sync_status = 2;
- }
+  optional uint64 lineid = 3;
+  optional string traj_md5 = 4;
+  optional string failed_reason = 5;
+}
 
 message TrajectoryAgentDownloadCheck {
-  optional mogo.telematics.pad.Line line = 1; //·��
-  optional geometry.Point start = 2;  //��㾭γ��
-  optional geometry.Point end = 3;    //�յ㾭γ��
+  optional mogo.telematics.pad.Line line = 1; //轨迹下载Line信息
+  optional geometry.Point start = 2;  //自动驾驶启动，MAP340起，traj client不处理
+  optional geometry.Point end = 3;    //自动驾驶终点，MAP340起，traj client不处理
 }

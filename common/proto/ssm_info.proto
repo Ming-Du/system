@@ -9,8 +9,8 @@ enum NodeState {
     RUNNING = 3;   //运行running
     STOPPING = 4;  //停止stopping
     BROKEN = 5;    //无法启动状态
-    MAN_RUN = 6;   //人为启动状态
-    MAN_STOP = 7;  //人为关闭状态
+    MAN_RUN = 6;   //非自动启动状态
+    MAN_STOP = 7;  //非自动关闭状态
 }
 
 enum AgentState {
@@ -43,6 +43,8 @@ message SsmStatusInf {
     required bool remote_pilot_ready = 5;   // 平行驾驶状态就绪
     repeated NodeInf auto_pilot_unready_list = 6;   //自驾未就绪节点列表
     repeated NodeInf remote_pilot_unready_list = 7;  //平行驾驶未就绪列表
+    optional string auto_pilot_unready_reason = 8;  //自动驾驶状态未就绪原因描述
+    optional string remote_pilot_unready_reason = 9;  //平行驾驶状态未就绪原因描述
 }
 
 

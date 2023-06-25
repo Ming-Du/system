@@ -33,5 +33,6 @@ message RoutingRequest {
   optional bool exist_xy_flag = 15 [default = false];
   optional geometry.Point start_point = 16;
   optional geometry.Point end_point = 17;
+  optional string traj_md5 = 18; // 用于判断是否是重复的轨迹
 }
 

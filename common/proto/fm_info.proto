@@ -21,13 +21,13 @@ enum FaultLevel {
     EMERGENCY_STOP = 1; //紧急停车
     COMFORTABLE_SLOW_STOP = 2; //舒适减速停车
     COMFORTABLE_PULL_OVER = 3; //舒适靠边停车
-    REDUCE_SPEED = 4; //减速形式   低于10km/小时
+    REDUCE_SPEED = 4; //减速行驶   低于10km/小时
     WARNING_ONLY = 5; //仅告警
     STATISTICS_INFO = 6; //仅做系统后台统计
 }
 
 message FaultResultMsg {
-    required uint64 time = 1;       //故障策略输出时间
+    required uint64 time = 1;       //故障策略输出时间，毫秒
     required FaultLevel level = 2;  //故障汇总等级  （前期按等级处理）
     required uint32 fault_sum = 3;  //故障总数
     repeated FaultInfo infos = 4;   //故障消息详情
@@ -38,8 +38,38 @@ message FaultResultMsg {
 
 
 message FaultIgnoreMsg {
-    required uint64 time = 1;   //故障忽略配置时间
+    required uint64 time = 1;   //故障忽略配置时间，毫秒
     required string ignore_src = 2;  //忽略来源，pad，云控，调测工具
-    repeated string Ignore_fault_id = 3;  //故障忽略全量列表
+    repeated string ignore_fault_id = 3;  //故障忽略全量列表
+}
+
+
+message FaultQueryMsg {
+    required string fm_version = 1;       //故障管理的版本
+    required FaultLevel level = 2;        //故障汇总等级
+    required uint32 veh_policy = 3;       //车端降级策略
+    required uint32 current_fault_num = 4;   //当前故障数目
+    repeated string current_fault_id = 5;    //当前故障id列表
+    required uint32 ignore_fault_num = 6;    //忽略故障数目
+    repeated string ignore_fault_id = 7;     //故障忽略id列表
+}
+
+
+message SetHandleFlag {
+    required bool fault_handle_flag = 1;  //故障处理开关，0 不处理，1处理
+    optional string set_flag_src = 2;     //设置开关消息源，如ssm
+    optional int32 pilot_mode = 3 [default = -1];  //自动驾驶状态
+}
+
+message KeyFaultInfo {
+    required string key_node_name = 1;   //故障发生节点
+    repeated string fault_id = 2;        //故障标识，每个告警有一个全域唯一的标识
+    optional uint32 node_fault_level = 3;  //对驾驶的影响等级
+}
+
+message KeyNodeFault {
+    required uint64 time = 1;               //关键错误事件
+    repeated KeyFaultInfo nodeinfo = 2;     //关键故障节点与故障码
+    optional uint32 health_level = 3;        //对系统健康状态的总体影响，各个故障影响的加成
 }
 
