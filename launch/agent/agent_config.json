@@ -10,22 +10,6 @@
       "node_name": "",
       "package": "telematics",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosmaster": []
       },
@@ -47,26 +31,42 @@
       }
     },
     {
+      "launch_name": "gpu_schedule_server.launch",
+      "node_name": "",
+      "package": "gpu_schedule",
+      "path": "",
+      "enable_control": {
+        "rosmaster": [],
+        "rosslave": [],
+        "rosslave-103": [],
+        "rosslave-104": [],
+        "rosslave-105": [],
+        "rosslave-106": [],
+        "rosslave-107": []
+      },
+      "car_type": [
+        "df",
+        "hq",
+        "jinlv",
+        "sweeper"
+      ],
+      "node_type": "SYS",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 0,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
       "launch_name": "drivers_gnss.launch",
       "node_name": "",
       "package": "launch",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosmaster": []
       },
@@ -92,26 +92,6 @@
       "node_name": "",
       "package": "log_collect_client",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster",
-            "rosslave-104",
-            "rosslave-105",
-            "rosslave-106",
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosmaster": [],
         "rosslave-104": [],
@@ -141,26 +121,6 @@
       "node_name": "",
       "package": "log_msg_collect_client",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster",
-            "rosslave-104",
-            "rosslave-105",
-            "rosslave-106",
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosmaster": [],
         "rosslave-104": [],
@@ -190,22 +150,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/drivers/camera",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-103"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosmaster": [
           {
@@ -252,22 +196,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/drivers/camera",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosmaster": [
           {
@@ -308,20 +236,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/drivers/camera",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-103"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-103": [
           {
@@ -361,20 +275,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/drivers/camera",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-105"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-105": [
           {
@@ -414,20 +314,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/drivers/camera",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-107": [
           {
@@ -467,20 +353,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/drivers/camera",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-107": [
           {
@@ -520,20 +392,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/drivers/camera",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-105"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-105": [
           {
@@ -566,20 +424,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/drivers/camera",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-105"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-105": [
           {
@@ -612,20 +456,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/drivers/camera",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-105"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-105": [
           {
@@ -658,20 +488,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/drivers/camera",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-105"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-105": [
           {
@@ -704,20 +520,6 @@
       "node_name": "",
       "package": "perception_camera_SEG",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosmaster": [
           {
@@ -745,62 +547,10 @@
       }
     },
     {
-      "launch_name": "perception_3D_node_6x_df.launch",
-      "node_name": "",
-      "package": "perception_camera_3D",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-105"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosslave-105": []
-      },
-      "car_type": [
-        "df",
-        "hq"
-      ],
-      "node_type": "MAP",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 2,
-        "remote_pilot": 2,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
       "launch_name": "perception_3D_node_6x_bus.launch",
       "node_name": "",
       "package": "perception_camera_3D",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-105"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-105": []
       },
@@ -820,98 +570,10 @@
       }
     },
     {
-      "launch_name": "perception_2D_side_node_6x_df.launch",
-      "node_name": "",
-      "package": "perception_camera_2D_side",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosslave-107": []
-      },
-      "car_type": [
-        "df"
-      ],
-      "node_type": "MAP",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 2,
-        "remote_pilot": 2,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
-      "launch_name": "perception_2D_side_node_6x_hq.launch",
-      "node_name": "",
-      "package": "perception_camera_2D_side",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosslave-107": []
-      },
-      "car_type": [
-        "hq"
-      ],
-      "node_type": "MAP",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 2,
-        "remote_pilot": 2,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
       "launch_name": "perception_2D_side_node_6x_bus.launch",
       "node_name": "",
       "package": "perception_camera_2D_right",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-107": [
           {
@@ -945,22 +607,6 @@
       "node_name": "",
       "package": "launch",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosmaster": []
       },
@@ -986,22 +632,6 @@
       "node_name": "",
       "package": "localization",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosmaster": []
       },
@@ -1023,184 +653,10 @@
       }
     },
     {
-      "launch_name": "perception_2D_front_node_6x_df.launch",
-      "node_name": "",
-      "package": "perception_camera_2D_front",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-103"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosslave-103": []
-      },
-      "car_type": [
-        "df"
-      ],
-      "node_type": "MAP",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 1,
-        "remote_pilot": 1,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
-      "launch_name": "perception_2D_front_node_2x_df.launch",
-      "node_name": "",
-      "package": "perception_camera_2D_front",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosmaster": [
-          {
-            "SOC": [
-              "2x"
-            ]
-          }
-        ]
-      },
-      "car_type": [
-        "df"
-      ],
-      "node_type": "MAP",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 1,
-        "remote_pilot": 1,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
-      "launch_name": "perception_2D_front_node_6x_hq.launch",
-      "node_name": "",
-      "package": "perception_camera_2D_front",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-103"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosslave-103": []
-      },
-      "car_type": [
-        "hq"
-      ],
-      "node_type": "MAP",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 1,
-        "remote_pilot": 1,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
-      "launch_name": "perception_2D_front_node_2x_hq.launch",
-      "node_name": "",
-      "package": "perception_camera_2D_front",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosmaster": [
-          {
-            "SOC": [
-              "2x"
-            ]
-          }
-        ]
-      },
-      "car_type": [
-        "hq"
-      ],
-      "node_type": "MAP",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 1,
-        "remote_pilot": 1,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
       "launch_name": "perception_2D_front_node_6x_bus.launch",
       "node_name": "",
       "package": "perception_camera_2D_front",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-103"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-103": []
       },
@@ -1224,20 +680,6 @@
       "node_name": "",
       "package": "perception_camera_2D_front",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosmaster": [
           {
@@ -1267,22 +709,6 @@
       "node_name": "",
       "package": "launch",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-106"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave": [],
         "rosslave-106": [
@@ -1329,22 +755,6 @@
       "node_name": "",
       "package": "launch",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosmaster": []
       },
@@ -1364,106 +774,10 @@
       }
     },
     {
-      "launch_name": "local_planning_250.launch",
-      "node_name": "",
-      "package": "launch",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosmaster": []
-      },
-      "car_type": [
-        "df",
-        "hq"
-      ],
-      "node_type": "OPTIONAL",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 1,
-        "remote_pilot": 2,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
-      "launch_name": "local_planning_260.launch",
-      "node_name": "",
-      "package": "launch",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosmaster": []
-      },
-      "car_type": [
-        "df",
-        "hq"
-      ],
-      "node_type": "OPTIONAL",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 1,
-        "remote_pilot": 2,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
       "launch_name": "controller.launch",
       "node_name": "",
       "package": "launch",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosmaster": []
       },
@@ -1489,20 +803,6 @@
       "node_name": "",
       "package": "autocar_socket",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-103"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-103": []
       },
@@ -1528,22 +828,6 @@
       "node_name": "",
       "package": "pushvideo",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-103",
-            "rosslave-105",
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-103": [
           {
@@ -1602,22 +886,6 @@
       "node_name": "",
       "package": "monitor_collect",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-103"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave": [],
         "rosslave-103": []
@@ -1644,22 +912,6 @@
       "node_name": "",
       "package": "launch",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-106"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave": [],
         "rosslave-106": []
@@ -1684,24 +936,8 @@
     {
       "launch_name": "perception_lidar.launch",
       "node_name": "",
-      "package": "launch",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-106"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
+      "package": "config",
+      "path": "vehicle/perception/lidar",
       "enable_control": {
         "rosslave": [],
         "rosslave-106": []
@@ -1724,64 +960,10 @@
       }
     },
     {
-      "launch_name": "perception_radar.launch",
-      "node_name": "",
-      "package": "perception_radar",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-105"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosslave-105": []
-      },
-      "car_type": [
-        "df",
-        "hq"
-      ],
-      "node_type": "MAP",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 2,
-        "remote_pilot": 2,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
       "launch_name": "perception_fusion.launch",
       "node_name": "",
       "package": "launch",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-106"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave": [],
         "rosslave-106": []
@@ -1808,20 +990,6 @@
       "node_name": "",
       "package": "launch",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-107": []
       },
@@ -1843,67 +1011,10 @@
       }
     },
     {
-      "launch_name": "rule_segement.launch",
-      "node_name": "",
-      "package": "rule_segement",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-104"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosslave": [],
-        "rosslave-104": []
-      },
-      "car_type": [
-        "df",
-        "hq"
-      ],
-      "node_type": "MAP",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 2,
-        "remote_pilot": 2,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
       "launch_name": "v2x.launch",
       "node_name": "",
       "package": "v2x",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-106"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave": [],
         "rosslave-106": []
@@ -1930,22 +1041,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/perception/v2x",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-106"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave": [],
         "rosslave-106": []
@@ -1971,22 +1066,6 @@
       "node_name": "",
       "package": "log_collect_server",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-103"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave": [],
         "rosslave-103": []
@@ -2013,22 +1092,6 @@
       "node_name": "",
       "package": "log_msg_collect_server",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-103"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave": [],
         "rosslave-103": []
@@ -2055,22 +1118,6 @@
       "node_name": "",
       "package": "log_reslove",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-103"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave": [],
         "rosslave-103": []
@@ -2093,70 +1140,13 @@
       }
     },
     {
-      "launch_name": "localization_mogo_taxi.launch",
-      "node_name": "",
-      "package": "slam_localization",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-104"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosslave": [],
-        "rosslave-104": []
-      },
-      "car_type": [
-        "df",
-        "hq"
-      ],
-      "node_type": "SYS",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 0,
-      "function": {
-        "auto_pilot": 1,
-        "remote_pilot": 1,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
       "launch_name": "localization_mogo_bus_right.launch",
       "node_name": "",
       "package": "slam_localization",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-103"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave": [],
-        "rosslave-103": [
+        "rosslave-106": [
           {
             "SOC": [
               "6x"
@@ -2187,20 +1177,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/drivers/radar",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-104"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-104": [
           {
@@ -2238,20 +1214,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/drivers/radar",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-105"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-105": [
           {
@@ -2290,20 +1252,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/perception/radar",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-105"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-105": []
       },
@@ -2323,66 +1271,10 @@
       }
     },
     {
-      "launch_name": "trajectory_agent.launch",
-      "node_name": "",
-      "package": "trajectory_agent",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosslave": [],
-        "rosslave-107": []
-      },
-      "car_type": [
-        "df",
-        "hq",
-        "jinlv"
-      ],
-      "node_type": "SYS",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 0,
-      "function": {
-        "auto_pilot": 2,
-        "remote_pilot": 2,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
       "launch_name": "drivers_rslidar.launch",
       "node_name": "",
       "package": "launch",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-106"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-106": [
           {
@@ -2421,20 +1313,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/drivers/lidar",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-107": [
           {
@@ -2473,20 +1351,6 @@
       "node_name": "",
       "package": "launch",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-104"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-104": [
           {
@@ -2525,20 +1389,6 @@
       "node_name": "",
       "package": "launch",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-104"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-104": []
       },
@@ -2562,20 +1412,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/perception/lidar",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-106"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-106": []
       },
@@ -2599,20 +1435,6 @@
       "node_name": "",
       "package": "config",
       "path": "vehicle/perception/lidar",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-107": []
       },
@@ -2636,22 +1458,6 @@
       "node_name": "",
       "package": "launch",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave": [],
         "rosslave-107": []
@@ -2678,22 +1484,6 @@
       "node_name": "",
       "package": "hadmap_engine",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave": [],
         "rosslave-107": []
@@ -2720,20 +1510,6 @@
       "node_name": "",
       "package": "val",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-106"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-106": [
           {
@@ -2762,135 +1538,13 @@
       }
     },
     {
-      "launch_name": "system_guardian.launch",
-      "node_name": "",
-      "package": "guardian",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster",
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster",
-            "rosslave-103",
-            "rosslave-104",
-            "rosslave-105",
-            "rosslave-106",
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosmaster": [],
-        "rosslave": [],
-        "rosslave-103": [],
-        "rosslave-104": [],
-        "rosslave-105": [],
-        "rosslave-106": [],
-        "rosslave-107": []
-      },
-      "car_type": [
-        "df",
-        "hq",
-        "jinlv"
-      ],
-      "node_type": "SYS",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 0,
-      "function": {
-        "auto_pilot": 0,
-        "remote_pilot": 0,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
       "launch_name": "monitor_gnss.launch",
       "node_name": "",
       "package": "monitor_gnss",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-103"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave": [],
         "rosslave-103": []
-      },
-      "car_type": [
-        "df",
-        "hq",
-        "jinlv"
-      ],
-      "node_type": "SYS",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 0,
-      "function": {
-        "auto_pilot": 0,
-        "remote_pilot": 0,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
-      "launch_name": "monitor_process.launch",
-      "node_name": "",
-      "package": "monitor_process",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster",
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster",
-            "rosslave-103",
-            "rosslave-104",
-            "rosslave-105",
-            "rosslave-106",
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosmaster": [],
-        "rosslave": [],
-        "rosslave-103": [],
-        "rosslave-104": [],
-        "rosslave-105": [],
-        "rosslave-106": [],
-        "rosslave-107": []
       },
       "car_type": [
         "df",
@@ -2914,28 +1568,6 @@
       "node_name": "",
       "package": "update_config_simple",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-            "rosmaster",
-            "rosslave"
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster",
-            "rosslave-103",
-            "rosslave-104",
-            "rosslave-105",
-            "rosslave-106",
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosmaster": [],
         "rosslave": [],
@@ -2967,20 +1599,6 @@
       "node_name": "",
       "package": "led_screen_manager",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-106"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-106": []
       },
@@ -3004,20 +1622,6 @@
       "node_name": "",
       "package": "launch",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-106"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-106": []
       },
@@ -3041,20 +1645,6 @@
       "node_name": "",
       "package": "launch",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-107"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-107": []
       },
@@ -3074,106 +1664,10 @@
       }
     },
     {
-      "launch_name": "locating.launch",
-      "node_name": "",
-      "package": "vslam",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-106"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosslave-106": []
-      },
-      "car_type": [
-        "df"
-      ],
-      "node_type": "MAP",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 2,
-        "remote_pilot": 2,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
-      "launch_name": "perception_2D_hd_node_6x_df.launch",
-      "node_name": "",
-      "package": "perception_camera_2D_hd",
-      "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
-      "enable_control": {
-        "rosmaster": [
-          {
-            "SOC": [
-              "6x"
-            ]
-          }
-        ]
-      },
-      "car_type": [
-        "df"
-      ],
-      "node_type": "MAP",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 1,
-        "remote_pilot": 1,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
       "launch_name": "perception_2D_hd_node_6x_bus.launch",
       "node_name": "",
       "package": "perception_camera_2D_hd",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [
-          ],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosmaster"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosmaster": [
           {
@@ -3203,20 +1697,6 @@
       "node_name": "",
       "package": "slam_localization",
       "path": "",
-      "machine": {
-        "2x": {
-          "must": [],
-          "should": [],
-          "must_not": []
-        },
-        "6x": {
-          "must": [
-            "rosslave-104"
-          ],
-          "should": [],
-          "must_not": []
-        }
-      },
       "enable_control": {
         "rosslave-104": [
           {
@@ -3237,6 +1717,134 @@
       "depends": [],
       "mutexs": [],
       "idle_mode_support": 0,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
+      "launch_name": "mogo_iftop.launch",
+      "node_name": "",
+      "package": "mogo_iftop",
+      "path": "",
+      "enable_control": {
+        "rosmaster": [],
+        "rosslave": [],
+        "rosslave-103": [],
+        "rosslave-104": [],
+        "rosslave-105": [],
+        "rosslave-106": [],
+        "rosslave-107": []
+      },
+      "car_type": [
+        "df",
+        "hq",
+        "jinlv",
+        "sweeper"
+      ],
+      "node_type": "SYS",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 0,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
+      "launch_name": "analysize_iftop.launch",
+      "node_name": "",
+      "package": "analysize_iftop",
+      "path": "",
+      "enable_control": {
+        "rosmaster": [],
+        "rosslave": [],
+        "rosslave-103": [],
+        "rosslave-104": [],
+        "rosslave-105": [],
+        "rosslave-106": [],
+        "rosslave-107": []
+      },
+      "car_type": [
+        "df",
+        "hq",
+        "jinlv",
+        "sweeper"
+      ],
+      "node_type": "SYS",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 0,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
+      "launch_name": "view_stitcher.launch",
+      "node_name": "",
+      "package": "view_stitcher",
+      "path": "",
+      "enable_control": {
+        "rosslave-105": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV_M1"
+            ]
+          }
+        ]
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
+      "launch_name": "vslam_localization.launch",
+      "node_name": "",
+      "package": "vslam_localization",
+      "path": "",
+      "enable_control": {
+        "rosslave-106": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV"
+            ]
+          }
+        ]
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
       "function": {
         "auto_pilot": 2,
         "remote_pilot": 2,
