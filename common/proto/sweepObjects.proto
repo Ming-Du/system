@@ -1,0 +1,48 @@
+syntax = "proto2";
+package perception;
+
+import "header.proto";
+import "geometry.proto";
+
+enum GarbageType {
+  CLEAN = 0;          //无垃圾
+  LEAF = 1;           //树叶
+  EARTH = 2;          //泥土
+  DUST = 3;           //灰尘
+  SEWAGE = 4;         //污水
+  PAPER = 5;          //纸屑
+  SNIPE = 6;          //烟蒂
+  BAGS = 7;           //塑料袋
+  PEEL = 8;           //果皮果壳
+  BOXS = 9;           //包装壳
+  COBBLESTONE = 10;   //石子砖瓦
+}
+
+enum GarbageQuantityType {
+  EMPTY = 0;          //空
+  LITTLE = 1;         //少量
+  LARGE = 2;         //多量
+}
+
+message GarbageObj {
+  optional double time_stamp = 1;        //  time
+  optional string sensor_orient = 2;        // front,rear
+  optional geometry.Point center = 3;        // x,y in meter
+  optional geometry.Point left_front = 4;        //  Left_front
+  optional geometry.Point right_rear = 5;        //  Right_rear
+  repeated GarbageType garbage_type = 6;             //0:clean 1:leaf 2:earth 3:dust 4:sewage 5:paper 6:snipe 7:bags 8:peel 9:boxs 10:cobblestone
+  optional GarbageQuantityType garbage_quantitytype = 7;        // a:empty b:little c:large
+}
+
+message SweepObject {
+  repeated GarbageObj objs = 1;
+  optional double time_stamp = 2;
+  optional string region = 3;          // A、B、C || D、E、F
+  optional uint32 num = 4;
+}
+
+message SweepObjects {
+  optional common.Header header = 1;
+  repeated SweepObject objs = 2;
+}
+
