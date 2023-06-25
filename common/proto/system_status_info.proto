@@ -54,11 +54,13 @@ message StatusInfo {
     optional DropTopic topic_drop_info=3;    // topic 掉频信息， 如有掉频添加没有不添加
     optional string reserved = 4;            // 用于表示idle模式，'idle' 表示idle模式 'work' 表示正常工作
     // add by liyl 20220907
-    optional int32 pilot_mode = 5;      // 0: manaul  1: autopilot  2: RemotePilot
+    optional int32 pilot_mode = 5;      // 0: manaul  1: autopilot  6: RemotePilot
     optional string map_version = 6;     // MAP 版本信息
     optional string master_version = 7;  // system_master 版本信息
     optional bool auto_pilot_ready = 8;     // 自动驾驶状态就绪, 20221111增加
     optional bool remote_pilot_ready = 9;   // 平行驾驶状态就绪
-    optional NodeFaultList auto_pilot_unready_list = 10;  //20221128 增加
-    optional NodeFaultList remote_pilot_unready_list = 11;  //20221128 增加
+    optional NodeFaultList auto_pilot_unready_list = 10;  //自驾未就绪节点列表
+    optional NodeFaultList remote_pilot_unready_list = 11;  //平行驾驶未就绪列表
+    optional string auto_pilot_unready_reason = 12;  //自动驾驶状态未就绪原因描述
+    optional string remote_pilot_unready_reason = 13;  //平行驾驶状态未就绪原因描述
 }
