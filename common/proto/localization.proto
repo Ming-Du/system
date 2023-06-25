@@ -41,6 +41,10 @@ message Localization {
   optional double utm_zone = 24;
   optional double gnss_sys_dtime = 25;
   optional double gnss_num = 26;
+  optional int32 gnss_status = 27;   //42 is good ,32 is dr mode, 12 is single mode ,52 is float mode
+  optional int32 loc_status = 28;    // 0 rtk mode ,1 slam mode, 2 val mode ,3 vslam mode
+  optional double loc_long_cov = 29;       //localization covariance of vehicle longitudinal
+  optional double loc_lat_cov = 30;       //localization covariance of vehicle lateral
   //repeated double pose_cov  = 10 [packed = true]; //6x6=36
   //repeated double twist_cov = 11 [packed = true]; //6x6=36
   //repeated double accel_cov = 12 [packed = true]; //6x6=36
