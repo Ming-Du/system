@@ -1,0 +1,30 @@
+syntax="proto2";
+package ground_map;
+
+import "header.proto";
+
+message GroundCoeff
+{
+    optional int32 start_ring = 1;
+    optional int32 end_ring = 2;
+    optional float a = 3;
+    optional float b = 4;
+    optional float c = 5;
+    optional float d = 6;
+    optional float normal_x = 7;
+    optional float normal_y = 8;
+    optional float normal_z = 9;
+}
+
+message GroundMap
+{ 
+    optional common.Header header = 1; 
+    optional double self_longitude = 2;
+    optional double self_latitude = 3;
+    optional double self_altitude = 4;
+    optional double self_roll = 5;
+    optional double self_pitch = 6;
+    optional double self_yaw = 7;
+    repeated GroundCoeff coefficients = 8; 
+}
+
