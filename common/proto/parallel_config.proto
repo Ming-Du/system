@@ -6,4 +6,5 @@ import "sensor_meta.proto";
 message ParallelVehicleConfigs {
     chassis.VehicleConfig vehicle_config = 1;
     repeated perception.base.SensorInfo sensor_infos = 2;
+    string stitched_video_param = 3;
 }
