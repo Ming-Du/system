@@ -6,6 +6,7 @@ enum ParamSetType
     ParamSetTypeNone = 0;
     ParamSetTypeBlindArea = 1; //bool, 0:off 1:on
     ParamSetTypeV2N = 2; //bool, 0:不发给PnC 1:发给Pnc
+    ParamSetTypeV2I = 3; //bool, 0:不发给PnC和鹰眼 1:发给Pnc和鹰眼，默认0
 }
 
 message ParamSetCmd
