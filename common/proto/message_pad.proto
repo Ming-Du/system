@@ -294,7 +294,7 @@ message RouteInfo
 message SetAutopilotModeReq
 {
     uint32 mode = 1; //1: enter autopilot mode, 0: quit autopilot mode
-    uint32 source = 2; //命令来源: 0: pad模拟, 1: pad业务, 2:aicloud
+    uint32 source = 2; //命令来源: 0: pad模拟, 1: pad业务, 2:aicloud, 3:魔方
     RouteInfo routeInfo = 3; //自动驾驶路径信息
 }
 
