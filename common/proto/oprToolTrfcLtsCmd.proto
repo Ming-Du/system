@@ -1,0 +1,8 @@
+syntax = "proto2";
+package vision;
+import "header.proto";
+
+message oprToolTrfcLtsCmdMsg {
+  optional common.Header header = 1;
+  optional int64 trfclts_status = 2;//0-'ignore',1-RED,2-GREEN,3-YELLOW,4-FLASH,others-'illegal'
+}
