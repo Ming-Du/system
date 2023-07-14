@@ -966,7 +966,7 @@
       }
     },
     {
-      "launch_name": "perception_lidar.launch",
+      "launch_name": "rs_perception.launch",
       "node_name": "",
       "package": "config",
       "path": "vehicle/perception/lidar",
@@ -1167,8 +1167,11 @@
         "auto_pilot": 2,
         "remote_pilot": 2,
         "flow_ctrl": 0,
-        "cpu_ctrl": 0,
+        "cpu_ctrl": 1,
         "mem_ctrl": 0
+      },
+      "resource_limit": {
+        "cpu_percent": 1
       }
     },
     {
@@ -1785,8 +1788,12 @@
         "auto_pilot": 2,
         "remote_pilot": 2,
         "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
+        "cpu_ctrl": 1,
+        "mem_ctrl": 1
+      },
+      "resource_limit": {
+        "memory_size": 100,
+        "cpu_percent": 0.1
       }
     },
     {
@@ -1817,8 +1824,12 @@
         "auto_pilot": 2,
         "remote_pilot": 2,
         "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
+        "cpu_ctrl": 1,
+        "mem_ctrl": 1
+      },
+      "resource_limit": {
+        "memory_size": 100,
+        "cpu_percent": 0.1
       }
     },
     {
