@@ -966,7 +966,7 @@
       }
     },
     {
-      "launch_name": "rs_perception.launch",
+      "launch_name": "perception_lidar.launch",
       "node_name": "",
       "package": "config",
       "path": "vehicle/perception/lidar",
