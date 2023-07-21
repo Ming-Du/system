@@ -1895,6 +1895,42 @@
         "cpu_ctrl": 0,
         "mem_ctrl": 0
       }
+    },
+    {
+      "launch_name": "mogo_moniter.launch",
+      "node_name": "",
+      "package": "top_monitor",
+      "path": "",
+      "enable_control": {
+        "rosmaster": [],
+        "rosslave": [],
+        "rosslave-103": [],
+        "rosslave-104": [],
+        "rosslave-105": [],
+        "rosslave-106": [],
+        "rosslave-107": []
+      },
+      "car_type": [
+        "df",
+        "hq",
+        "jinlv",
+        "sweeper"
+      ],
+      "node_type": "SYS",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 0,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 1,
+        "mem_ctrl": 1
+      },
+      "resource_limit": {
+        "memory_size": 100,
+        "cpu_percent": 0.1
+      }
     }
   ]
 }
