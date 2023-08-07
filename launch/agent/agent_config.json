@@ -749,8 +749,18 @@
               "6x"
             ],
             "vehicle_type": [
-              "JINLV_M1",
+              "JINLV_M1"
+            ]
+          },
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
               "JINLV_M2"
+            ],
+            "hardware_suite": [
+              "1.0"
             ]
           }
         ],
@@ -761,6 +771,17 @@
             ],
             "vehicle_type": [
               "JINLV"
+            ]
+          },
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV_M2"
+            ],
+            "hardware_suite": [
+              "2.0"
             ]
           }
         ]
@@ -994,40 +1015,48 @@
     {
       "launch_name": "perception_fusion.launch",
       "node_name": "",
-      "package": "launch",
-      "path": "",
+      "package": "config",
+      "path": "vehicle/perception/fusion",
       "enable_control": {
-        "rosslave": [],
-        "rosslave-106": []
+        "rosslave": [
+          {
+            "vehicle_type": [
+              "JINLV"
+            ]
+          }
+        ],
+        "rosslave-106": [
+          {
+            "vehicle_type": [
+              "JINLV"
+            ]
+          },
+          {
+            "vehicle_type": [
+              "JINLV_M2"
+            ],
+            "hardware_suite": [
+              "2.0"
+            ]
+          }
+        ],
+        "rosslave-107": [
+          {
+            "vehicle_type": [
+              "JINLV_M1"
+            ]
+          },
+          {
+            "vehicle_type": [
+              "JINLV_M2"
+            ],
+            "hardware_suite": [
+              "1.0"
+            ]
+          }
+        ]
       },
       "car_type": [
-        "df",
-        "hq",
-        "jinlv"
-      ],
-      "node_type": "MAP",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 1,
-        "remote_pilot": 1,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
-      "launch_name": "perception_fusion_Mx.launch",
-      "node_name": "",
-      "package": "launch",
-      "path": "",
-      "enable_control": {
-        "rosslave-107": []
-      },
-      "car_type": [
-        "df",
-        "hq",
         "jinlv"
       ],
       "node_type": "MAP",
@@ -1349,18 +1378,32 @@
       "package": "config",
       "path": "vehicle/drivers/lidar",
       "enable_control": {
-        "rosslave-107": [
+        "rosslave-106": [
           {
             "SOC": [
               "6x"
             ],
+            "vehicle_type": [
+              "JINLV_M2"
+            ],
             "hardware_suite": [
               "2.0"
             ]
+          }
+        ],
+        "rosslave-107": [
+          {
+            "vehicle_type": [
+              "JINLV",
+              "JINLV_M1"
+            ]
           },
           {
-            "SOC": [
-              "6x"
+            "vehicle_type": [
+              "JINLV_M2"
+            ],
+            "hardware_suite": [
+              "1.0"
             ]
           }
         ]
@@ -1471,7 +1514,35 @@
       "package": "config",
       "path": "vehicle/perception/lidar",
       "enable_control": {
-        "rosslave-107": []
+        "rosslave-106": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV_M2"
+            ],
+            "hardware_suite": [
+              "2.0"
+            ]
+          }
+        ],
+        "rosslave-107": [
+          {
+            "vehicle_type": [
+              "JINLV_M2"
+            ],
+            "hardware_suite": [
+              "1.0"
+            ]
+          },
+          {
+            "vehicle_type": [
+              "JINLV",
+              "JINLV_M1"
+            ]
+          }
+        ]
       },
       "car_type": [
         "jinlv"
@@ -1653,35 +1724,41 @@
       }
     },
     {
-      "launch_name": "perception_fusion_mid_106.launch",
+      "launch_name": "perception_fusion_mid.launch",
       "node_name": "",
-      "package": "launch",
+      "package": "perception_fusion_mid",
       "path": "",
       "enable_control": {
-        "rosslave-106": []
-      },
-      "car_type": [
-        "jinlv"
-      ],
-      "node_type": "MAP",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 1,
-        "remote_pilot": 2,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
-      "launch_name": "perception_fusion_mid_107.launch",
-      "node_name": "",
-      "package": "launch",
-      "path": "",
-      "enable_control": {
-        "rosslave-107": []
+        "rosslave-106": [
+          {
+            "vehicle_type": [
+              "JINLV_M2"
+            ],
+            "hardware_suite": [
+              "2.0"
+            ]
+          },
+          {
+            "vehicle_type": [
+              "JINLV"
+            ]
+          }
+        ],
+        "rosslave-107": [
+          {
+            "vehicle_type": [
+              "JINLV_M2"
+            ],
+            "hardware_suite": [
+              "1.0"
+            ]
+          },
+          {
+            "vehicle_type": [
+              "JINLV_M1"
+            ]
+          }
+        ]
       },
       "car_type": [
         "jinlv"
@@ -1877,6 +1954,41 @@
             ],
             "vehicle_type": [
               "JINLV"
+            ]
+          }
+        ]
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
+    },
+    {
+      "launch_name": "zvisionlidars_fusion.launch",
+      "node_name": "",
+      "package": "xiaoba_fusion",
+      "path": "",
+      "enable_control": {
+        "rosslave-106": [
+          {
+            "SOC": [
+              "6x"
+            ],
+            "vehicle_type": [
+              "JINLV_M2"
+            ],
+            "hardware_suite": [
+              "2.0"
             ]
           }
         ]
