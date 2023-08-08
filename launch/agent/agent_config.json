@@ -2043,6 +2043,35 @@
         "memory_size": 100,
         "cpu_percent": 0.1
       }
+    },
+    {
+      "launch_name": "perception_2D_f120_node_6x_bus.launch",
+      "node_name": "",
+      "package": "perception_camera_2D_f120",
+      "path": "",
+      "enable_control": {
+        "rosslave-103": [
+          {
+            "SOC": [
+              "6x"
+            ]
+          }
+        ]
+      },
+      "car_type": [
+        "jinlv"
+      ],
+      "node_type": "MAP",
+      "depends": [],
+      "mutexs": [],
+      "idle_mode_support": 1,
+      "function": {
+        "auto_pilot": 2,
+        "remote_pilot": 2,
+        "flow_ctrl": 0,
+        "cpu_ctrl": 0,
+        "mem_ctrl": 0
+      }
     }
   ]
 }
