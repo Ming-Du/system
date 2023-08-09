@@ -1,0 +1,21 @@
+syntax="proto2";
+package trigger_info;
+
+import "header.proto";
+
+
+message Time {
+  optional uint32 sec = 1;
+  optional uint32 nsec = 2;
+}
+
+message TriggerInfo
+{ 
+    optional common.Header header = 1; 
+    optional Time timestamp_start = 2;
+    optional Time timestamp_end = 3;
+    optional string primary_label = 4;
+    optional string secondary_label = 5;
+    optional uint32 case_num = 6;
+    optional uint32 level = 7;
+}
