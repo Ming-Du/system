@@ -1335,44 +1335,6 @@
       }
     },
     {
-      "launch_name": "drivers_rslidar.launch",
-      "node_name": "",
-      "package": "launch",
-      "path": "",
-      "enable_control": {
-        "rosslave-106": [
-          {
-            "SOC": [
-              "6x"
-            ],
-            "hardware_suite": [
-              "2.0"
-            ]
-          },
-          {
-            "SOC": [
-              "6x"
-            ]
-          }
-        ]
-      },
-      "car_type": [
-        "df",
-        "jinlv"
-      ],
-      "node_type": "MAP",
-      "depends": [],
-      "mutexs": [],
-      "idle_mode_support": 1,
-      "function": {
-        "auto_pilot": 2,
-        "remote_pilot": 2,
-        "flow_ctrl": 0,
-        "cpu_ctrl": 0,
-        "mem_ctrl": 0
-      }
-    },
-    {
       "launch_name": "drivers_zvisionlidar.launch",
       "node_name": "",
       "package": "config",
