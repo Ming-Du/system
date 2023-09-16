@@ -1,0 +1,27 @@
+vin : "vin"
+plate : "1880227"
+brand : "JINLV"
+    
+length : 5.995
+width  : 2.020
+height : 2.560
+weight : 5440
+
+accel_min : -7.0
+accel_max : 3.0
+steering_min : -700
+steering_max : 700
+
+wheel_base : 3.79
+steer_ratio : 22
+max_abs_speed_when_stopped : 0.15 
+throttle_deadzone : 0.2
+brake_deadzone : 0.2
+
+center_to_front : 4.995
+center_to_back  : 1.0
+center_to_left  : 1.010
+center_to_right : 1.010
+
+new_jinlv : true
+is_rec_frontwheelData : false

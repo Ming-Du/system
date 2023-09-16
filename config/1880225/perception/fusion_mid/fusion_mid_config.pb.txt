@@ -1,0 +1,3 @@
+  rec_topic_name_lidar_cloud: "/sensor/lidar/middle/point_cloud"
+  rec_topic_name_lidar_obstacle: "/perception/lidar/lidar_obstacle"
+  vehicle_type: "jinlv_star"

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="config_path" default="$(find config)/vehicle"/>
+    <arg name="sensor_meta"
+        value="$(arg config_path)/sensor/calibrated_sensor.pb.txt " />
+    <arg name="config_file_path" default="$(find drivers_radar)/conti_radar/conf" />
+    <arg name= "perception_path" default="$(find perception_radar)/config" />
+    <arg name="radar_sensor_name" default="conti_radar" />
+    <arg name="viz_text_topic" default="viz_text" />
+    <arg name="viz_obstacle_topic" default="viz_obstacle" />
+    <arg name="obstacles_topic" default="radar_obstacle" />
+
+    <node name="radar_fusion" pkg="perception_radar"
+    type="perception_radar_fusion_node" output="screen"
+    args="--sensor_meta_path=$(arg sensor_meta)
+                --radar_fusion_conf_path=$(arg config_path)/perception/radar/radar_fusion.pb.txt" >
+    <param name="match_min_distance_thresh" type = "double" value="0.3" />
+    <param name="perception_grid_map_path" type="string" value="$(arg perception_path)/map" />
+    <param name="radar_config_path" type="string" value="$(arg perception_path)" />
+  </node>
+
+</launch>

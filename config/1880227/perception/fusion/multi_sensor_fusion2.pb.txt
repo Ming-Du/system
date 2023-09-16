@@ -1,0 +1,142 @@
+use_camera: true
+use_lidar: true
+use_radar: true
+use_obu: true
+use_falcon_lidar: true
+use_vidar: true
+
+pub_radar: false
+pub_obu: false
+pub_vidar: false
+input_sensor {
+  sensor_name: "H30S-E03090217"
+  topic: "/perception/camera/camera_obstacle_front30"
+}
+input_sensor {
+  sensor_name: "H60L1-E03080618"
+  topic: "/perception/camera/camera_obstacle_front60"
+}
+input_sensor {
+  sensor_name: "lidar_main"
+  topic: "/perception/fusion_mid/lidar_obstacle"
+}
+
+input_sensor {
+  sensor_name: "radar_front"
+  topic: "/perception/radar/radar_obstacle"
+}
+
+input_sensor {
+  sensor_name: "obu"
+  topic: "/perception/v2x/v2x_obstacle"
+}
+input_sensor {
+  sensor_name: "innolidar"
+  topic: "/perception/lidar/lidar_inno_obstacle"
+}
+input_sensor {
+  sensor_name: "H120L-E03190758_3d"
+  topic: "/perception/camera/vidar_obstacle"
+}
+fusion_method: "ProbabilisticFusion"
+fusion_main_sensors: "lidar_main"
+object_in_roi_check: true
+radius_for_roi_object_check: 100
+falcon_lidar_filter_distance: 50
+localization_topic: "/localization/global"
+enable_publish_fusion_topic: true
+enable_publish_fusion_topic_app: true
+output_obstacles_topic_name: "/perception/fusion/obstacles"
+output_obstacles_topic_name_app: "/perception/fusion/obstacles_app"
+output_viz_fused_box_topic_name: "/perception/fusion/viz_obstacles_box"
+output_viz_fused_text_topic_name: "/perception/fusion/viz_obstacles_text"
+
+virtual_object {
+  id : 100001
+  position {
+    x : 615053.8727569748
+    y : 2856228.35017606
+    z : 0.0
+  }
+  size {
+    x : 2.0
+    y : 1.2
+    z : 1.5
+  }
+  yaw: 4.221680
+}
+
+virtual_object {
+  id : 100002
+  position {
+    x : 614956.1118977442
+    y : 2856035.928116526
+    z : 0.0
+  }
+  size {
+    x : 2.0
+    y : 1.2
+    z : 1.5
+  }
+  yaw: 3.653493
+}
+
+virtual_object {
+  id : 100003
+  position {
+    x : 614860.2870605636
+    y : 2855968.281086601
+    z : 0.0
+  }
+  size {
+    x : 2.0
+    y : 1.2
+    z : 1.5
+  }
+  yaw: 3.829393
+}
+
+virtual_object {
+  id : 100004
+  position {
+    x : 614851.8425859158
+    y : 2855960.576528417
+    z : 0.0
+  }
+  size {
+    x : 2.0
+    y : 1.2
+    z : 1.5
+  }
+  yaw: 3.887364
+}
+
+virtual_object {
+  id : 100005
+  position {
+    x : 614846.4516633684
+    y : 2855955.1865814035
+    z : 0.0
+  }
+  size {
+    x : 2.0
+    y : 1.2
+    z : 1.5
+  }
+  yaw: 3.980191
+}
+
+virtual_object {
+  id : 100006
+  position {
+    x : 615120.4172781596
+    y : 2856540.0539883757
+    z : 0.0
+  }
+  size {
+    x : 2.0
+    y : 1.2
+    z : 1.5
+  }
+  yaw: 3.869946
+}

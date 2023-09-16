@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="config_path" default="$(find config)/vehicle"/>
+    <arg name="sensor_meta"
+        value="$(arg config_path)/sensor/calibrated_sensor.pb.txt " />
+    <arg name="config_file_path" default="$(find drivers_radar)/conti_radar/conf" />
+    <arg name="radar_sensor_name" default="conti_radar" />
+    <arg name="rviz_text_topic" default="rviz_text" />
+    <arg name="rviz_obstacle_topic" default="rviz_obstacle" />
+    <arg name="obstacles_topic" default="radar_obstacle" />
+
+  <group ns="drivers/radar/front/">
+    <node name="conti_radar" pkg="drivers_radar" 
+      type="drivers_radar_conti_node" output="screen"    
+      args="--sensor_meta_path=$(arg sensor_meta)" >
+      <param name="config_file" value="$(arg config_file_path)/conti_radar_front_conf.pb.txt" />
+      <param name="sensor_meta" value="$(arg sensor_meta)" />
+      <param name = "sensor_name" type = "string" value = "radar_front" />
+      <param name="rviz_text_marker_topic_name" value="$(arg rviz_text_topic)" />
+      <param name="rviz_obstacle_marker_topic_name" value="$(arg rviz_obstacle_topic)" />
+      <param name="conti_radar_obstacles_topic_name" value="$(arg obstacles_topic)" />
+      <param name="port" type = "int" value="0" />
+    </node>
+  </group>
+
+  <group ns="drivers/radar/rear_left/">
+    <node name="conti_radar" pkg="drivers_radar" 
+      type="drivers_radar_conti_node" output="screen"
+      args="--sensor_meta_path=$(arg sensor_meta)" >
+      <param name="config_file" value="$(arg config_file_path)/conti_radar_left_rear_conf.pb.txt" />
+      <param name="sensor_meta" value="$(arg sensor_meta)" />
+      <param name="sensor_name" type = "string" value = "radar_rear_left" />
+      <param name="rviz_text_marker_topic_name" value="$(arg rviz_text_topic)" />
+      <param name="rviz_obstacle_marker_topic_name" value="$(arg rviz_obstacle_topic)" />
+      <param name="conti_radar_obstacles_topic_name" value="$(arg obstacles_topic)" />
+      <param name="port" type = "int" value="1" />
+    </node>
+  </group>
+
+  <group ns="drivers/radar/rear_right/">
+    <node name="conti_radar" pkg="drivers_radar" 
+      type="drivers_radar_conti_node" output="screen"
+      args="--sensor_meta_path=$(arg sensor_meta)" >
+      <param name="config_file" value="$(arg config_file_path)/conti_radar_right_rear_conf.pb.txt" />
+      <param name="sensor_meta" value="$(arg sensor_meta)" />
+      <param name="sensor_name" type = "string" value = "radar_rear_right" />
+      <param name="rviz_text_marker_topic_name" value="$(arg rviz_text_topic)" />
+      <param name="rviz_obstacle_marker_topic_name" value="$(arg rviz_obstacle_topic)" />
+      <param name="conti_radar_obstacles_topic_name" value="$(arg obstacles_topic)" />
+      <param name="port" type = "int" value="1" />
+    </node>
+  </group>
+</launch>

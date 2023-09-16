@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="config_path" default="$(find config)/vehicle" />
+  <arg name="sensor_meta" default="$(arg config_path)/sensor/calibrated_sensor.pb.txt" />
+  <arg name= "innolidar_path" default="$(find drivers_innolidar)" />
+  <arg name="frame_id" value="base_link" />
+  <arg name="device_ip" default="192.168.1.205" />
+  <arg name="tcp_port" default="8010" />
+  <arg name="udp_port" default="13400" />
+  <arg name="time_synchronization" default="false" />
+  <arg name="testmode" default="false" />
+  <arg name="loglevel" default="2" />
+  <arg name="enable_log" default="false" />
+  <arg name="horz_angle" default="0.0" />
+  <arg name="vert_angle" default="5.0" />
+
+  <group ns="/sensor/lidar/innolidar">
+    <node pkg="drivers_innolidar" name="drivers_innolidar" 
+      type="drivers_innolidar" output="screen"
+      args="--logtostderr=0 --stderrthreshold=1 --v=5
+          --sensor_meta_path=$(arg sensor_meta)">
+    <param name="innolidar_config_path" type="string" value="$(arg innolidar_path)" />
+    <param name="device_ip" value="$(arg device_ip)" />
+    <param name="tcp_port" value="$(arg tcp_port)" />
+    <param name="udp_port" value="$(arg udp_port)"/>
+    <param name="frame_id" value="$(arg frame_id)"/>
+    <param name="time_synchronization" value="$(arg time_synchronization)"/>
+    <param name="testmode" value="$(arg testmode)"/>
+    <param name="loglevel" value="$(arg loglevel)"/>
+    <param name="enable_log" value="$(arg enable_log)"/>
+    <param name="horz_angle" value="$(arg horz_angle)"/>
+    <param name="vert_angle" value="$(arg vert_angle)"/>
+    </node>
+  </group>
+</launch>

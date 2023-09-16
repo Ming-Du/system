@@ -1,0 +1,466 @@
+base: "base_link"
+
+sensor_info {
+  name: "gnss"
+  type: GNSS
+  orientation: FRONT
+
+  extrinsic {
+    translation {
+      x: 3.63
+      y: -0.53
+      z: 0.3
+    }
+    rotation {
+      w: 0.707
+      x: 0
+      y: 0
+      z: 0.707
+    }
+  }
+}
+
+sensor_info {
+  name: "H60L1-E03080536"
+  type: SENSING_60
+  orientation: FRONT
+  topic: "/sensor/camera/sensing/image_raw_60"
+  extrinsic {
+    translation {
+      x: 4.875707082196473
+      y: -0.00068848210226307239
+      z: 1.7371870941024123
+    }
+    rotation {
+      x: -0.503105862492604
+      y: 0.48901310519103125
+      z: -0.49993642061399279
+      w: 0.50784514840111916
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 1947.126544902649
+    matrix: 0
+    matrix: 961.5870474201859
+    matrix: 0
+    matrix: 1949.7594462053535
+    matrix: 535.8654382395221
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.55141923182532
+    distort_matrix: 0.2531415068049287
+    distort_matrix: -0.0006393367865351911
+    distort_matrix: 0.0009773259926678492
+    distort_matrix: 0
+  }
+}
+
+sensor_info {
+  name: "H30S-D12290584"
+  type: SENSING_30
+  orientation: FRONT
+  topic: "/sensor/camera/sensing/image_raw_30"
+  extrinsic {
+    translation {
+      x: 4.7521613890268961
+      y: 0.04268920232982408
+      z: 1.7454967036193993
+    }
+    rotation {
+      x: -0.4942817891120781
+      y: 0.4939637261960203
+      z: -0.49754798612819967
+      w: 0.51395371504754328
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 3927.277986759402
+    matrix: 0
+    matrix: 1002.7747225497177
+    matrix: 0
+    matrix: 3925.026960380086
+    matrix: 584.2625635289585
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.3889779629414852
+    distort_matrix: 0.16660755853562975
+    distort_matrix: -0.0009740658822185497
+    distort_matrix: -0.00045983421081809996
+    distort_matrix: 0
+  }
+}
+
+sensor_info {
+  name: "H120L-E03190755"
+  type: SENSING_120
+  orientation: FRONT
+  topic: "/sensor/camera/sensing/image_raw_120"
+  extrinsic {
+     translation {
+      x: 4.8938030468490208
+      y: -0.02631720670148148
+      z: 1.7553529335530231
+    }
+    rotation {
+      x: -0.49028313705586019
+      y: 0.49161156678551332
+      z: -0.51077861693872373
+      w: 0.50699676271106453
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 949.7958087234275
+    matrix: 0
+    matrix: 1007.6189728767953
+    matrix: 0
+    matrix: 950.3169407494139
+    matrix: 542.0540446251626
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.039173451522673465
+    distort_matrix: 0.0028617419909638016
+    distort_matrix: -0.004600506862374551
+    distort_matrix: 0.0008267265140666766
+    distort_matrix: 0
+  }
+}
+
+sensor_info {
+  name: "H120L-E03190411"
+  type: SENSING_120
+  orientation: REAR
+  topic: "/sensor/camera/sensing/image_raw_back"
+  extrinsic {
+    translation {
+      x: -0.73666718333660375
+      y: -0.055485823590290355
+      z: 2.3515192502668114
+    }
+    rotation {
+      x: -0.47228254003631742
+      y: -0.47828553301426985
+      z: 0.52131763235482187
+      w: 0.52575667136239213
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 954.1676882716207
+    matrix: 0
+    matrix: 992.21871440472569
+    matrix: 0
+    matrix: 954.87634627126363
+    matrix: 562.88880773435039
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.034393335408902069
+    distort_matrix: -0.0055184486347013353
+    distort_matrix: 0.0020081228017054492
+    distort_matrix: -0.0010907809062526818
+    distort_matrix: 0
+  }
+}
+sensor_info {
+  name: "H120L-E03190411_3d"
+  type: VIDAR
+}
+sensor_info {
+  name: "H120L-E03190282"
+  type: SENSING_120
+  orientation: LEFT
+  topic: "/sensor/camera/sensing/image_raw_left"
+  extrinsic {
+    translation {
+      x: 1.8787087733745598
+      y: 1.1691099436931707
+      z: 2.0739286861944337
+    }
+    rotation {
+      x: 0.95012841854544827
+      y: 0.026449698952211345
+      z: -0.028220441724031355
+      w: -0.28812111351135083
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 953.35317260020713
+    matrix: 0
+    matrix: 993.67741852873007
+    matrix: 0
+    matrix: 953.74614568651509
+    matrix: 521.31745624685675
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.036115621708893757
+    distort_matrix: 0.00024749459039067923
+    distort_matrix: -0.0038295708866806894
+    distort_matrix: 0.000836626685104904
+    distort_matrix: 0
+  }
+}
+
+sensor_info {
+  name: "H120L-E03190762"
+  type: SENSING_120
+  orientation: RIGHT
+  topic: "/sensor/camera/sensing/image_raw_right"
+  extrinsic {
+    translation {
+      x: 1.8396834703511153
+      y: -0.7948063512780531
+      z: 2.1623963686714669
+    }
+    rotation {
+      x: -0.011281291936282863
+      y: 0.93901896951043973
+      z: -0.34367803847691597
+      w: 0.001251603549767928
+    }
+  }
+  intrinsic {
+    width: 1920
+    height: 1080
+    matrix: 953.88505364152456
+    matrix: 0
+    matrix: 996.09974736499862
+    matrix: 0
+    matrix: 954.82576302981272
+    matrix: 525.56235445797233
+    matrix: 0
+    matrix: 0
+    matrix: 1
+  }
+  distcoeff {
+    distort_matrix: -0.034174061964302532
+    distort_matrix: -0.0023599437111276296
+    distort_matrix: -0.0026145275742760991
+    distort_matrix: 0.00076325267908403723
+    distort_matrix: 0
+  }
+}
+
+sensor_info {
+  name: "c32_front_left"
+  type: LSLIDAR_C32
+  orientation: LEFT_FORWARD
+  topic: "/sensor/lidar/front_left/point_cloud"
+  extrinsic {
+    translation {
+      x: 4.97
+      y: 1.05
+      z: 0.70
+    }
+    rotation {
+      w: 0.4766758
+      x: 0.03901
+      y: 0.0333823
+      z: 0.8775785
+    }
+  }
+}
+sensor_info {
+  name: "c32_front_right"
+  type: LSLIDAR_C32
+  orientation: RIGHT_FORWARD
+  topic: "/sensor/lidar/front_right/point_cloud"
+  extrinsic {
+    translation {
+      x: 4.95
+      y: -1.0
+      z: 0.72
+    }
+    rotation {
+      w: 0.8936888
+      x: 0.0011449
+      y: 0.017172
+      z: 0.4483571
+    }
+  }
+}
+sensor_info {
+  name: "c32_rear"
+  type: LSLIDAR_C32
+  orientation: REAR
+  topic: "/sensor/lidar/rear/point_cloud"
+  extrinsic {
+    translation {
+      x: -1.03
+      y: 0
+      z: 0.79
+    }
+    rotation {
+      w: 0.7031995
+      x: 0.0165718
+      y: -0.0167463
+      z: -0.7106022
+    }
+  }
+}
+sensor_info{
+  name:"lidar_main"
+  type:LSLIDAR_C32
+}
+
+sensor_info {
+  name: "radar_front"
+  type: CONTI_RADAR_ARS408
+  orientation: FRONT
+  topic: "perception/radar/front/radar_obstacle"
+  extrinsic {
+    translation {
+      x: 5.075
+      y: 0
+      z: 0.471
+    }
+    rotation {
+      x: 0
+      y: 0
+      z: -0.0017453283658983088
+      w: 0.99999847691328769
+    }
+  }
+}
+
+sensor_info {
+  name: "radar_rear_left"
+  type: CONTI_RADAR_SRR308
+  orientation: LEFT_BACKWARD
+  topic: "perception/radar/rear_left/radar_obstacle"
+  extrinsic {
+    translation {
+      x: -0.839
+      y: 0.779
+      z: 0.7
+    }
+    rotation {
+      x: 0
+      y: 0
+      z: 0.93605953573897283
+      w: 0.35184164840470294
+    }
+  }
+}
+
+sensor_info {
+  name: "radar_rear_right"
+  type: CONTI_RADAR_SRR308
+  orientation: RIGHT_BACKWARD
+  topic: "/perception/radar/rear_right/radar_obstacle"
+  extrinsic {
+    translation {
+      x: -0.839
+      y: -0.779
+      z: 0.7
+    }
+    rotation {
+      x: 0
+      y: 0
+      z: -0.92652863087183768
+      w: 0.3762242631393648
+    }
+  }
+}
+
+sensor_info {
+  name: "radar_front_left"
+  type: CONTI_RADAR_SRR308
+  orientation: LEFT_FORWARD
+  topic: "/perception/radar/front_left/radar_obstacle"
+  extrinsic {
+    translation {
+      x: 4.5
+      y: 0.914
+      z: 0.487
+    }
+    rotation {
+      x: 0
+      y: 0
+      z: 0.374606593415912
+      w: 0.92718385456678742
+    }
+  }
+}
+
+sensor_info {
+  name: "radar_front_right"
+  type: CONTI_RADAR_SRR308
+  orientation: RIGHT_FORWARD
+  topic: "/perception/radar/front_right/radar_obstacle"
+  extrinsic {
+    translation {
+      x: 4.5760000000000032
+      y: -0.83399999999999985
+      z: 0.487
+    }
+    rotation {
+      x: 0
+      y: 0
+      z: -0.36731302956691292
+      w: 0.930097381089946
+    }
+  }
+}
+
+sensor_info {
+  name: "innolidar"
+  type: INNOVUSION_FALCON_LIDAR
+  orientation: FRONT
+  topic: "/sensor/lidar/innolidar/point_cloud"
+  extrinsic {
+    translation {
+      x: 4.28
+      y: 0
+      z: 2.55
+    }
+    rotation {
+      w: 0.9991379
+      x: -0.004311
+      y: 0.0411648
+      z: 0.0032242
+    }
+  }
+}
+
+sensor_info {
+  name: "obu"
+  type: V2X
+  orientation: FRONT
+  topic: "/perception/v2x/v2x_obstacle"
+  extrinsic {
+    translation {
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    }
+    rotation {
+      w: 1.00000
+      x: 0.00000
+      y: 0.00000
+      z: 0.00000
+    }
+  }
+}

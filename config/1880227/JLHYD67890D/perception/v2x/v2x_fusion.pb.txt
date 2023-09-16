@@ -1,0 +1,34 @@
+module_name: "v2x_fusion"
+frame_id: "base_link"
+use_bsm: false
+use_rsm: false
+use_ssm: false
+use_v2n_rsm: false
+use_v2n_rsi: false
+
+input_source {
+    source_name: "bsm"
+    topic: "/v2x/v2x_bsm"
+}
+
+input_source {
+    source_name: "rsm"
+    topic: "/v2x/v2x_rsm"
+}
+
+input_source {
+    source_name: "ssm"
+    topic: "/v2x/v2x_ssm"
+}
+
+input_source {
+    source_name: "v2n_rsm"
+    topic: "/v2n/aicloud/rsm_info"
+}
+
+input_source {
+    source_name: "v2n_rsi"
+    topic: "/v2n/aicloud/rsi_info"
+}
+localization_topic: "/localization/global"
+output_topic: "/perception/v2x/v2x_obstacle"

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find config)/vehicle/drivers/camera/sensing60.launch" />
+  <!--<include file="$(find config)/vehicle/drivers/camera/sensing30.launch" />-->
+  <!--<include file="$(find config)/vehicle/drivers/camera/sensing120.launch" />-->
+</launch>
